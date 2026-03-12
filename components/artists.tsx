@@ -188,6 +188,11 @@ export function Artists() {
             Are you a DJ or producer? We&apos;re always looking for fresh talent.
           </p>
           <motion.button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+            }}
             className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent transition-colors"
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.96 }}
