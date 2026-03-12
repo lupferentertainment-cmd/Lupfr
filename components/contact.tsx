@@ -17,6 +17,7 @@ const socialLinks = [
 const inquiryTypes = [
   "Book an Event",
   "Talent Booking",
+  "Submit Your Mix",
   "Venue Partnership",
   "Private Event",
   "Sponsorship",
@@ -49,11 +50,22 @@ function ProtectedPhone() {
   )
 }
 
+const PRESET_INQUIRY_EVENT = "presetInquiry"
+
 export function Contact() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<string>).detail
+      if (detail && inquiryTypes.includes(detail)) setSelectedType(detail)
+    }
+    window.addEventListener(PRESET_INQUIRY_EVENT, handler)
+    return () => window.removeEventListener(PRESET_INQUIRY_EVENT, handler)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
