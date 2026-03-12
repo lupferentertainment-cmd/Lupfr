@@ -78,13 +78,13 @@ export function Footer() {
           {/* Brand */}
           <motion.div
             className="lg:col-span-2"
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 32 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, ease }}
+            transition={{ duration: 0.5, ease }}
           >
             <a href="#" className="inline-block mb-6" aria-label="Lupfer Entertainment home">
               <Image
-                src="/logo.png"
+                src="/will_logo.png"
                 alt="Lupfer Entertainment"
                 width={200}
                 height={66}
@@ -121,7 +121,7 @@ export function Footer() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.1, ease }}
+            transition={{ duration: 0.5, delay: 0.08, ease }}
           >
             <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Company</h4>
             <ul className="space-y-3">
@@ -146,7 +146,7 @@ export function Footer() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease }}
+            transition={{ duration: 0.5, delay: 0.12, ease }}
           >
             <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Stay in the loop</h4>
             <p className="text-muted-foreground text-sm mb-4">
@@ -164,7 +164,7 @@ export function Footer() {
               <motion.button
                 type="submit"
                 disabled={newsletterSubmitting}
-                className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-medium disabled:opacity-70"
+                className="px-4 py-2 btn-metallic-gold rounded-full text-sm font-medium disabled:opacity-70"
                 whileHover={newsletterSubmitting ? undefined : { scale: 1.05 }}
                 whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}
               >
@@ -182,7 +182,7 @@ export function Footer() {
           className="flex flex-col md:flex-row items-center justify-between gap-4"
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3, ease }}
+          transition={{ duration: 0.45, delay: 0.2, ease }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-muted-foreground text-center sm:text-left">
             <span>&copy; {new Date().getFullYear()} <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>. All rights reserved.</span>
@@ -219,10 +219,10 @@ export function Footer() {
           style={{ opacity: bigTextOpacity, scale: bigTextScale }}
         >
           <motion.h2
-            className="text-[5vw] sm:text-[6vw] md:text-[7vw] lg:text-[8vw] font-bold tracking-tighter leading-none select-none"
+            className="font-serif text-[5vw] sm:text-[6vw] md:text-[7vw] lg:text-[8vw] font-bold tracking-tighter leading-none select-none"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4, ease }}
+            transition={{ duration: 0.5, delay: 0.25, ease }}
           >
             <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>
           </motion.h2>

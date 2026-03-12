@@ -51,11 +51,11 @@ export function Navigation() {
   return (
     <>
       <motion.header
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-lg shadow-black/10" : ""
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-background/70 backdrop-blur-2xl border-b border-border/80 shadow-lg shadow-black/5" : ""
         }`}
       >
         <nav className="container mx-auto px-4 sm:px-6 py-4 md:py-5 flex items-center justify-between">
@@ -67,7 +67,7 @@ export function Navigation() {
             aria-label="Lupfer Entertainment home"
           >
             <Image
-              src="/logo.png"
+              src="/will_logo.png"
               alt="Lupfer Entertainment"
               width={360}
               height={120}
@@ -83,18 +83,18 @@ export function Navigation() {
                 <motion.a
                   key={link.name}
                   href={link.href}
-                  className={`text-sm uppercase tracking-widest transition-colors relative group py-1 ${
+                  className={`text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
                     isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
                   }`}
-                  initial={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  transition={{ delay: i * 0.06, duration: 0.35 }}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   {link.name}
                   <span
-                    className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 ease-out ${
+                    className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-out ${
                       isActive ? "w-full" : "w-0 group-hover:w-full"
                     }`}
                   />
@@ -107,10 +107,10 @@ export function Navigation() {
             href={LINKS.partiful}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-foreground text-background text-sm font-medium uppercase tracking-wider hover:bg-accent hover:text-accent-foreground transition-colors rounded-full"
-            whileHover={{ scale: 1.05, boxShadow: "0 0 24px oklch(0.72 0.14 88 / 0.3)" }}
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            transition={{ type: "spring", stiffness: 500, damping: 28 }}
           >
             Book an Event
           </motion.a>
@@ -145,7 +145,7 @@ export function Navigation() {
                     key={link.name}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className={`text-3xl font-bold uppercase tracking-wider transition-colors ${
+                    className={`font-serif text-3xl font-bold uppercase tracking-wider transition-colors ${
                       isActive ? "text-accent" : "text-foreground hover:text-accent"
                     }`}
                     initial={{ opacity: 0, y: 20 }}
@@ -163,7 +163,7 @@ export function Navigation() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
-                className="mt-4 px-8 py-4 bg-accent text-accent-foreground text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
+                className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
               >
                 Book an Event
               </motion.a>

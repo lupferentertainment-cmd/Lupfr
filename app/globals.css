@@ -19,14 +19,14 @@
   --secondary-foreground: oklch(0.92 0.05 88);
   --muted: oklch(0.14 0.01 80);
   --muted-foreground: oklch(0.55 0.03 85);
-  /* Metallic brass – subdued, darker gold, still yellow */
-  --gold-shadow: oklch(0.22 0.07 78);
-  --gold-dark: oklch(0.40 0.11 80);
-  --gold: oklch(0.58 0.12 82);
-  --gold-bright: oklch(0.72 0.10 85);
-  --gold-specular: oklch(0.80 0.06 88);
-  --gold-filter-shadow: oklch(0.12 0.03 78 / 0.6);
-  --gold-filter-edge: oklch(0.28 0.08 82 / 0.18);
+  /* Metallic gold – matches will_logo.png: bright highlights, rich mid-tones, deep brown-gold shadows */
+  --gold-shadow: oklch(0.38 0.09 82);
+  --gold-dark: oklch(0.52 0.10 85);
+  --gold: oklch(0.65 0.12 88);
+  --gold-bright: oklch(0.78 0.09 90);
+  --gold-specular: oklch(0.88 0.06 92);
+  --gold-filter-shadow: oklch(0.12 0.05 82 / 0.8);
+  --gold-filter-edge: oklch(0.38 0.09 85 / 0.3);
   --accent: var(--gold);
   --accent-foreground: oklch(0.06 0.005 280);
   --destructive: oklch(0.577 0.245 27.325);
@@ -39,7 +39,10 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+  --transition-fast: 150ms;
+  --transition-snap: 250ms;
+  --transition-smooth: 350ms;
   --sidebar: oklch(0.08 0.006 280);
   --sidebar-foreground: oklch(0.96 0.008 85);
   --sidebar-primary: var(--gold);
@@ -48,20 +51,28 @@
   --sidebar-accent-foreground: oklch(0.96 0.008 85);
   --sidebar-border: oklch(0.18 0.015 80);
   --sidebar-ring: var(--gold);
-  /* Metallic brass gold gradient – more white, less yellow (champagne/brass tone) */
+  /* Metallic gold gradient – logo-matched: shadow → mid → specular → bright */
   --gradient-hero-gold: linear-gradient(
     90deg,
-    oklch(0.42 0.05 72) 0%,
-    oklch(0.58 0.06 74) 15%,
-    oklch(0.72 0.06 75) 28%,
-    oklch(0.58 0.06 74) 35%,
-    oklch(0.90 0.03 78) 42%,
-    oklch(0.82 0.05 76) 48%,
-    oklch(0.90 0.03 78) 54%,
-    oklch(0.58 0.06 74) 62%,
-    oklch(0.72 0.06 75) 75%,
-    oklch(0.58 0.06 74) 88%,
-    oklch(0.42 0.05 72) 100%
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 15%,
+    var(--gold) 28%,
+    var(--gold-dark) 35%,
+    var(--gold-specular) 42%,
+    var(--gold-bright) 48%,
+    var(--gold-specular) 54%,
+    var(--gold-dark) 62%,
+    var(--gold) 75%,
+    var(--gold-dark) 88%,
+    var(--gold-shadow) 100%
+  );
+  /* Metallic gold button – vertical gradient for depth (logo-matched) */
+  --gradient-btn-brass: linear-gradient(
+    180deg,
+    var(--gold-bright) 0%,
+    var(--gold) 25%,
+    var(--gold-dark) 50%,
+    var(--gold-shadow) 100%
   );
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
 }
@@ -102,8 +113,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-serif: var(--font-serif), 'Playfair Display', ui-serif, serif;
+  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', ui-serif, serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -177,6 +188,9 @@
 
 /* Hide scrollbar but keep functionality */
 @layer utilities {
+  .font-display {
+    font-family: var(--font-serif), ui-serif, serif;
+  }
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -394,16 +408,113 @@
   color: transparent;
 }
 
-/* Hero gold text – scroll-driven shine (position set via JS for 60fps) */
+/* Metallic gold button – clean single shine, performant, snappy */
+.btn-metallic-gold {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, filter 0.2s ease;
+  /* Single vertical gradient for metallic depth (no horizontal stripes) */
+  background: linear-gradient(
+    180deg,
+    var(--gold-bright) 0%,
+    var(--gold) 50%,
+    var(--gold-dark) 100%
+  );
+  color: oklch(0.06 0.005 280);
+  border: 1px solid oklch(0.45 0.10 85 / 0.9);
+  box-shadow:
+    0 2px 4px var(--gold-filter-shadow),
+    0 4px 12px oklch(0.25 0.08 82 / 0.5),
+    inset 0 1px 0 oklch(0.88 0.06 92 / 0.5),
+    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.5);
+  filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+}
+/* One crisp diagonal shine – single band, no overlays */
+.btn-metallic-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    110deg,
+    transparent 38%,
+    oklch(1 0 0 / 0.35) 50%,
+    transparent 62%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 50%;
+  pointer-events: none;
+  transition: background-position 0.25s ease;
+}
+.btn-metallic-gold:hover {
+  box-shadow:
+    0 4px 12px var(--gold-filter-shadow),
+    0 8px 24px oklch(0.25 0.08 82 / 0.5),
+    inset 0 1px 0 oklch(0.88 0.06 92 / 0.6),
+    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.5);
+  filter: drop-shadow(0 2px 4px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) drop-shadow(0 0 20px oklch(0.55 0.10 88 / 0.25));
+}
+.btn-metallic-gold:hover::before {
+  background-position: 0% 50%;
+}
+
+/* Metallic brass button – clean single shine, matches btn-metallic-gold */
+.btn-metallic-brass {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, filter 0.2s ease;
+  background: linear-gradient(
+    180deg,
+    var(--gold-bright) 0%,
+    var(--gold) 50%,
+    var(--gold-dark) 100%
+  );
+  color: oklch(0.06 0.005 280);
+  border: 1px solid oklch(0.45 0.10 85 / 0.8);
+  box-shadow:
+    0 1px 2px var(--gold-filter-shadow),
+    0 2px 6px oklch(0.25 0.08 82 / 0.5),
+    inset 0 1px 0 oklch(0.88 0.06 92 / 0.4),
+    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.4);
+  filter: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+}
+.btn-metallic-brass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    110deg,
+    transparent 38%,
+    oklch(1 0 0 / 0.35) 50%,
+    transparent 62%
+  );
+  background-size: 200% 100%;
+  background-position: 100% 50%;
+  pointer-events: none;
+  transition: background-position 0.25s ease;
+}
+.btn-metallic-brass:hover {
+  box-shadow:
+    0 2px 6px var(--gold-filter-shadow),
+    0 4px 12px oklch(0.25 0.08 82 / 0.5),
+    inset 0 1px 0 oklch(0.88 0.06 92 / 0.5),
+    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.4);
+}
+.btn-metallic-brass:hover::before {
+  background-position: 0% 50%;
+}
+
+/* Hero gold text – scroll-driven shine (logo-matched metallic gold) */
 @layer components {
   .hero-gold-shine-scroll {
     @apply bg-clip-text text-transparent;
     -webkit-background-clip: text;
     background-image: var(--gradient-hero-gold);
     background-size: 220% 100%;
-    filter: drop-shadow(0 1px 2px oklch(0.08 0.02 78 / 0.9))
-            drop-shadow(0 2px 4px oklch(0.06 0.02 78 / 0.7))
-            drop-shadow(0 0 0 1px oklch(0.2 0.06 82 / 0.4))
+    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow))
+            drop-shadow(0 2px 4px oklch(0.28 0.08 82 / 0.6))
+            drop-shadow(0 0 0 1px var(--gold-filter-edge))
             var(--filter-hero-gold);
   }
 }

@@ -59,12 +59,12 @@ export function About() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 items-center">
           {/* Left - Content */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -32 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">The Story</p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8">
               <GoldShineText scrollTargetRef={ref}>Culture Meets</GoldShineText>
               <br />
               <span className="text-muted-foreground">Production</span>
@@ -102,10 +102,10 @@ export function About() {
               {values.map((value, i) => (
                 <motion.div
                   key={value.number}
-                  initial={{ opacity: 0, x: 50 }}
+                  initial={{ opacity: 0, x: 40 }}
                   animate={isInView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.65, delay: 0.2 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                  className="group p-8 rounded-2xl bg-card border border-border hover:border-accent/50 transition-all duration-300"
+                  transition={{ duration: 0.45, delay: 0.12 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="group p-8 rounded-2xl bg-card border border-border hover:border-accent/50 transition-all duration-200"
                   whileHover={{ y: -4, transition: { duration: 0.3 } }}
                 >
                   <div className="flex items-start gap-6">
@@ -154,7 +154,7 @@ export function About() {
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center">
                 {["BOAT PARTIES", "ROOFTOP SESSIONS", "WAREHOUSE EVENTS", "PRIVATE EXPERIENCES", "TALENT BOOKING", "VENUE PROGRAMMING"].map((item) => (
-                  <span key={item} className="mx-4 sm:mx-6 md:mx-8 text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-muted/20 tracking-tighter">
+                  <span key={item} className="font-serif mx-4 sm:mx-6 md:mx-8 text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-muted/20 tracking-tighter">
                     {item}
                     <span className="mx-8 text-accent">•</span>
                   </span>
