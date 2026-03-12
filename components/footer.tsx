@@ -7,6 +7,7 @@ import { ArrowUp } from "lucide-react"
 import { toast } from "sonner"
 import { LINKS } from "@/lib/links"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { GoldShineText } from "@/components/gold-shine-text"
 
 const footerLinks = {
   company: [
@@ -70,10 +71,10 @@ export function Footer() {
   }
 
   return (
-    <footer ref={ref} className="relative pt-24 pb-8 px-6 bg-background border-t border-border">
+    <footer ref={ref} className="relative pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8 px-4 sm:px-6 bg-background border-t border-border">
       <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="container mx-auto">
         {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-12 sm:mb-16">
           {/* Brand */}
           <motion.div
             className="lg:col-span-2"
@@ -151,7 +152,7 @@ export function Footer() {
             <p className="text-muted-foreground text-sm mb-4">
               Get notified about upcoming events and exclusive presales.
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
+            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2">
               <input
                 name="email"
                 type="email"
@@ -183,8 +184,8 @@ export function Footer() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.3, ease }}
         >
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <span>&copy; {new Date().getFullYear()} <span className="inline-block text-metallic-gold-shimmer">Lupfer Entertainment</span>. All rights reserved.</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-muted-foreground text-center sm:text-left">
+            <span>&copy; {new Date().getFullYear()} <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>. All rights reserved.</span>
             {footerLinks.legal.map((link) => (
               <a 
                 key={link.name}
@@ -218,12 +219,12 @@ export function Footer() {
           style={{ opacity: bigTextOpacity, scale: bigTextScale }}
         >
           <motion.h2
-            className="text-[6vw] sm:text-[7vw] md:text-[8vw] font-bold tracking-tighter leading-none select-none"
+            className="text-[5vw] sm:text-[6vw] md:text-[7vw] lg:text-[8vw] font-bold tracking-tighter leading-none select-none"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4, ease }}
           >
-            <span className="inline-block heading-metallic-gold">Lupfer Entertainment</span>
+            <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>
           </motion.h2>
         </motion.div>
       </ScrollReveal>

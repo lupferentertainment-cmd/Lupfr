@@ -69,7 +69,7 @@ function ScrollRevealInner({
   if (variant === "scale") style.scale = scale
 
   return (
-    <motion.div ref={ref} className={className} style={style}>
+    <motion.div ref={ref} className={className ? `gpu-accelerate ${className}` : "gpu-accelerate"} style={style}>
       {children}
     </motion.div>
   )
@@ -111,7 +111,7 @@ export function ScrollRevealStagger({
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: amountIn, margin: "0px 0px -80px 0px" }}
+      viewport={{ once: true, amount: amountIn, margin: "0px 0px -80px 0px" }}
       variants={{
         visible: { transition: { staggerChildren: stagger, delayChildren: 0.1 } },
         hidden: {},
@@ -122,15 +122,15 @@ export function ScrollRevealStagger({
   )
 }
 
+/* Compositor-friendly: opacity + transform only (no filter:blur - expensive) */
 export const scrollRevealItemVariants = {
-  hidden: { opacity: 0, y: 56, filter: "blur(8px)" },
+  hidden: { opacity: 0, y: 56 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   },
-  exit: { opacity: 0, y: -40, filter: "blur(6px)", transition: { duration: 0.4 } },
+  exit: { opacity: 0, y: -40, transition: { duration: 0.4 } },
 }
 
 export const scrollRevealLeftVariants = {

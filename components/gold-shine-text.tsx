@@ -1,7 +1,6 @@
 "use client"
 
-import { useScroll, useTransform, useMotionValueEvent } from "framer-motion"
-import { useState } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 
 export interface GoldShineTextProps {
   children: React.ReactNode
@@ -15,7 +14,7 @@ export interface GoldShineTextProps {
 
 /**
  * Renders text with a metallic gold gradient whose shine position is driven by scroll.
- * Reusable: use for any heading or phrase where the gold "bar" should move as the user scrolls.
+ * Uses MotionValue directly in style for smooth, scroll-synced shine (no React re-renders).
  */
 export function GoldShineText({
   children,
@@ -24,30 +23,26 @@ export function GoldShineText({
   className = "",
   as: Tag = "span",
 }: GoldShineTextProps) {
-  const [shinePosition, setShinePosition] = useState("50%")
-
   const { scrollYProgress } = useScroll(
     scrollTargetRef
       ? { target: scrollTargetRef, offset: scrollOffset }
       : {}
   )
 
-  const scrollShine = useTransform(
+  const backgroundPosition = useTransform(
     scrollYProgress,
     [0, 1],
-    [50, 100]
+    ["50% 50%", "100% 50%"]
   )
 
-  useMotionValueEvent(scrollShine, "change", (v) => {
-    setShinePosition(`${Number(v).toFixed(1)}%`)
-  })
+  const Component = Tag === "div" ? motion.div : motion.span
 
   return (
-    <Tag
-      className={`inline-block heading-metallic-gold-scroll ${className}`.trim()}
-      style={{ ["--scroll-shine" as string]: shinePosition }}
+    <Component
+      className={`inline-block heading-metallic-gold-scroll gpu-accelerate ${className}`.trim()}
+      style={{ backgroundPosition }}
     >
       {children}
-    </Tag>
+    </Component>
   )
 }

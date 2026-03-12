@@ -4,6 +4,7 @@ import { motion, useInView, useMotionValue, useTransform, useSpring } from "fram
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { GoldShineText } from "@/components/gold-shine-text"
 
 const artists = [
   { id: 1, name: "DJ Helix", genre: "Deep House", image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80", instagram: "#" },
@@ -63,7 +64,7 @@ function ArtistCard({
       initial={{ opacity: 0, y: 56 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-all duration-500"
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-300"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -106,10 +107,10 @@ function ArtistCard({
         </div>
       </div>
       <motion.div
-        className="absolute inset-0 pointer-events-none rounded-2xl"
+        className="absolute inset-0 pointer-events-none rounded-2xl bg-accent/5"
         initial={false}
-        animate={{ opacity: isHovered ? 1 : 0, boxShadow: isHovered ? "inset 0 0 80px oklch(0.72 0.14 88 / 0.08)" : "none" }}
-        transition={{ duration: 0.4 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
       />
     </motion.article>
   )
@@ -124,7 +125,7 @@ export function Artists() {
     <section
       id="artists"
       ref={ref}
-      className="py-32 px-6 relative overflow-hidden bg-card/50"
+      className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
       <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto relative z-10">
@@ -132,7 +133,7 @@ export function Artists() {
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20"
+          className="mb-12 sm:mb-16 md:mb-20"
         >
           <motion.p
             id="artists-section-title"
@@ -144,8 +145,8 @@ export function Artists() {
             The Sound · Featured Artists
           </motion.p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-              <span className="inline-block heading-metallic-gold">Featured</span>
+            <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+              <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>
               <br />
               <span className="text-muted-foreground">Artists</span>
             </h2>
@@ -160,7 +161,7 @@ export function Artists() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {artists.map((artist, i) => (
             <ArtistCard
               key={artist.id}
@@ -186,7 +187,7 @@ export function Artists() {
           </p>
           <motion.button
             className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent transition-colors"
-            whileHover={{ scale: 1.06, boxShadow: "0 0 28px oklch(0.72 0.14 88 / 0.2)" }}
+            whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >

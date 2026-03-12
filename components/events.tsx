@@ -98,7 +98,7 @@ function EventCard({
       initial={{ opacity: 0, y: 56 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-all duration-500"
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-300"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -127,7 +127,7 @@ function EventCard({
         </motion.span>
       </div>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
             <motion.h3
@@ -157,13 +157,10 @@ function EventCard({
       </div>
 
       <motion.div
-        className="absolute inset-0 pointer-events-none rounded-2xl"
+        className="absolute inset-0 pointer-events-none rounded-2xl bg-accent/5"
         initial={false}
-        animate={{
-          opacity: isHovered ? 1 : 0,
-          boxShadow: isHovered ? "inset 0 0 80px oklch(0.72 0.14 88 / 0.08)" : "none",
-        }}
-        transition={{ duration: 0.4 }}
+        animate={{ opacity: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
       />
     </motion.article>
   )
@@ -175,7 +172,7 @@ export function Events() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
 
   return (
-    <section id="events" ref={ref} className="py-32 px-6 relative">
+    <section id="events" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
       <ScrollReveal variant="up" className="container mx-auto relative z-10">
@@ -183,17 +180,17 @@ export function Events() {
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20"
+          className="mb-12 sm:mb-16 md:mb-20"
         >
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">Gallery</p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
-            <GoldShineText>Past</GoldShineText>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+            <GoldShineText scrollTargetRef={ref}>Past</GoldShineText>
             <br />
             <span className="text-muted-foreground">Events</span>
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {events.map((event, i) => (
             <EventCard
               key={event.id}

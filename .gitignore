@@ -9,3 +9,6 @@ node_modules/
 .env*.local
 .DS_Store
 .vercel
+
+# Original oversized source video (replaced by compressed hero-bg.mp4)
+public/vecteezy_people-dancing-with-mixed-music-suitable-for-all-speeds-in_26462763.mp4

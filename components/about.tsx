@@ -53,10 +53,10 @@ export function About() {
   const y = useTransform(scrollYProgress, [0, 1], [100, -100])
 
   return (
-    <section id="about" ref={ref} className="py-32 px-6 relative overflow-hidden">
+    <section id="about" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
         <div ref={containerRef} className="container mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 items-center">
           {/* Left - Content */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -64,15 +64,15 @@ export function About() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">The Story</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-8">
-              <GoldShineText>Culture Meets</GoldShineText>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8">
+              <GoldShineText scrollTargetRef={ref}>Culture Meets</GoldShineText>
               <br />
               <span className="text-muted-foreground">Production</span>
             </h2>
             
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
-                <span className="inline-block text-metallic-gold-shimmer">Lupfer Entertainment</span> was born from a simple idea: San Francisco deserves house music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
+                <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText> was born from a simple idea: San Francisco deserves house music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
               </p>
               <p>
                 Today, we produce boat parties on the Bay, rooftop sessions with skyline views, and warehouse events that bring back the raw energy of the underground—all while maintaining the polish that attracts SF&apos;s young professional crowd.
@@ -144,7 +144,7 @@ export function About() {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-32 overflow-hidden"
+          className="mt-20 sm:mt-24 md:mt-32 overflow-hidden"
         >
           <motion.div
             animate={{ x: [0, "-50%"] }}
@@ -154,7 +154,7 @@ export function About() {
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex items-center">
                 {["BOAT PARTIES", "ROOFTOP SESSIONS", "WAREHOUSE EVENTS", "PRIVATE EXPERIENCES", "TALENT BOOKING", "VENUE PROGRAMMING"].map((item) => (
-                  <span key={item} className="mx-8 text-6xl md:text-8xl font-bold text-muted/20 tracking-tighter">
+                  <span key={item} className="mx-4 sm:mx-6 md:mx-8 text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-muted/20 tracking-tighter">
                     {item}
                     <span className="mx-8 text-accent">•</span>
                   </span>
