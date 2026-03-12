@@ -1,7 +1,12 @@
 "use client"
 
-import { motion } from "framer-motion"
+import Image from "next/image"
+import { motion, useInView, useScroll, useTransform } from "framer-motion"
+import { useRef, useState } from "react"
 import { ArrowUp } from "lucide-react"
+import { toast } from "sonner"
+import { LINKS } from "@/lib/links"
+import { ScrollReveal } from "@/components/scroll-reveal"
 
 const footerLinks = {
   company: [
@@ -11,10 +16,9 @@ const footerLinks = {
     { name: "Contact", href: "#contact" },
   ],
   social: [
-    { name: "Instagram", href: "#" },
-    { name: "TikTok", href: "#" },
-    { name: "Spotify", href: "#" },
-    { name: "YouTube", href: "#" },
+    { name: "Instagram", href: LINKS.instagram },
+    { name: "TikTok", href: LINKS.tiktok },
+    { name: "YouTube", href: LINKS.youtube },
   ],
   legal: [
     { name: "Privacy Policy", href: "#" },
@@ -22,30 +26,87 @@ const footerLinks = {
   ],
 }
 
+const ease = [0.22, 1, 0.36, 1] as const
+
 export function Footer() {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const { scrollYProgress } = useScroll()
+  const bigTextOpacity = useTransform(scrollYProgress, [0.85, 1], [0.3, 0.6])
+  const bigTextScale = useTransform(scrollYProgress, [0.9, 1], [0.98, 1])
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false)
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const email = (new FormData(form).get("email") as string)?.trim()
+    if (!email) {
+      toast.error("Please enter your email.")
+      return
+    }
+    setNewsletterSubmitting(true)
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        toast.error(data.error ?? "Something went wrong. Try again.")
+        return
+      }
+      toast.success("You're on the list! We'll be in touch.")
+      form.reset()
+    } catch {
+      toast.error("Network error. Please try again.")
+    } finally {
+      setNewsletterSubmitting(false)
+    }
+  }
+
   return (
-    <footer className="relative pt-24 pb-8 px-6 bg-background border-t border-border">
-      <div className="container mx-auto">
+    <footer ref={ref} className="relative pt-24 pb-8 px-6 bg-background border-t border-border">
+      <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="container mx-auto">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
-          <div className="lg:col-span-2">
-            <a href="#" className="inline-block text-3xl font-bold tracking-tighter mb-6">
-              <span className="text-foreground">LUPFR</span>
-              <span className="text-accent">.</span>
+          <motion.div
+            className="lg:col-span-2"
+            initial={{ opacity: 0, y: 40 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, ease }}
+          >
+            <a href="#" className="inline-block mb-6" aria-label="Lupfer Entertainment home">
+              <Image
+                src="/logo.png"
+                alt="Lupfer Entertainment"
+                width={200}
+                height={66}
+                className="h-14 w-auto object-contain"
+              />
             </a>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6">
               San Francisco&apos;s premier house music event production company. Creating unforgettable experiences on the Bay and beyond.
             </p>
+            <motion.a
+              href="mailto:will@lupfr.com"
+              className="text-accent hover:underline text-sm mb-4 inline-block"
+              whileHover={{ y: -2 }}
+            >
+              will@lupfr.com
+            </motion.a>
             <div className="flex items-center gap-4">
               {footerLinks.social.map((link) => (
                 <motion.a
                   key={link.name}
                   href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-accent transition-colors text-sm"
                   whileHover={{ y: -2 }}
                 >
@@ -53,56 +114,77 @@ export function Footer() {
                 </motion.a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Links */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.1, ease }}
+          >
             <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Company</h4>
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
+              {footerLinks.company.map((link, i) => (
                 <li key={link.name}>
-                  <a 
+                  <motion.a
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors inline-block"
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ delay: 0.1 + i * 0.05 }}
+                    whileHover={{ x: 4 }}
                   >
                     {link.name}
-                  </a>
+                  </motion.a>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Newsletter */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2, ease }}
+          >
             <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Stay in the loop</h4>
             <p className="text-muted-foreground text-sm mb-4">
               Get notified about upcoming events and exclusive presales.
             </p>
-            <form className="flex gap-2">
+            <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
               <input
+                name="email"
                 type="email"
+                required
                 placeholder="Email"
-                className="flex-1 px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground"
+                disabled={newsletterSubmitting}
+                className="flex-1 px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
               />
               <motion.button
                 type="submit"
-                className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-medium"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                disabled={newsletterSubmitting}
+                className="px-4 py-2 bg-accent text-accent-foreground rounded-full text-sm font-medium disabled:opacity-70"
+                whileHover={newsletterSubmitting ? undefined : { scale: 1.05 }}
+                whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}
               >
-                Join
+                {newsletterSubmitting ? "..." : "Join"}
               </motion.button>
             </form>
-          </div>
+          </motion.div>
         </div>
 
         {/* Divider */}
         <div className="h-px bg-border mb-8" />
 
         {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+        <motion.div
+          className="flex flex-col md:flex-row items-center justify-between gap-4"
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3, ease }}
+        >
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <span>&copy; {new Date().getFullYear()} Lupfer Entertainment. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} <span className="inline-block text-metallic-gold-shimmer">Lupfer Entertainment</span>. All rights reserved.</span>
             {footerLinks.legal.map((link) => (
               <a 
                 key={link.name}
@@ -117,25 +199,34 @@ export function Footer() {
           <motion.button
             onClick={scrollToTop}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-            whileHover={{ y: -2 }}
+            whileHover={{ y: -4 }}
+            whileTap={{ scale: 0.95 }}
           >
             <span className="text-sm">Back to top</span>
-            <ArrowUp size={16} className="group-hover:-translate-y-1 transition-transform" />
+            <motion.span
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <ArrowUp size={16} />
+            </motion.span>
           </motion.button>
-        </div>
+        </motion.div>
 
-        {/* Large Brand Text */}
+        {/* Large Brand Text - scroll-reactive */}
         <motion.div
           className="mt-16 text-center overflow-hidden"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          style={{ opacity: bigTextOpacity, scale: bigTextScale }}
         >
-          <h2 className="text-[12vw] font-bold tracking-tighter text-muted/10 leading-none select-none">
-            LUPFR
-          </h2>
+          <motion.h2
+            className="text-[6vw] sm:text-[7vw] md:text-[8vw] font-bold tracking-tighter leading-none select-none"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4, ease }}
+          >
+            <span className="inline-block heading-metallic-gold">Lupfer Entertainment</span>
+          </motion.h2>
         </motion.div>
-      </div>
+      </ScrollReveal>
     </footer>
   )
 }

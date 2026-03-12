@@ -11,12 +11,17 @@ export function CustomCursor() {
   const springConfig = { damping: 25, stiffness: 400 }
   const cursorX = useSpring(0, springConfig)
   const cursorY = useSpring(0, springConfig)
+  const trailSpring = { damping: 20, stiffness: 150 }
+  const trailX = useSpring(0, trailSpring)
+  const trailY = useSpring(0, trailSpring)
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
       cursorX.set(e.clientX)
       cursorY.set(e.clientY)
+      trailX.set(e.clientX)
+      trailY.set(e.clientY)
       setIsVisible(true)
     }
 
@@ -52,7 +57,7 @@ export function CustomCursor() {
       window.removeEventListener("mouseenter", handleMouseEnter)
       window.removeEventListener("mouseover", handleElementHover)
     }
-  }, [cursorX, cursorY])
+  }, [cursorX, cursorY, trailX, trailY])
 
   // Don't render on mobile/touch devices
   if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
@@ -72,25 +77,28 @@ export function CustomCursor() {
         <motion.div
           className="relative -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground"
           animate={{
-            width: isHovering ? 60 : 12,
-            height: isHovering ? 60 : 12,
+            width: isHovering ? 56 : 12,
+            height: isHovering ? 56 : 12,
             opacity: isVisible ? 1 : 0,
+            scale: isHovering ? 1.1 : 1,
           }}
-          transition={{ duration: 0.2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
         />
       </motion.div>
 
-      {/* Trailing Cursor */}
+      {/* Trailing Cursor - spring-follow for smooth lag */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998] hidden md:block"
-        animate={{
-          x: mousePosition.x - 20,
-          y: mousePosition.y - 20,
-          opacity: isVisible ? 0.3 : 0,
-        }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="fixed top-0 left-0 pointer-events-none z-[9998] hidden md:block -translate-x-1/2 -translate-y-1/2"
+        style={{ x: trailX, y: trailY }}
       >
-        <div className="w-10 h-10 rounded-full border border-accent" />
+        <motion.div
+          className="w-10 h-10 rounded-full border-2 border-accent/60"
+          animate={{
+            opacity: isVisible ? 0.5 : 0,
+            scale: isHovering ? 1.3 : 1,
+          }}
+          transition={{ duration: 0.25 }}
+        />
       </motion.div>
     </>
   )
