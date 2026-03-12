@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion } fr
 import { useRef, useState, useEffect } from "react"
 import { ArrowDown, Play } from "lucide-react"
 import { LINKS } from "@/lib/links"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const HERO_PHRASES = [
   "Curating unforgettable house music experiences. Boat parties, rooftop events, and warehouse sessions that move the city.",
@@ -32,6 +33,7 @@ export function Hero() {
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const prefersReducedMotion = useReducedMotion()
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -107,9 +109,9 @@ export function Hero() {
     offset: ["start start", "end start"]
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "0%" : "50%"])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile ? 1 : 1.2])
   /* Shine sweeps left→right in first 20% of scroll */
   const shinePosition = useTransform(scrollYProgress, [0, 0.2, 1], ["100% 50%", "0% 50%", "0% 50%"])
   const shinePositionDelayed = useTransform(scrollYProgress, [0, 0.04, 0.24, 1], ["100% 50%", "100% 50%", "0% 50%", "0% 50%"])
@@ -158,7 +160,7 @@ export function Hero() {
           <img
             src={HERO_POSTER}
             alt=""
-            className="absolute inset-0 w-full h-full object-contain object-center [image-rendering:auto]"
+            className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
             sizes="100vw"
             fetchPriority="high"
             aria-hidden
@@ -171,7 +173,7 @@ export function Hero() {
             loop
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-contain object-center [image-rendering:auto]"
+            className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
             poster={HERO_POSTER}
             aria-hidden
           >
