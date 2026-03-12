@@ -74,6 +74,8 @@ function ArtistCard({
         <motion.img
           src={imageSrc}
           alt={`${artist.name}, ${artist.genre}`}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover"
           animate={{ scale: isHovered ? 1.12 : 1 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}

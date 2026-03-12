@@ -7,18 +7,21 @@ import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: '--font-sans'
+  variable: '--font-sans',
+  display: 'swap',
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: '--font-body'
+  variable: '--font-body',
+  display: 'swap',
 });
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: '--font-serif',
   weight: ['600', '700'],
+  display: 'swap',
 });
 
 const siteUrl = 'https://lupfr.com'
