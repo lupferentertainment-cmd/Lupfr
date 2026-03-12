@@ -29,16 +29,6 @@ export default function OpenGraphImage() {
         >
           <div
             style={{
-              fontSize: 28,
-              letterSpacing: '0.3em',
-              color: '#c9a227',
-              textTransform: 'uppercase',
-            }}
-          >
-            San Francisco House Music
-          </div>
-          <div
-            style={{
               fontSize: 96,
               fontWeight: 700,
               color: '#fafafa',

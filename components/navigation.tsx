@@ -14,15 +14,37 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ]
 
+const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
+
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState<string | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
+
+      const headerOffset = 120
+      let current: string | null = null
+
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
+          current = id
+          break
+        }
+        if (rect.top < window.innerHeight / 2) {
+          current = id
+        }
+      }
+      setActiveSection(current ?? SECTION_IDS[0])
     }
-    window.addEventListener("scroll", handleScroll)
+
+    handleScroll()
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -36,7 +58,7 @@ export function Navigation() {
           isScrolled ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-lg shadow-black/10" : ""
         }`}
       >
-        <nav className="container mx-auto px-6 py-5 flex items-center justify-between">
+        <nav className="container mx-auto px-4 sm:px-6 py-4 md:py-5 flex items-center justify-between">
           <motion.a
             href="#"
             className="flex items-center gap-2 text-2xl font-bold tracking-tighter"
@@ -47,29 +69,38 @@ export function Navigation() {
             <Image
               src="/logo.png"
               alt="Lupfer Entertainment"
-              width={180}
-              height={60}
-              className="h-12 md:h-14 w-auto object-contain"
+              width={360}
+              height={120}
+              className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain"
               priority
             />
           </motion.a>
 
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link, i) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                className="text-sm uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors relative group py-1"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent group-hover:w-full transition-all duration-300 ease-out" />
-              </motion.a>
-            ))}
+            {navLinks.map((link, i) => {
+              const isActive = activeSection === link.href.slice(1)
+              return (
+                <motion.a
+                  key={link.name}
+                  href={link.href}
+                  className={`text-sm uppercase tracking-widest transition-colors relative group py-1 ${
+                    isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
+                  }`}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {link.name}
+                  <span
+                    className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-300 ease-out ${
+                      isActive ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </motion.a>
+              )
+            })}
           </div>
 
           <motion.a
@@ -107,19 +138,24 @@ export function Navigation() {
               transition={{ delay: 0.1 }}
               className="flex flex-col items-center justify-center h-full gap-8"
             >
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-3xl font-bold uppercase tracking-wider text-foreground hover:text-accent transition-colors"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                >
-                  {link.name}
-                </motion.a>
-              ))}
+              {navLinks.map((link, i) => {
+                const isActive = activeSection === link.href.slice(1)
+                return (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-3xl font-bold uppercase tracking-wider transition-colors ${
+                      isActive ? "text-accent" : "text-foreground hover:text-accent"
+                    }`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                  >
+                    {link.name}
+                  </motion.a>
+                )
+              })}
               <motion.a
                 href={LINKS.partiful}
                 target="_blank"

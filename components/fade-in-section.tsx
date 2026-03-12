@@ -27,7 +27,7 @@ export function FadeInSection({
       initial={{ opacity: 0, y: 48 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ ...defaultTransition, delay }}
-      className={className}
+      className={className ? `gpu-accelerate ${className}` : "gpu-accelerate"}
     >
       {children}
     </motion.div>

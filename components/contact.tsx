@@ -6,6 +6,7 @@ import { Mail, MapPin, Phone, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { LINKS } from "@/lib/links"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { GoldShineText } from "@/components/gold-shine-text"
 
 const socialLinks = [
   { name: "Instagram", href: LINKS.instagram },
@@ -92,7 +93,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-32 px-6 relative overflow-hidden bg-card/30">
+    <section id="contact" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden bg-card/30">
       {/* Background Elements */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[200px]" />
 
@@ -101,17 +102,17 @@ export function Contact() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 md:mb-16"
         >
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">Get In Touch</p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
-            <span className="inline-block heading-metallic-gold">Let&apos;s Create</span>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
+            <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>
             <br />
             <span className="text-muted-foreground">Something</span>
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 sm:gap-12 lg:gap-16">
           {/* Left - Info */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -200,17 +201,14 @@ export function Contact() {
                       key={type}
                       type="button"
                       onClick={() => setSelectedType(type)}
-                      className={`px-4 py-2 rounded-full text-sm border transition-colors ${
+                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm border transition-colors min-h-[44px] sm:min-h-0 ${
                         selectedType === type
                           ? "border-accent bg-accent text-accent-foreground"
                           : "border-border hover:border-accent/50 text-muted-foreground hover:text-foreground"
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      animate={{
-                        scale: selectedType === type ? 1.02 : 1,
-                        boxShadow: selectedType === type ? "0 0 20px oklch(0.72 0.14 88 / 0.25)" : "none",
-                      }}
+                      animate={{ scale: selectedType === type ? 1.02 : 1 }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     >
                       {type}
@@ -271,7 +269,7 @@ export function Contact() {
                 type="submit"
                 disabled={isSubmitting}
                 className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-accent text-accent-foreground font-semibold uppercase tracking-wider rounded-full hover:bg-foreground transition-colors disabled:opacity-50"
-                whileHover={{ scale: 1.03, boxShadow: "0 0 32px oklch(0.72 0.14 88 / 0.35)" }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >

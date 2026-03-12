@@ -9,12 +9,10 @@ import { Artists } from "@/components/artists"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
 import { ScrollProgress } from "@/components/scroll-progress"
-import { CustomCursor } from "@/components/custom-cursor"
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-x-hidden">
-      <CustomCursor />
+    <main className="relative min-h-screen overflow-x-clip">
       <ScrollProgress />
       <Navigation />
       <Hero />

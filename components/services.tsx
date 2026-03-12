@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { Music, Users, Mic2, PartyPopper, Building2, Sparkles } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { GoldShineText } from "@/components/gold-shine-text"
 
 const COUNT_UP_DURATION_MS = 1200
 const CARD_STAGGER = 0.08
@@ -104,7 +105,7 @@ export function Services() {
   const countUpTrigger = isInView || isStatsInView
 
   return (
-    <section id="services" ref={ref} className="py-32 px-6 relative overflow-hidden">
+    <section id="services" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden">
       {/* Animated background orbs - subtle pulse */}
       <motion.div
         className="absolute top-0 right-0 w-1/2 h-1/2 bg-accent/5 rounded-full blur-[200px]"
@@ -122,7 +123,7 @@ export function Services() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ ...SPRING_SNAPPY, delay: 0.1 }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-16 md:mb-20"
         >
           <motion.p
             className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4"
@@ -133,12 +134,12 @@ export function Services() {
             What We Do
           </motion.p>
           <motion.h2
-            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ ...SPRING_PUNCH, delay: 0.12 }}
           >
-            <span className="inline-block heading-metallic-gold">Our Services</span>
+            <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
           </motion.h2>
           <motion.p
             className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
@@ -150,7 +151,7 @@ export function Services() {
           </motion.p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
@@ -250,7 +251,7 @@ export function Services() {
           initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ ...SPRING_PUNCH, delay: 0.55 }}
-          className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8"
+          className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
         >
           {[
             { end: 50, suffix: "+", label: "Events Hosted" },
@@ -267,7 +268,7 @@ export function Services() {
               whileHover={{ scale: 1.08, y: -6 }}
               whileTap={{ scale: 0.98 }}
             >
-              <p className="text-4xl md:text-5xl font-bold text-accent mb-2 tabular-nums tracking-tight">
+              <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent mb-2 tabular-nums tracking-tight">
                 <CountUp
                   end={stat.end}
                   suffix={stat.suffix}
