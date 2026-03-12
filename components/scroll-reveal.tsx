@@ -1,0 +1,152 @@
+"use client"
+
+import { motion, useScroll, useTransform } from "framer-motion"
+import { useRef, useState, useEffect, type ReactNode } from "react"
+
+const ease = [0.22, 1, 0.36, 1] as const
+
+type RevealVariant = "up" | "down" | "left" | "right" | "scale" | "none"
+
+interface ScrollRevealProps {
+  children: ReactNode
+  className?: string
+  /** How much of the section (0-1) triggers "in" state. 0.2 = animate in when 20% visible. */
+  amountIn?: number
+  /** How much of the section (0-1) triggers "out" state when leaving. */
+  amountOut?: number
+  variant?: RevealVariant
+  /** Stagger delay for child motion (if using staggered children). */
+  stagger?: number
+  /** Extra Y offset when "out" (positive = exit upward). */
+  exitY?: number
+}
+
+/**
+ * Inner component that uses useScroll/useTransform. Only mounted on client to avoid SSR issues.
+ */
+const DEFAULT_AMOUNT_IN = 0.2
+const DEFAULT_AMOUNT_OUT = 0.8
+
+function ScrollRevealInner({
+  children,
+  className,
+  amountIn = DEFAULT_AMOUNT_IN,
+  amountOut = DEFAULT_AMOUNT_OUT,
+  variant,
+  exitY,
+}: ScrollRevealProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  })
+
+  const initialY = variant === "up" ? 72 : variant === "down" ? -48 : 0
+  const initialX = variant === "left" ? -80 : variant === "right" ? 80 : 0
+  const exitX = variant === "left" ? 40 : variant === "right" ? -40 : 0
+
+  const inputRange = [0, amountIn, 0.5, amountOut, 1] as const
+  const opacity = useTransform(scrollYProgress, inputRange, [0, 1, 1, 1, 0])
+  const y = useTransform(
+    scrollYProgress,
+    inputRange,
+    [initialY, 0, 0, exitY ?? 0, exitY ?? 0]
+  )
+  const x = useTransform(
+    scrollYProgress,
+    inputRange,
+    [initialX, 0, 0, exitX, exitX]
+  )
+  const scale = useTransform(
+    scrollYProgress,
+    inputRange,
+    [variant === "scale" ? 0.92 : 1, 1, 1, variant === "scale" ? 0.96 : 1, variant === "scale" ? 0.96 : 1]
+  )
+
+  const style: Record<string, unknown> = { opacity }
+  if (variant === "left" || variant === "right") style.x = x
+  else style.y = y
+  if (variant === "scale") style.scale = scale
+
+  return (
+    <motion.div ref={ref} className={className} style={style}>
+      {children}
+    </motion.div>
+  )
+}
+
+/**
+ * Wraps content and animates it in/out based on scroll position (Martin Garrix-style).
+ * As you scroll down: content moves in (fade + slide). As you scroll past: content moves out.
+ * Renders static on server; scroll-driven motion runs only after client mount (SSR-safe).
+ */
+export function ScrollReveal(props: ScrollRevealProps) {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
+  if (!mounted) {
+    return <div className={props.className}>{props.children}</div>
+  }
+  return <ScrollRevealInner {...props} />
+}
+
+interface ScrollRevealStaggerProps {
+  children: ReactNode
+  className?: string
+  stagger?: number
+  amountIn?: number
+}
+
+/**
+ * Uses whileInView so each child animates in when it enters view, and can animate out when it leaves (once: false).
+ */
+export function ScrollRevealStagger({
+  children,
+  className = "",
+  stagger = 0.08,
+  amountIn = 0.2,
+}: ScrollRevealStaggerProps) {
+  return (
+    <motion.div
+      className={className}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: false, amount: amountIn, margin: "0px 0px -80px 0px" }}
+      variants={{
+        visible: { transition: { staggerChildren: stagger, delayChildren: 0.1 } },
+        hidden: {},
+      }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+export const scrollRevealItemVariants = {
+  hidden: { opacity: 0, y: 56, filter: "blur(8px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: { opacity: 0, y: -40, filter: "blur(6px)", transition: { duration: 0.4 } },
+}
+
+export const scrollRevealLeftVariants = {
+  hidden: { opacity: 0, x: -64 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease } },
+  exit: { opacity: 0, x: 40, transition: { duration: 0.4 } },
+}
+
+export const scrollRevealRightVariants = {
+  hidden: { opacity: 0, x: 64 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease } },
+  exit: { opacity: 0, x: -40, transition: { duration: 0.4 } },
+}
+
+export const scrollRevealScaleVariants = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease } },
+  exit: { opacity: 0, scale: 0.96, transition: { duration: 0.4 } },
+}

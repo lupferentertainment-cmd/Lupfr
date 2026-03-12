@@ -4,80 +4,88 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Lupfer Entertainment - Dark Mode Theme */
+/* Lupfer Entertainment - Metallic Gold & Black Theme */
 :root {
-  --background: oklch(0.08 0.005 280);
-  --foreground: oklch(0.98 0.005 280);
-  --card: oklch(0.12 0.008 280);
-  --card-foreground: oklch(0.98 0.005 280);
-  --popover: oklch(0.1 0.006 280);
-  --popover-foreground: oklch(0.98 0.005 280);
-  --primary: oklch(0.98 0.005 280);
-  --primary-foreground: oklch(0.08 0.005 280);
-  --secondary: oklch(0.18 0.01 280);
-  --secondary-foreground: oklch(0.95 0.005 280);
-  --muted: oklch(0.2 0.01 280);
-  --muted-foreground: oklch(0.65 0.01 280);
-  --accent: oklch(0.75 0.15 50);
-  --accent-foreground: oklch(0.08 0.005 280);
+  /* Black base – sleek modern */
+  --background: oklch(0.055 0.004 280);
+  --foreground: oklch(0.96 0.008 85);
+  --card: oklch(0.085 0.005 280);
+  --card-foreground: oklch(0.96 0.008 85);
+  --popover: oklch(0.075 0.005 280);
+  --popover-foreground: oklch(0.96 0.008 85);
+  --primary: oklch(0.96 0.008 85);
+  --primary-foreground: oklch(0.055 0.004 280);
+  --secondary: oklch(0.12 0.01 80);
+  --secondary-foreground: oklch(0.92 0.05 88);
+  --muted: oklch(0.14 0.01 80);
+  --muted-foreground: oklch(0.55 0.03 85);
+  /* Luxurious metallic gold – refined, sleek */
+  --gold-shadow: oklch(0.28 0.08 82);
+  --gold-dark: oklch(0.48 0.12 85);
+  --gold: oklch(0.72 0.14 88);
+  --gold-bright: oklch(0.9 0.08 90);
+  --gold-specular: oklch(0.98 0.02 92);
+  --accent: var(--gold);
+  --accent-foreground: oklch(0.06 0.005 280);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.22 0.01 280);
-  --input: oklch(0.18 0.01 280);
-  --ring: oklch(0.75 0.15 50);
-  --chart-1: oklch(0.75 0.15 50);
+  --border: oklch(0.18 0.015 80);
+  --input: oklch(0.12 0.008 280);
+  --ring: var(--gold);
+  --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.5rem;
-  --sidebar: oklch(0.1 0.006 280);
-  --sidebar-foreground: oklch(0.98 0.005 280);
-  --sidebar-primary: oklch(0.75 0.15 50);
-  --sidebar-primary-foreground: oklch(0.08 0.005 280);
-  --sidebar-accent: oklch(0.18 0.01 280);
-  --sidebar-accent-foreground: oklch(0.98 0.005 280);
-  --sidebar-border: oklch(0.22 0.01 280);
-  --sidebar-ring: oklch(0.75 0.15 50);
+  --sidebar: oklch(0.08 0.006 280);
+  --sidebar-foreground: oklch(0.96 0.008 85);
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: oklch(0.055 0.004 280);
+  --sidebar-accent: oklch(0.12 0.01 80);
+  --sidebar-accent-foreground: oklch(0.96 0.008 85);
+  --sidebar-border: oklch(0.18 0.015 80);
+  --sidebar-ring: var(--gold);
 }
 
 .dark {
-  --background: oklch(0.08 0.005 280);
-  --foreground: oklch(0.98 0.005 280);
-  --card: oklch(0.12 0.008 280);
-  --card-foreground: oklch(0.98 0.005 280);
-  --popover: oklch(0.1 0.006 280);
-  --popover-foreground: oklch(0.98 0.005 280);
-  --primary: oklch(0.98 0.005 280);
-  --primary-foreground: oklch(0.08 0.005 280);
-  --secondary: oklch(0.18 0.01 280);
-  --secondary-foreground: oklch(0.95 0.005 280);
-  --muted: oklch(0.2 0.01 280);
-  --muted-foreground: oklch(0.65 0.01 280);
-  --accent: oklch(0.75 0.15 50);
-  --accent-foreground: oklch(0.08 0.005 280);
+  --background: oklch(0.055 0.004 280);
+  --foreground: oklch(0.96 0.008 85);
+  --card: oklch(0.085 0.005 280);
+  --card-foreground: oklch(0.96 0.008 85);
+  --popover: oklch(0.075 0.005 280);
+  --popover-foreground: oklch(0.96 0.008 85);
+  --primary: oklch(0.96 0.008 85);
+  --primary-foreground: oklch(0.055 0.004 280);
+  --secondary: oklch(0.12 0.01 80);
+  --secondary-foreground: oklch(0.92 0.05 88);
+  --muted: oklch(0.14 0.01 80);
+  --muted-foreground: oklch(0.55 0.03 85);
+  --accent: var(--gold);
+  --accent-foreground: oklch(0.06 0.005 280);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.22 0.01 280);
-  --input: oklch(0.18 0.01 280);
-  --ring: oklch(0.75 0.15 50);
-  --chart-1: oklch(0.75 0.15 50);
+  --border: oklch(0.18 0.015 80);
+  --input: oklch(0.12 0.008 280);
+  --ring: var(--gold);
+  --chart-1: var(--gold);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.1 0.006 280);
-  --sidebar-foreground: oklch(0.98 0.005 280);
-  --sidebar-primary: oklch(0.75 0.15 50);
-  --sidebar-primary-foreground: oklch(0.08 0.005 280);
-  --sidebar-accent: oklch(0.18 0.01 280);
-  --sidebar-accent-foreground: oklch(0.98 0.005 280);
-  --sidebar-border: oklch(0.22 0.01 280);
-  --sidebar-ring: oklch(0.75 0.15 50);
+  --sidebar: oklch(0.075 0.005 280);
+  --sidebar-foreground: oklch(0.96 0.008 85);
+  --sidebar-primary: var(--gold);
+  --sidebar-primary-foreground: oklch(0.055 0.004 280);
+  --sidebar-accent: oklch(0.12 0.01 80);
+  --sidebar-accent-foreground: oklch(0.96 0.008 85);
+  --sidebar-border: oklch(0.18 0.015 80);
+  --sidebar-ring: var(--gold);
 }
 
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
+  --font-serif: var(--font-serif), 'Playfair Display', ui-serif, serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -123,9 +131,20 @@
   }
   html {
     scroll-behavior: smooth;
+    /* Invisible/transparent scrollbar site-wide – one scroll, no visible bar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
   }
   body {
     @apply bg-background text-foreground;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  body::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -140,8 +159,224 @@
   }
 }
 
+/* Luxurious metallic gold text – scroll-driven shine, sleek modern look */
+.text-metallic-gold {
+  /* --scroll-shine set on parent (e.g. hero h1) for scroll-driven shine; fallback 0% */
+  /* Brushed metal: deep shadow → sharp specular streak → bright → mid → repeat */
+  background: linear-gradient(
+    110deg,
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 8%,
+    var(--gold) 16%,
+    var(--gold-specular) 22%,
+    var(--gold-bright) 26%,
+    var(--gold) 32%,
+    var(--gold-dark) 42%,
+    var(--gold) 52%,
+    var(--gold-specular) 58%,
+    var(--gold-bright) 62%,
+    var(--gold) 68%,
+    var(--gold-dark) 78%,
+    var(--gold) 88%,
+    var(--gold-shadow) 100%
+  );
+  background-size: 280% 100%;
+  background-position: var(--scroll-shine, 0%) 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* Sleek depth: soft edge shadow + subtle highlight for metallic bevel */
+  filter: drop-shadow(0 1px 1px oklch(0.15 0.02 80 / 0.6)) drop-shadow(0 0 0 1px oklch(0.3 0.06 85 / 0.15));
+}
+
+/* Idle shimmer – same luxurious gradient */
+@keyframes metallic-shimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* One shared shine across the whole phrase (one gold bar, unison) – no per-letter gradient */
+@keyframes gold-unison-shine {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Single-band gradient: base gold with one moving specular streak so the whole phrase shines together */
+.gold-unison-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 15%,
+    var(--gold) 28%,
+    var(--gold-dark) 35%,
+    var(--gold-specular) 42%,
+    var(--gold-bright) 48%,
+    var(--gold-specular) 54%,
+    var(--gold-dark) 62%,
+    var(--gold) 75%,
+    var(--gold-dark) 88%,
+    var(--gold-shadow) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-unison-shine 5s ease-in-out infinite;
+  filter: drop-shadow(0 1px 1px oklch(0.15 0.02 80 / 0.6)) drop-shadow(0 0 0 1px oklch(0.3 0.06 85 / 0.15));
+}
+
+.text-metallic-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 15%,
+    var(--gold) 28%,
+    var(--gold-dark) 35%,
+    var(--gold-specular) 42%,
+    var(--gold-bright) 48%,
+    var(--gold-specular) 54%,
+    var(--gold-dark) 62%,
+    var(--gold) 75%,
+    var(--gold-dark) 88%,
+    var(--gold-shadow) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-unison-shine 5s ease-in-out infinite;
+  filter: drop-shadow(0 1px 1px oklch(0.15 0.02 80 / 0.6)) drop-shadow(0 0 0 1px oklch(0.3 0.06 85 / 0.15));
+}
+
 /* Selection styling */
 ::selection {
-  background: oklch(0.75 0.15 50 / 0.3);
-  color: oklch(0.98 0.005 280);
+  background: oklch(0.72 0.14 88 / 0.45);
+  color: oklch(0.06 0.005 280);
+}
+
+/* ========== High-end animation keyframes (Martin Garrix / Peggy Gou style) ========== */
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-12px) translateX(6px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; filter: blur(128px); transform: scale(1); }
+  50% { opacity: 0.6; filter: blur(140px); transform: scale(1.1); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes line-reveal {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: oklch(0.18 0.015 80); box-shadow: 0 0 0 0 oklch(0.72 0.14 88 / 0); }
+  50% { border-color: oklch(0.72 0.14 88 / 0.5); box-shadow: 0 0 30px oklch(0.72 0.14 88 / 0.15); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section headings: one gold bar, one shine across the whole phrase.
+   Use on inline or inline-block elements only so the gradient spans the text width
+   and one shine runs through all letters (L-U-P-F-E-R-...), not a gradient per letter. */
+.heading-metallic-gold {
+  background: linear-gradient(
+    90deg,
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 15%,
+    var(--gold) 28%,
+    var(--gold-dark) 35%,
+    var(--gold-specular) 42%,
+    var(--gold-bright) 48%,
+    var(--gold-specular) 54%,
+    var(--gold-dark) 62%,
+    var(--gold) 75%,
+    var(--gold-dark) 88%,
+    var(--gold-shadow) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-unison-shine 5s ease-in-out infinite;
+  filter: drop-shadow(0 1px 1px oklch(0.15 0.02 80 / 0.6)) drop-shadow(0 0 0 1px oklch(0.3 0.06 85 / 0.15));
+}
+
+/* Same gold bar as heading-metallic-gold but scroll-driven: shine starts center, moves right (no animation) */
+.heading-metallic-gold-scroll {
+  background: linear-gradient(
+    90deg,
+    var(--gold-shadow) 0%,
+    var(--gold-dark) 15%,
+    var(--gold) 28%,
+    var(--gold-dark) 35%,
+    var(--gold-specular) 42%,
+    var(--gold-bright) 48%,
+    var(--gold-specular) 54%,
+    var(--gold-dark) 62%,
+    var(--gold) 75%,
+    var(--gold-dark) 88%,
+    var(--gold-shadow) 100%
+  );
+  background-size: 220% 100%;
+  background-position: var(--scroll-shine, 50%) 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 1px oklch(0.15 0.02 80 / 0.6)) drop-shadow(0 0 0 1px oklch(0.3 0.06 85 / 0.15));
+}
+
+/* Gold accent for labels and small caps (no animation) */
+.text-gold-accent {
+  color: var(--gold);
+}
+
+/* Hero title: "Entertainment" – horizontal gradient (peachy left → darker orange right) */
+.hero-entertainment-gradient {
+  background: linear-gradient(
+    90deg,
+    oklch(0.88 0.08 75) 0%,
+    oklch(0.82 0.12 70) 35%,
+    oklch(0.68 0.16 55) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Reduce motion: respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

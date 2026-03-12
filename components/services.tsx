@@ -1,8 +1,60 @@
 "use client"
 
 import { motion, useInView } from "framer-motion"
-import { useRef, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import { Music, Users, Mic2, PartyPopper, Building2, Sparkles } from "lucide-react"
+import { ScrollReveal } from "@/components/scroll-reveal"
+
+const COUNT_UP_DURATION_MS = 1200
+const CARD_STAGGER = 0.08
+const SPRING_PUNCH = { type: "spring" as const, stiffness: 400, damping: 22 }
+const SPRING_SNAPPY = { type: "spring" as const, stiffness: 500, damping: 28 }
+
+function easeOutCubic(t: number): number {
+  return 1 - Math.pow(1 - t, 3)
+}
+
+function CountUp({
+  end,
+  suffix = "",
+  isInView,
+}: {
+  end: number
+  suffix?: string
+  isInView: boolean
+}) {
+  const nodeRef = useRef<HTMLSpanElement>(null)
+  const hasStarted = useRef(false)
+
+  useEffect(() => {
+    if (!nodeRef.current) return
+    const node = nodeRef.current
+    if (!isInView) {
+      node.textContent = "0" + suffix
+      hasStarted.current = false
+      return
+    }
+    if (hasStarted.current) return
+    hasStarted.current = true
+    const startTime = performance.now()
+
+    const tick = (now: number) => {
+      const elapsed = now - startTime
+      const t = Math.min(elapsed / COUNT_UP_DURATION_MS, 1)
+      const eased = easeOutCubic(t)
+      const value = Math.round(eased * end)
+      node.textContent = String(value) + suffix
+      if (t < 1) requestAnimationFrame(tick)
+    }
+    const id = requestAnimationFrame(tick)
+    return () => {
+      cancelAnimationFrame(id)
+      hasStarted.current = false
+    }
+  }, [isInView, end, suffix])
+
+  return <span ref={nodeRef} className="tabular-nums">0{suffix}</span>
+}
 
 const services = [
   {
@@ -45,116 +97,188 @@ const services = [
 
 export function Services() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const statsRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const isStatsInView = useInView(statsRef, { once: false, amount: 0.1 })
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const countUpTrigger = isInView || isStatsInView
 
   return (
     <section id="services" ref={ref} className="py-32 px-6 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-accent/5 rounded-full blur-[200px]" />
-      <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-accent/5 rounded-full blur-[150px]" />
+      {/* Animated background orbs - subtle pulse */}
+      <motion.div
+        className="absolute top-0 right-0 w-1/2 h-1/2 bg-accent/5 rounded-full blur-[200px]"
+        animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.15, 1] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-accent/5 rounded-full blur-[150px]"
+        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1.1, 1, 1.1] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      <div className="container mx-auto relative z-10">
+      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ ...SPRING_SNAPPY, delay: 0.1 }}
           className="text-center mb-20"
         >
-          <p className="text-accent uppercase tracking-[0.3em] text-sm mb-4">What We Do</p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
-            Our Services
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+          <motion.p
+            className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4"
+            initial={{ opacity: 0, x: -24 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ ...SPRING_PUNCH, delay: 0.05 }}
+          >
+            What We Do
+          </motion.p>
+          <motion.h2
+            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ ...SPRING_PUNCH, delay: 0.12 }}
+          >
+            <span className="inline-block heading-metallic-gold">Our Services</span>
+          </motion.h2>
+          <motion.p
+            className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 12 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ ...SPRING_SNAPPY, delay: 0.22 }}
+          >
             From intimate bar takeovers to large-scale productions, we bring house music culture to life across San Francisco.
-          </p>
+          </motion.p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 40 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
+              initial={{ opacity: 0, y: 32, scale: 0.94, filter: "blur(8px)" }}
+              animate={
+                isInView
+                  ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+                  : { opacity: 0, y: 32, scale: 0.94, filter: "blur(8px)" }
+              }
+              transition={{ ...SPRING_PUNCH, delay: 0.2 + i * CARD_STAGGER }}
               className="group relative"
               onMouseEnter={() => setActiveIndex(i)}
               onMouseLeave={() => setActiveIndex(null)}
+              whileHover={{ y: -10, scale: 1.02 }}
+              whileTap={{ scale: 0.99 }}
             >
-              <div className="relative p-8 rounded-2xl bg-card border border-border hover:border-accent/50 transition-all duration-500 h-full">
-                {/* Icon */}
+              <motion.div
+                className="relative p-8 rounded-2xl bg-card border border-border hover:border-accent/50 transition-colors duration-300 h-full overflow-hidden"
+                animate={{
+                  boxShadow:
+                    activeIndex === i
+                      ? "0 0 0 1px oklch(0.72 0.14 88 / 0.25), 0 24px 48px -12px oklch(0.72 0.14 88 / 0.2), 0 0 60px -10px oklch(0.72 0.14 88 / 0.15)"
+                      : "0 4px 6px -1px rgb(0 0 0 / 0.05)",
+                }}
+                transition={SPRING_SNAPPY}
+              >
+                {/* Icon - bounce on hover */}
                 <motion.div
                   className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center mb-6 group-hover:bg-accent transition-colors duration-300"
                   animate={{
                     rotate: activeIndex === i ? 360 : 0,
+                    scale: activeIndex === i ? 1.1 : 1,
+                    y: activeIndex === i ? [0, -8, 0] : 0,
                   }}
-                  transition={{ duration: 0.6 }}
+                  transition={{
+                    rotate: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+                    scale: SPRING_PUNCH,
+                    y: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+                  }}
                 >
-                  <service.icon 
-                    size={28} 
-                    className="text-foreground group-hover:text-accent-foreground transition-colors" 
+                  <service.icon
+                    size={28}
+                    className="text-foreground group-hover:text-accent-foreground transition-colors"
                   />
                 </motion.div>
 
                 {/* Content */}
-                <h3 className="text-xl font-bold tracking-tight mb-3 group-hover:text-accent transition-colors">
+                <motion.h3
+                  className="text-xl font-bold tracking-tight mb-3 group-hover:text-accent transition-colors"
+                  animate={{ scale: activeIndex === i ? 1.02 : 1 }}
+                  transition={SPRING_SNAPPY}
+                >
                   {service.title}
-                </h3>
+                </motion.h3>
                 <p className="text-muted-foreground text-sm leading-relaxed mb-6">
                   {service.description}
                 </p>
 
-                {/* Features */}
+                {/* Features - bullet pulse on hover */}
                 <ul className="space-y-2">
-                  {service.features.map((feature) => (
-                    <li 
+                  {service.features.map((feature, fi) => (
+                    <motion.li
                       key={feature}
                       className="flex items-center gap-2 text-sm text-muted-foreground"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                      <motion.span
+                        className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
+                        animate={{
+                          scale: activeIndex === i ? [1, 1.3, 1] : 1,
+                          opacity: activeIndex === i ? 1 : 0.8,
+                        }}
+                        transition={{
+                          scale: { duration: 0.5, delay: fi * 0.06 },
+                          opacity: { duration: 0.2 },
+                        }}
+                      />
                       {feature}
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
 
-                {/* Hover Line */}
+                {/* Hover line - snappy reveal */}
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-accent rounded-b-2xl"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-accent rounded-b-2xl origin-left"
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: activeIndex === i ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={SPRING_SNAPPY}
                 />
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
 
-        {/* Stats Row */}
+        {/* Stats - pop in with beat stagger */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          ref={statsRef}
+          initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ ...SPRING_PUNCH, delay: 0.55 }}
           className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {[
-            { value: "50+", label: "Events Hosted" },
-            { value: "100+", label: "Artists Booked" },
-            { value: "10K+", label: "Happy Attendees" },
-            { value: "15+", label: "Venue Partners" },
+            { end: 50, suffix: "+", label: "Events Hosted" },
+            { end: 100, suffix: "+", label: "Artists Booked" },
+            { end: 10, suffix: "K+", label: "Happy Attendees" },
+            { end: 15, suffix: "+", label: "Venue Partners" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
-              className="text-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.8 + i * 0.1 }}
+              className="text-center group/stat"
+              initial={{ opacity: 0, scale: 0.5, y: 16 }}
+              animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
+              transition={{ ...SPRING_PUNCH, delay: 0.65 + i * CARD_STAGGER }}
+              whileHover={{ scale: 1.08, y: -6 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <p className="text-4xl md:text-5xl font-bold text-accent mb-2">{stat.value}</p>
+              <p className="text-4xl md:text-5xl font-bold text-accent mb-2 tabular-nums tracking-tight">
+                <CountUp
+                  end={stat.end}
+                  suffix={stat.suffix}
+                  isInView={countUpTrigger}
+                />
+              </p>
               <p className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }
