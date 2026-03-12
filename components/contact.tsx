@@ -99,13 +99,13 @@ export function Contact() {
 
       <ScrollReveal variant="up" className="container mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-10 sm:mb-12 md:mb-16"
         >
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">Get In Touch</p>
-          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
             <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>
             <br />
             <span className="text-muted-foreground">Something</span>
@@ -115,9 +115,9 @@ export function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 sm:gap-12 lg:gap-16">
           {/* Left - Info */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -32 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-2 space-y-8"
           >
             <div>
@@ -186,9 +186,9 @@ export function Contact() {
 
           {/* Right - Form */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 32 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-3"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -209,7 +209,7 @@ export function Contact() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       animate={{ scale: selectedType === type ? 1.02 : 1 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 28 }}
                     >
                       {type}
                     </motion.button>
@@ -268,10 +268,10 @@ export function Contact() {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-accent text-accent-foreground font-semibold uppercase tracking-wider rounded-full hover:bg-foreground transition-colors disabled:opacity-50"
+                className="group w-full flex items-center justify-center gap-3 px-8 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                transition={{ type: "spring", stiffness: 500, damping: 28 }}
               >
                 {isSubmitting ? (
                   <span>Sending...</span>

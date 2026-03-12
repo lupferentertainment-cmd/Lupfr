@@ -8,8 +8,8 @@ import { GoldShineText } from "@/components/gold-shine-text"
 
 const COUNT_UP_DURATION_MS = 1200
 const CARD_STAGGER = 0.08
-const SPRING_PUNCH = { type: "spring" as const, stiffness: 400, damping: 22 }
-const SPRING_SNAPPY = { type: "spring" as const, stiffness: 500, damping: 28 }
+const SPRING_PUNCH = { type: "spring" as const, stiffness: 500, damping: 26 }
+const SPRING_SNAPPY = { type: "spring" as const, stiffness: 550, damping: 30 }
 
 function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - t, 3)
@@ -134,7 +134,7 @@ export function Services() {
             What We Do
           </motion.p>
           <motion.h2
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
+            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ ...SPRING_PUNCH, delay: 0.12 }}
@@ -155,13 +155,13 @@ export function Services() {
           {services.map((service, i) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 32, scale: 0.94, filter: "blur(8px)" }}
-              animate={
-                isInView
-                  ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
-                  : { opacity: 0, y: 32, scale: 0.94, filter: "blur(8px)" }
-              }
-              transition={{ ...SPRING_PUNCH, delay: 0.2 + i * CARD_STAGGER }}
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={
+            isInView
+              ? { opacity: 1, y: 0, scale: 1 }
+              : { opacity: 0, y: 24, scale: 0.96 }
+          }
+          transition={{ ...SPRING_PUNCH, delay: 0.12 + i * CARD_STAGGER }}
               className="group relative"
               onMouseEnter={() => setActiveIndex(i)}
               onMouseLeave={() => setActiveIndex(null)}
@@ -173,7 +173,7 @@ export function Services() {
                 animate={{
                   boxShadow:
                     activeIndex === i
-                      ? "0 0 0 1px oklch(0.72 0.14 88 / 0.25), 0 24px 48px -12px oklch(0.72 0.14 88 / 0.2), 0 0 60px -10px oklch(0.72 0.14 88 / 0.15)"
+                      ? "0 0 0 1px oklch(0.58 0.1 86 / 0.25), 0 24px 48px -12px oklch(0.54 0.09 84 / 0.2), 0 0 60px -10px oklch(0.5 0.08 84 / 0.15)"
                       : "0 4px 6px -1px rgb(0 0 0 / 0.05)",
                 }}
                 transition={SPRING_SNAPPY}

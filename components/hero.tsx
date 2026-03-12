@@ -1,5 +1,6 @@
 "use client"
 
+import { preload } from "react-dom"
 import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import { ArrowDown, Play } from "lucide-react"
@@ -28,6 +29,7 @@ const HERO_POSTER = "/hero-poster.jpg"
 const HERO_FALLBACK_IMAGE = HERO_POSTER
 
 export function Hero() {
+  preload(HERO_VIDEO_SRC, { as: "video", fetchPriority: "high" })
   const containerRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [phraseIndex, setPhraseIndex] = useState(0)
@@ -70,6 +72,10 @@ export function Hero() {
     const onPause = () => {
       ensurePlaying()
     }
+    const onEnded = () => {
+      video.currentTime = 0
+      video.play().catch(() => {})
+    }
     const onStalled = () => {
       video.play().catch(() => {})
     }
@@ -90,6 +96,7 @@ export function Hero() {
     video.addEventListener("canplay", onCanPlay, { once: true })
     video.addEventListener("error", onError, { once: true })
     video.addEventListener("pause", onPause)
+    video.addEventListener("ended", onEnded)
     video.addEventListener("stalled", onStalled)
     document.addEventListener("visibilitychange", onVisibilityChange)
 
@@ -99,6 +106,7 @@ export function Hero() {
       video.removeEventListener("canplay", onCanPlay)
       video.removeEventListener("error", onError)
       video.removeEventListener("pause", onPause)
+      video.removeEventListener("ended", onEnded)
       video.removeEventListener("stalled", onStalled)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
@@ -173,6 +181,8 @@ export function Hero() {
             loop
             playsInline
             preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
             className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
             poster={HERO_POSTER}
             aria-hidden
@@ -189,9 +199,9 @@ export function Hero() {
         className="relative z-20 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-28 sm:pt-36 md:pt-40 pb-24 sm:pb-28 md:pb-32"
       >
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="text-center"
         >
           <motion.h1
@@ -232,24 +242,18 @@ export function Hero() {
 
           <motion.div 
             className="mt-8 sm:mt-10 md:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
+            transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <motion.a
               href="#events"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-accent text-accent-foreground font-semibold uppercase tracking-wider rounded-full overflow-hidden relative text-sm sm:text-base"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full overflow-hidden relative text-sm sm:text-base"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >
               <span className="relative z-10">Upcoming Events</span>
-              <motion.span
-                className="absolute inset-0 bg-foreground"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              />
             </motion.a>
 
             <motion.a
@@ -257,12 +261,12 @@ export function Hero() {
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-border text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent transition-colors text-sm sm:text-base"
-              whileHover={{ scale: 1.08, borderColor: "oklch(0.72 0.14 88 / 0.8)", boxShadow: "0 0 30px oklch(0.72 0.14 88 / 0.2)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 24px oklch(0.48 0.06 74 / 0.25)" }}
               whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >
               <motion.span whileHover={{ rotate: 90 }}>
-                <Play size={18} className="group-hover:scale-110 transition-transform" />
+                <Play size={18} className="group-hover:scale-110 transition-transform duration-200" />
               </motion.span>
               Watch Reel
             </motion.a>
@@ -290,30 +294,30 @@ export function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Corner Decorations - animated reveal */}
+      {/* Corner Decorations - sleek animated reveal */}
       <motion.div
-        className="absolute top-4 left-4 sm:top-8 sm:left-8 w-16 h-16 sm:w-24 sm:h-24 border-l border-t border-accent/40"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="absolute top-4 left-4 sm:top-8 sm:left-8 w-12 h-12 sm:w-16 sm:h-16 border-l border-t border-accent/50 rounded-tl-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.2, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: 0.5, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
-        className="absolute top-4 right-4 sm:top-8 sm:right-8 w-16 h-16 sm:w-24 sm:h-24 border-r border-t border-accent/40"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 border-r border-t border-accent/50 rounded-tr-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.35, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: 0.55, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
-        className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 w-16 h-16 sm:w-24 sm:h-24 border-l border-b border-accent/40"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 w-12 h-12 sm:w-16 sm:h-16 border-l border-b border-accent/50 rounded-bl-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: 0.6, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       />
       <motion.div
-        className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 w-16 h-16 sm:w-24 sm:h-24 border-r border-b border-accent/40"
-        initial={{ opacity: 0, scale: 0.8 }}
+        className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 border-r border-b border-accent/50 rounded-br-lg"
+        initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.65, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: 0.65, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       />
     </section>
   )

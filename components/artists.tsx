@@ -61,10 +61,10 @@ function ArtistCard({
   return (
     <motion.article
       ref={cardRef}
-      initial={{ opacity: 0, y: 56 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-300"
+      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-200"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -77,8 +77,8 @@ function ArtistCard({
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover"
-          animate={{ scale: isHovered ? 1.12 : 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ scale: isHovered ? 1.08 : 1 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           onError={() => setImageError(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
@@ -132,9 +132,9 @@ export function Artists() {
     >
       <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 36 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12 sm:mb-16 md:mb-20"
         >
           <motion.p
@@ -147,7 +147,7 @@ export function Artists() {
             The Sound · Featured Artists
           </motion.p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
               <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>
               <br />
               <span className="text-muted-foreground">Artists</span>

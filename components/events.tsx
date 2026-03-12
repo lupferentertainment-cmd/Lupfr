@@ -95,10 +95,10 @@ function EventCard({
   return (
     <motion.article
       ref={cardRef}
-      initial={{ opacity: 0, y: 56 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-300"
+      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-200"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -115,8 +115,8 @@ function EventCard({
           loading="lazy"
           decoding="async"
           className="w-full h-full object-cover"
-          animate={{ scale: isHovered ? 1.12 : 1 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ scale: isHovered ? 1.08 : 1 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
         <motion.span
@@ -179,16 +179,16 @@ export function Events() {
 
       <ScrollReveal variant="up" className="container mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 36 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-12 sm:mb-16 md:mb-20"
         >
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">Gallery</p>
-          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
             <GoldShineText scrollTargetRef={ref}>Past</GoldShineText>
             <br />
-            <span className="text-muted-foreground">Events</span>
+            <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
           </h2>
         </motion.div>
 

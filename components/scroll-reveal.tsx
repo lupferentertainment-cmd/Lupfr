@@ -41,9 +41,9 @@ function ScrollRevealInner({
     offset: ["start end", "end start"],
   })
 
-  const initialY = variant === "up" ? 72 : variant === "down" ? -48 : 0
-  const initialX = variant === "left" ? -80 : variant === "right" ? 80 : 0
-  const exitX = variant === "left" ? 40 : variant === "right" ? -40 : 0
+  const initialY = variant === "up" ? 48 : variant === "down" ? -40 : 0
+  const initialX = variant === "left" ? -56 : variant === "right" ? 56 : 0
+  const exitX = variant === "left" ? 32 : variant === "right" ? -32 : 0
 
   const inputRange = [0, amountIn, 0.5, amountOut, 1] as const
   const opacity = useTransform(scrollYProgress, inputRange, [0, 1, 1, 1, 0])
@@ -122,31 +122,31 @@ export function ScrollRevealStagger({
   )
 }
 
-/* Compositor-friendly: opacity + transform only (no filter:blur - expensive) */
+/* Compositor-friendly: opacity + transform only (no filter:blur - expensive) - snappy modern feel */
 export const scrollRevealItemVariants = {
-  hidden: { opacity: 0, y: 56 },
+  hidden: { opacity: 0, y: 40 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
-  exit: { opacity: 0, y: -40, transition: { duration: 0.4 } },
+  exit: { opacity: 0, y: -32, transition: { duration: 0.3 } },
 }
 
 export const scrollRevealLeftVariants = {
-  hidden: { opacity: 0, x: -64 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease } },
-  exit: { opacity: 0, x: 40, transition: { duration: 0.4 } },
+  hidden: { opacity: 0, x: -48 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease } },
+  exit: { opacity: 0, x: 32, transition: { duration: 0.3 } },
 }
 
 export const scrollRevealRightVariants = {
-  hidden: { opacity: 0, x: 64 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease } },
-  exit: { opacity: 0, x: -40, transition: { duration: 0.4 } },
+  hidden: { opacity: 0, x: 48 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease } },
+  exit: { opacity: 0, x: -32, transition: { duration: 0.3 } },
 }
 
 export const scrollRevealScaleVariants = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease } },
-  exit: { opacity: 0, scale: 0.96, transition: { duration: 0.4 } },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.45, ease } },
+  exit: { opacity: 0, scale: 0.97, transition: { duration: 0.3 } },
 }
