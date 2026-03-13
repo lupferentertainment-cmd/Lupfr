@@ -18,7 +18,7 @@
   --secondary: oklch(0.12 0.01 80);
   --secondary-foreground: oklch(0.92 0.05 88);
   --muted: oklch(0.14 0.01 80);
-  --muted-foreground: oklch(0.55 0.03 85);
+  --muted-foreground: oklch(0.62 0.03 85);
   /* Metallic gold – matches will_logo.png: bright highlights, rich mid-tones, deep brown-gold shadows */
   --gold-shadow: oklch(0.38 0.09 82);
   --gold-dark: oklch(0.52 0.10 85);
@@ -89,7 +89,7 @@
   --secondary: oklch(0.12 0.01 80);
   --secondary-foreground: oklch(0.92 0.05 88);
   --muted: oklch(0.14 0.01 80);
-  --muted-foreground: oklch(0.55 0.03 85);
+  --muted-foreground: oklch(0.62 0.03 85);
   --accent: var(--gold);
   --accent-foreground: oklch(0.06 0.005 280);
   --destructive: oklch(0.396 0.141 25.723);

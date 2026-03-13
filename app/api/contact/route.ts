@@ -7,6 +7,7 @@ export interface ContactBody {
   name: string;
   email: string;
   company?: string;
+  budget?: string;
   message: string;
 }
 
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { inquiryType, name, email, company, message } = body;
+  const { inquiryType, name, email, company, budget, message } = body;
   if (!inquiryType?.trim() || !name?.trim() || !email?.trim() || !message?.trim()) {
     return NextResponse.json(
       { error: "Missing required fields: inquiryType, name, email, message" },
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
     name,
     email,
     company,
+    budget,
     message,
   });
 
@@ -49,7 +51,7 @@ export async function POST(request: Request) {
     from: RESEND_FROM_EMAIL,
     to: RESEND_TO_EMAIL,
     replyTo: email,
-    subject: `[Lupfer] ${inquiryType} – ${name}`,
+    subject: `[LUPFR] ${inquiryType} – ${name}`,
     html,
   });
 

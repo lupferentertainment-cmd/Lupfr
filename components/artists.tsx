@@ -7,12 +7,55 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
 const artists = [
-  { id: 1, name: "DJ Helix", genre: "Deep House", image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80", instagram: "#" },
-  { id: 2, name: "Luna Waves", genre: "Tech House", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80", instagram: "#" },
-  { id: 3, name: "Sonic Drift", genre: "Progressive House", image: "/sonic-drift.jpg", instagram: "#" },
-  { id: 4, name: "Maya Chen", genre: "Afro House", image: "https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80", instagram: "#" },
-  { id: 5, name: "Bassline Kid", genre: "House / Garage", image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80", instagram: "#" },
-  { id: 6, name: "Frequency", genre: "Melodic Techno", image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80", instagram: "#" },
+  {
+    id: 1,
+    name: "Where's West?",
+    genre: "Indie",
+    image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80",
+    spotify: "https://open.spotify.com/artist/7380t6i98gEs1ysixt1cTO",
+    appleMusic: "https://music.apple.com/artist/wheres-west",
+    instagram: "https://www.instagram.com/wheres__west/",
+  },
+  {
+    id: 2,
+    name: "HLWA",
+    genre: "Melodic House",
+    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+    spotify: "https://open.spotify.com/artist/1uFstDfzHjdGuzOrnrzOTy",
+    appleMusic: "https://music.apple.com/artist/hlwa",
+    instagram: "https://www.instagram.com/hlwamusic/",
+  },
+  {
+    id: 3,
+    name: "Tommy Guala",
+    genre: "Deep House",
+    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+    spotify: "https://open.spotify.com/artist/5gXe3UJr2VZq0bMKAgxsTY",
+    appleMusic: "https://music.apple.com/artist/tommy-guala",
+    instagram: "https://www.instagram.com/tommy.guala/",
+  },
+  {
+    id: 4,
+    name: "Mike Stern",
+    genre: "Afro House",
+    image: "https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80",
+    spotify: "https://open.spotify.com/artist/6AKgtbnwiE2SIzlIChxLRZ",
+    instagram: "https://www.instagram.com/mikeystern/",
+  },
+  {
+    id: 5,
+    name: "Operator SF",
+    genre: "Deep House",
+    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+    instagram: "https://www.instagram.com/operator.sf/",
+  },
+  {
+    id: 6,
+    name: "LUPFR",
+    genre: "Progressive House",
+    image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80",
+    instagram: "https://www.instagram.com/lupfr_music/",
+  },
 ]
 
 type ArtistItem = (typeof artists)[number]
@@ -99,13 +142,46 @@ function ArtistCard({
         <motion.h3 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-accent transition-colors mb-4" whileHover={{ x: 4 }}>
           {artist.name}
         </motion.h3>
-        <div className="flex items-center gap-3">
-          <motion.a href={artist.instagram} className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors" whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}>
-            <Instagram size={16} />
-          </motion.a>
-          <motion.a href="#" className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors" whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }}>
-            <ExternalLink size={16} />
-          </motion.a>
+        <div className="flex items-center gap-3 flex-wrap">
+          {"spotify" in artist && artist.spotify && (
+            <motion.a
+              href={artist.spotify}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Spotify"
+            >
+              <ExternalLink size={16} />
+            </motion.a>
+          )}
+          {"appleMusic" in artist && artist.appleMusic && (
+            <motion.a
+              href={artist.appleMusic}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Apple Music"
+            >
+              <Music size={16} />
+            </motion.a>
+          )}
+          {artist.instagram && (
+            <motion.a
+              href={artist.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              aria-label="Instagram"
+            >
+              <Instagram size={16} />
+            </motion.a>
+          )}
         </div>
       </div>
       <motion.div
@@ -158,7 +234,7 @@ export function Artists() {
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.3 }}
             >
-              We work with talented DJs and producers who share our vision for creating unforgettable house music experiences.
+              We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
             </motion.p>
           </div>
         </motion.div>

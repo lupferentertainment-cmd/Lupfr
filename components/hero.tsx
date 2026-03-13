@@ -8,14 +8,14 @@ import { LINKS } from "@/lib/links"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 const HERO_PHRASES = [
-  "Curating unforgettable house music experiences. Boat parties, rooftop events, and warehouse sessions that move the city.",
-  "Where the Bay dances. Premier house music events that define San Francisco nightlife.",
+  "Curating unforgettable music experiences. Boat parties, rooftop events, and warehouse sessions that move the city.",
+  "Where the Bay dances. Premier music events that define San Francisco nightlife.",
   "From boat parties to warehouses—we turn every night into an experience.",
   "Sound that moves you. Events that move the city.",
-  "San Francisco's pulse. House music, elevated.",
+  "San Francisco's pulse. Music, elevated.",
   "Rooftops, boats, warehouses. One vibe. One city.",
   "We don't just throw parties. We create moments that last.",
-  "The city's most iconic house music experiences—curated, produced, unforgettable.",
+  "The city's most iconic music experiences—curated, produced, unforgettable.",
   "Where beats meet the Bay. Where crowds become communities.",
   "Ten years of moving dance floors. One mission: make every night matter.",
 ]
@@ -43,6 +43,11 @@ export function Hero() {
     }, PHRASE_DURATION_MS)
     return () => clearInterval(id)
   }, [])
+
+  // Mobile: skip video and use poster immediately to avoid autoplay issues and improve load
+  useEffect(() => {
+    if (isMobile) setFallbackToImage(true)
+  }, [isMobile])
 
   useEffect(() => {
     if (fallbackToImage) return
@@ -164,10 +169,12 @@ export function Hero() {
       />
 
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        {fallbackToImage ? (
+        {fallbackToImage || isMobile ? (
           <img
             src={HERO_POSTER}
             alt=""
+            width={1920}
+            height={1080}
             className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
             sizes="100vw"
             fetchPriority="high"
@@ -211,15 +218,21 @@ export function Hero() {
               className="block hero-gold-shine-scroll gpu-accelerate"
               style={{ backgroundPosition: prefersReducedMotion ? staticShinePosition : shinePosition }}
             >
-              <span className="text-[1.35em]">L</span>upfer
+              LUPFR
             </motion.span>
             <motion.span
-              className="block hero-gold-shine-scroll gpu-accelerate"
+              className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-muted-foreground normal-case tracking-normal"
               style={{ backgroundPosition: prefersReducedMotion ? staticShinePosition : shinePositionDelayed }}
             >
-              <span className="text-[1.35em]">E</span>ntertainment
+              Entertainment
             </motion.span>
           </motion.h1>
+
+          <p className="mt-4 sm:mt-5 text-base sm:text-lg text-muted-foreground/90 font-medium">
+            Will be rebranding under{" "}
+            <span className="text-foreground">LUPFR</span>{" "}
+            <span className="text-sm sm:text-base text-muted-foreground">Entertainment</span>
+          </p>
 
           <div
             className="mt-6 sm:mt-8 min-h-[4rem] sm:min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem] relative w-full max-w-3xl mx-auto px-2 sm:px-4"
@@ -247,13 +260,13 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <motion.a
-              href="#events"
+              href="#contact"
               className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full overflow-hidden relative text-sm sm:text-base"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >
-              <span className="relative z-10">Upcoming Events</span>
+              <span className="relative z-10">Book an Event</span>
             </motion.a>
 
             <motion.a
@@ -281,6 +294,7 @@ export function Hero() {
           <motion.a
             href="#events"
             className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Scroll to events"
             whileHover={{ scale: 1.1 }}
           >
             <span className="text-xs uppercase tracking-widest">Scroll</span>

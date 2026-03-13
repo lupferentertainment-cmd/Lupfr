@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { motion, useInView, useScroll, useTransform } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { ArrowUp } from "lucide-react"
 import { toast } from "sonner"
@@ -32,9 +32,6 @@ const ease = [0.22, 1, 0.36, 1] as const
 export function Footer() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
-  const { scrollYProgress } = useScroll()
-  const bigTextOpacity = useTransform(scrollYProgress, [0.85, 1], [0.3, 0.6])
-  const bigTextScale = useTransform(scrollYProgress, [0.9, 1], [0.98, 1])
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -82,17 +79,18 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease }}
           >
-            <a href="#" className="inline-block mb-6" aria-label="Lupfer Entertainment home">
+            <a href="#" className="inline-block mb-6" aria-label="LUPFR home">
               <Image
                 src="/will_logo.png"
-                alt="Lupfer Entertainment"
+                alt="LUPFR"
                 width={200}
                 height={66}
+                sizes="140px"
                 className="h-14 w-auto object-contain"
               />
             </a>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6">
-              San Francisco&apos;s premier house music event production company. Creating unforgettable experiences on the Bay and beyond.
+              San Francisco&apos;s premier music event production company. Creating unforgettable experiences in the Bay and beyond.
             </p>
             <motion.a
               href="mailto:will@lupfr.com"
@@ -165,6 +163,7 @@ export function Footer() {
                 type="submit"
                 disabled={newsletterSubmitting}
                 className="px-4 py-2 btn-metallic-gold rounded-full text-sm font-medium disabled:opacity-70"
+                aria-label="Join newsletter"
                 whileHover={newsletterSubmitting ? undefined : { scale: 1.05 }}
                 whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}
               >
@@ -185,7 +184,7 @@ export function Footer() {
           transition={{ duration: 0.45, delay: 0.2, ease }}
         >
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-muted-foreground text-center sm:text-left">
-            <span>&copy; {new Date().getFullYear()} <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} <GoldShineText scrollTargetRef={ref}>LUPFR Entertainment</GoldShineText>. All rights reserved.</span>
             {footerLinks.legal.map((link) => (
               <a 
                 key={link.name}
@@ -198,8 +197,10 @@ export function Footer() {
           </div>
 
           <motion.button
+            type="button"
             onClick={scrollToTop}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+            aria-label="Back to top"
             whileHover={{ y: -4 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -213,20 +214,6 @@ export function Footer() {
           </motion.button>
         </motion.div>
 
-        {/* Large Brand Text - scroll-reactive */}
-        <motion.div
-          className="mt-16 text-center overflow-hidden"
-          style={{ opacity: bigTextOpacity, scale: bigTextScale }}
-        >
-          <motion.h2
-            className="font-serif text-[5vw] sm:text-[6vw] md:text-[7vw] lg:text-[8vw] font-bold tracking-tighter leading-none select-none"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.25, ease }}
-          >
-            <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText>
-          </motion.h2>
-        </motion.div>
       </ScrollReveal>
     </footer>
   )
