@@ -4,7 +4,7 @@ import { Resend } from "resend";
 export const RESEND_TO_EMAIL = "will@lupfr.com";
 
 /** Sender: verified lupfr.com domain. */
-export const RESEND_FROM_EMAIL = "Lupfer Entertainment <hello@lupfr.com>";
+export const RESEND_FROM_EMAIL = "LUPFR Entertainment <hello@lupfr.com>";
 
 function getApiKey(): string | undefined {
   return process.env.RESEND_API_KEY?.trim();

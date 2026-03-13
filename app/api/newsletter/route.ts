@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     from: RESEND_FROM_EMAIL,
     to: RESEND_TO_EMAIL,
     replyTo: email,
-    subject: `[Lupfer] Newsletter signup – ${email}`,
+    subject: `[LUPFR] Newsletter signup – ${email}`,
     html,
   });
 

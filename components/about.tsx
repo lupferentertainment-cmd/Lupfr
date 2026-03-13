@@ -72,10 +72,10 @@ export function About() {
             
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
-                <GoldShineText scrollTargetRef={ref}>Lupfer Entertainment</GoldShineText> was born from a simple idea: San Francisco deserves house music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
+                <GoldShineText scrollTargetRef={ref}>LUPFR Entertainment</GoldShineText> was born from a simple idea: San Francisco deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
               </p>
               <p>
-                Today, we produce boat parties on the Bay, rooftop sessions with skyline views, and warehouse events that bring back the raw energy of the underground—all while maintaining the polish that attracts SF&apos;s young professional crowd.
+                Today, we produce boat parties on the Bay, rooftop sessions with skyline views, warehouse events, and anything in between that bring back the raw energy of the city—all while maintaining the polish that attracts SF&apos;s young professional crowd.
               </p>
               <p>
                 Whether you&apos;re a venue looking to elevate your programming, a brand seeking authentic nightlife partnerships, or simply someone who wants to dance to great music with a great crowd—we&apos;re here to make it happen.
@@ -86,10 +86,13 @@ export function About() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 flex items-center gap-6"
+              className="mt-10 flex flex-col gap-4"
             >
-              <div className="w-16 h-px bg-accent" />
-              <p className="text-foreground font-medium">SF&apos;s House Music Movement</p>
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-px bg-accent" />
+                <p className="text-foreground font-medium">SF&apos;s Music Movement</p>
+              </div>
+              <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
             </motion.div>
           </motion.div>
 

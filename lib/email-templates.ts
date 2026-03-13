@@ -1,5 +1,5 @@
 /**
- * Lupfer-branded email templates. Black + metallic gold aesthetic.
+ * LUPFR-branded email templates. Black + metallic gold aesthetic.
  * Inline styles and table layout for broad client support.
  */
 
@@ -38,7 +38,7 @@ function wrapLayout(content: string, title: string): string {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
           <tr>
             <td style="padding-bottom:24px; border-bottom:1px solid ${BRAND.border};">
-              <span style="font-size:11px; letter-spacing:0.25em; text-transform:uppercase; color:${BRAND.gold};">Lupfer Entertainment</span>
+              <span style="font-size:11px; letter-spacing:0.25em; text-transform:uppercase; color:${BRAND.gold};">LUPFR Entertainment</span>
             </td>
           </tr>
           <tr>
@@ -48,7 +48,7 @@ function wrapLayout(content: string, title: string): string {
           </tr>
           <tr>
             <td style="padding-top:40px; border-top:1px solid ${BRAND.border}; font-size:12px; color:${BRAND.muted};">
-              San Francisco · House music events &amp; talent
+              San Francisco · Music events &amp; talent
             </td>
           </tr>
         </table>
@@ -75,9 +75,10 @@ export function contactFormEmail(params: {
   name: string;
   email: string;
   company?: string;
+  budget?: string;
   message: string;
 }): string {
-  const { inquiryType, name, email, company, message } = params;
+  const { inquiryType, name, email, company, budget, message } = params;
   const content = `
     <h1 style="margin:0 0 24px; font-size:22px; font-weight:600; color:${BRAND.text}; letter-spacing:-0.02em;">
       New inquiry
@@ -92,6 +93,7 @@ export function contactFormEmail(params: {
           ${row("Name", name)}
           ${row("Email", email)}
           ${company ? row("Company / Venue", company) : ""}
+          ${budget ? row("Budget", budget) : ""}
           <tr>
             <td style="padding:8px 0 4px; font-size:12px; color:${BRAND.muted}; text-transform:uppercase; letter-spacing:0.05em;">Message</td>
           </tr>

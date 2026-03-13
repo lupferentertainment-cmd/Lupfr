@@ -80,6 +80,7 @@ export function Contact() {
       name: (formData.get("name") as string)?.trim() ?? "",
       email: (formData.get("email") as string)?.trim() ?? "",
       company: (formData.get("company") as string)?.trim() || undefined,
+      budget: (formData.get("budget") as string)?.trim() || undefined,
       message: (formData.get("message") as string)?.trim() ?? "",
     }
     setIsSubmitting(true)
@@ -261,6 +262,17 @@ export function Contact() {
                   type="text"
                   className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
                   placeholder="Your organization"
+                />
+              </div>
+
+              {/* Budget */}
+              <div>
+                <label className="block text-sm text-muted-foreground mb-2">Budget (optional)</label>
+                <input
+                  name="budget"
+                  type="text"
+                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
+                  placeholder="Budget range or amount"
                 />
               </div>
 

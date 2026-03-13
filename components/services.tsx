@@ -147,7 +147,7 @@ export function Services() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ ...SPRING_SNAPPY, delay: 0.22 }}
           >
-            From intimate bar takeovers to large-scale productions, we bring house music culture to life across San Francisco.
+            From intimate bar takeovers to large-scale productions, we bring the music culture to life across San Francisco.
           </motion.p>
         </motion.div>
 
@@ -254,10 +254,10 @@ export function Services() {
           className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
         >
           {[
-            { end: 50, suffix: "+", label: "Events Hosted" },
-            { end: 100, suffix: "+", label: "Artists Booked" },
+            { end: 20, suffix: "+", label: "Events Hosted" },
+            { end: 50, suffix: "+", label: "Artists Booked" },
             { end: 10, suffix: "K+", label: "Happy Attendees" },
-            { end: 15, suffix: "+", label: "Venue Partners" },
+            { end: 10, suffix: "+", label: "Venue Partners" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -278,6 +278,57 @@ export function Services() {
               <p className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Corporate partners - rotating row */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ ...SPRING_PUNCH, delay: 0.8 }}
+          className="mt-16 sm:mt-20 md:mt-24"
+        >
+          <p className="text-center text-sm text-muted-foreground uppercase tracking-wider mb-8">
+            Corporate Partners
+          </p>
+          <div className="overflow-hidden">
+            <motion.div
+              animate={{ x: [0, "-50%"] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="flex items-center gap-12 md:gap-16 w-max"
+            >
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="flex items-center gap-12 md:gap-16 shrink-0">
+                  <a
+                    href="https://umbrella.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+                    aria-label="Umbrella"
+                  >
+                    <img src="/partners/umbrella.svg" alt="Umbrella" width={120} height={32} className="h-8 w-auto object-contain" />
+                  </a>
+                  <a
+                    href="https://www.eriaevents.co"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+                    aria-label="Eria"
+                  >
+                    <img src="/partners/eria.svg" alt="Eria" width={120} height={32} className="h-8 w-auto object-contain" />
+                  </a>
+                  <a
+                    href="https://vennsocial.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+                    aria-label="Venn Social"
+                  >
+                    <img src="/partners/venn-social.svg" alt="Venn Social" width={120} height={32} className="h-8 w-auto object-contain" />
+                  </a>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
       </ScrollReveal>
     </section>

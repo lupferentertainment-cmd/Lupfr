@@ -64,13 +64,14 @@ export function Navigation() {
             className="flex items-center gap-2 text-2xl font-bold tracking-tighter"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            aria-label="Lupfer Entertainment home"
+            aria-label="LUPFR home"
           >
             <Image
               src="/will_logo.png"
-              alt="Lupfer Entertainment"
+              alt="LUPFR"
               width={360}
               height={120}
+              sizes="(max-width: 640px) 140px, (max-width: 768px) 200px, 240px"
               className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain"
               priority
             />
@@ -86,6 +87,7 @@ export function Navigation() {
                   className={`text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
                     isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
                   }`}
+                  aria-current={isActive ? "true" : undefined}
                   initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.06, duration: 0.35 }}
@@ -104,9 +106,7 @@ export function Navigation() {
           </div>
 
           <motion.a
-            href={LINKS.partiful}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -116,10 +116,13 @@ export function Navigation() {
           </motion.a>
 
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
           </button>
         </nav>
       </motion.header>
@@ -148,6 +151,7 @@ export function Navigation() {
                     className={`font-serif text-3xl font-bold uppercase tracking-wider transition-colors ${
                       isActive ? "text-accent" : "text-foreground hover:text-accent"
                     }`}
+                    aria-current={isActive ? "true" : undefined}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 + i * 0.1 }}
@@ -157,9 +161,8 @@ export function Navigation() {
                 )
               })}
               <motion.a
-                href={LINKS.partiful}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#contact"
+                onClick={() => setIsOpen(false)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}

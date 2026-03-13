@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Inter, Playfair_Display } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
+import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
+import { EVENTS } from '@/lib/events'
 import './globals.css'
+
+const firstEventImage = EVENTS[0]?.image
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -25,19 +28,19 @@ const playfairDisplay = Playfair_Display({
 });
 
 const siteUrl = 'https://lupfr.com'
-const siteName = 'Lupfer Entertainment'
-const defaultTitle = 'Lupfer Entertainment | SF House Music Events & Talent Curation'
-const defaultDescription = "San Francisco's premier house music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable nightlife experiences."
+const siteName = 'LUPFR Entertainment'
+const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
+const defaultDescription = "San Francisco's premier music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable experiences in the Bay and beyond."
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: defaultTitle,
-    template: '%s | Lupfer Entertainment',
+    template: '%s | LUPFR Entertainment',
   },
   description: defaultDescription,
   generator: 'lupfr.com',
-  keywords: ['house music', 'san francisco events', 'boat parties', 'dj booking', 'nightlife', 'event production', 'Lupfer Entertainment', 'SF nightlife', 'Bay Area events', 'warehouse parties', 'rooftop parties'],
+  keywords: ['music', 'san francisco events', 'boat parties', 'dj booking', 'nightlife', 'event production', 'LUPFR Entertainment', 'SF nightlife', 'Bay Area events', 'warehouse parties', 'rooftop parties'],
   authors: [{ name: siteName, url: siteUrl }],
   creator: siteName,
   publisher: siteName,
@@ -94,9 +97,9 @@ const jsonLd = {
       url: siteUrl,
       description: defaultDescription,
       sameAs: [
-        'https://www.instagram.com/lupfer_entertainment/',
+        'https://www.instagram.com/lupfr_/',
         'https://www.tiktok.com/@lupfer_entertainment',
-        'https://www.youtube.com/@Lupfer_Entertainment',
+        'https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew',
       ],
     },
     {
@@ -118,6 +121,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" style={{ colorScheme: 'dark' }}>
+      <head>
+        <link rel="preload" as="image" href="/hero-poster.jpg" />
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
+        {firstEventImage ? (
+          <link rel="preload" as="image" href={firstEventImage} />
+        ) : null}
+      </head>
       <body className={`${spaceGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <script
           type="application/ld+json"
@@ -128,7 +138,7 @@ export default function RootLayout({
           {children}
           <Toaster />
         </ThemeProvider>
-        <Analytics />
+        <DeferredAnalytics />
       </body>
     </html>
   )

@@ -1,0 +1,8 @@
+# Modern browsers only – avoids legacy polyfills (Array.at, flat, Object.hasOwn, etc.)
+# and reduces "Legacy JavaScript" in Lighthouse (est. 7 KiB savings).
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+not dead
+not IE 11
