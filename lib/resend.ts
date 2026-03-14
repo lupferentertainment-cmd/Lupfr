@@ -1,7 +1,9 @@
 import { Resend } from "resend";
 
-/** Recipient for all site emails (contact, newsletter). */
-export const RESEND_TO_EMAIL = "will@lupfr.com";
+/** Recipient for all site emails (contact, newsletter). Use env to override; defaults to entertainment inbox. */
+export const RESEND_TO_EMAIL =
+  (typeof process !== "undefined" && process.env.RESEND_TO_EMAIL?.trim()) ||
+  "entertainment@lupfr.com";
 
 /** Sender: verified lupfr.com domain. */
 export const RESEND_FROM_EMAIL = "LUPFR Entertainment <hello@lupfr.com>";
