@@ -1,3 +1,8 @@
+import path from "path"
+import { fileURLToPath } from "url"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 /**
  * @type {import('next').NextConfig}
  * Lighthouse: run against production (next build && next start) for minify/LCP metrics.
@@ -6,8 +11,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  outputFileTracingRoot: path.resolve(__dirname),
   experimental: {
     inlineCss: true,
+    imgOptTimeoutInSeconds: 30,
     optimizePackageImports: [
       'lucide-react',
       '@radix-ui/react-accordion',

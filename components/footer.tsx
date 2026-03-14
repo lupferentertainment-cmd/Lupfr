@@ -1,6 +1,8 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { ArrowUp } from "lucide-react"
@@ -28,10 +30,14 @@ const footerLinks = {
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
+const LUPFR_EMAIL = "will@lupfr.com"
 
 export function Footer() {
+  const pathname = usePathname()
+  const isHome = pathname === "/"
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const companyHref = (hash: string) => (isHome ? hash : `/${hash}`)
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -55,13 +61,19 @@ export function Footer() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        toast.error(data.error ?? "Something went wrong. Try again.")
+        toast.error("Signup not configured. Opening email to send to LUPFR instead.")
+        const subject = encodeURIComponent("[LUPFR] Newsletter signup")
+        const body = encodeURIComponent(`Please add me to the LUPFR mailing list:\n\nEmail: ${email}`)
+        window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
         return
       }
       toast.success("You're on the list! We'll be in touch.")
       form.reset()
     } catch {
-      toast.error("Network error. Please try again.")
+      toast.error("Network error. Opening email to send to LUPFR instead.")
+      const subject = encodeURIComponent("[LUPFR] Newsletter signup")
+      const body = encodeURIComponent(`Please add me to the LUPFR mailing list:\n\nEmail: ${email}`)
+      window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
     } finally {
       setNewsletterSubmitting(false)
     }
@@ -79,7 +91,7 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease }}
           >
-            <a href="#" className="inline-block mb-6" aria-label="LUPFR home">
+            <Link href={isHome ? "#" : "/"} className="inline-block mb-6" aria-label="LUPFR home">
               <Image
                 src="/will_logo.png"
                 alt="LUPFR"
@@ -88,7 +100,7 @@ export function Footer() {
                 sizes="140px"
                 className="h-14 w-auto object-contain"
               />
-            </a>
+            </Link>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6">
               San Francisco&apos;s premier music event production company. Creating unforgettable experiences in the Bay and beyond.
             </p>
@@ -126,7 +138,7 @@ export function Footer() {
               {footerLinks.company.map((link, i) => (
                 <li key={link.name}>
                   <motion.a
-                    href={link.href}
+                    href={companyHref(link.href)}
                     className="text-muted-foreground hover:text-foreground transition-colors inline-block"
                     initial={{ opacity: 0, x: -10 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -213,6 +225,20 @@ export function Footer() {
             </motion.span>
           </motion.button>
         </motion.div>
+
+        <p className="mt-6 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground/80">
+          Made with{" "}
+          <span className="text-accent/90" aria-hidden>♥</span>
+          {" "}by{" "}
+          <a
+            href="https://mishalubich.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-accent transition-colors underline underline-offset-2"
+          >
+            Misha Lubich
+          </a>
+        </p>
 
       </ScrollReveal>
     </footer>

@@ -2,6 +2,7 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@1.3.9",
   "browserslist": [
     "chrome >= 87",
     "edge >= 88",
@@ -9,7 +10,8 @@
     "safari >= 14"
   ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "dev:turbo": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint ."
