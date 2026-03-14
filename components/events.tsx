@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import Script from "next/script"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
@@ -10,7 +11,7 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
 const EVENT_IMAGE_WIDTH = 800
-const EVENT_IMAGE_HEIGHT = 500
+const EVENT_IMAGE_HEIGHT = 600
 
 function EventCard({
   event,
@@ -67,7 +68,7 @@ function EventCard({
       }}
     >
       <Link href={`/events/${event.slug}`} className="block">
-        <div className="aspect-[16/10] overflow-hidden relative">
+        <div className="aspect-[4/3] overflow-hidden relative">
           <motion.div
             className="relative w-full h-full"
             animate={{ scale: isHovered ? 1.08 : 1 }}
@@ -82,7 +83,8 @@ function EventCard({
               priority={index === 0}
               loading={index === 0 ? "eager" : "lazy"}
               fetchPriority={index === 0 ? "high" : undefined}
-              className="w-full h-full object-cover"
+              unoptimized={event.image.startsWith("http")}
+              className="w-full h-full object-cover object-top"
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
@@ -160,6 +162,25 @@ export function Events() {
           </h2>
         </motion.div>
 
+        {/* SociableKit Eventbrite widget – modern dark UI: muted invert + card container */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mb-12 sm:mb-16 md:mb-20 rounded-2xl overflow-hidden border border-border/80 bg-card/95 shadow-xl shadow-black/20"
+        >
+          <div
+            className="sk-eventbrite-event min-h-[200px] [filter:invert(1)_hue-rotate(180deg)_saturate(0.72)_brightness(0.97)_contrast(0.96)]"
+            data-embed-id="25663001"
+            suppressHydrationWarning
+          />
+          {/* Soft dark overlay to blend widget into theme */}
+          <div
+            className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-background/10 via-transparent to-background/15"
+            aria-hidden
+          />
+        </motion.div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {EVENTS.map((event, i) => (
             <EventCard
@@ -174,6 +195,10 @@ export function Events() {
           ))}
         </div>
       </ScrollReveal>
+      <Script
+        src="https://widgets.sociablekit.com/eventbrite-events/widget.js"
+        strategy="lazyOnload"
+      />
     </section>
   )
 }

@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
-import { LINKS } from "@/lib/links"
+const MotionLink = motion(Link)
 
 const navLinks = [
   { name: "Events", href: "#events" },
@@ -17,9 +19,16 @@ const navLinks = [
 const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
 
 export function Navigation() {
+  const pathname = usePathname()
+  const isHome = pathname === "/"
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+
+  /** On event/detail pages, use full path so browser navigates to home and scrolls to section. */
+  const linkHref = (hash: string) => (isHome ? hash : `/${hash}`)
+  const bookHref = isHome ? "#contact" : "/#contact"
+  const bookLabel = "Book an Event"
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,8 +68,8 @@ export function Navigation() {
         }`}
       >
         <nav className="container mx-auto px-4 sm:px-6 py-4 md:py-5 flex items-center justify-between">
-          <motion.a
-            href="#"
+          <MotionLink
+            href={isHome ? "#" : "/"}
             className="flex items-center gap-2 text-2xl font-bold tracking-tighter"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -75,18 +84,27 @@ export function Navigation() {
               className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain"
               priority
             />
-          </motion.a>
+          </MotionLink>
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link, i) => {
               const isActive = activeSection === link.href.slice(1)
-              return (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  className={`text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
-                    isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
+              const href = linkHref(link.href)
+              const linkClass = `text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
+                isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
+              }`
+              const underline = (
+                <span
+                  className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-out ${
+                    isActive ? "w-full" : "w-0 group-hover:w-full"
                   }`}
+                />
+              )
+              return isHome ? (
+                <MotionLink
+                  key={link.name}
+                  href={href}
+                  className={linkClass}
                   aria-current={isActive ? "true" : undefined}
                   initial={{ opacity: 0, y: -12 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -95,25 +113,47 @@ export function Navigation() {
                   whileTap={{ scale: 0.98 }}
                 >
                   {link.name}
-                  <span
-                    className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-out ${
-                      isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
+                  {underline}
+                </MotionLink>
+              ) : (
+                <motion.a
+                  key={link.name}
+                  href={href}
+                  className={linkClass}
+                  initial={{ opacity: 0, y: -12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.35 }}
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {link.name}
+                  {underline}
                 </motion.a>
               )
             })}
           </div>
 
-          <motion.a
-            href="#contact"
-            className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 500, damping: 28 }}
-          >
-            Book an Event
-          </motion.a>
+          {isHome ? (
+            <MotionLink
+              href={bookHref}
+              className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 500, damping: 28 }}
+            >
+              {bookLabel}
+            </MotionLink>
+          ) : (
+            <motion.a
+              href={bookHref}
+              className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 500, damping: 28 }}
+            >
+              {bookLabel}
+            </motion.a>
+          )}
 
           <button
             type="button"
@@ -143,15 +183,29 @@ export function Navigation() {
             >
               {navLinks.map((link, i) => {
                 const isActive = activeSection === link.href.slice(1)
-                return (
+                const href = linkHref(link.href)
+                const mobileClass = `font-serif text-3xl font-bold uppercase tracking-wider transition-colors ${
+                  isActive ? "text-accent" : "text-foreground hover:text-accent"
+                }`
+                return isHome ? (
+                  <MotionLink
+                    key={link.name}
+                    href={href}
+                    onClick={() => setIsOpen(false)}
+                    className={mobileClass}
+                    aria-current={isActive ? "true" : undefined}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                  >
+                    {link.name}
+                  </MotionLink>
+                ) : (
                   <motion.a
                     key={link.name}
-                    href={link.href}
+                    href={href}
                     onClick={() => setIsOpen(false)}
-                    className={`font-serif text-3xl font-bold uppercase tracking-wider transition-colors ${
-                      isActive ? "text-accent" : "text-foreground hover:text-accent"
-                    }`}
-                    aria-current={isActive ? "true" : undefined}
+                    className={mobileClass}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 + i * 0.1 }}
@@ -160,16 +214,29 @@ export function Navigation() {
                   </motion.a>
                 )
               })}
-              <motion.a
-                href="#contact"
-                onClick={() => setIsOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
-              >
-                Book an Event
-              </motion.a>
+              {isHome ? (
+                <MotionLink
+                  href={bookHref}
+                  onClick={() => setIsOpen(false)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
+                >
+                  {bookLabel}
+                </MotionLink>
+              ) : (
+                <motion.a
+                  href={bookHref}
+                  onClick={() => setIsOpen(false)}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
+                >
+                  {bookLabel}
+                </motion.a>
+              )}
             </motion.nav>
           </motion.div>
         )}

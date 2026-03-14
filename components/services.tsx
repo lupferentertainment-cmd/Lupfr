@@ -288,7 +288,7 @@ export function Services() {
           className="mt-16 sm:mt-20 md:mt-24"
         >
           <p className="text-center text-sm text-muted-foreground uppercase tracking-wider mb-8">
-            Corporate Partners
+            Corporate Partners?
           </p>
           <div className="overflow-hidden">
             <motion.div

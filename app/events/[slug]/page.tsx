@@ -7,7 +7,7 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
 const EVENT_IMAGE_WIDTH = 800
-const EVENT_IMAGE_HEIGHT = 500
+const EVENT_IMAGE_HEIGHT = 600
 
 export function generateStaticParams() {
   return EVENTS.map((e) => ({ slug: e.slug }))
@@ -26,11 +26,11 @@ export default async function EventPage({
   return (
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
-      <div className="pt-24 sm:pt-28 md:pt-32 pb-20 px-4 sm:px-6">
+      <div className="pt-32 sm:pt-36 md:pt-40 pb-20 px-4 sm:px-6">
         <div className="container mx-auto max-w-3xl">
           <Link
             href="/#events"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
+            className="inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors mb-8 relative z-10"
             aria-label="Back to events list"
           >
             <ArrowLeft size={18} aria-hidden />
@@ -38,7 +38,7 @@ export default async function EventPage({
           </Link>
 
           <div className="rounded-2xl overflow-hidden bg-card border border-border mb-10">
-            <div className="aspect-[16/10] relative">
+            <div className="aspect-[4/3] relative">
               <Image
                 src={event.image}
                 alt={event.title}
@@ -46,7 +46,8 @@ export default async function EventPage({
                 height={EVENT_IMAGE_HEIGHT}
                 sizes="(max-width: 768px) 100vw, 672px"
                 priority
-                className="w-full h-full object-cover"
+                unoptimized={event.image.startsWith("http")}
+                className="w-full h-full object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
               <span
@@ -84,7 +85,7 @@ export default async function EventPage({
                 </p>
               ) : null}
 
-              {event.ticketLink && event.ticketLabel ? (
+              {event.ticketLink ? (
                 <a
                   href={event.ticketLink}
                   target="_blank"
@@ -92,7 +93,7 @@ export default async function EventPage({
                   className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full"
                 >
                   <Ticket size={18} />
-                  {event.ticketLabel}
+                  Tickets
                 </a>
               ) : null}
             </div>

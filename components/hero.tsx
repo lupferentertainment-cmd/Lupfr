@@ -54,6 +54,8 @@ export function Hero() {
     const video = videoRef.current
     if (!video) return
 
+    video.loop = true
+
     const useFallback = () => setFallbackToImage(true)
     const timeoutId = setTimeout(useFallback, HERO_VIDEO_SLOW_MS)
 
@@ -212,7 +214,7 @@ export function Hero() {
           className="text-center"
         >
           <motion.h1
-            className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[6rem] xl:text-[7rem] 2xl:text-[8rem] font-bold tracking-tighter leading-none text-center flex flex-col items-center uppercase gap-1.5 sm:gap-2 md:gap-3"
+            className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] 2xl:text-[10rem] font-bold tracking-tighter leading-none text-center flex flex-col items-center uppercase gap-1.5 sm:gap-2 md:gap-3"
           >
             <motion.span
               className="block hero-gold-shine-scroll gpu-accelerate"
@@ -228,21 +230,15 @@ export function Hero() {
             </motion.span>
           </motion.h1>
 
-          <p className="mt-4 sm:mt-5 text-base sm:text-lg text-muted-foreground/90 font-medium">
-            Will be rebranding under{" "}
-            <span className="text-foreground">LUPFR</span>{" "}
-            <span className="text-sm sm:text-base text-muted-foreground">Entertainment</span>
-          </p>
-
           <div
-            className="mt-6 sm:mt-8 min-h-[4rem] sm:min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem] relative w-full max-w-3xl mx-auto px-2 sm:px-4"
+            className="mt-6 sm:mt-8 min-h-[2.5rem] sm:min-h-[3rem] relative w-full max-w-4xl mx-auto px-8 sm:px-12 md:px-20 lg:px-24"
             aria-live="polite"
             aria-atomic="true"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.p
                 key={phraseIndex}
-                className="text-base sm:text-lg md:text-xl lg:text-2xl font-medium tracking-tight leading-snug text-center absolute top-1/2 left-0 right-0 -translate-y-1/2 drop-shadow-sm"
+                className="text-xs sm:text-sm md:text-base font-medium tracking-tight leading-snug text-center absolute top-1/2 left-0 right-0 -translate-y-1/2 drop-shadow-sm max-w-2xl mx-auto"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}

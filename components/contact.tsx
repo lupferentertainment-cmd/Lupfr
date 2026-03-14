@@ -51,6 +51,25 @@ function ProtectedPhone() {
 }
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
+const LUPFR_EMAIL = "will@lupfr.com"
+
+function openContactMailto(payload: {
+  inquiryType: string
+  name: string
+  email: string
+  company?: string
+  budget?: string
+  message: string
+}) {
+  const subject = encodeURIComponent(`[LUPFR] ${payload.inquiryType} – ${payload.name}`)
+  const body = encodeURIComponent(
+    `Inquiry: ${payload.inquiryType}\nName: ${payload.name}\nEmail: ${payload.email}\n` +
+      (payload.company ? `Company: ${payload.company}\n` : "") +
+      (payload.budget ? `Budget: ${payload.budget}\n` : "") +
+      `\nMessage:\n${payload.message}`
+  )
+  window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
+}
 
 export function Contact() {
   const ref = useRef(null)
@@ -92,14 +111,16 @@ export function Contact() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        toast.error(data.error ?? "Failed to send message. Please try again.")
+        toast.error("Form not configured. Opening your email client to send to LUPFR instead.")
+        openContactMailto(payload)
         return
       }
       toast.success("Message sent! We'll get back to you soon.")
       form.reset()
       setSelectedType(null)
     } catch {
-      toast.error("Network error. Please try again.")
+      toast.error("Network error. Opening your email client to send to LUPFR instead.")
+      openContactMailto(payload)
     } finally {
       setIsSubmitting(false)
     }

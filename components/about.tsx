@@ -64,12 +64,17 @@ export function About() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">The Story</p>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-6 sm:mb-8">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-6">
               <GoldShineText scrollTargetRef={ref}>Culture Meets</GoldShineText>
               <br />
               <span className="text-muted-foreground">Production</span>
             </h2>
-            
+            <div className="flex flex-col gap-4 mb-6 sm:mb-8">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-px bg-accent" />
+                <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
+              </div>
+            </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
                 <GoldShineText scrollTargetRef={ref}>LUPFR Entertainment</GoldShineText> was born from a simple idea: San Francisco deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
@@ -82,18 +87,6 @@ export function About() {
               </p>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-10 flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-px bg-accent" />
-                <p className="text-foreground font-medium">SF&apos;s Music Movement</p>
-              </div>
-              <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
-            </motion.div>
           </motion.div>
 
           {/* Right - Values */}
