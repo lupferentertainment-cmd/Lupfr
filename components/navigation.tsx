@@ -6,6 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 const MotionLink = motion.create(Link)
 
 const navLinks = [
@@ -64,10 +65,12 @@ export function Navigation() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background/70 backdrop-blur-2xl border-b border-border/80 shadow-lg shadow-black/5" : ""
+          isScrolled
+            ? "bg-background/60 dark:bg-background/50 backdrop-blur-xl border-b border-border/60 shadow-sm"
+            : ""
         }`}
       >
-        <nav className="container mx-auto px-4 sm:px-6 py-4 md:py-5 flex items-center justify-between">
+        <nav className="container mx-auto px-4 sm:px-6 py-2 md:py-3 flex items-center justify-between">
           <MotionLink
             href={isHome ? "#" : "/"}
             className="flex items-center gap-2 text-2xl font-bold tracking-tighter"
@@ -81,17 +84,22 @@ export function Navigation() {
               width={360}
               height={120}
               sizes="(max-width: 640px) 140px, (max-width: 768px) 200px, 240px"
-              className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto object-contain"
+              className="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain"
               priority
             />
           </MotionLink>
 
           <div className="hidden md:flex items-center gap-8">
+            <ThemeToggle withSound className="shrink-0" />
             {navLinks.map((link, i) => {
               const isActive = activeSection === link.href.slice(1)
               const href = linkHref(link.href)
               const linkClass = `text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
-                isActive ? "text-accent font-medium" : "text-foreground/90 hover:text-foreground"
+                isActive
+                  ? "text-accent font-medium"
+                  : isScrolled
+                    ? "text-foreground/90 hover:text-foreground"
+                    : "text-white dark:text-foreground/90 hover:text-white dark:hover:text-foreground"
               }`
               const underline = (
                 <span
@@ -133,10 +141,11 @@ export function Navigation() {
             })}
           </div>
 
+          <div className="hidden md:flex items-center gap-4">
           {isHome ? (
             <MotionLink
               href={bookHref}
-              className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              className="flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -146,7 +155,7 @@ export function Navigation() {
           ) : (
             <motion.a
               href={bookHref}
-              className="hidden md:flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              className="flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -154,11 +163,12 @@ export function Navigation() {
               {bookLabel}
             </motion.a>
           )}
+          </div>
 
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-foreground"
+            className={`md:hidden p-2 ${isScrolled ? "text-foreground" : "text-white dark:text-foreground"}`}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
@@ -181,6 +191,9 @@ export function Navigation() {
               transition={{ delay: 0.1 }}
               className="flex flex-col items-center justify-center h-full gap-8"
             >
+              <div className="absolute top-6 right-6">
+                <ThemeToggle withSound />
+              </div>
               {navLinks.map((link, i) => {
                 const isActive = activeSection === link.href.slice(1)
                 const href = linkHref(link.href)
