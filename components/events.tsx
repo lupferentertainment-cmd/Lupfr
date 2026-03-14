@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import Script from "next/script"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
@@ -162,25 +161,6 @@ export function Events() {
           </h2>
         </motion.div>
 
-        {/* SociableKit Eventbrite widget – modern dark UI: muted invert + card container */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mb-12 sm:mb-16 md:mb-20 rounded-2xl overflow-hidden border border-border/80 bg-card/95 shadow-xl shadow-black/20"
-        >
-          <div
-            className="sk-eventbrite-event min-h-[200px] [filter:invert(1)_hue-rotate(180deg)_saturate(0.72)_brightness(0.97)_contrast(0.96)]"
-            data-embed-id="25663001"
-            suppressHydrationWarning
-          />
-          {/* Soft dark overlay to blend widget into theme */}
-          <div
-            className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-background/10 via-transparent to-background/15"
-            aria-hidden
-          />
-        </motion.div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {EVENTS.map((event, i) => (
             <EventCard
@@ -195,10 +175,6 @@ export function Events() {
           ))}
         </div>
       </ScrollReveal>
-      <Script
-        src="https://widgets.sociablekit.com/eventbrite-events/widget.js"
-        strategy="lazyOnload"
-      />
     </section>
   )
 }
