@@ -1,8 +1,9 @@
 "use client"
 
 import { preload } from "react-dom"
-import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
+import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion, type MotionValue } from "framer-motion"
+import { useRef, useState, useEffect, memo } from "react"
+
 import { ArrowDown, Play } from "lucide-react"
 import { LINKS } from "@/lib/links"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -24,18 +25,75 @@ const PHRASE_DURATION_MS = 4500
 const FADE_DURATION_S = 0.6
 
 const HERO_VIDEO_SLOW_MS = 30000
-const HERO_VIDEO_SRC = "/hero-bg.mp4"
+const HERO_VIDEO_DARK = "/hero_dark.mp4"
+const HERO_VIDEO_LIGHT = "/hero_light_opt.mp4"
 const HERO_POSTER = "/hero-poster.jpg"
 const HERO_FALLBACK_IMAGE = HERO_POSTER
 
+const staticShinePositionCss = "50% 50%"
+
+/** LUPFR: plain span + CSS-only gradient oscillation so it never re-renders; no Framer, no inline style. */
+const HeroLupfrText = memo(function HeroLupfrText({ prefersReducedMotion }: { prefersReducedMotion: boolean | null }) {
+  return (
+    <span
+      className={`inline-flex items-baseline justify-center gap-0 overflow-visible hero-gold-shine-scroll gpu-accelerate ${prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-periodic"}`}
+    >
+      <span className="inline-block text-[1.2em] leading-[1]">L</span>
+      <span className="inline-block text-[1em] leading-[1]">U</span>
+      <span className="inline-block text-[0.85em] leading-[1]">P</span>
+      <span className="inline-block text-[1em] leading-[1]">F</span>
+      <span className="inline-block text-[1.2em] leading-[1]">R</span>
+    </span>
+  )
+})
+
+/** Memoized so title block does not re-render when phraseIndex changes. */
+const HeroTitleContent = memo(function HeroTitleContent({
+  prefersReducedMotion,
+  shinePositionDelayed,
+}: {
+  prefersReducedMotion: boolean | null
+  shinePositionDelayed: MotionValue<string>
+}) {
+  return (
+    <h1
+      className="font-serif hero-title-lupfr font-bold tracking-tighter leading-none text-center flex flex-col items-center uppercase gap-1.5 sm:gap-2 md:gap-3"
+    >
+      <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
+      <motion.span
+        className="block hero-title-entertainment font-medium hero-entertainment-text normal-case tracking-normal"
+        style={{ backgroundPosition: prefersReducedMotion ? staticShinePositionCss : shinePositionDelayed }}
+      >
+        Entertainment
+      </motion.span>
+    </h1>
+  )
+})
+
 export function Hero() {
-  preload(HERO_VIDEO_SRC, { as: "video", fetchPriority: "high" })
   const containerRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoDarkRef = useRef<HTMLVideoElement>(null)
+  const videoLightRef = useRef<HTMLVideoElement>(null)
+
+  const setVideoDarkRef = (el: HTMLVideoElement | null) => {
+    videoDarkRef.current = el
+    if (el) el.loop = true
+  }
+  const setVideoLightRef = (el: HTMLVideoElement | null) => {
+    videoLightRef.current = el
+    if (el) el.loop = true
+  }
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
+
+  // Preload video only on desktop to keep mobile fast (no video load)
+  useEffect(() => {
+    if (isMobile !== false) return
+    const prefersDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
+    preload(prefersDark ? HERO_VIDEO_DARK : HERO_VIDEO_LIGHT, { as: "video", fetchPriority: "high" })
+  }, [isMobile])
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -44,52 +102,61 @@ export function Hero() {
     return () => clearInterval(id)
   }, [])
 
-  // Mobile: skip video and use poster immediately to avoid autoplay issues and improve load
+  // Mobile: skip video and use poster to avoid autoplay issues and improve load
   useEffect(() => {
-    if (isMobile) setFallbackToImage(true)
+    if (isMobile === true) setFallbackToImage(true)
   }, [isMobile])
 
   useEffect(() => {
     if (fallbackToImage) return
-    const video = videoRef.current
-    if (!video) return
+    const darkEl = videoDarkRef.current
+    const lightEl = videoLightRef.current
+    if (!darkEl || !lightEl) return
 
-    video.loop = true
+    const videos = [darkEl, lightEl]
+    videos.forEach((v) => { v.loop = true })
 
     const useFallback = () => setFallbackToImage(true)
     const timeoutId = setTimeout(useFallback, HERO_VIDEO_SLOW_MS)
 
     const ensurePlaying = () => {
-      if (video.paused) {
-        if (video.ended) {
-          video.currentTime = 0
+      videos.forEach((video) => {
+        if (video.paused) {
+          if (video.ended) video.currentTime = 0
+          video.play().catch(() => {})
         }
-        video.play().catch(() => {})
-      }
+      })
     }
 
     const onCanPlay = () => {
       clearTimeout(timeoutId)
+      videos.forEach((v) => { v.loop = true })
       ensurePlaying()
     }
     const onError = () => {
       clearTimeout(timeoutId)
       useFallback()
     }
-    const onPause = () => {
-      ensurePlaying()
-    }
-    const onEnded = () => {
+    const onPause = () => ensurePlaying()
+    const restartVideo = (video: HTMLVideoElement) => {
+      video.loop = true
       video.currentTime = 0
       video.play().catch(() => {})
     }
-    const onStalled = () => {
-      video.play().catch(() => {})
+    const onEnded = (e: Event) => {
+      const video = e.target as HTMLVideoElement
+      if (video) restartVideo(video)
     }
+    const onTimeUpdate = () => {
+      videos.forEach((video) => {
+        if (video.ended || (video.duration > 0 && video.currentTime >= video.duration - 0.25)) {
+          restartVideo(video)
+        }
+      })
+    }
+    const onStalled = () => { videos.forEach((v) => v.play().catch(() => {})) }
     const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        ensurePlaying()
-      }
+      if (document.visibilityState === "visible") ensurePlaying()
     }
 
     const observer = new IntersectionObserver(
@@ -98,23 +165,29 @@ export function Hero() {
       },
       { threshold: 0.1 }
     )
-    observer.observe(video)
+    videos.forEach((v) => observer.observe(v))
 
-    video.addEventListener("canplay", onCanPlay, { once: true })
-    video.addEventListener("error", onError, { once: true })
-    video.addEventListener("pause", onPause)
-    video.addEventListener("ended", onEnded)
-    video.addEventListener("stalled", onStalled)
+    videos.forEach((video) => {
+      video.addEventListener("canplay", onCanPlay, { once: true })
+      video.addEventListener("error", onError, { once: true })
+      video.addEventListener("pause", onPause)
+      video.addEventListener("ended", onEnded)
+      video.addEventListener("timeupdate", onTimeUpdate)
+      video.addEventListener("stalled", onStalled)
+    })
     document.addEventListener("visibilitychange", onVisibilityChange)
 
     return () => {
       clearTimeout(timeoutId)
       observer.disconnect()
-      video.removeEventListener("canplay", onCanPlay)
-      video.removeEventListener("error", onError)
-      video.removeEventListener("pause", onPause)
-      video.removeEventListener("ended", onEnded)
-      video.removeEventListener("stalled", onStalled)
+      videos.forEach((video) => {
+        video.removeEventListener("canplay", onCanPlay)
+        video.removeEventListener("error", onError)
+        video.removeEventListener("pause", onPause)
+        video.removeEventListener("ended", onEnded)
+        video.removeEventListener("timeupdate", onTimeUpdate)
+        video.removeEventListener("stalled", onStalled)
+      })
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
   }, [fallbackToImage])
@@ -124,16 +197,14 @@ export function Hero() {
     offset: ["start start", "end start"]
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "0%" : "50%"])
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile === false ? "50%" : "0%"])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile ? 1 : 1.2])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile === false ? 1.2 : 1])
   /* Shine sweeps left→right in first 20% of scroll */
-  const shinePosition = useTransform(scrollYProgress, [0, 0.2, 1], ["100% 50%", "0% 50%", "0% 50%"])
   const shinePositionDelayed = useTransform(scrollYProgress, [0, 0.04, 0.24, 1], ["100% 50%", "100% 50%", "0% 50%", "0% 50%"])
-  const staticShinePosition = "50% 50%"
 
   return (
-    <section ref={containerRef} className="relative min-h-[100vh] overflow-hidden">
+    <section ref={containerRef} className="relative min-h-[100vh] min-h-[100dvh] overflow-hidden">
       {/* Animated Background Grid - opacity only (compositor-friendly) */}
       <motion.div
         className="absolute inset-0 gpu-accelerate bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
@@ -171,7 +242,7 @@ export function Hero() {
       />
 
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        {fallbackToImage || isMobile ? (
+        {fallbackToImage || isMobile !== false ? (
           <img
             src={HERO_POSTER}
             alt=""
@@ -183,27 +254,45 @@ export function Hero() {
             aria-hidden
           />
         ) : (
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            disableRemotePlayback
-            className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
-            poster={HERO_POSTER}
-            aria-hidden
-          >
-            <source src={HERO_VIDEO_SRC} type="video/mp4" />
-          </video>
+          <>
+            <video
+              ref={setVideoDarkRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              disableRemotePlayback
+              className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-0 dark:opacity-100 transition-opacity duration-500 ease-out"
+              poster={HERO_POSTER}
+              aria-hidden
+            >
+              <source src={HERO_VIDEO_DARK} type="video/mp4" />
+            </video>
+            <video
+              ref={setVideoLightRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              disablePictureInPicture
+              disableRemotePlayback
+              className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-100 dark:opacity-0 transition-opacity duration-500 ease-out"
+              poster={HERO_POSTER}
+              aria-hidden
+            >
+              <source src={HERO_VIDEO_LIGHT} type="video/mp4" />
+            </video>
+          </>
         )}
-        <div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background z-10" />
+<div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
+        {/* Seamless fade into next section: softer gradient for smooth handoff to stats */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background z-10" />
       </motion.div>
 
-      <motion.div 
+      <motion.div
         style={{ opacity }}
         className="relative z-20 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-28 sm:pt-36 md:pt-40 pb-24 sm:pb-28 md:pb-32"
       >
@@ -213,35 +302,23 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="text-center"
         >
-          <motion.h1
-            className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-[8rem] xl:text-[9rem] 2xl:text-[10rem] font-bold tracking-tighter leading-none text-center flex flex-col items-center uppercase gap-1.5 sm:gap-2 md:gap-3"
-          >
-            <motion.span
-              className="block hero-gold-shine-scroll gpu-accelerate"
-              style={{ backgroundPosition: prefersReducedMotion ? staticShinePosition : shinePosition }}
-            >
-              LUPFR
-            </motion.span>
-            <motion.span
-              className="block text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-muted-foreground normal-case tracking-normal"
-              style={{ backgroundPosition: prefersReducedMotion ? staticShinePosition : shinePositionDelayed }}
-            >
-              Entertainment
-            </motion.span>
-          </motion.h1>
+          <HeroTitleContent
+            prefersReducedMotion={prefersReducedMotion}
+            shinePositionDelayed={shinePositionDelayed}
+          />
 
           <div
-            className="mt-6 sm:mt-8 min-h-[2.5rem] sm:min-h-[3rem] relative w-full max-w-4xl mx-auto px-8 sm:px-12 md:px-20 lg:px-24"
+            className="mt-6 sm:mt-8 min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center w-full max-w-4xl mx-auto px-8 sm:px-12 md:px-20 lg:px-24"
             aria-live="polite"
             aria-atomic="true"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.p
                 key={phraseIndex}
-                className="text-xs sm:text-sm md:text-base font-medium tracking-tight leading-snug text-center absolute top-1/2 left-0 right-0 -translate-y-1/2 drop-shadow-sm max-w-2xl mx-auto"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
+                className="text-sm sm:text-base md:text-lg font-medium tracking-tight leading-snug text-center max-w-2xl mx-auto text-gold-accent antialiased gpu-accelerate subpixel-antialiased"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: FADE_DURATION_S, ease: [0.22, 1, 0.36, 1] }}
               >
                 {HERO_PHRASES[phraseIndex]}
@@ -269,7 +346,7 @@ export function Hero() {
               href={LINKS.watchReel}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-border text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent transition-colors text-sm sm:text-base"
+              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/80 dark:border-border text-white dark:text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent dark:hover:text-accent transition-colors text-sm sm:text-base"
               whileHover={{ scale: 1.05, boxShadow: "0 0 24px oklch(0.48 0.06 74 / 0.25)" }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}

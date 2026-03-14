@@ -4,6 +4,8 @@ San Francisco's premier music event production company. Creating unforgettable e
 
 ## Setup
 
+This project uses **Bun**. With [Corepack](https://nodejs.org/api/corepack.html) enabled (`corepack enable`), `npm install` and `npm run` will use Bun.
+
 1. Install dependencies: `bun install`
 2. Copy environment: `cp .env.example .env.local`
 3. Add your [Resend](https://resend.com) API key to `.env.local`:
