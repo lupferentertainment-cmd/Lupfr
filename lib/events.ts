@@ -22,6 +22,18 @@ export interface EventItem {
 export const EVENTS: EventItem[] = [
   // —— Upcoming (in display order) ——
   {
+    id: 5,
+    slug: "wheres-west-corbin-mason",
+    title: "Where's West",
+    subtitle: "Corbin Mason",
+    date: "TBD",
+    dateISO: null,
+    time: "TBD",
+    location: "TBD",
+    image: "/events/wheres_west.jpeg",
+    description: "Where's West with Corbin Mason.",
+  },
+  {
     id: 1,
     slug: "boiler-boat-003-wheres-west-warehouse-session",
     title: "BOILER BOAT 003 – WHERES WEST — WAREHOUSE SESSION",
@@ -74,6 +86,30 @@ export const EVENTS: EventItem[] = [
 
 export function getEventBySlug(slug: string): EventItem | undefined {
   return EVENTS.find((e) => e.slug === slug)
+}
+
+/** Upcoming: date TBD (dateISO null) or event date >= today. */
+export function getUpcomingEvents(): EventItem[] {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return EVENTS.filter((e) => {
+    if (e.dateISO === null) return true
+    const d = new Date(e.dateISO)
+    d.setHours(0, 0, 0, 0)
+    return d >= today
+  })
+}
+
+/** Past: event date < today. */
+export function getPastEvents(): EventItem[] {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return EVENTS.filter((e) => {
+    if (e.dateISO === null) return false
+    const d = new Date(e.dateISO)
+    d.setHours(0, 0, 0, 0)
+    return d < today
+  })
 }
 
 export function getEventTag(event: EventItem): { label: string; color: string } {

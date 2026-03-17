@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Music, Users, Mic2, PartyPopper, Building2, Sparkles } from "lucide-react"
@@ -132,7 +133,7 @@ function ServiceCard({
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-2xl pointer-events-none" aria-hidden />
 
         <motion.div
-          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 transition-colors duration-300"
+          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-300"
           animate={{
             scale: isActive ? 1.05 : 1,
           }}
@@ -140,12 +141,12 @@ function ServiceCard({
         >
           <service.icon
             size={24}
-            className="text-foreground group-hover:text-accent-foreground transition-colors"
+            className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-300"
           />
         </motion.div>
 
         <motion.h3
-          className="text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent transition-colors"
+          className="text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors"
           animate={{ scale: isActive ? 1.01 : 1 }}
           transition={SPRING_SNAPPY}
         >
@@ -253,65 +254,79 @@ export function Services() {
           ))}
         </div>
 
-        {/* Corporate partners - rotating row */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ ...SPRING_PUNCH, delay: 0.8 }}
-          className="mt-16 sm:mt-20 md:mt-24"
-        >
-          {/* Label with floating orbs */}
-          <div className="relative flex justify-center mb-8 py-4">
-            {/* Floating orbs around "Corporate Partners?" */}
-            <span className="absolute left-[12%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent/40 animate-float" aria-hidden />
-            <span className="absolute left-[18%] top-1/3 w-1.5 h-1.5 rounded-full bg-muted-foreground/30 animate-float-delay-1" aria-hidden />
-            <span className="absolute right-[18%] top-1/3 w-1.5 h-1.5 rounded-full bg-muted-foreground/30 animate-float-delay-2" aria-hidden />
-            <span className="absolute right-[12%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent/40 animate-float-delay-3" aria-hidden />
-            <span className="absolute left-1/2 -translate-x-1/2 top-0 w-1 h-1 rounded-full bg-accent/30 animate-float-delay-4" aria-hidden />
-            <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-1 h-1 rounded-full bg-accent/30 animate-float-delay-1" aria-hidden />
-            <p className="relative text-center text-sm text-muted-foreground uppercase tracking-wider">
-              Corporate Partners?
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16">
+        {/* Corporate partners - same title style as Featured Artists / Culture Meets Production; no strip background */}
+        <div className="mt-20 sm:mt-24 md:mt-32">
+          <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">
+            Partners
+          </p>
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-10 sm:mb-12 md:mb-14">
+            <GoldShineText scrollTargetRef={ref}>Corporate</GoldShineText>
+            <br />
+            <span className="text-muted-foreground">Partners</span>
+          </h2>
+          <div className="flex flex-wrap items-center justify-center gap-14 sm:gap-20 md:gap-24 min-h-[10rem] sm:min-h-[12rem]">
             <a
               href="https://umbrella.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-visible"
               aria-label="Umbrella"
             >
-              <img src="/corporate_partners/umbrella.png" alt="Umbrella" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+              <Image
+                src="/corporate_partners/umbrella_transparent_2.png"
+                alt="Umbrella"
+                width={400}
+                height={160}
+                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
+              />
             </a>
             <a
               href="https://www.eriaevents.co"
               target="_blank"
               rel="noopener noreferrer"
-              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
               aria-label="Eria"
             >
-              <img src="/corporate_partners/eria.png" alt="Eria" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+              <Image
+                src="/corporate_partners/eria.png"
+                alt="Eria"
+                width={400}
+                height={160}
+                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-90"
+              />
             </a>
             <a
               href="https://vennsocial.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
               aria-label="Venn Social"
             >
-              <img src="/corporate_partners/venn_social.png" alt="Venn Social" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+              <Image
+                src="/corporate_partners/venn_social.png"
+                alt="Venn Social"
+                width={400}
+                height={160}
+                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-[0.55]"
+              />
             </a>
             <a
               href="https://brixtonbarsf.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
               aria-label="Brixton Bar SF"
             >
-              <img src="/corporate_partners/brixton.png" alt="Brixton Bar SF" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+              <Image
+                src="/corporate_partners/brixton_logo_transparent.png"
+                alt="Brixton Bar SF"
+                width={400}
+                height={160}
+                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
+              />
             </a>
           </div>
-        </motion.div>
+        </div>
       </ScrollReveal>
     </section>
   )
