@@ -273,44 +273,43 @@ export function Services() {
               Corporate Partners?
             </p>
           </div>
-          <div className="overflow-hidden">
-            <motion.div
-              animate={{ x: [0, "-50%"] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="flex items-center gap-12 md:gap-16 w-max"
+          <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-16">
+            <a
+              href="https://umbrella.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              aria-label="Umbrella"
             >
-              {[...Array(2)].map((_, i) => (
-                <div key={i} className="flex items-center gap-12 md:gap-16 shrink-0">
-                  <a
-                    href="https://umbrella.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
-                    aria-label="Umbrella"
-                  >
-                    <img src="/partners/umbrella.svg" alt="Umbrella" width={120} height={32} className="h-8 w-auto object-contain" />
-                  </a>
-                  <a
-                    href="https://www.eriaevents.co"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
-                    aria-label="Eria"
-                  >
-                    <img src="/partners/eria.svg" alt="Eria" width={120} height={32} className="h-8 w-auto object-contain" />
-                  </a>
-                  <a
-                    href="https://vennsocial.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
-                    aria-label="Venn Social"
-                  >
-                    <img src="/partners/venn-social.svg" alt="Venn Social" width={120} height={32} className="h-8 w-auto object-contain" />
-                  </a>
-                </div>
-              ))}
-            </motion.div>
+              <img src="/corporate_partners/umbrella.png" alt="Umbrella" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+            </a>
+            <a
+              href="https://www.eriaevents.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              aria-label="Eria"
+            >
+              <img src="/corporate_partners/eria.png" alt="Eria" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+            </a>
+            <a
+              href="https://vennsocial.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              aria-label="Venn Social"
+            >
+              <img src="/corporate_partners/venn_social.png" alt="Venn Social" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+            </a>
+            <a
+              href="https://brixtonbarsf.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-70 hover:opacity-100 transition-opacity h-10 flex items-center"
+              aria-label="Brixton Bar SF"
+            >
+              <img src="/corporate_partners/brixton.png" alt="Brixton Bar SF" width={120} height={40} className="h-8 w-auto object-contain max-h-10" />
+            </a>
           </div>
         </motion.div>
       </ScrollReveal>

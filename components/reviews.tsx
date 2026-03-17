@@ -344,7 +344,7 @@ const STATS_SLIDES: StatItem[][] = [
   [
     { end: 5, suffix: "+", label: "Years experience", type: "int" },
     { end: 98, suffix: "%", label: "Client retention", type: "int" },
-    { end: 500, suffix: "+", label: "Collaborations", type: "int" },
+    { end: 200, suffix: "+", label: "Collaborations", type: "int" },
     { end: 12, suffix: "+", label: "Venue partners", type: "int" },
   ],
 ]

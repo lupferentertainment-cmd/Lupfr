@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { motion, useInView, useScroll, useTransform, animate, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import { Sparkles, Users, Zap } from "lucide-react"
@@ -235,6 +236,19 @@ export function About() {
                 <div className="w-16 h-px bg-accent" />
                 <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
               </div>
+            </div>
+            {/* Portrait: fades into section, does not dominate */}
+            <div className="relative w-full max-w-sm mb-8 rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 z-10 pointer-events-none" />
+              <Image
+                src="/images/will_lupfer.jpg"
+                alt="Will Lupfer, Founder & CEO of LUPFR Entertainment"
+                width={400}
+                height={500}
+                sizes="(max-width: 768px) 100vw, 400px"
+                className="w-full h-auto object-cover object-top"
+              />
             </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>

@@ -122,7 +122,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preload" as="image" href="/hero-poster.jpg" />
+        <link rel="preload" as="image" href="/hero/hero-poster.jpg" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         {firstEventImage ? (
           <link rel="preload" as="image" href={firstEventImage} />

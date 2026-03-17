@@ -15,7 +15,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "prepare": "node scripts/install-pre-commit.js"
+    "prepare": "bun scripts/install-pre-commit.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
