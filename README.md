@@ -17,10 +17,20 @@ This project uses **Bun** for install, scripts, and lint. Vercel is configured t
 
 Contact form submissions and newsletter signups are sent via [Resend](https://resend.com). Without `RESEND_API_KEY` in `.env.local`, those endpoints return an error asking you to add the key. Verify your `lupfr.com` domain in Resend and use a key with send permission.
 
+## Content and images (data-driven UI)
+
+Site content (events, artists, services, corporate partners) lives in **`data/`** as YAML files. Images live in **`public/`** (e.g. `public/artists/`, `public/events/`, `public/corporate_partners/`). To add or edit content without touching code:
+
+1. **Add or replace images** in the right `public/` subfolder (e.g. `public/artists/`, `public/events/`, `public/past_events/`, `public/corporate_partners/`).
+2. **Edit the matching YAML** in `data/` (e.g. `data/artists.yml`, `data/events.yml`, `data/services.yml`, `data/partners.yml`). Use paths from the site root, e.g. `image: "/artists/yourfile.jpg"` (no `public/` in the path).
+3. **Rebuild**: `bun run build` runs `generate-data` first, which turns YAML into JSON under `lib/data/generated/` so the app can use the new content.
+
+See comments at the top of each `data/*.yml` file for field descriptions. Non-technical editors can add images and update YAML; no component code changes are required.
+
 ## Build & Lint
 
 - `bun run dev` – development server
-- `bun run build` – production build
+- `bun run build` – runs `generate-data` then production build
 - `bun run start` – run production server
 - `bun run lint` – run ESLint
 

@@ -3,9 +3,9 @@
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
-import { Music, Users, Mic2, PartyPopper, Building2, Sparkles } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { getServices, type ServiceItem } from "@/lib/data/services"
 
 const CARD_STAGGER = 0.08
 const SPRING_PUNCH = { type: "spring" as const, stiffness: 500, damping: 26 }
@@ -16,46 +16,7 @@ const TILT_SPRING = { stiffness: 420, damping: 32 }
 // Deeper perspective so cards read more 3D
 const CARD_PERSPECTIVE = 1200
 
-const services = [
-  {
-    icon: PartyPopper,
-    title: "Owned Events",
-    description: "Our signature branded experiences—from Boiler Boat to Rooftop Grooves. We handle everything: venue, talent, production, and promotion.",
-    features: ["Full Production", "Curated Lineups", "Premium Venues", "Marketing & Promotion"],
-  },
-  {
-    icon: Mic2,
-    title: "Talent Booking",
-    description: "Connect with the right artists through our extensive network. We source, negotiate, and coordinate talent for your events.",
-    features: ["Artist Discovery", "Contract Negotiation", "Schedule Coordination", "On-Site Management"],
-  },
-  {
-    icon: Building2,
-    title: "Venue Programming",
-    description: "We curate regular music programming for venues looking to elevate their nightlife presence with consistent, quality entertainment.",
-    features: ["Monthly DJ Nights", "Music Curation", "Event Management", "Audience Development"],
-  },
-  {
-    icon: Users,
-    title: "Private Events",
-    description: "From corporate gatherings to luxury celebrations, we bring the same energy and attention to detail to every private event.",
-    features: ["Custom Concepts", "Full Service", "Premium Sound", "Exclusive Access"],
-  },
-  {
-    icon: Music,
-    title: "Event Production",
-    description: "End-to-end production services for venues and brands. We bring the vision, crew, and execution to make it happen.",
-    features: ["Sound & Lighting", "Staging & Decor", "Vendor Management", "Day-Of Coordination"],
-  },
-  {
-    icon: Sparkles,
-    title: "Brand Partnerships",
-    description: "Collaborate with us on activations that reach the SF nightlife community through our events and platform.",
-    features: ["Event Sponsorships", "Brand Activations", "Content Creation", "Influencer Access"],
-  },
-]
-
-type ServiceItem = (typeof services)[number]
+const services = getServices()
 
 function ServiceCard({
   service,
@@ -266,7 +227,7 @@ export function Services() {
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-14 sm:gap-20 md:gap-24 min-h-[10rem] sm:min-h-[12rem]">
             <a
-              href="https://umbrella.com"
+              href="https://umbrellalive.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-visible"
