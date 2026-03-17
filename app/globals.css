@@ -5,34 +5,36 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Lupfer Entertainment - Metallic Gold & Black Theme */
+/* :root = light theme (all text visible); .dark = dark theme */
 :root {
-  /* Black base – sleek modern */
-  --background: oklch(0.055 0.004 280);
-  --foreground: oklch(0.96 0.008 85);
-  --card: oklch(0.085 0.005 280);
-  --card-foreground: oklch(0.96 0.008 85);
-  --popover: oklch(0.075 0.005 280);
-  --popover-foreground: oklch(0.96 0.008 85);
-  --primary: oklch(0.96 0.008 85);
-  --primary-foreground: oklch(0.055 0.004 280);
-  --secondary: oklch(0.12 0.01 80);
-  --secondary-foreground: oklch(0.92 0.05 88);
-  --muted: oklch(0.14 0.01 80);
-  --muted-foreground: oklch(0.62 0.03 85);
-  /* Metallic gold – matches will_logo.png: bright highlights, rich mid-tones, deep brown-gold shadows */
-  --gold-shadow: oklch(0.38 0.09 82);
-  --gold-dark: oklch(0.52 0.10 85);
-  --gold: oklch(0.65 0.12 88);
-  --gold-bright: oklch(0.78 0.09 90);
-  --gold-specular: oklch(0.88 0.06 92);
-  --gold-filter-shadow: oklch(0.12 0.05 82 / 0.8);
-  --gold-filter-edge: oklch(0.38 0.09 85 / 0.3);
+  /* Light base – high contrast for accessibility */
+  --background: oklch(0.98 0.006 85);
+  --foreground: oklch(0.18 0.02 280);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.02 280);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.02 280);
+  --primary: oklch(0.25 0.02 280);
+  --primary-foreground: oklch(0.98 0.006 85);
+  --secondary: oklch(0.94 0.02 85);
+  --secondary-foreground: oklch(0.22 0.02 280);
+  --muted: oklch(0.92 0.015 85);
+  --muted-foreground: oklch(0.45 0.02 280);
+  /* Metallic gold – light mode: more yellow (flipping phrases, Entertainment, accents) */
+  --gold-shadow: oklch(0.50 0.14 88);
+  --gold-dark: oklch(0.62 0.15 88);
+  --gold: oklch(0.70 0.16 88);
+  --gold-bright: oklch(0.78 0.12 88);
+  --gold-specular: oklch(0.88 0.06 88);
+  --gold-filter-shadow: oklch(0.35 0.10 88 / 0.55);
+  --gold-filter-edge: oklch(0.55 0.12 88 / 0.35);
+  --btn-gold-text: oklch(0.98 0.004 85);
   --accent: var(--gold);
-  --accent-foreground: oklch(0.06 0.005 280);
+  --accent-foreground: oklch(0.12 0.02 280);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.18 0.015 80);
-  --input: oklch(0.12 0.008 280);
+  --border: oklch(0.88 0.015 85);
+  --input: oklch(0.92 0.01 85);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -43,15 +45,14 @@
   --transition-fast: 150ms;
   --transition-snap: 250ms;
   --transition-smooth: 350ms;
-  --sidebar: oklch(0.08 0.006 280);
-  --sidebar-foreground: oklch(0.96 0.008 85);
+  --sidebar: oklch(0.96 0.01 85);
+  --sidebar-foreground: oklch(0.18 0.02 280);
   --sidebar-primary: var(--gold);
-  --sidebar-primary-foreground: oklch(0.055 0.004 280);
-  --sidebar-accent: oklch(0.12 0.01 80);
-  --sidebar-accent-foreground: oklch(0.96 0.008 85);
-  --sidebar-border: oklch(0.18 0.015 80);
+  --sidebar-primary-foreground: oklch(0.12 0.02 280);
+  --sidebar-accent: oklch(0.92 0.02 85);
+  --sidebar-accent-foreground: oklch(0.18 0.02 280);
+  --sidebar-border: oklch(0.88 0.015 85);
   --sidebar-ring: var(--gold);
-  /* Metallic gold gradient – logo-matched: shadow → mid → specular → bright */
   --gradient-hero-gold: linear-gradient(
     90deg,
     var(--gold-shadow) 0%,
@@ -66,7 +67,6 @@
     var(--gold-dark) 88%,
     var(--gold-shadow) 100%
   );
-  /* Metallic gold button – vertical gradient for depth (logo-matched) */
   --gradient-btn-brass: linear-gradient(
     180deg,
     var(--gold-bright) 0%,
@@ -75,9 +75,33 @@
     var(--gold-shadow) 100%
   );
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+  /* Light mode buttons: more yellow gold (Book an event, etc.) */
+  --btn-gold-shadow: oklch(0.52 0.14 88);
+  --btn-gold-dark: oklch(0.60 0.15 88);
+  --btn-gold: oklch(0.68 0.16 88);
+  --btn-gold-bright: oklch(0.76 0.13 88);
+  --btn-gold-specular: oklch(0.88 0.06 88);
+  --btn-gold-filter-shadow: oklch(0.35 0.10 88 / 0.6);
+  --btn-gold-filter-edge: oklch(0.56 0.12 88 / 0.4);
 }
 
 .dark {
+  /* Gold in dark mode: white gold (cooler, less yellow) */
+  --btn-gold-text: oklch(0.09 0.01 75);
+  --gold-shadow: oklch(0.50 0.06 75);
+  --gold-dark: oklch(0.62 0.07 78);
+  --gold: oklch(0.68 0.08 80);
+  --gold-bright: oklch(0.86 0.06 82);
+  --gold-specular: oklch(0.94 0.04 84);
+  --gold-filter-shadow: oklch(0.18 0.04 75 / 0.7);
+  --gold-filter-edge: oklch(0.48 0.07 78 / 0.35);
+  --btn-gold-shadow: oklch(0.48 0.05 68);
+  --btn-gold-dark: oklch(0.58 0.06 70);
+  --btn-gold: oklch(0.65 0.07 72);
+  --btn-gold-bright: oklch(0.86 0.05 74);
+  --btn-gold-specular: oklch(0.94 0.03 76);
+  --btn-gold-filter-shadow: oklch(0.28 0.04 70 / 0.75);
+  --btn-gold-filter-edge: oklch(0.55 0.06 72 / 0.45);
   --background: oklch(0.055 0.004 280);
   --foreground: oklch(0.96 0.008 85);
   --card: oklch(0.085 0.005 280);
@@ -175,11 +199,17 @@
   html {
     overflow-x: clip;
     min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color var(--transition-smooth) ease, color var(--transition-smooth) ease;
     scroll-behavior: inherit;
     overflow-x: clip;
+    width: 100%;
+    max-width: 100%;
     /* Safe area insets for notched devices (iPhone X+, etc.) */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -305,6 +335,13 @@
   50% { transform: translateY(-12px) translateX(6px); }
 }
 
+/* Floating orbs around section labels (e.g. Corporate Partners) */
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-float-delay-1 { animation: float 5s ease-in-out 0.5s infinite; }
+.animate-float-delay-2 { animation: float 4.5s ease-in-out 1s infinite; }
+.animate-float-delay-3 { animation: float 5.5s ease-in-out 1.5s infinite; }
+.animate-float-delay-4 { animation: float 4s ease-in-out 2s infinite; }
+
 /* Compositor-friendly: opacity + transform only (no filter animation) */
 @keyframes pulse-glow {
   0%, 100% { opacity: 0.3; transform: scale(1); }
@@ -395,6 +432,24 @@
   color: var(--gold);
 }
 
+/* Hero "Entertainment" line: gold in light mode, muted in dark */
+.hero-entertainment-text {
+  color: var(--gold);
+}
+.dark .hero-entertainment-text {
+  color: var(--muted-foreground);
+}
+
+/* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */
+.hero-title-lupfr {
+  font-size: clamp(3.5rem, 12vw + 2rem, 12rem);
+  line-height: 1;
+}
+.hero-title-entertainment {
+  font-size: clamp(1.25rem, 3.5vw + 0.75rem, 3.5rem);
+  line-height: 1.2;
+}
+
 /* Hero title: "Entertainment" – horizontal gradient (peachy left → darker orange right) */
 .hero-entertainment-gradient {
   background: linear-gradient(
@@ -408,28 +463,23 @@
   color: transparent;
 }
 
-/* Metallic gold button – clean single shine, performant, snappy */
+/* Brassy metallic gold button – LE logo: whiter highlights, brown/beige depth, metallic sheen */
 .btn-metallic-gold {
   position: relative;
   overflow: hidden;
   transition: box-shadow 0.2s ease, filter 0.2s ease;
-  /* Single vertical gradient for metallic depth (no horizontal stripes) */
   background: linear-gradient(
     180deg,
-    var(--gold-bright) 0%,
-    var(--gold) 50%,
-    var(--gold-dark) 100%
+    var(--btn-gold-bright) 0%,
+    var(--btn-gold) 35%,
+    var(--btn-gold-dark) 65%,
+    var(--btn-gold-shadow) 100%
   );
-  color: oklch(0.06 0.005 280);
-  border: 1px solid oklch(0.45 0.10 85 / 0.9);
-  box-shadow:
-    0 2px 4px var(--gold-filter-shadow),
-    0 4px 12px oklch(0.25 0.08 82 / 0.5),
-    inset 0 1px 0 oklch(0.88 0.06 92 / 0.5),
-    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.5);
-  filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+  color: var(--btn-gold-text);
+  border: none;
+  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
+  filter: none;
 }
-/* One crisp diagonal shine – single band, no overlays */
 .btn-metallic-gold::before {
   content: "";
   position: absolute;
@@ -437,9 +487,9 @@
   border-radius: inherit;
   background: linear-gradient(
     110deg,
-    transparent 38%,
-    oklch(1 0 0 / 0.35) 50%,
-    transparent 62%
+    transparent 35%,
+    oklch(1 0 0 / 0.45) 50%,
+    transparent 65%
   );
   background-size: 200% 100%;
   background-position: 100% 50%;
@@ -447,36 +497,29 @@
   transition: background-position 0.25s ease;
 }
 .btn-metallic-gold:hover {
-  box-shadow:
-    0 4px 12px var(--gold-filter-shadow),
-    0 8px 24px oklch(0.25 0.08 82 / 0.5),
-    inset 0 1px 0 oklch(0.88 0.06 92 / 0.6),
-    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.5);
-  filter: drop-shadow(0 2px 4px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) drop-shadow(0 0 20px oklch(0.55 0.10 88 / 0.25));
+  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
+  filter: none;
 }
 .btn-metallic-gold:hover::before {
   background-position: 0% 50%;
 }
 
-/* Metallic brass button – clean single shine, matches btn-metallic-gold */
+/* Brassy metallic brass button – matches btn-metallic-gold (LE logo) */
 .btn-metallic-brass {
   position: relative;
   overflow: hidden;
   transition: box-shadow 0.2s ease, filter 0.2s ease;
   background: linear-gradient(
     180deg,
-    var(--gold-bright) 0%,
-    var(--gold) 50%,
-    var(--gold-dark) 100%
+    var(--btn-gold-bright) 0%,
+    var(--btn-gold) 35%,
+    var(--btn-gold-dark) 65%,
+    var(--btn-gold-shadow) 100%
   );
-  color: oklch(0.06 0.005 280);
-  border: 1px solid oklch(0.45 0.10 85 / 0.8);
-  box-shadow:
-    0 1px 2px var(--gold-filter-shadow),
-    0 2px 6px oklch(0.25 0.08 82 / 0.5),
-    inset 0 1px 0 oklch(0.88 0.06 92 / 0.4),
-    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.4);
-  filter: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+  color: var(--btn-gold-text);
+  border: none;
+  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
+  filter: none;
 }
 .btn-metallic-brass::before {
   content: "";
@@ -485,9 +528,9 @@
   border-radius: inherit;
   background: linear-gradient(
     110deg,
-    transparent 38%,
-    oklch(1 0 0 / 0.35) 50%,
-    transparent 62%
+    transparent 35%,
+    oklch(1 0 0 / 0.45) 50%,
+    transparent 65%
   );
   background-size: 200% 100%;
   background-position: 100% 50%;
@@ -495,17 +538,26 @@
   transition: background-position 0.25s ease;
 }
 .btn-metallic-brass:hover {
-  box-shadow:
-    0 2px 6px var(--gold-filter-shadow),
-    0 4px 12px oklch(0.25 0.08 82 / 0.5),
-    inset 0 1px 0 oklch(0.88 0.06 92 / 0.5),
-    inset 0 -1px 0 oklch(0.35 0.09 82 / 0.4);
+  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
 }
 .btn-metallic-brass:hover::before {
   background-position: 0% 50%;
 }
 
-/* Hero gold text – scroll-driven shine (logo-matched metallic gold) */
+/* Periodic shine: gradient passes across hero LUPFR text */
+@keyframes hero-shine-pass {
+  0% {
+    background-position: 120% 50%;
+  }
+  50% {
+    background-position: -20% 50%;
+  }
+  100% {
+    background-position: 120% 50%;
+  }
+}
+
+/* Hero gold text – scroll-driven or periodic shine (logo-matched metallic gold) */
 @layer components {
   .hero-gold-shine-scroll {
     @apply bg-clip-text text-transparent;
@@ -517,6 +569,117 @@
             drop-shadow(0 0 0 1px var(--gold-filter-edge))
             var(--filter-hero-gold);
   }
+
+  /* Static position for reduced-motion (no animation); LUPFR renders once, no inline style updates */
+  .hero-gold-shine-static {
+    background-position: 50% 50%;
+  }
+
+  /* Passing periodic shine on LUPFR – only when motion is allowed; CSS-only so no React re-renders */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-gold-shine-periodic {
+      animation: hero-shine-pass 4.5s ease-in-out infinite;
+    }
+  }
+
+  /* Reviews section: minimal 2026-style stars (small, flat, no animation) */
+  .stars-modern {
+    display: inline-block;
+    color: var(--gold);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stars-modern.stars-half {
+    clip-path: inset(0 50% 0 0);
+    margin-inline-end: -0.15em;
+  }
+
+  /* Reviews marquee: infinite scroll tracks */
+  .reviews-marquee-outer {
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+  }
+
+  .reviews-marquee-inner {
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  .reviews-marquee-inner--slow {
+    animation-duration: 260s;
+  }
+
+  .reviews-marquee-inner--medium {
+    animation-duration: 220s;
+  }
+
+  .reviews-marquee-inner--fast {
+    animation-duration: 180s;
+  }
+
+  .reviews-marquee-left {
+    animation-name: reviews-marquee-left;
+  }
+
+  .reviews-marquee-right {
+    animation-name: reviews-marquee-right;
+  }
+
+  .reviews-marquee-paused {
+    animation-play-state: paused;
+  }
+
+  /* 3D layered strips: back behind, mid middle, front in front */
+  .reviews-marquee-strip--back {
+    opacity: 0.58;
+    filter: saturate(0.82);
+    transform: scale(0.97) translateZ(-24px);
+  }
+
+  .reviews-marquee-strip--mid {
+    opacity: 0.78;
+    filter: saturate(0.9);
+    transform: scale(0.99) translateZ(0);
+  }
+
+  .reviews-marquee-strip--front {
+    opacity: 1;
+    transform: translateZ(16px);
+  }
+
+  .reviews-item--back {
+    opacity: 0.9;
+  }
+
+  .reviews-item--mid {
+    opacity: 0.95;
+  }
+
+  .reviews-item--front {
+    opacity: 1;
+  }
+}
+
+@keyframes reviews-marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes reviews-marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
 }
 
 /* Reduce motion: respect user preference */

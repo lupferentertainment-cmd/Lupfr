@@ -109,7 +109,7 @@ export function contactFormEmail(params: {
   return wrapLayout(content, `Inquiry: ${inquiryType}`);
 }
 
-/** Newsletter signup – internal notification */
+/** Newsletter signup – internal notification to team */
 export function newsletterSignupEmail(params: { email: string }): string {
   const { email } = params;
   const content = `
@@ -125,4 +125,19 @@ export function newsletterSignupEmail(params: { email: string }): string {
       </td></tr>
     </table>`;
   return wrapLayout(content, "Newsletter signup");
+}
+
+/** Welcome email sent to the subscriber after they join the list */
+export function newsletterWelcomeEmail(params: { email: string }): string {
+  const content = `
+    <h1 style="margin:0 0 24px; font-size:22px; font-weight:600; color:${BRAND.text}; letter-spacing:-0.02em;">
+      You're on the list
+    </h1>
+    <p style="margin:0 0 16px; font-size:15px; color:${BRAND.text}; line-height:1.6;">
+      Thanks for signing up. We'll notify you about upcoming events and exclusive presales.
+    </p>
+    <p style="margin:0; font-size:14px; color:${BRAND.muted}; line-height:1.6;">
+      Stay tuned — LUPFR Entertainment
+    </p>`;
+  return wrapLayout(content, "You're on the list – LUPFR Entertainment");
 }

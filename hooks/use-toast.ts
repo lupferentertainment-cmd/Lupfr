@@ -132,8 +132,11 @@ let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
   memoryState = reducer(memoryState, action)
-  listeners.forEach((listener) => {
-    listener(memoryState)
+  const state = memoryState
+  queueMicrotask(() => {
+    listeners.forEach((listener) => {
+      listener(state)
+    })
   })
 }
 

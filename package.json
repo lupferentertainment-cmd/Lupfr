@@ -14,7 +14,8 @@
     "dev:turbo": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepare": "node scripts/install-pre-commit.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

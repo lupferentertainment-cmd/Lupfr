@@ -1,5 +1,6 @@
 "use client"
 
+import { memo } from "react"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink } from "lucide-react"
@@ -11,7 +12,8 @@ const artists = [
     id: 1,
     name: "Where's West?",
     genre: "Indie",
-    image: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&q=80",
+    image: "/artists/wheres_west.jpeg",
+    bio: "LA-based indie band born in a college laundry room. From backyard shows to Sweetwater and Wonderfront—rock, indie, dance and funk with a 70s feel and California coast energy.",
     spotify: "https://open.spotify.com/artist/7380t6i98gEs1ysixt1cTO",
     appleMusic: "https://music.apple.com/artist/wheres-west",
     instagram: "https://www.instagram.com/wheres__west/",
@@ -20,7 +22,8 @@ const artists = [
     id: 2,
     name: "HLWA",
     genre: "Melodic House",
-    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80",
+    image: "/artists/hlwa.jpeg",
+    bio: "Melodic house artist from Ann Arbor. Emotive, driving cuts on Beatport and Apple Music—think soaring leads and deep grooves that move the room.",
     spotify: "https://open.spotify.com/artist/1uFstDfzHjdGuzOrnrzOTy",
     appleMusic: "https://music.apple.com/artist/hlwa",
     instagram: "https://www.instagram.com/hlwamusic/",
@@ -30,6 +33,7 @@ const artists = [
     name: "Tommy Guala",
     genre: "Deep House",
     image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+    bio: "Artist and DJ with a deep house edge. Soulful grooves and heady vibes across SoundCloud and Beatport—built for late nights and locked-in crowds.",
     spotify: "https://open.spotify.com/artist/5gXe3UJr2VZq0bMKAgxsTY",
     appleMusic: "https://music.apple.com/artist/tommy-guala",
     instagram: "https://www.instagram.com/tommy.guala/",
@@ -38,7 +42,8 @@ const artists = [
     id: 4,
     name: "Mike Stern",
     genre: "Afro House",
-    image: "https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=800&q=80",
+    image: "/artists/mike_stern.jpeg",
+    bio: "Afro house selector bringing percussion-heavy, sun-soaked grooves to the Bay. Rhythmic, hypnotic sets that keep the floor moving.",
     spotify: "https://open.spotify.com/artist/6AKgtbnwiE2SIzlIChxLRZ",
     instagram: "https://www.instagram.com/mikeystern/",
   },
@@ -46,14 +51,16 @@ const artists = [
     id: 5,
     name: "Operator SF",
     genre: "Deep House",
-    image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80",
+    image: "/artists/operator_sf.png",
+    bio: "SF house crew behind feel-good deep house sessions across the city—from Savoy Tivoli to Baker Beach. High-energy, dance-first vibes.",
     instagram: "https://www.instagram.com/operator.sf/",
   },
   {
     id: 6,
     name: "LUPFR",
     genre: "Progressive House",
-    image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80",
+    image: "/artists/lupfr.jpeg",
+    bio: "The sound behind LUPFR Entertainment. Progressive house and curation that match SF's energy—boat parties, warehouses, and nights that stick.",
     instagram: "https://www.instagram.com/lupfr_music/",
   },
 ]
@@ -63,7 +70,7 @@ type ArtistItem = (typeof artists)[number]
 const FALLBACK_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%236b7280'/%3E%3Cstop offset='100%25' style='stop-color:%234b5563'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='system-ui' font-size='48'%3EDJ%3C/text%3E%3C/svg%3E"
 
-function ArtistCard({
+const ArtistCard = memo(function ArtistCard({
   artist,
   index,
   isInView,
@@ -83,8 +90,8 @@ function ArtistCard({
   const imageSrc = imageError ? FALLBACK_IMAGE : artist.image
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 300, damping: 30 })
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!cardRef.current) return
@@ -101,98 +108,134 @@ function ArtistCard({
     onLeave()
   }
 
+  const hasSpotify = "spotify" in artist && artist.spotify
+  const hasAppleMusic = "appleMusic" in artist && artist.appleMusic
+
   return (
     <motion.article
       ref={cardRef}
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-200"
+      className="group relative rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
     >
-      <div className="aspect-square overflow-hidden relative">
-        <motion.img
-          src={imageSrc}
-          alt={`${artist.name}, ${artist.genre}`}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover"
-          animate={{ scale: isHovered ? 1.08 : 1 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          onError={() => setImageError(true)}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-        <motion.span
-          className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-muted text-foreground"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: index * 0.12 + 0.2 }}
+      {/* Single card: image always visible; overlay fades in on hover (no flip) */}
+      <div className="relative w-full rounded-2xl overflow-hidden">
+        {/* Image layer — subtle scale on hover */}
+        <div className="rounded-2xl overflow-hidden bg-card">
+          <motion.div
+            className="aspect-square w-full overflow-hidden relative bg-muted"
+            animate={{ scale: isHovered ? 1.03 : 1 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <img
+              src={imageSrc}
+              alt={`${artist.name}, ${artist.genre}`}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
+            <motion.span
+              className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-muted text-foreground"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ delay: index * 0.12 + 0.2 }}
+            >
+              {artist.genre}
+            </motion.span>
+          </motion.div>
+          <div className="p-4 md:p-5">
+            <div className="flex items-center gap-2 mb-1">
+              <Music size={14} className="text-accent shrink-0" />
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">{artist.genre}</span>
+            </div>
+            <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
+              {artist.name}
+            </h3>
+          </div>
+        </div>
+
+        {/* Hover overlay: fade + gentle slide up — seamless, no flip */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px]"
+          initial={false}
+          animate={{
+            opacity: isHovered ? 1 : 0,
+            pointerEvents: isHovered ? "auto" : "none",
+          }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
-          {artist.genre}
-        </motion.span>
+          <motion.div
+            className="p-5 md:p-6 flex flex-col justify-end min-h-0"
+            initial={false}
+            animate={{
+              opacity: isHovered ? 1 : 0,
+              y: isHovered ? 0 : 12,
+            }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              {artist.genre}
+            </span>
+            <h3 className="text-xl font-bold tracking-tight text-foreground mt-1 mb-3">
+              {artist.name}
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed tracking-wide font-[450] antialiased line-clamp-3">
+              {artist.bio}
+            </p>
+            <div className="flex items-center gap-3 flex-wrap mt-4 pt-4 border-t border-border/80">
+              {hasSpotify && (
+                <motion.a
+                  href={artist.spotify}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                  whileHover={{ scale: 1.12 }}
+                  whileTap={{ scale: 0.92 }}
+                  aria-label="Spotify"
+                >
+                  <ExternalLink size={16} />
+                </motion.a>
+              )}
+              {hasAppleMusic && (
+                <motion.a
+                  href={artist.appleMusic}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                  whileHover={{ scale: 1.12 }}
+                  whileTap={{ scale: 0.92 }}
+                  aria-label="Apple Music"
+                >
+                  <Music size={16} />
+                </motion.a>
+              )}
+              {artist.instagram && (
+                <motion.a
+                  href={artist.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                  whileHover={{ scale: 1.12 }}
+                  whileTap={{ scale: 0.92 }}
+                  aria-label="Instagram"
+                >
+                  <Instagram size={16} />
+                </motion.a>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
       </div>
-      <div className="p-4 md:p-5">
-        <div className="flex items-center gap-2 mb-2">
-          <Music size={14} className="text-accent shrink-0" />
-          <span className="text-xs uppercase tracking-wider text-muted-foreground">{artist.genre}</span>
-        </div>
-        <motion.h3 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-accent transition-colors mb-4" whileHover={{ x: 4 }}>
-          {artist.name}
-        </motion.h3>
-        <div className="flex items-center gap-3 flex-wrap">
-          {"spotify" in artist && artist.spotify && (
-            <motion.a
-              href={artist.spotify}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Spotify"
-            >
-              <ExternalLink size={16} />
-            </motion.a>
-          )}
-          {"appleMusic" in artist && artist.appleMusic && (
-            <motion.a
-              href={artist.appleMusic}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Apple Music"
-            >
-              <Music size={16} />
-            </motion.a>
-          )}
-          {artist.instagram && (
-            <motion.a
-              href={artist.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Instagram"
-            >
-              <Instagram size={16} />
-            </motion.a>
-          )}
-        </div>
-      </div>
-      <motion.div
-        className="absolute inset-0 pointer-events-none rounded-2xl bg-accent/5"
-        initial={false}
-        animate={{ opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-      />
     </motion.article>
   )
-}
+})
 
 export function Artists() {
   const ref = useRef(null)

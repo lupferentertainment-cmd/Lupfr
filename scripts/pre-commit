@@ -1,0 +1,14 @@
+#!/bin/sh
+# Pre-commit hook: run lint and build so only working commits are allowed.
+# Installed by "bun run prepare" (or "bun install") from scripts/pre-commit -> .git/hooks/pre-commit.
+
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+echo "Running lint..."
+bun run lint || { echo "Pre-commit failed: lint failed."; exit 1; }
+
+echo "Running build..."
+bun run build || { echo "Pre-commit failed: build failed."; exit 1; }
+
+echo "Lint and build passed. Proceeding with commit."
