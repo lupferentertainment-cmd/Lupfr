@@ -3,18 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "bun@1.3.9",
-  "browserslist": [
-    "chrome >= 87",
-    "edge >= 88",
-    "firefox >= 78",
-    "safari >= 14"
-  ],
   "scripts": {
     "dev": "next dev --webpack",
     "dev:turbo": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "bunx eslint .",
     "prepare": "bun scripts/install-pre-commit.js"
   },
   "dependencies": {
@@ -72,6 +66,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^16.0.0",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
     "@types/react": "19.2.14",
@@ -80,6 +75,8 @@
     "shadcn": "^4.0.0",
     "tailwindcss": "^4.2.0",
     "tw-animate-css": "1.3.3",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
     "typescript": "5.7.3"
   }
 }

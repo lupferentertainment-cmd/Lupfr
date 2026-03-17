@@ -112,8 +112,8 @@ export function Hero() {
     const videos = [darkEl, lightEl]
     videos.forEach((v) => { v.loop = true })
 
-    const useFallback = () => setFallbackToImage(true)
-    const timeoutId = setTimeout(useFallback, HERO_VIDEO_SLOW_MS)
+    const triggerFallback = () => setFallbackToImage(true)
+    const timeoutId = setTimeout(triggerFallback, HERO_VIDEO_SLOW_MS)
 
     const ensurePlaying = () => {
       videos.forEach((video) => {
@@ -131,7 +131,7 @@ export function Hero() {
     }
     const onError = () => {
       clearTimeout(timeoutId)
-      useFallback()
+      triggerFallback()
     }
     const onPause = () => ensurePlaying()
     const restartVideo = (video: HTMLVideoElement) => {

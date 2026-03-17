@@ -1,11 +1,14 @@
 "use client"
 
 import { memo } from "react"
+import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+
+const ARTIST_IMAGE_SIZE = 400
 
 const artists = [
   {
@@ -87,7 +90,6 @@ const ArtistCard = memo(function ArtistCard({
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
-  const imageSrc = imageError ? FALLBACK_IMAGE : artist.image
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -132,14 +134,24 @@ const ArtistCard = memo(function ArtistCard({
             animate={{ scale: isHovered ? 1.03 : 1 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <img
-              src={imageSrc}
-              alt={`${artist.name}, ${artist.genre}`}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover"
-              onError={() => setImageError(true)}
-            />
+            {imageError ? (
+              <img
+                src={FALLBACK_IMAGE}
+                alt={`${artist.name}, ${artist.genre}`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={artist.image}
+                alt={`${artist.name}, ${artist.genre}`}
+                width={ARTIST_IMAGE_SIZE}
+                height={ARTIST_IMAGE_SIZE}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                loading="lazy"
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
             <motion.span
               className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-muted text-foreground"
@@ -242,11 +254,12 @@ export function Artists() {
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
 
+  /* The featured artists section is a grid of artist cards. */
   return (
     <section
       id="artists"
       ref={ref}
-      className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden bg-card/50"
+      className="pt-4 sm:pt-6 md:pt-8 pb-20 sm:pb-24 md:pb-32 px-4 sm:px-6 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
       <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto relative z-10">
