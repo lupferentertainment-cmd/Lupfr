@@ -206,7 +206,7 @@ const ArtistCard = memo(function ArtistCard({
                   <iframe
                     src={soundcloudEmbedUrl(artist.featuredTrack.url)}
                     width="100%"
-                    height="166"
+                    height="80"
                     allowFullScreen
                     loading="lazy"
                     className="border-0"
