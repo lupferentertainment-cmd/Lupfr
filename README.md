@@ -4,7 +4,7 @@ San Francisco's premier music event production company. Creating unforgettable e
 
 ## Setup
 
-This project uses **Bun**. With [Corepack](https://nodejs.org/api/corepack.html) enabled (`corepack enable`), `npm install` and `npm run` will use Bun.
+This project uses **Bun** for install, scripts, and lint. Vercel is configured to use Bun for install and build.
 
 1. Install dependencies: `bun install`
 2. Copy environment: `cp .env.example .env.local`
@@ -17,10 +17,12 @@ This project uses **Bun**. With [Corepack](https://nodejs.org/api/corepack.html)
 
 Contact form submissions and newsletter signups are sent via [Resend](https://resend.com). Without `RESEND_API_KEY` in `.env.local`, those endpoints return an error asking you to add the key. Verify your `lupfr.com` domain in Resend and use a key with send permission.
 
-## Build
+## Build & Lint
 
+- `bun run dev` – development server
 - `bun run build` – production build
 - `bun run start` – run production server
+- `bun run lint` – run ESLint
 
 ## Vercel (production deploys)
 

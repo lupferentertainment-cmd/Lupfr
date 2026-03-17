@@ -93,7 +93,7 @@ export function Footer() {
           >
             <Link href={isHome ? "#" : "/"} className="inline-block mb-6" aria-label="LUPFR home">
               <Image
-                src="/will_logo.png"
+                src="/logos/will_logo.png"
                 alt="LUPFR"
                 width={200}
                 height={66}

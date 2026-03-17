@@ -25,24 +25,20 @@ const PHRASE_DURATION_MS = 4500
 const FADE_DURATION_S = 0.6
 
 const HERO_VIDEO_SLOW_MS = 30000
-const HERO_VIDEO_DARK = "/hero_dark.mp4"
-const HERO_VIDEO_LIGHT = "/hero_light_opt.mp4"
-const HERO_POSTER = "/hero-poster.jpg"
+const HERO_VIDEO_DARK = "/hero/hero_dark.mp4"
+const HERO_VIDEO_LIGHT = "/hero/hero_light_opt.mp4"
+const HERO_POSTER = "/hero/hero-poster.jpg"
 const HERO_FALLBACK_IMAGE = HERO_POSTER
 
 const staticShinePositionCss = "50% 50%"
 
-/** LUPFR: plain span + CSS-only gradient oscillation so it never re-renders; no Framer, no inline style. */
+/** LUPFR: same-size letters with gold shine (periodic or static). */
 const HeroLupfrText = memo(function HeroLupfrText({ prefersReducedMotion }: { prefersReducedMotion: boolean | null }) {
   return (
     <span
-      className={`inline-flex items-baseline justify-center gap-0 overflow-visible hero-gold-shine-scroll gpu-accelerate ${prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-periodic"}`}
+      className={`inline-block overflow-visible hero-gold-shine-scroll gpu-accelerate ${prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-periodic"}`}
     >
-      <span className="inline-block text-[1.2em] leading-[1]">L</span>
-      <span className="inline-block text-[1em] leading-[1]">U</span>
-      <span className="inline-block text-[0.85em] leading-[1]">P</span>
-      <span className="inline-block text-[1em] leading-[1]">F</span>
-      <span className="inline-block text-[1.2em] leading-[1]">R</span>
+      LUPFR
     </span>
   )
 })

@@ -79,7 +79,7 @@ export function Navigation() {
             aria-label="LUPFR home"
           >
             <Image
-              src="/will_logo.png"
+              src="/logos/will_logo.png"
               alt="LUPFR"
               width={360}
               height={120}

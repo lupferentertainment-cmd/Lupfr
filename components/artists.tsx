@@ -32,7 +32,7 @@ const artists = [
     id: 3,
     name: "Tommy Guala",
     genre: "Deep House",
-    image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+    image: "/artists/tommy_guala.jpg",
     bio: "Artist and DJ with a deep house edge. Soulful grooves and heady vibes across SoundCloud and Beatport—built for late nights and locked-in crowds.",
     spotify: "https://open.spotify.com/artist/5gXe3UJr2VZq0bMKAgxsTY",
     appleMusic: "https://music.apple.com/artist/tommy-guala",

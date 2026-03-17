@@ -1,6 +1,7 @@
 /**
  * Event data for LUPFR. Single source of truth for listing and detail pages.
  * dateISO: YYYY-MM-DD for sorting/tag logic; "TBD" for date TBD.
+ * Order: upcoming events first, then past events (past order: Shamrock & House → Boiler Boat 002 → Haunted at Brixton).
  */
 
 export interface EventItem {
@@ -19,59 +20,55 @@ export interface EventItem {
 }
 
 export const EVENTS: EventItem[] = [
+  // —— Upcoming (in display order) ——
   {
     id: 1,
-    slug: "boiler-boat-003-yacht-edition",
-    title: "Boiler Boat 003",
-    subtitle: "Yacht Edition feat. HLWA",
-    date: "April 4th, 2026",
-    dateISO: "2026-04-04",
-    time: "3-6 PM",
-    location: "Pier 40, SF",
+    slug: "boiler-boat-003-wheres-west-warehouse-session",
+    title: "BOILER BOAT 003 – WHERES WEST — WAREHOUSE SESSION",
+    subtitle: "",
+    date: "TBD",
+    dateISO: null,
+    time: "TBD",
+    location: "TBD",
     image: "/events/boiler_boat.png",
-    ticketLink: "https://www.eventbrite.com/e/boiler-boat-003-yacht-edition-feat-hlwa-soch-tickets-1981381998896?aff=oddtdtcreator",
-    ticketLabel: "Tickets",
-    description: "Boiler Boat returns with a yacht edition on the Bay featuring HLWA.",
+    description: "Boiler Boat meets Where's West in a warehouse session.",
   },
+  // —— Past (order: Shamrock & House → Boiler Boat 002 → Haunted at Brixton) ——
   {
     id: 2,
     slug: "shamrock-house",
     title: "Shamrock & House",
     subtitle: "",
-    date: "March 14th, 2026",
-    dateISO: "2026-03-14",
+    date: "March 14th, 2025",
+    dateISO: "2025-03-14",
     time: "9 PM - 1 AM",
     location: "Brixton Bar, Marina District",
     image: "/events/shamrock_house.jpeg",
-    ticketLink: "https://www.eventbrite.com/e/shamrock-house-at-brixton-bar-tickets-1982327604227?aff=oddtdtcreator",
-    ticketLabel: "Tickets",
     description: "St. Patrick's season house music at Brixton Bar.",
   },
   {
     id: 3,
-    slug: "wheres-west-corbin-mason",
-    title: "Where's West?",
-    subtitle: "feat. Corbin Mason",
-    date: "April 18th, 2026",
-    dateISO: "2026-04-18",
-    time: "11 AM - 2 PM",
-    location: "Eria Events, Sausalito",
-    image: "/events/wheres_west.jpeg",
-    ticketLink: "https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito",
-    ticketLabel: "Tickets",
-    description: "Waterfront day party in Sausalito with Corbin Mason.",
+    slug: "boiler-boat-002-apres-ski-edition",
+    title: "Boiler Boat 002",
+    subtitle: "Apres Ski Edition feat. Rayne",
+    date: "Jan 31st, 2025",
+    dateISO: "2025-01-31",
+    time: "2-4 PM",
+    location: "Fisherman's Wharf",
+    image: "/past_events/boiler_boat_002_apres_ski_edition.jpg",
+    description: "Boiler Boat brings apres to the bay.",
   },
   {
     id: 4,
-    slug: "warehouse-sessions",
-    title: "Warehouse Sessions",
-    subtitle: "",
-    date: "TBD",
-    dateISO: null,
-    time: "10 PM - 2 AM",
-    location: "Secret Location",
-    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80",
-    description: "Underground warehouse series. Location revealed to ticket holders.",
+    slug: "haunted-at-brixton",
+    title: "Haunted at Brixton",
+    subtitle: "Halloween Bash",
+    date: "Nov 1, 2024",
+    dateISO: "2024-11-01",
+    time: "9 PM - 1 AM",
+    location: "Brixton Bar, Marina District",
+    image: "/past_events/haunted_at_brixton.jpg",
+    description: "Spooky house tunes and extreme dancing.",
   },
 ]
 
