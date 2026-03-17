@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Umbrella",
+    "url": "https://umbrellalive.com",
+    "image": "/corporate_partners/umbrella_transparent_2.png",
+    "imageClassName": "max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
+  },
+  {
+    "name": "Eria",
+    "url": "https://www.eriaevents.co",
+    "image": "/corporate_partners/eria.png",
+    "imageClassName": "max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-90"
+  },
+  {
+    "name": "Venn Social",
+    "url": "https://vennsocial.com",
+    "image": "/corporate_partners/venn_social.png",
+    "imageClassName": "max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-[0.55]"
+  },
+  {
+    "name": "Brixton Bar SF",
+    "url": "https://brixtonbarsf.com",
+    "image": "/corporate_partners/brixton_logo_transparent.png",
+    "imageClassName": "max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
+  }
+]

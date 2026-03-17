@@ -1,0 +1,62 @@
+# Event data for LUPFR. Order = display order (upcoming first, then past).
+# dateISO: YYYY-MM-DD for sorting; use null for TBD.
+# Images: place files in public/events/ or public/past_events/; reference as /events/name.jpeg or /past_events/name.jpg
+
+- id: 5
+  slug: wheres-west-corbin-mason
+  title: Where's West?
+  subtitle: feat. Corbin Mason
+  date: April 18th, 2026
+  dateISO: "2026-04-18"
+  time: 11 AM - 2 PM
+  location: Eria Events, Sausalito
+  image: /events/wheres_west.jpeg
+  ticketLink: https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito
+  ticketLabel: Tickets
+  description: Waterfront day party in Sausalito with Corbin Mason.
+
+- id: 1
+  slug: boiler-boat-003-wheres-west-warehouse-session
+  title: Boiler Boat 003
+  subtitle: Yacht Edition feat. HLWA
+  date: April 4th, 2026
+  dateISO: "2026-04-04"
+  time: 3-6 PM
+  location: Pier 40, SF
+  image: /events/boiler_boat.png
+  ticketLink: https://www.eventbrite.com/e/boiler-boat-003-yacht-edition-feat-hlwa-soch-tickets-1981381998896?aff=oddtdtcreator
+  ticketLabel: Tickets
+  description: Boiler Boat returns with a yacht edition on the Bay featuring HLWA.
+
+- id: 2
+  slug: shamrock-house
+  title: Shamrock & House
+  subtitle: ""
+  date: March 14th, 2025
+  dateISO: "2025-03-14"
+  time: 9 PM - 1 AM
+  location: Brixton Bar, Marina District
+  image: /events/shamrock_house.jpeg
+  description: St. Patrick's season house music at Brixton Bar.
+
+- id: 3
+  slug: boiler-boat-002-apres-ski-edition
+  title: Boiler Boat 002
+  subtitle: Apres Ski Edition feat. Rayne
+  date: Jan 31st, 2025
+  dateISO: "2025-01-31"
+  time: 2-4 PM
+  location: Fisherman's Wharf
+  image: /past_events/boiler_boat_002_apres_ski_edition.jpg
+  description: Boiler Boat brings apres to the bay.
+
+- id: 4
+  slug: haunted-at-brixton
+  title: Haunted at Brixton
+  subtitle: Halloween Bash
+  date: Nov 1, 2024
+  dateISO: "2024-11-01"
+  time: 9 PM - 1 AM
+  location: Brixton Bar, Marina District
+  image: /past_events/haunted_at_brixton.jpg
+  description: Spooky house tunes and extreme dancing.

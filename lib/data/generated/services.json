@@ -1,0 +1,68 @@
+[
+  {
+    "icon": "PartyPopper",
+    "title": "Owned Events",
+    "description": "Our signature branded experiences—from Boiler Boat to Rooftop Grooves. We handle everything: venue, talent, production, and promotion.",
+    "features": [
+      "Full Production",
+      "Curated Lineups",
+      "Premium Venues",
+      "Marketing & Promotion"
+    ]
+  },
+  {
+    "icon": "Mic2",
+    "title": "Talent Booking",
+    "description": "Connect with the right artists through our extensive network. We source, negotiate, and coordinate talent for your events.",
+    "features": [
+      "Artist Discovery",
+      "Contract Negotiation",
+      "Schedule Coordination",
+      "On-Site Management"
+    ]
+  },
+  {
+    "icon": "Building2",
+    "title": "Venue Programming",
+    "description": "We curate regular music programming for venues looking to elevate their nightlife presence with consistent, quality entertainment.",
+    "features": [
+      "Monthly DJ Nights",
+      "Music Curation",
+      "Event Management",
+      "Audience Development"
+    ]
+  },
+  {
+    "icon": "Users",
+    "title": "Private Events",
+    "description": "From corporate gatherings to luxury celebrations, we bring the same energy and attention to detail to every private event.",
+    "features": [
+      "Custom Concepts",
+      "Full Service",
+      "Premium Sound",
+      "Exclusive Access"
+    ]
+  },
+  {
+    "icon": "Music",
+    "title": "Event Production",
+    "description": "End-to-end production services for venues and brands. We bring the vision, crew, and execution to make it happen.",
+    "features": [
+      "Sound & Lighting",
+      "Staging & Decor",
+      "Vendor Management",
+      "Day-Of Coordination"
+    ]
+  },
+  {
+    "icon": "Sparkles",
+    "title": "Brand Partnerships",
+    "description": "Collaborate with us on activations that reach the SF nightlife community through our events and platform.",
+    "features": [
+      "Event Sponsorships",
+      "Brand Activations",
+      "Content Creation",
+      "Influencer Access"
+    ]
+  }
+]

@@ -232,7 +232,7 @@ export function Events() {
   const past = getPastEvents()
 
   return (
-    <section id="events" ref={ref} className="py-24 sm:py-28 md:py-36 lg:py-44 px-4 sm:px-6 lg:px-8 relative">
+    <section id="events" ref={ref} className="py-24 sm:py-28 md:py-36 lg:py-44 pb-32 sm:pb-36 md:pb-40 lg:pb-48 px-4 sm:px-6 lg:px-8 relative overflow-visible">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
       <ScrollReveal variant="up" className="container mx-auto relative z-10 max-w-7xl">
@@ -255,10 +255,9 @@ export function Events() {
             transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="mb-20 md:mb-28 lg:mb-32"
           >
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-8 md:mb-10">
-              <GoldShineText scrollTargetRef={ref} className="font-bold">
-                Upcoming events
-              </GoldShineText>
+            <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Upcoming</p>
+            <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
+              <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
             </h3>
             <EventsCarousel
               events={upcoming}
@@ -275,12 +274,11 @@ export function Events() {
             initial={{ opacity: 0, y: 24 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="pt-4"
+            className="pt-4 pb-8"
           >
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-8 md:mb-10">
-              <GoldShineText scrollTargetRef={ref} className="font-bold">
-                Past events
-              </GoldShineText>
+            <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Past</p>
+            <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
+              <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
             </h3>
             <EventsCarousel
               events={past}
