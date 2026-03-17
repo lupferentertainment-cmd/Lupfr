@@ -21,3 +21,19 @@ Contact form submissions and newsletter signups are sent via [Resend](https://re
 
 - `bun run build` – production build
 - `bun run start` – run production server
+
+## Vercel (production deploys)
+
+The site is deployed on Vercel. Pushes to `main` normally trigger an automatic deployment.
+
+**If a push didn’t trigger a deploy:**
+
+1. **Git integration** – [Vercel → Account → Authentication](https://vercel.com/account/authentication): ensure your GitHub (or Git) login is connected and has access to this repo.
+2. **Repo permissions** – If you only granted access to certain repos, add `lupferentertainment-cmd/Lupfr` (or this repo) to the allowed list in GitHub’s Vercel app settings.
+3. **Commit author** – The commit author email must match the email of the Git account linked to Vercel. Check with `git log -1` and fix with `git config user.email "your@email.com"` if needed.
+4. **Private repo + team** – For a team project, the commit author must be a member of the Vercel team (or owner for Hobby).
+
+**Redeploy now (without pushing again):**
+
+- In [Vercel Dashboard](https://vercel.com/dashboard) open the project → **Deployments** → open the latest deployment → **⋯** → **Redeploy** (use “Use existing Build Cache” or not).
+- Or create a **Deploy Hook**: Project **Settings** → **Git** → **Deploy Hooks** → add a hook, then call that URL (e.g. `curl -X POST "https://api.vercel.com/v1/integrations/deploy/…"`) to trigger a new deployment.

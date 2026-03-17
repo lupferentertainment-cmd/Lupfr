@@ -30,8 +30,8 @@ function EventCard({
   const cardRef = useRef<HTMLElement>(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 300, damping: 30 })
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 300, damping: 30 })
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
   const tag = getEventTag(event)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -56,7 +56,7 @@ function EventCard({
       initial={isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: isFirstCard ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-200"
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:border-accent/50 transition-[border-color,transform] duration-150 ease-out"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -71,7 +71,7 @@ function EventCard({
           <motion.div
             className="relative w-full h-full"
             animate={{ scale: isHovered ? 1.08 : 1 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
               src={event.image}
@@ -133,7 +133,7 @@ function EventCard({
         className="absolute inset-0 pointer-events-none rounded-2xl bg-accent/5"
         initial={false}
         animate={{ opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.22 }}
       />
     </motion.article>
   )

@@ -9,6 +9,10 @@ const ScrollProgress = dynamic(
   { ssr: false }
 )
 
+const Reviews = dynamic(() => import("@/components/reviews").then((m) => ({ default: m.Reviews })), {
+  ssr: true,
+})
+
 const Events = dynamic(() => import("@/components/events").then((m) => ({ default: m.Events })), {
   ssr: true,
 })
@@ -35,10 +39,11 @@ const Footer = dynamic(() => import("@/components/footer").then((m) => ({ defaul
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-x-clip">
+    <main className="relative min-h-screen min-h-[100dvh] overflow-x-clip w-full max-w-full">
       <ScrollProgress />
       <Navigation />
       <Hero />
+      <Reviews />
       <Events />
       <Services />
       <Artists />

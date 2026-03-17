@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getResendClient, RESEND_TO_EMAIL, RESEND_FROM_EMAIL } from "@/lib/resend";
-import { newsletterSignupEmail } from "@/lib/email-templates";
+import { newsletterSignupEmail, newsletterWelcomeEmail } from "@/lib/email-templates";
 
 export async function POST(request: Request) {
   let resend;
@@ -26,22 +26,37 @@ export async function POST(request: Request) {
     );
   }
 
-  const html = newsletterSignupEmail({ email });
+  const internalHtml = newsletterSignupEmail({ email });
+  const welcomeHtml = newsletterWelcomeEmail({ email });
 
-  const { data, error } = await resend.emails.send({
-    from: RESEND_FROM_EMAIL,
-    to: RESEND_TO_EMAIL,
-    replyTo: email,
-    subject: `[LUPFR] Newsletter signup – ${email}`,
-    html,
-  });
+  const [internalResult, welcomeResult] = await Promise.all([
+    resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to: RESEND_TO_EMAIL,
+      replyTo: email,
+      subject: `[LUPFR] Newsletter signup – ${email}`,
+      html: internalHtml,
+    }),
+    resend.emails.send({
+      from: RESEND_FROM_EMAIL,
+      to: email,
+      subject: "You're on the list – LUPFR Entertainment",
+      html: welcomeHtml,
+    }),
+  ]);
 
-  if (error) {
+  if (internalResult.error) {
     return NextResponse.json(
-      { error: error.message ?? "Failed to send" },
+      { error: internalResult.error.message ?? "Failed to send" },
+      { status: 502 }
+    );
+  }
+  if (welcomeResult.error) {
+    return NextResponse.json(
+      { error: welcomeResult.error.message ?? "Failed to send welcome email" },
       { status: 502 }
     );
   }
 
-  return NextResponse.json({ success: true, id: data?.id });
+  return NextResponse.json({ success: true, id: internalResult.data?.id });
 }

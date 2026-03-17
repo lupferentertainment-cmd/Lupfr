@@ -1,61 +1,19 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
-import { useRef, useEffect, useState } from "react"
+import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { useRef, useState } from "react"
 import { Music, Users, Mic2, PartyPopper, Building2, Sparkles } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
-const COUNT_UP_DURATION_MS = 1200
 const CARD_STAGGER = 0.08
 const SPRING_PUNCH = { type: "spring" as const, stiffness: 500, damping: 26 }
 const SPRING_SNAPPY = { type: "spring" as const, stiffness: 550, damping: 30 }
 
-function easeOutCubic(t: number): number {
-  return 1 - Math.pow(1 - t, 3)
-}
-
-function CountUp({
-  end,
-  suffix = "",
-  isInView,
-}: {
-  end: number
-  suffix?: string
-  isInView: boolean
-}) {
-  const nodeRef = useRef<HTMLSpanElement>(null)
-  const hasStarted = useRef(false)
-
-  useEffect(() => {
-    if (!nodeRef.current) return
-    const node = nodeRef.current
-    if (!isInView) {
-      node.textContent = "0" + suffix
-      hasStarted.current = false
-      return
-    }
-    if (hasStarted.current) return
-    hasStarted.current = true
-    const startTime = performance.now()
-
-    const tick = (now: number) => {
-      const elapsed = now - startTime
-      const t = Math.min(elapsed / COUNT_UP_DURATION_MS, 1)
-      const eased = easeOutCubic(t)
-      const value = Math.round(eased * end)
-      node.textContent = String(value) + suffix
-      if (t < 1) requestAnimationFrame(tick)
-    }
-    const id = requestAnimationFrame(tick)
-    return () => {
-      cancelAnimationFrame(id)
-      hasStarted.current = false
-    }
-  }, [isInView, end, suffix])
-
-  return <span ref={nodeRef} className="tabular-nums">0{suffix}</span>
-}
+// Same tilt range as events/artists: ±6deg, snappy spring
+const TILT_SPRING = { stiffness: 420, damping: 32 }
+// Deeper perspective so cards read more 3D
+const CARD_PERSPECTIVE = 1200
 
 const services = [
   {
@@ -96,13 +54,144 @@ const services = [
   },
 ]
 
+type ServiceItem = (typeof services)[number]
+
+function ServiceCard({
+  service,
+  index,
+  isInView,
+  activeIndex,
+  setActiveIndex,
+}: {
+  service: ServiceItem
+  index: number
+  isInView: boolean
+  activeIndex: number | null
+  setActiveIndex: (i: number | null) => void
+}) {
+  const cardRef = useRef<HTMLElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), TILT_SPRING)
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), TILT_SPRING)
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set((e.clientX - centerX) / rect.width)
+    y.set((e.clientY - centerY) / rect.height)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+    setActiveIndex(null)
+  }
+
+  const isActive = activeIndex === index
+  return (
+    <motion.article
+      ref={cardRef}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      animate={
+        isInView
+          ? { opacity: 1, y: 0, scale: 1 }
+          : { opacity: 0, y: 24, scale: 0.96 }
+      }
+      transition={{ ...SPRING_PUNCH, delay: 0.12 + index * CARD_STAGGER }}
+      className="group relative pt-2"
+      onMouseEnter={() => setActiveIndex(index)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformPerspective: CARD_PERSPECTIVE }}
+      whileTap={{ scale: 0.99 }}
+    >
+      {/* Floating shadow layer for depth */}
+      <motion.div
+        className="absolute inset-x-2 top-4 bottom-0 rounded-2xl bg-black/8 dark:bg-black/25 blur-2xl pointer-events-none"
+        animate={{
+          opacity: isActive ? 0.5 : 0.35,
+          scale: isActive ? 0.98 : 0.96,
+        }}
+        transition={SPRING_SNAPPY}
+        aria-hidden
+      />
+      <motion.div
+        className="relative p-8 rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
+        animate={{
+          boxShadow: isActive
+            ? "0 0 0 1px oklch(0.58 0.1 86 / 0.2), 0 20px 40px -12px oklch(0.54 0.09 84 / 0.25), 0 0 64px -16px oklch(0.5 0.08 84 / 0.2)"
+            : "0 1px 2px rgba(0,0,0,0.06), 0 12px 32px -12px rgba(0,0,0,0.18)",
+          y: isActive ? -6 : 0,
+        }}
+        transition={SPRING_SNAPPY}
+      >
+        {/* Subtle top-edge highlight for raised surface feel */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-2xl pointer-events-none" aria-hidden />
+
+        <motion.div
+          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 transition-colors duration-300"
+          animate={{
+            scale: isActive ? 1.05 : 1,
+          }}
+          transition={SPRING_PUNCH}
+        >
+          <service.icon
+            size={24}
+            className="text-foreground group-hover:text-accent-foreground transition-colors"
+          />
+        </motion.div>
+
+        <motion.h3
+          className="text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent transition-colors"
+          animate={{ scale: isActive ? 1.01 : 1 }}
+          transition={SPRING_SNAPPY}
+        >
+          {service.title}
+        </motion.h3>
+        <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+          {service.description}
+        </p>
+
+        <ul className="space-y-1.5">
+          {service.features.map((feature, fi) => (
+            <motion.li
+              key={feature}
+              className="flex items-center gap-2 text-sm text-muted-foreground"
+            >
+              <motion.span
+                className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
+                animate={{
+                  scale: isActive ? 1.2 : 1,
+                  opacity: isActive ? 1 : 0.85,
+                }}
+                transition={{
+                  scale: { duration: 0.35, delay: fi * 0.04 },
+                  opacity: { duration: 0.2 },
+                }}
+              />
+              {feature}
+            </motion.li>
+          ))}
+        </ul>
+
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent rounded-b-2xl origin-left"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: isActive ? 1 : 0 }}
+          transition={SPRING_SNAPPY}
+        />
+      </motion.div>
+    </motion.article>
+  )
+}
+
 export function Services() {
   const ref = useRef(null)
-  const statsRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
-  const isStatsInView = useInView(statsRef, { once: false, amount: 0.1 })
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
-  const countUpTrigger = isInView || isStatsInView
 
   return (
     <section id="services" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden">
@@ -153,132 +242,16 @@ export function Services() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {services.map((service, i) => (
-            <motion.div
+            <ServiceCard
               key={service.title}
-          initial={{ opacity: 0, y: 24, scale: 0.96 }}
-          animate={
-            isInView
-              ? { opacity: 1, y: 0, scale: 1 }
-              : { opacity: 0, y: 24, scale: 0.96 }
-          }
-          transition={{ ...SPRING_PUNCH, delay: 0.12 + i * CARD_STAGGER }}
-              className="group relative"
-              onMouseEnter={() => setActiveIndex(i)}
-              onMouseLeave={() => setActiveIndex(null)}
-              whileHover={{ y: -10, scale: 1.02 }}
-              whileTap={{ scale: 0.99 }}
-            >
-              <motion.div
-                className="relative p-8 rounded-2xl bg-card border border-border hover:border-accent/50 transition-colors duration-300 h-full overflow-hidden"
-                animate={{
-                  boxShadow:
-                    activeIndex === i
-                      ? "0 0 0 1px oklch(0.58 0.1 86 / 0.25), 0 24px 48px -12px oklch(0.54 0.09 84 / 0.2), 0 0 60px -10px oklch(0.5 0.08 84 / 0.15)"
-                      : "0 4px 6px -1px rgb(0 0 0 / 0.05)",
-                }}
-                transition={SPRING_SNAPPY}
-              >
-                {/* Icon - bounce on hover */}
-                <motion.div
-                  className="w-14 h-14 rounded-xl bg-secondary flex items-center justify-center mb-6 group-hover:bg-accent transition-colors duration-300"
-                  animate={{
-                    rotate: activeIndex === i ? 360 : 0,
-                    scale: activeIndex === i ? 1.1 : 1,
-                    y: activeIndex === i ? [0, -8, 0] : 0,
-                  }}
-                  transition={{
-                    rotate: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-                    scale: SPRING_PUNCH,
-                    y: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
-                  }}
-                >
-                  <service.icon
-                    size={28}
-                    className="text-foreground group-hover:text-accent-foreground transition-colors"
-                  />
-                </motion.div>
-
-                {/* Content */}
-                <motion.h3
-                  className="text-xl font-bold tracking-tight mb-3 group-hover:text-accent transition-colors"
-                  animate={{ scale: activeIndex === i ? 1.02 : 1 }}
-                  transition={SPRING_SNAPPY}
-                >
-                  {service.title}
-                </motion.h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-                  {service.description}
-                </p>
-
-                {/* Features - bullet pulse on hover */}
-                <ul className="space-y-2">
-                  {service.features.map((feature, fi) => (
-                    <motion.li
-                      key={feature}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
-                    >
-                      <motion.span
-                        className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                        animate={{
-                          scale: activeIndex === i ? [1, 1.3, 1] : 1,
-                          opacity: activeIndex === i ? 1 : 0.8,
-                        }}
-                        transition={{
-                          scale: { duration: 0.5, delay: fi * 0.06 },
-                          opacity: { duration: 0.2 },
-                        }}
-                      />
-                      {feature}
-                    </motion.li>
-                  ))}
-                </ul>
-
-                {/* Hover line - snappy reveal */}
-                <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-accent rounded-b-2xl origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: activeIndex === i ? 1 : 0 }}
-                  transition={SPRING_SNAPPY}
-                />
-              </motion.div>
-            </motion.div>
+              service={service}
+              index={i}
+              isInView={isInView}
+              activeIndex={activeIndex}
+              setActiveIndex={setActiveIndex}
+            />
           ))}
         </div>
-
-        {/* Stats - pop in with beat stagger */}
-        <motion.div
-          ref={statsRef}
-          initial={{ opacity: 0, y: 32 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ ...SPRING_PUNCH, delay: 0.55 }}
-          className="mt-16 sm:mt-20 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8"
-        >
-          {[
-            { end: 20, suffix: "+", label: "Events Hosted" },
-            { end: 50, suffix: "+", label: "Artists Booked" },
-            { end: 10, suffix: "K+", label: "Happy Attendees" },
-            { end: 10, suffix: "+", label: "Venue Partners" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              className="text-center group/stat"
-              initial={{ opacity: 0, scale: 0.5, y: 16 }}
-              animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
-              transition={{ ...SPRING_PUNCH, delay: 0.65 + i * CARD_STAGGER }}
-              whileHover={{ scale: 1.08, y: -6 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-accent mb-2 tabular-nums tracking-tight">
-                <CountUp
-                  end={stat.end}
-                  suffix={stat.suffix}
-                  isInView={countUpTrigger}
-                />
-              </p>
-              <p className="text-sm text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
 
         {/* Corporate partners - rotating row */}
         <motion.div
@@ -287,9 +260,19 @@ export function Services() {
           transition={{ ...SPRING_PUNCH, delay: 0.8 }}
           className="mt-16 sm:mt-20 md:mt-24"
         >
-          <p className="text-center text-sm text-muted-foreground uppercase tracking-wider mb-8">
-            Corporate Partners?
-          </p>
+          {/* Label with floating orbs */}
+          <div className="relative flex justify-center mb-8 py-4">
+            {/* Floating orbs around "Corporate Partners?" */}
+            <span className="absolute left-[12%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent/40 animate-float" aria-hidden />
+            <span className="absolute left-[18%] top-1/3 w-1.5 h-1.5 rounded-full bg-muted-foreground/30 animate-float-delay-1" aria-hidden />
+            <span className="absolute right-[18%] top-1/3 w-1.5 h-1.5 rounded-full bg-muted-foreground/30 animate-float-delay-2" aria-hidden />
+            <span className="absolute right-[12%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent/40 animate-float-delay-3" aria-hidden />
+            <span className="absolute left-1/2 -translate-x-1/2 top-0 w-1 h-1 rounded-full bg-accent/30 animate-float-delay-4" aria-hidden />
+            <span className="absolute left-1/2 -translate-x-1/2 bottom-0 w-1 h-1 rounded-full bg-accent/30 animate-float-delay-1" aria-hidden />
+            <p className="relative text-center text-sm text-muted-foreground uppercase tracking-wider">
+              Corporate Partners?
+            </p>
+          </div>
           <div className="overflow-hidden">
             <motion.div
               animate={{ x: [0, "-50%"] }}

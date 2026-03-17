@@ -226,22 +226,24 @@ export function Contact() {
             className="lg:col-span-3"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Inquiry Type */}
+              {/* Inquiry Type – label and tabs match section fold (gold-accent eyebrow + card-style borders) */}
               <div>
-                <label className="block text-sm text-muted-foreground mb-3">What can we help with?</label>
+                <label className="block text-gold-accent uppercase tracking-[0.3em] text-sm mb-3">
+                  What can we help with?
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {inquiryTypes.map((type) => (
                     <motion.button
                       key={type}
                       type="button"
                       onClick={() => setSelectedType(type)}
-                      className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm border transition-colors min-h-[44px] sm:min-h-0 ${
+                      className={`px-3 sm:px-4 py-2.5 rounded-2xl text-xs sm:text-sm border transition-[border-color,background-color,color] min-h-[44px] sm:min-h-0 ${
                         selectedType === type
-                          ? "border-accent bg-accent text-accent-foreground"
-                          : "border-border hover:border-accent/50 text-muted-foreground hover:text-foreground"
+                          ? "border-accent bg-accent/10 text-accent"
+                          : "border-border hover:border-accent/50 text-muted-foreground hover:text-foreground bg-card/50"
                       }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       animate={{ scale: selectedType === type ? 1.02 : 1 }}
                       transition={{ type: "spring", stiffness: 500, damping: 28 }}
                     >
@@ -254,7 +256,7 @@ export function Contact() {
               {/* Name & Email Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Name</label>
+                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Name</label>
                   <input
                     name="name"
                     type="text"
@@ -264,7 +266,7 @@ export function Contact() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted-foreground mb-2">Email</label>
+                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Email</label>
                   <input
                     name="email"
                     type="email"
@@ -277,7 +279,7 @@ export function Contact() {
 
               {/* Company */}
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Company / Venue (optional)</label>
+                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Company / Venue (optional)</label>
                 <input
                   name="company"
                   type="text"
@@ -288,7 +290,7 @@ export function Contact() {
 
               {/* Budget */}
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Budget (optional)</label>
+                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Budget (optional)</label>
                 <input
                   name="budget"
                   type="text"
@@ -299,7 +301,7 @@ export function Contact() {
 
               {/* Message */}
               <div>
-                <label className="block text-sm text-muted-foreground mb-2">Tell us more</label>
+                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Tell us more</label>
                 <textarea
                   name="message"
                   required
