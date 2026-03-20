@@ -51,7 +51,7 @@ function ProtectedPhone() {
 }
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
-const LUPFR_EMAIL = "will@lupfr.com"
+const LUPFR_EMAIL = "events@lupfr.com"
 
 function openContactMailto(payload: {
   inquiryType: string
@@ -168,8 +168,8 @@ export function Contact() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Email us</p>
-                  <a href="mailto:will@lupfr.com" className="text-foreground hover:text-accent transition-colors">
-                    will@lupfr.com
+                  <a href="mailto:events@lupfr.com" className="text-foreground hover:text-accent transition-colors">
+                    events@lupfr.com
                   </a>
                 </div>
               </div>

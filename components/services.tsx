@@ -94,7 +94,7 @@ function ServiceCard({
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-2xl pointer-events-none" aria-hidden />
 
         <motion.div
-          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-300"
+          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
           animate={{
             scale: isActive ? 1.05 : 1,
           }}
@@ -102,7 +102,7 @@ function ServiceCard({
         >
           <service.icon
             size={24}
-            className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-300"
+            className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
           />
         </motion.div>
 

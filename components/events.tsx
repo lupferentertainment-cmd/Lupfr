@@ -185,7 +185,10 @@ function EventsCarousel({
   return (
     <div className="w-full">
       <Carousel opts={CAROUSEL_OPTS} className="w-full" setApi={setApi}>
-        <CarouselContent className="-ml-4 md:-ml-6 lg:-ml-8">
+        <CarouselContent
+          className="-ml-4 md:-ml-6 lg:-ml-8"
+          viewportClassName="py-6 md:py-8"
+        >
           {events.map((event, i) => (
             <CarouselItem
               key={event.id}
@@ -204,13 +207,13 @@ function EventsCarousel({
         </CarouselContent>
       </Carousel>
       {snapCount > 1 && (
-        <div className="flex justify-center gap-2.5 mt-8 md:mt-10" aria-hidden>
+        <div className="flex justify-center gap-2.5 mt-4 md:mt-5" aria-hidden>
           {Array.from({ length: snapCount }).map((_, i) => (
             <button
               key={i}
               type="button"
               onClick={() => api?.scrollTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
+              className={`h-1.5 rounded-full transition-all duration-200 ease-snap ${
                 i === selectedIndex
                   ? "w-6 bg-foreground/80"
                   : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
@@ -232,7 +235,11 @@ export function Events() {
   const past = getPastEvents()
 
   return (
-    <section id="events" ref={ref} className="py-24 sm:py-28 md:py-36 lg:py-44 pb-32 sm:pb-36 md:pb-40 lg:pb-48 px-4 sm:px-6 lg:px-8 relative overflow-visible">
+    <section
+      id="events"
+      ref={ref}
+      className="pt-14 sm:pt-16 md:pt-20 lg:pt-24 pb-32 sm:pb-36 md:pb-40 lg:pb-48 px-4 sm:px-6 lg:px-8 relative overflow-visible"
+    >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
       <ScrollReveal variant="up" className="container mx-auto relative z-10 max-w-7xl">
@@ -240,7 +247,7 @@ export function Events() {
           initial={{ opacity: 0, y: 36 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-16 sm:mb-20 md:mb-24"
+          className="mb-8 sm:mb-10 md:mb-12"
         >
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Gallery</p>
           <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
@@ -248,17 +255,16 @@ export function Events() {
           </h2>
         </motion.div>
 
-        {upcoming.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-20 md:mb-28 lg:mb-32"
-          >
-            <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Upcoming</p>
-            <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
-              <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
-            </h3>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-20 md:mb-28 lg:mb-32"
+        >
+          <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
+            <GoldShineText scrollTargetRef={ref}>Upcoming</GoldShineText>
+          </h3>
+          {upcoming.length > 0 ? (
             <EventsCarousel
               events={upcoming}
               isInView={isInView}
@@ -266,8 +272,12 @@ export function Events() {
               onHover={setHoveredId}
               onLeave={() => setHoveredId(null)}
             />
-          </motion.div>
-        )}
+          ) : (
+            <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
+              More dates coming soon — join the list below to hear first.
+            </p>
+          )}
+        </motion.div>
 
         {past.length > 0 && (
           <motion.div
@@ -276,9 +286,8 @@ export function Events() {
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="pt-4 pb-8"
           >
-            <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Past</p>
             <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
-              <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
+              <GoldShineText scrollTargetRef={ref}>Past</GoldShineText>
             </h3>
             <EventsCarousel
               events={past}

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { preload } from "react-dom"
 import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion, type MotionValue } from "framer-motion"
 import { useRef, useState, useEffect, memo } from "react"
@@ -22,6 +23,7 @@ const HERO_PHRASES = [
 ]
 
 const PHRASE_DURATION_MS = 4500
+const PHRASE_DURATION_MOBILE_MS = 9000
 const FADE_DURATION_S = 0.6
 
 const HERO_VIDEO_SLOW_MS = 30000
@@ -83,6 +85,9 @@ export function Hero() {
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
+  /** Fewer continuous Motion animations + lighter imagery on phones. */
+  const liteHero = prefersReducedMotion === true || isMobile === true
+  const phraseDurationMs = isMobile === true ? PHRASE_DURATION_MOBILE_MS : PHRASE_DURATION_MS
 
   // Preload video only on desktop to keep mobile fast (no video load)
   useEffect(() => {
@@ -94,9 +99,9 @@ export function Hero() {
   useEffect(() => {
     const id = setInterval(() => {
       setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length)
-    }, PHRASE_DURATION_MS)
+    }, phraseDurationMs)
     return () => clearInterval(id)
-  }, [])
+  }, [phraseDurationMs])
 
   // Mobile: skip video and use poster to avoid autoplay issues and improve load
   useEffect(() => {
@@ -201,54 +206,64 @@ export function Hero() {
 
   return (
     <section ref={containerRef} className="relative min-h-[100vh] min-h-[100dvh] overflow-hidden">
-      {/* Animated Background Grid - opacity only (compositor-friendly) */}
-      <motion.div
-        className="absolute inset-0 gpu-accelerate bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
-        animate={prefersReducedMotion ? { opacity: 1 } : { opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-      />
-      
-      {/* Gradient Orbs - transform + opacity only (no filter animation) */}
-      <motion.div
-        className="absolute top-1/4 -left-32 w-96 h-96 gpu-accelerate bg-accent/20 rounded-full blur-[128px]"
-        animate={
-          prefersReducedMotion
-            ? { scale: 1, opacity: 0.45, x: 0, y: 0 }
-            : { scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3], x: [0, 30, 0], y: [0, -20, 0] }
-        }
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 -right-32 w-96 h-96 gpu-accelerate bg-accent/10 rounded-full blur-[128px]"
-        animate={
-          prefersReducedMotion
-            ? { scale: 1.1, opacity: 0.35, x: 0, y: 0 }
-            : { scale: [1.2, 1, 1.2], opacity: [0.2, 0.5, 0.2], x: [0, -20, 0], y: [0, 15, 0] }
-        }
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] gpu-accelerate bg-accent/5 rounded-full blur-[180px]"
-        animate={
-          prefersReducedMotion
-            ? { scale: 1.1, opacity: 0.22, rotate: 0 }
-            : { scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15], rotate: [0, 180, 360] }
-        }
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      />
+      {/* Background grid + orbs: static on mobile / reduced-motion to cut continuous Motion work */}
+      {liteHero ? (
+        <>
+          <div
+            className="absolute inset-0 gpu-accelerate opacity-80 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
+            aria-hidden
+          />
+          <div
+            className="absolute top-1/4 -left-32 w-72 h-72 sm:w-96 sm:h-96 gpu-accelerate bg-accent/22 rounded-full blur-[100px] sm:blur-[128px]"
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-1/4 -right-32 w-72 h-72 sm:w-96 sm:h-96 gpu-accelerate bg-accent/12 rounded-full blur-[100px] sm:blur-[128px]"
+            aria-hidden
+          />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(100vw,480px)] h-[min(100vw,480px)] sm:w-[600px] sm:h-[600px] gpu-accelerate bg-accent/6 rounded-full blur-[120px] sm:blur-[180px] opacity-90"
+            aria-hidden
+          />
+        </>
+      ) : (
+        <>
+          <motion.div
+            className="absolute inset-0 gpu-accelerate bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute top-1/4 -left-32 w-96 h-96 gpu-accelerate bg-accent/20 rounded-full blur-[128px]"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3], x: [0, 30, 0], y: [0, -20, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 -right-32 w-96 h-96 gpu-accelerate bg-accent/10 rounded-full blur-[128px]"
+            animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.5, 0.2], x: [0, -20, 0], y: [0, 15, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] gpu-accelerate bg-accent/5 rounded-full blur-[180px]"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.3, 0.15], rotate: [0, 180, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          />
+        </>
+      )}
 
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
         {fallbackToImage || isMobile !== false ? (
-          <img
-            src={HERO_POSTER}
-            alt=""
-            width={1920}
-            height={1080}
-            className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto]"
-            sizes="100vw"
-            fetchPriority="high"
-            aria-hidden
-          />
+          <div className="absolute inset-0">
+            <Image
+              src={HERO_POSTER}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-center"
+              aria-hidden
+            />
+          </div>
         ) : (
           <>
             <video
@@ -355,53 +370,40 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          className="absolute bottom-8 sm:bottom-6 md:bottom-12 left-1/2 -translate-x-1/2"
-          animate={prefersReducedMotion ? { y: 0, opacity: 1 } : { y: [0, 14, 0], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <motion.a
-            href="#events"
-            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Scroll to events"
-            whileHover={{ scale: 1.1 }}
-          >
-            <span className="text-xs uppercase tracking-widest">Scroll</span>
-            <motion.span
-              animate={prefersReducedMotion ? { y: 0 } : { y: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        {liteHero ? (
+          <div className="absolute bottom-8 sm:bottom-6 md:bottom-12 left-1/2 -translate-x-1/2">
+            <a
+              href="#events"
+              className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Scroll to events"
             >
+              <span className="text-xs uppercase tracking-widest">Scroll</span>
               <ArrowDown size={20} />
-            </motion.span>
-          </motion.a>
-        </motion.div>
+            </a>
+          </div>
+        ) : (
+          <motion.div
+            className="absolute bottom-8 sm:bottom-6 md:bottom-12 left-1/2 -translate-x-1/2"
+            animate={{ y: [0, 14, 0], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <motion.a
+              href="#events"
+              className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Scroll to events"
+              whileHover={{ scale: 1.1 }}
+            >
+              <span className="text-xs uppercase tracking-widest">Scroll</span>
+              <motion.span
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ArrowDown size={20} />
+              </motion.span>
+            </motion.a>
+          </motion.div>
+        )}
       </motion.div>
-
-      {/* Corner Decorations - sleek animated reveal */}
-      <motion.div
-        className="absolute top-4 left-4 sm:top-8 sm:left-8 w-12 h-12 sm:w-16 sm:h-16 border-l border-t border-accent/50 rounded-tl-lg"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      />
-      <motion.div
-        className="absolute top-4 right-4 sm:top-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 border-r border-t border-accent/50 rounded-tr-lg"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.55, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      />
-      <motion.div
-        className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 w-12 h-12 sm:w-16 sm:h-16 border-l border-b border-accent/50 rounded-bl-lg"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.6, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      />
-      <motion.div
-        className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-16 sm:h-16 border-r border-b border-accent/50 rounded-br-lg"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.65, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      />
     </section>
   )
 }

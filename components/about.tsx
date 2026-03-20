@@ -93,7 +93,7 @@ function AboutValueCard({
       initial={{ opacity: 0, x: 40 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden rounded-2xl border bg-card transition-[border-color,box-shadow] duration-300 ease-out"
+      className="relative overflow-hidden rounded-2xl border bg-card transition-[border-color,box-shadow] duration-200 ease-snap"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
@@ -104,7 +104,7 @@ function AboutValueCard({
           borderColor: isExpanded ? "oklch(0.52 0.10 85 / 0.45)" : "var(--border)",
           boxShadow: isExpanded ? "0 0 0 1px oklch(0.52 0.10 85 / 0.2), 0 0 20px oklch(0.38 0.09 82 / 0.06)" : "0 0 0 1px transparent",
         }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         className="rounded-2xl border border-transparent"
       >
         <motion.button
@@ -118,7 +118,7 @@ function AboutValueCard({
         <div className="flex items-start gap-6 p-8">
           <div className="flex flex-col items-center gap-2">
             <span
-              className={`text-5xl font-bold tabular-nums transition-colors duration-300 ${
+              className={`text-5xl font-bold tabular-nums transition-colors duration-200 ease-snap ${
                 isExpanded ? "text-accent/70" : "text-accent/20 group-hover:text-accent/40"
               }`}
             >
@@ -128,7 +128,7 @@ function AboutValueCard({
               const Icon = valueIcons[index]
               return (
                 <Icon
-                  className={`h-6 w-6 transition-colors duration-300 ${
+                  className={`h-6 w-6 transition-colors duration-200 ease-snap ${
                     isExpanded ? "text-accent" : "text-accent/30 group-hover:text-accent/50"
                   }`}
                   strokeWidth={1.5}
@@ -139,7 +139,7 @@ function AboutValueCard({
           </div>
           <div className="flex-1 min-w-0">
             <h3
-              className={`text-xl font-bold mb-3 transition-colors duration-300 ${
+              className={`text-xl font-bold mb-3 transition-colors duration-200 ease-snap ${
                 isExpanded ? "text-accent" : "group-hover:text-accent/90"
               }`}
             >
@@ -167,7 +167,7 @@ function AboutValueCard({
               </span>
               <motion.span
                 animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               >
                 ▼
               </motion.span>
@@ -185,7 +185,7 @@ function AboutValueCard({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ height: { duration: 0.35, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.2 } }}
+              transition={{ height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18 } }}
               className="overflow-hidden border-t border-border/80"
             >
               <div className="px-8 py-6 bg-muted/30">
@@ -295,31 +295,6 @@ export function About() {
             />
           </motion.div>
         </div>
-
-        {/* Marquee */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-20 sm:mt-24 md:mt-32 overflow-hidden"
-        >
-          <motion.div
-            animate={{ x: [0, "-50%"] }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-            className="flex whitespace-nowrap"
-          >
-            {[...Array(2)].map((_, i) => (
-              <div key={i} className="flex items-center">
-                {["BOAT PARTIES", "ROOFTOP SESSIONS", "WAREHOUSE EVENTS", "PRIVATE EXPERIENCES", "TALENT BOOKING", "VENUE PROGRAMMING"].map((item) => (
-                  <span key={item} className="font-serif mx-4 sm:mx-6 md:mx-8 text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-foreground tracking-tighter">
-                    {item}
-                    <span className="mx-8 text-foreground">•</span>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
         </div>
       </ScrollReveal>
     </section>

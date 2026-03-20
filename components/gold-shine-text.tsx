@@ -39,7 +39,7 @@ export function GoldShineText({
 
   return (
     <Component
-      className={`inline-block heading-metallic-gold-scroll gpu-accelerate ${className}`.trim()}
+      className={`inline-block overflow-visible heading-metallic-gold-scroll gpu-accelerate ${className}`.trim()}
       style={{ backgroundPosition }}
     >
       {children}
