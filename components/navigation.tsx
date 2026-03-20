@@ -64,9 +64,9 @@ export function Navigation() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ease-snap ${
           isScrolled
-            ? "bg-background/60 dark:bg-background/50 backdrop-blur-xl border-b border-border/60 shadow-sm"
+            ? "bg-background/60 dark:bg-background/50 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60 shadow-sm"
             : ""
         }`}
       >
@@ -94,7 +94,7 @@ export function Navigation() {
             {navLinks.map((link, i) => {
               const isActive = activeSection === link.href.slice(1)
               const href = linkHref(link.href)
-              const linkClass = `text-sm uppercase tracking-widest transition-colors duration-200 relative group py-1 ${
+              const linkClass = `text-sm uppercase tracking-widest transition-colors duration-200 ease-snap relative group py-1 ${
                 isActive
                   ? "text-accent font-medium"
                   : isScrolled
@@ -103,7 +103,7 @@ export function Navigation() {
               }`
               const underline = (
                 <span
-                  className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-out ${
+                  className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-snap ${
                     isActive ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 />

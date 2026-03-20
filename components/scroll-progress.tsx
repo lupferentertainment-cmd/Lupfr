@@ -2,8 +2,15 @@
 
 import { motion, useScroll } from "framer-motion"
 
+import { useIsMobile } from "@/hooks/use-mobile"
+
 export function ScrollProgress() {
+  const isMobile = useIsMobile()
   const { scrollYProgress } = useScroll()
+
+  if (isMobile === true) {
+    return null
+  }
 
   return (
     <motion.div
