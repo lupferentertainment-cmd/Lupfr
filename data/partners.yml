@@ -1,23 +1,27 @@
 # Corporate partners. Images go in public/corporate_partners/; reference as /corporate_partners/filename.png
-# Optional imageClassName: Tailwind classes for the image (e.g. scale-90, scale-[1.75])
-# (Not used in UI currently; corporate partners are hardcoded in components/services.tsx.)
+# Transparent PNGs: default = mono silhouette (dark in light theme, light in dark theme).
+# logoTreatment: outline = thin strokes; solid = softer mono; natural = no filter (full-color).
 
 - name: Umbrella
   url: https://umbrellalive.com
-  image: /corporate_partners/umbrella_transparent_2.png
-  imageClassName: max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]
+  image: /corporate_partners/umbrella.png
+  logoTreatment: outline
+  imageClassName: scale-[1.38]
 
 - name: Eria
   url: https://www.eriaevents.co
   image: /corporate_partners/eria.png
-  imageClassName: max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-90
+  imageClassName: scale-[0.88]
 
 - name: Venn Social
   url: https://vennsocial.com
   image: /corporate_partners/venn_social.png
-  imageClassName: max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-[0.55]
+  # Mono filters collapse this asset to a flat disc; keep full color.
+  logoTreatment: natural
+  imageClassName: scale-[0.92]
 
 - name: Brixton Bar SF
   url: https://brixtonbarsf.com
-  image: /corporate_partners/brixton_logo_transparent.png
-  imageClassName: max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]
+  image: /corporate_partners/brixton.png
+  logoTreatment: outline
+  imageClassName: scale-[0.9]

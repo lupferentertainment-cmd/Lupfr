@@ -145,7 +145,7 @@ export function Navigation() {
           {isHome ? (
             <MotionLink
               href={bookHref}
-              className="flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              className="flex items-center gap-2 px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full shrink-0 min-w-0 max-w-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -155,7 +155,7 @@ export function Navigation() {
           ) : (
             <motion.a
               href={bookHref}
-              className="flex items-center gap-2 px-5 py-2.5 btn-metallic-gold text-sm font-medium uppercase tracking-wider transition-colors rounded-full"
+              className="flex items-center gap-2 px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full shrink-0 min-w-0 max-w-full"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -165,15 +165,22 @@ export function Navigation() {
           )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className={`md:hidden p-2 ${isScrolled ? "text-foreground" : "text-white dark:text-foreground"}`}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isOpen}
-          >
-            {isOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
-          </button>
+          <div className="flex md:hidden items-center gap-3 shrink-0">
+            <ThemeToggle withSound className="shrink-0" />
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className={`p-2 ${
+                isOpen || isScrolled
+                  ? "text-foreground"
+                  : "text-white dark:text-foreground"
+              }`}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+            >
+              {isOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
+            </button>
+          </div>
         </nav>
       </motion.header>
 
@@ -191,9 +198,6 @@ export function Navigation() {
               transition={{ delay: 0.1 }}
               className="flex flex-col items-center justify-center h-full gap-8"
             >
-              <div className="absolute top-6 right-6">
-                <ThemeToggle withSound />
-              </div>
               {navLinks.map((link, i) => {
                 const isActive = activeSection === link.href.slice(1)
                 const href = linkHref(link.href)
@@ -234,7 +238,7 @@ export function Navigation() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
+                  className="mt-4 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
                 >
                   {bookLabel}
                 </MotionLink>
@@ -245,7 +249,7 @@ export function Navigation() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="mt-4 px-8 py-4 btn-metallic-gold text-lg font-bold uppercase tracking-wider rounded-full inline-block text-center"
+                  className="mt-4 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
                 >
                   {bookLabel}
                 </motion.a>

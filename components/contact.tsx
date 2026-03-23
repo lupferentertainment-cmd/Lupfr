@@ -315,7 +315,7 @@ export function Contact() {
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="group w-full flex items-center justify-center gap-3 px-8 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50"
+                className="group w-full flex items-center justify-center gap-3 px-8 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50 min-w-0"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 500, damping: 28 }}

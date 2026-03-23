@@ -174,7 +174,7 @@ export function Footer() {
               <motion.button
                 type="submit"
                 disabled={newsletterSubmitting}
-                className="px-4 py-2 btn-metallic-gold rounded-full text-sm font-medium disabled:opacity-70"
+                className="px-4 py-2 btn-metallic-gold rounded-full font-medium disabled:opacity-70"
                 aria-label="Join newsletter"
                 whileHover={newsletterSubmitting ? undefined : { scale: 1.05 }}
                 whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}

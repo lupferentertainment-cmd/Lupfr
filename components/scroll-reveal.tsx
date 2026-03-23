@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef, useState, useEffect, type ReactNode } from "react"
+import { useRef, type ReactNode } from "react"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -21,9 +21,6 @@ interface ScrollRevealProps {
   exitY?: number
 }
 
-/**
- * Inner component that uses useScroll/useTransform. Only mounted on client to avoid SSR issues.
- */
 const DEFAULT_AMOUNT_IN = 0.2
 const DEFAULT_AMOUNT_OUT = 0.8
 
@@ -76,17 +73,10 @@ function ScrollRevealInner({
 }
 
 /**
- * Wraps content and animates it in/out based on scroll position (Martin Garrix-style).
- * As you scroll down: content moves in (fade + slide). As you scroll past: content moves out.
- * Renders static on server; scroll-driven motion runs only after client mount (SSR-safe).
+ * Scroll-driven fade + slide. Ref lives on this wrapper so useScroll measures correctly on first paint.
+ * No “static SSR shell” — a plain div at full opacity then switching to opacity 0 caused a visible flash for below-fold sections.
  */
 export function ScrollReveal(props: ScrollRevealProps) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
-  if (!mounted) {
-    return <div className={props.className}>{props.children}</div>
-  }
   return <ScrollRevealInner {...props} />
 }
 

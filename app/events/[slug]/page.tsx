@@ -90,7 +90,7 @@ export default async function EventPage({
                   href={event.ticketLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full"
+                  className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full max-w-full min-w-0"
                 >
                   <Ticket size={18} />
                   Tickets

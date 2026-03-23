@@ -25,7 +25,12 @@ export function GoldShineText({
 }: GoldShineTextProps) {
   const { scrollYProgress } = useScroll(
     scrollTargetRef
-      ? { target: scrollTargetRef, offset: scrollOffset }
+      ? {
+          target: scrollTargetRef,
+          offset: scrollOffset,
+          /* Parent section ref is attached after child layout effects (Strict Mode / streaming); useEffect avoids Framer ref warning. */
+          layoutEffect: false,
+        }
       : {}
   )
 
