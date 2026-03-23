@@ -85,6 +85,13 @@
   --btn-gold-specular: oklch(0.88 0.06 88);
   --btn-gold-filter-shadow: oklch(0.35 0.10 88 / 0.6);
   --btn-gold-filter-edge: oklch(0.56 0.12 88 / 0.4);
+  /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
+  --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
+  /* Partner row: mono marks ≈ foreground on light chips (see .partner-logo) */
+  --partner-logo-opacity: 0.92;
+  --partner-logo-opacity-outline: 0.93;
+  --partner-logo-opacity-solid: 0.88;
+  --partner-logo-opacity-natural: 0.94;
 }
 
 .dark {
@@ -136,6 +143,73 @@
   --sidebar-accent-foreground: oklch(0.96 0.008 85);
   --sidebar-border: oklch(0.18 0.015 80);
   --sidebar-ring: var(--gold);
+  --partner-logo-opacity: 0.95;
+  --partner-logo-opacity-outline: 0.96;
+  --partner-logo-opacity-solid: 0.9;
+  --partner-logo-opacity-natural: 0.97;
+}
+
+/*
+ * Corporate partner PNGs (transparent, cropped) on theme-aware chips:
+ * Light: near-black ink (matches readable foreground on light surfaces).
+ * Dark: softened white (~foreground) after invert — not pure 1/1/1.
+ * .partner-logo--natural keeps brand color; tuned per theme for muted vs page bg.
+ */
+.partner-logo {
+  filter: brightness(0) saturate(100%);
+  opacity: var(--partner-logo-opacity);
+  transition:
+    filter var(--transition-smooth) var(--ease-snap),
+    opacity var(--transition-smooth) var(--ease-snap);
+}
+
+.dark .partner-logo {
+  filter: brightness(0) saturate(100%) invert(1) brightness(0.94);
+  opacity: var(--partner-logo-opacity);
+}
+
+/* Thin strokes: contrast bump; invert order keeps edges clean in dark */
+.partner-logo.partner-logo--outline {
+  filter: brightness(0) saturate(100%) contrast(1.2);
+  opacity: var(--partner-logo-opacity-outline);
+}
+
+.dark .partner-logo.partner-logo--outline {
+  filter: brightness(0) saturate(100%) contrast(1.14) invert(1) brightness(0.93);
+  opacity: var(--partner-logo-opacity-outline);
+}
+
+.partner-logo.partner-logo--solid {
+  filter: brightness(0) saturate(100%);
+  opacity: var(--partner-logo-opacity-solid);
+}
+
+.dark .partner-logo.partner-logo--solid {
+  filter: brightness(0) saturate(100%) invert(1) brightness(0.9);
+  opacity: var(--partner-logo-opacity-solid);
+}
+
+.partner-logo.partner-logo--natural {
+  filter: brightness(0.97) saturate(1.08) contrast(1.04);
+  opacity: var(--partner-logo-opacity-natural);
+}
+
+.dark .partner-logo.partner-logo--natural {
+  filter: brightness(1.1) saturate(1.1) contrast(1.05);
+  opacity: var(--partner-logo-opacity-natural);
+}
+
+/* Circular partner tiles: card surface tracks theme so mono marks stay legible */
+.partner-logo-chip {
+  box-shadow:
+    0 1px 2px oklch(0.2 0.02 280 / 0.06),
+    inset 0 1px 0 oklch(1 0 0 / 0.35);
+}
+
+.dark .partner-logo-chip {
+  box-shadow:
+    0 2px 8px oklch(0 0 0 / 0.35),
+    inset 0 1px 0 oklch(1 0 0 / 0.06);
 }
 
 @theme inline {
@@ -193,8 +267,9 @@
   *::-webkit-scrollbar {
     display: none;
   }
+  /* auto: avoids fighting Framer scroll-linked transforms (smooth + wheel = jank/flicker) */
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -207,9 +282,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    transition:
-      background-color var(--transition-smooth) var(--ease-snap),
-      color var(--transition-smooth) var(--ease-snap);
+    /* Instant theme paint — long color transitions read as flicker next to scroll-driven motion */
     text-rendering: optimizeLegibility;
     scroll-behavior: inherit;
     overflow-x: clip;
@@ -479,6 +552,10 @@
 .btn-metallic-gold {
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
+  text-wrap: nowrap;
+  font-size: var(--lupfr-pill-cta-fs);
+  line-height: 1.25;
   transition:
     box-shadow var(--transition-snap) var(--ease-snap),
     filter var(--transition-snap) var(--ease-snap),
@@ -523,6 +600,10 @@
 .btn-metallic-brass {
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
+  text-wrap: nowrap;
+  font-size: var(--lupfr-pill-cta-fs);
+  line-height: 1.25;
   transition:
     box-shadow var(--transition-snap) var(--ease-snap),
     filter var(--transition-snap) var(--ease-snap),

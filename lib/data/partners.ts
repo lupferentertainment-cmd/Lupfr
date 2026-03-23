@@ -3,11 +3,15 @@
  */
 import partnersJson from "@/lib/data/generated/partners.json"
 
+export type PartnerLogoTreatment = "outline" | "solid" | "natural"
+
 export interface PartnerItem {
   name: string
   url: string
   image: string
   ariaLabel?: string
+  /** Mono silhouette + theme (default), outline/solid, or natural (no filter) — see globals.css `.partner-logo*`. */
+  logoTreatment?: PartnerLogoTreatment
   /** Optional Tailwind classes for the partner logo image. */
   imageClassName?: string
 }
@@ -16,14 +20,23 @@ function normalizeImage(path: string): string {
   return String(path).startsWith("/") ? path : `/${path}`
 }
 
-const DEFAULT_IMAGE_CLASS =
-  "max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95"
+const PARTNER_LAYOUT =
+  "block max-h-full max-w-full min-h-0 min-w-0 h-auto w-auto shrink-0 object-contain object-center"
+
+function partnerLogoClasses(treatment: PartnerLogoTreatment | undefined): string {
+  if (treatment === "outline") return "partner-logo partner-logo--outline"
+  if (treatment === "solid") return "partner-logo partner-logo--solid"
+  if (treatment === "natural") return "partner-logo partner-logo--natural"
+  return "partner-logo"
+}
 
 export const PARTNERS: PartnerItem[] = (partnersJson as PartnerItem[]).map((p) => ({
   ...p,
   image: normalizeImage(p.image),
   ariaLabel: p.ariaLabel ?? p.name,
-  imageClassName: p.imageClassName ?? DEFAULT_IMAGE_CLASS,
+  imageClassName: [partnerLogoClasses(p.logoTreatment), PARTNER_LAYOUT, p.imageClassName]
+    .filter(Boolean)
+    .join(" "),
 }))
 
 export function getPartners(): PartnerItem[] {

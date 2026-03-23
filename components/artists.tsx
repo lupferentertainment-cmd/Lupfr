@@ -195,7 +195,6 @@ const ArtistCard = memo(function ArtistCard({
                     src={spotifyEmbedUrl(artist.featuredTrack.url)}
                     width="100%"
                     height="80"
-                    allowFullScreen
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                     loading="lazy"
                     className="border-0"
@@ -207,7 +206,7 @@ const ArtistCard = memo(function ArtistCard({
                     src={soundcloudEmbedUrl(artist.featuredTrack.url)}
                     width="100%"
                     height="166"
-                    allowFullScreen
+                    allow="autoplay; encrypted-media; fullscreen"
                     loading="lazy"
                     className="border-0"
                     title={`Listen to ${artist.name} on SoundCloud`}

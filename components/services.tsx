@@ -5,7 +5,9 @@ import { motion, useInView, useMotionValue, useTransform, useSpring } from "fram
 import { useRef, useState } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { getPartners } from "@/lib/data/partners"
 import { getServices, type ServiceItem } from "@/lib/data/services"
+import { cn } from "@/lib/utils"
 
 const CARD_STAGGER = 0.08
 const SPRING_PUNCH = { type: "spring" as const, stiffness: 500, damping: 26 }
@@ -17,6 +19,7 @@ const TILT_SPRING = { stiffness: 420, damping: 32 }
 const CARD_PERSPECTIVE = 1200
 
 const services = getServices()
+const partners = getPartners()
 
 function ServiceCard({
   service,
@@ -84,7 +87,7 @@ function ServiceCard({
         className="relative p-8 rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
         animate={{
           boxShadow: isActive
-            ? "0 0 0 1px oklch(0.58 0.1 86 / 0.2), 0 20px 40px -12px oklch(0.54 0.09 84 / 0.25), 0 0 64px -16px oklch(0.5 0.08 84 / 0.2)"
+            ? "0 0 0 1px rgba(184, 148, 58, 0.2), 0 20px 40px -12px rgba(168, 132, 48, 0.25), 0 0 64px -16px rgba(150, 118, 42, 0.2)"
             : "0 1px 2px rgba(0,0,0,0.06), 0 12px 32px -12px rgba(0,0,0,0.18)",
           y: isActive ? -6 : 0,
         }}
@@ -156,7 +159,11 @@ export function Services() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   return (
-    <section id="services" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden">
+    <section
+      id="services"
+      ref={ref}
+      className="relative overflow-x-hidden py-20 sm:py-24 md:py-32 px-4 sm:px-6"
+    >
       {/* Animated background orbs - subtle pulse */}
       <motion.div
         className="absolute top-0 right-0 w-1/2 h-1/2 bg-accent/5 rounded-full blur-[200px]"
@@ -216,76 +223,50 @@ export function Services() {
         </div>
 
         {/* Corporate partners - same title style as Featured Artists / Culture Meets Production; no strip background */}
-        <div className="mt-20 sm:mt-24 md:mt-32">
+        <div className="mt-20 scroll-mt-8 pt-2 sm:mt-24 md:mt-32">
           <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">
             Partners
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-10 sm:mb-12 md:mb-14">
+          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-10 sm:mb-12 md:mb-14 leading-[1.08]">
             <GoldShineText scrollTargetRef={ref}>Corporate</GoldShineText>
             <br />
             <span className="text-muted-foreground">Partners</span>
           </h2>
-          <div className="flex flex-wrap items-center justify-center gap-14 sm:gap-20 md:gap-24 min-h-[10rem] sm:min-h-[12rem]">
-            <a
-              href="https://umbrellalive.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-visible"
-              aria-label="Umbrella"
-            >
-              <Image
-                src="/corporate_partners/umbrella_transparent_2.png"
-                alt="Umbrella"
-                width={400}
-                height={160}
-                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
-              />
-            </a>
-            <a
-              href="https://www.eriaevents.co"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
-              aria-label="Eria"
-            >
-              <Image
-                src="/corporate_partners/eria.png"
-                alt="Eria"
-                width={400}
-                height={160}
-                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-90"
-              />
-            </a>
-            <a
-              href="https://vennsocial.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
-              aria-label="Venn Social"
-            >
-              <Image
-                src="/corporate_partners/venn_social.png"
-                alt="Venn Social"
-                width={400}
-                height={160}
-                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:invert dark:opacity-90 scale-[0.55]"
-              />
-            </a>
-            <a
-              href="https://brixtonbarsf.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-90 hover:opacity-100 transition-opacity flex items-center justify-center shrink-0 w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 overflow-hidden"
-              aria-label="Brixton Bar SF"
-            >
-              <Image
-                src="/corporate_partners/brixton_logo_transparent.png"
-                alt="Brixton Bar SF"
-                width={400}
-                height={160}
-                className="max-h-full max-w-full w-auto h-auto object-contain grayscale dark:opacity-95 scale-[1.75]"
-              />
-            </a>
+          <div
+            className={cn(
+              "mx-auto grid max-w-5xl grid-cols-2 place-items-center gap-x-8 gap-y-10",
+              "sm:grid-cols-4 sm:gap-x-6 sm:gap-y-8 md:gap-x-8 lg:gap-x-10"
+            )}
+          >
+            {partners.map((p) => (
+              <a
+                key={p.name}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
+                  "size-28 sm:size-32 md:size-36 lg:size-40"
+                )}
+                aria-label={p.ariaLabel ?? p.name}
+              >
+                <div
+                  className={cn(
+                    "partner-logo-chip flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border/75 bg-card p-3 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
+                    "dark:border-border/90 dark:bg-card group-hover:scale-[1.03]"
+                  )}
+                >
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    width={512}
+                    height={512}
+                    sizes="(max-width: 640px) 7rem, (max-width: 1024px) 8rem, 10rem"
+                    className={p.imageClassName}
+                  />
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </ScrollReveal>

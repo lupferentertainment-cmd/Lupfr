@@ -1,70 +1,18 @@
 import { ImageResponse } from 'next/og'
+import { OgBrandPreview, readLogoDataUri } from '@/lib/og-brand-preview'
 
-export const alt = 'Lupfer Entertainment | SF House Music Events & Talent Curation'
+export const runtime = 'nodejs'
+
+const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
+const tagline = 'Boat parties, rooftop events, warehouse sessions — Bay Area & beyond.'
+
+export const alt = defaultTitle
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default function TwitterImage() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#0d0d12',
-          fontFamily: 'system-ui, sans-serif',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 24,
-          }}
-        >
-          <div
-            style={{
-              fontSize: 96,
-              fontWeight: 700,
-              color: '#fafafa',
-              letterSpacing: '-0.02em',
-              lineHeight: 1,
-            }}
-          >
-            LUPFER
-          </div>
-          <div
-            style={{
-              fontSize: 96,
-              fontWeight: 700,
-              background: 'linear-gradient(90deg, #fafafa, #c9a227, #fafafa)',
-              backgroundClip: 'text',
-              color: 'transparent',
-              letterSpacing: '-0.02em',
-              lineHeight: 1,
-            }}
-          >
-            ENTERTAINMENT
-          </div>
-          <div
-            style={{
-              fontSize: 26,
-              color: '#71717a',
-              maxWidth: 560,
-              textAlign: 'center',
-              lineHeight: 1.4,
-            }}
-          >
-            Boat parties, rooftop events, warehouse sessions.
-          </div>
-        </div>
-      </div>
-    ),
-    { ...size }
-  )
+export default async function TwitterImage() {
+  const logoSrc = await readLogoDataUri()
+  return new ImageResponse(<OgBrandPreview logoSrc={logoSrc} tagline={tagline} />, {
+    ...size,
+  })
 }

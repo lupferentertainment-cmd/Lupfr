@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-import { preload } from "react-dom"
 import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion, type MotionValue } from "framer-motion"
 import { useRef, useState, useEffect, memo } from "react"
 
@@ -89,24 +88,12 @@ export function Hero() {
   const liteHero = prefersReducedMotion === true || isMobile === true
   const phraseDurationMs = isMobile === true ? PHRASE_DURATION_MOBILE_MS : PHRASE_DURATION_MS
 
-  // Preload video only on desktop to keep mobile fast (no video load)
-  useEffect(() => {
-    if (isMobile !== false) return
-    const prefersDark = typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-    preload(prefersDark ? HERO_VIDEO_DARK : HERO_VIDEO_LIGHT, { as: "video", fetchPriority: "high" })
-  }, [isMobile])
-
   useEffect(() => {
     const id = setInterval(() => {
       setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length)
     }, phraseDurationMs)
     return () => clearInterval(id)
   }, [phraseDurationMs])
-
-  // Mobile: skip video and use poster to avoid autoplay issues and improve load
-  useEffect(() => {
-    if (isMobile === true) setFallbackToImage(true)
-  }, [isMobile])
 
   useEffect(() => {
     if (fallbackToImage) return
@@ -195,12 +182,14 @@ export function Hero() {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+    layoutEffect: false,
   })
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile === false ? "50%" : "0%"])
+  /* Use `isMobile !== true` so undefined (pre-breakpoint) matches desktop — avoids parallax/media flash on load. */
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile !== true ? "50%" : "0%"])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile === false ? 1.2 : 1])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile !== true ? 1.2 : 1])
   /* Shine sweeps left→right in first 20% of scroll */
   const shinePositionDelayed = useTransform(scrollYProgress, [0, 0.04, 0.24, 1], ["100% 50%", "100% 50%", "0% 50%", "0% 50%"])
 
@@ -252,7 +241,7 @@ export function Hero() {
       )}
 
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        {fallbackToImage || isMobile !== false ? (
+        {fallbackToImage ? (
           <div className="absolute inset-0">
             <Image
               src={HERO_POSTER}
@@ -272,7 +261,7 @@ export function Hero() {
               muted
               loop
               playsInline
-              preload="auto"
+              preload={isMobile === true ? "metadata" : "auto"}
               disablePictureInPicture
               disableRemotePlayback
               className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-0 dark:opacity-100 transition-opacity duration-500 ease-out"
@@ -287,7 +276,7 @@ export function Hero() {
               muted
               loop
               playsInline
-              preload="auto"
+              preload={isMobile === true ? "metadata" : "auto"}
               disablePictureInPicture
               disableRemotePlayback
               className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-100 dark:opacity-0 transition-opacity duration-500 ease-out"
@@ -345,7 +334,7 @@ export function Hero() {
           >
             <motion.a
               href="#contact"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full overflow-hidden relative text-sm sm:text-base"
+              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full overflow-hidden relative max-w-full min-w-0 justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -357,8 +346,8 @@ export function Hero() {
               href={LINKS.watchReel}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/80 dark:border-border text-white dark:text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent dark:hover:text-accent transition-colors text-sm sm:text-base"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 24px oklch(0.48 0.06 74 / 0.25)" }}
+              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/80 dark:border-border text-white dark:text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent dark:hover:text-accent transition-colors max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug"
+              whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(115, 98, 72, 0.25)" }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >

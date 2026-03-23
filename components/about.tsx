@@ -101,8 +101,10 @@ function AboutValueCard({
     >
       <motion.div
         animate={{
-          borderColor: isExpanded ? "oklch(0.52 0.10 85 / 0.45)" : "var(--border)",
-          boxShadow: isExpanded ? "0 0 0 1px oklch(0.52 0.10 85 / 0.2), 0 0 20px oklch(0.38 0.09 82 / 0.06)" : "0 0 0 1px transparent",
+          borderColor: isExpanded ? "rgba(168, 130, 52, 0.45)" : "var(--border)",
+          boxShadow: isExpanded
+            ? "0 0 0 1px rgba(168, 130, 52, 0.2), 0 0 20px rgba(95, 78, 48, 0.06)"
+            : "0 0 0 1px transparent",
         }}
         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
         className="rounded-2xl border border-transparent"

@@ -3,10 +3,7 @@ import { Space_Grotesk, Inter, Playfair_Display } from 'next/font/google'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
-import { EVENTS } from '@/lib/events'
 import './globals.css'
-
-const firstEventImage = EVENTS[0]?.image
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -34,13 +31,32 @@ const defaultDescription = "San Francisco's premier music event production compa
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: siteName,
   title: {
     default: defaultTitle,
     template: '%s | LUPFR Entertainment',
   },
   description: defaultDescription,
   generator: 'lupfr.com',
-  keywords: ['music', 'san francisco events', 'boat parties', 'dj booking', 'nightlife', 'event production', 'LUPFR Entertainment', 'SF nightlife', 'Bay Area events', 'warehouse parties', 'rooftop parties'],
+  keywords: [
+    'LUPFR',
+    'Lupfer Entertainment',
+    'music',
+    'san francisco events',
+    'boat parties',
+    'dj booking',
+    'nightlife',
+    'event production',
+    'LUPFR Entertainment',
+    'SF nightlife',
+    'Bay Area events',
+    'warehouse parties',
+    'rooftop parties',
+    'house music',
+    'talent booking',
+    'event curator',
+  ],
+  formatDetection: { telephone: false },
   authors: [{ name: siteName, url: siteUrl }],
   creator: siteName,
   publisher: siteName,
@@ -64,7 +80,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: defaultTitle,
     description: defaultDescription,
-    images: ['/twitter-image'],
+    images: [{ url: '/twitter-image', width: 1200, height: 630, alt: defaultTitle }],
   },
   icons: {
     icon: [
@@ -95,9 +111,10 @@ const jsonLd = {
       '@id': `${siteUrl}/#organization`,
       name: siteName,
       url: siteUrl,
+      logo: `${siteUrl}/logos/will_logo.png`,
       description: defaultDescription,
       sameAs: [
-        'https://www.instagram.com/lupfr_/',
+        'https://www.instagram.com/lupfer_music/',
         'https://www.tiktok.com/@lupfer_entertainment',
         'https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew',
       ],
@@ -124,9 +141,6 @@ export default function RootLayout({
       <head>
         <link rel="preload" as="image" href="/hero/hero-poster.jpg" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
-        {firstEventImage ? (
-          <link rel="preload" as="image" href={firstEventImage} />
-        ) : null}
       </head>
       <body className={`${spaceGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
         <script
