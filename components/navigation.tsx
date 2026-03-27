@@ -1,13 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 const MotionLink = motion.create(Link)
+
+const HEADER_SCROLL_THRESHOLD_PX = 50
+const SECTION_SPY_OFFSET_PX = 120
 
 const navLinks = [
   { name: "Events", href: "#events" },
@@ -19,53 +22,76 @@ const navLinks = [
 
 const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
 
+/** Last section (in page order) whose top has crossed the spy line — stable while scrolling */
+function pickActiveSectionId(): string {
+  let active = SECTION_IDS[0]
+  for (const id of SECTION_IDS) {
+    const el = document.getElementById(id)
+    if (!el) continue
+    const top = el.getBoundingClientRect().top
+    if (top <= SECTION_SPY_OFFSET_PX) {
+      active = id
+    }
+  }
+  return active
+}
+
 export function Navigation() {
   const pathname = usePathname()
   const isHome = pathname === "/"
+  const prefersReducedMotion = useReducedMotion()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [activeSection, setActiveSection] = useState<string>(SECTION_IDS[0])
+  const tickingRef = useRef(false)
 
   /** On event/detail pages, use full path so browser navigates to home and scrolls to section. */
   const linkHref = (hash: string) => (isHome ? hash : `/${hash}`)
   const bookHref = isHome ? "#contact" : "/#contact"
   const bookLabel = "Book an Event"
 
+  const closeMenu = useCallback(() => setIsOpen(false), [])
+
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+    if (!isOpen) return
+    const html = document.documentElement
+    const body = document.body
+    const prevHtmlOverflow = html.style.overflow
+    const prevBodyOverflow = body.style.overflow
+    html.style.overflow = "hidden"
+    body.style.overflow = "hidden"
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => {
+      html.style.overflow = prevHtmlOverflow
+      body.style.overflow = prevBodyOverflow
+      window.removeEventListener("keydown", onKeyDown)
+    }
+  }, [isOpen, closeMenu])
 
-      const headerOffset = 120
-      let current: string | null = null
-
-      for (const id of SECTION_IDS) {
-        const el = document.getElementById(id)
-        if (!el) continue
-        const rect = el.getBoundingClientRect()
-        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
-          current = id
-          break
-        }
-        if (rect.top < window.innerHeight / 2) {
-          current = id
-        }
-      }
-      setActiveSection(current ?? SECTION_IDS[0])
+  useEffect(() => {
+    const onScroll = () => {
+      if (tickingRef.current) return
+      tickingRef.current = true
+      requestAnimationFrame(() => {
+        tickingRef.current = false
+        setIsScrolled(window.scrollY > HEADER_SCROLL_THRESHOLD_PX)
+        setActiveSection(pickActiveSectionId())
+      })
     }
 
-    handleScroll()
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   return (
     <>
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ease-snap ${
-          isScrolled
+      <header
+        className={`fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap ${
+          isScrolled || isOpen
             ? "bg-background/60 dark:bg-background/50 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60 shadow-sm"
             : ""
         }`}
@@ -169,8 +195,8 @@ export function Navigation() {
             <ThemeToggle withSound className="shrink-0" />
             <button
               type="button"
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 ${
+              onClick={() => setIsOpen((o) => !o)}
+              className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 isOpen || isScrolled
                   ? "text-foreground"
                   : "text-white dark:text-foreground"
@@ -182,38 +208,49 @@ export function Navigation() {
             </button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-background md:hidden"
+            transition={{ duration: prefersReducedMotion ? 0.01 : 0.2 }}
+            className="fixed inset-0 z-[55] md:hidden bg-background overscroll-contain touch-pan-y"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) closeMenu()
+            }}
           >
             <motion.nav
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
-              className="flex flex-col items-center justify-center h-full gap-8"
+              transition={{
+                duration: prefersReducedMotion ? 0.01 : 0.2,
+                delay: prefersReducedMotion ? 0 : 0.05,
+              }}
+              className="flex flex-col items-center justify-start min-h-[100dvh] pt-[max(5.5rem,env(safe-area-inset-top,0px)+4rem)] pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] px-4 overflow-y-auto gap-6 sm:gap-8"
             >
               {navLinks.map((link, i) => {
                 const isActive = activeSection === link.href.slice(1)
                 const href = linkHref(link.href)
-                const mobileClass = `font-serif text-3xl font-bold uppercase tracking-wider transition-colors ${
+                const mobileClass = `font-serif text-2xl sm:text-3xl font-bold uppercase tracking-wider transition-colors py-1 ${
                   isActive ? "text-accent" : "text-foreground hover:text-accent"
                 }`
+                const enterDelay = prefersReducedMotion ? 0 : 0.06 + i * 0.05
                 return isHome ? (
                   <MotionLink
                     key={link.name}
                     href={href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeMenu}
                     className={mobileClass}
                     aria-current={isActive ? "true" : undefined}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 + i * 0.1 }}
+                    transition={{ delay: enterDelay, duration: prefersReducedMotion ? 0.01 : 0.28 }}
                   >
                     {link.name}
                   </MotionLink>
@@ -221,11 +258,11 @@ export function Navigation() {
                   <motion.a
                     key={link.name}
                     href={href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeMenu}
                     className={mobileClass}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 + i * 0.1 }}
+                    transition={{ delay: enterDelay, duration: prefersReducedMotion ? 0.01 : 0.28 }}
                   >
                     {link.name}
                   </motion.a>
@@ -234,22 +271,28 @@ export function Navigation() {
               {isHome ? (
                 <MotionLink
                   href={bookHref}
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
+                  onClick={closeMenu}
+                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="mt-4 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
+                  transition={{
+                    delay: prefersReducedMotion ? 0 : 0.35,
+                    duration: prefersReducedMotion ? 0.01 : 0.28,
+                  }}
+                  className="mt-2 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
                 >
                   {bookLabel}
                 </MotionLink>
               ) : (
                 <motion.a
                   href={bookHref}
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, y: 20 }}
+                  onClick={closeMenu}
+                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="mt-4 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
+                  transition={{
+                    delay: prefersReducedMotion ? 0 : 0.35,
+                    duration: prefersReducedMotion ? 0.01 : 0.28,
+                  }}
+                  className="mt-2 px-8 py-4 btn-metallic-gold font-bold uppercase tracking-wider rounded-full inline-block text-center max-w-[min(100%,22rem)]"
                 >
                   {bookLabel}
                 </motion.a>
