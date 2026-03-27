@@ -275,7 +275,7 @@ export function Reviews() {
   const isStatsInView = useInView(statsRef, { once: true, amount: 0.2 })
   const [statsSlideIndex, setStatsSlideIndex] = useState(0)
 
-  const skipScrollLinkedFade = reducedMotion === true || isMobile === true
+  const skipScrollLinkedFade = reducedMotion === true || isMobile !== false
 
   // Scroll-driven fade: seamless transition from hero as section enters viewport
   const { scrollYProgress } = useScroll({
@@ -289,7 +289,7 @@ export function Reviews() {
   )
 
   const statsIntervalMs =
-    isMobile === true ? STATS_CAROUSEL_INTERVAL_MOBILE_MS : STATS_CAROUSEL_INTERVAL_MS
+    isMobile === false ? STATS_CAROUSEL_INTERVAL_MS : STATS_CAROUSEL_INTERVAL_MOBILE_MS
 
   // Rotate metrics carousel when stats section is in view
   useEffect(() => {
