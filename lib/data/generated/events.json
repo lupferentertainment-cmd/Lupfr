@@ -1,19 +1,5 @@
 [
   {
-    "id": 5,
-    "slug": "wheres-west-corbin-mason",
-    "title": "Where's West?",
-    "subtitle": "feat. Corbin Mason",
-    "date": "April 18th, 2026",
-    "dateISO": "2026-04-18",
-    "time": "11 AM - 2 PM",
-    "location": "Eria Events, Sausalito",
-    "image": "/events/wheres_west.jpeg",
-    "ticketLink": "https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito",
-    "ticketLabel": "Tickets",
-    "description": "Waterfront day party in Sausalito with Corbin Mason."
-  },
-  {
     "id": 1,
     "slug": "boiler-boat-003-wheres-west-warehouse-session",
     "title": "Boiler Boat 003",
@@ -28,10 +14,36 @@
     "description": "Boiler Boat returns with a yacht edition on the Bay featuring HLWA."
   },
   {
+    "id": 5,
+    "slug": "wheres-west-corbin-mason",
+    "title": "Where's West?",
+    "subtitle": "feat. Corbin Mason",
+    "date": "April 18th, 2026",
+    "dateISO": "2026-04-18",
+    "time": "11 AM - 2 PM",
+    "location": "Eria Events, Sausalito",
+    "image": "/events/wheres_west.jpeg",
+    "ticketLink": "https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito",
+    "ticketLabel": "Tickets",
+    "description": "Waterfront day party in Sausalito with Corbin Mason."
+  },
+  {
+    "id": 6,
+    "slug": "warehouse-sessions",
+    "title": "Warehouse Sessions",
+    "subtitle": "",
+    "date": "Date TBD",
+    "dateISO": null,
+    "time": "TBD",
+    "location": "Location TBD",
+    "image": "/events/boiler_boat.png",
+    "description": "Intimate warehouse energy—details coming soon."
+  },
+  {
     "id": 2,
     "slug": "shamrock-house",
     "title": "Shamrock & House",
-    "subtitle": "",
+    "subtitle": "feat. Operator SF",
     "date": "March 14th, 2025",
     "dateISO": "2025-03-14",
     "time": "9 PM - 1 AM",
