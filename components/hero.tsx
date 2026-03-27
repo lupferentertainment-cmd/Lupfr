@@ -84,9 +84,11 @@ export function Hero() {
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
-  /** Fewer continuous Motion animations + lighter imagery on phones. */
-  const liteHero = prefersReducedMotion === true || isMobile === true
-  const phraseDurationMs = isMobile === true ? PHRASE_DURATION_MOBILE_MS : PHRASE_DURATION_MS
+  /** Until breakpoint resolves, prefer lite path (SSR + first paint) to avoid mobile ↔ desktop flip jank. */
+  const isDesktopViewport = isMobile === false
+  /** Fewer continuous Motion animations + lighter imagery on phones (and unknown width). */
+  const liteHero = prefersReducedMotion === true || !isDesktopViewport
+  const phraseDurationMs = isDesktopViewport ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -186,10 +188,9 @@ export function Hero() {
     layoutEffect: false,
   })
 
-  /* Use `isMobile !== true` so undefined (pre-breakpoint) matches desktop — avoids parallax/media flash on load. */
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", isMobile !== true ? "50%" : "0%"])
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", isDesktopViewport ? "50%" : "0%"])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isMobile !== true ? 1.2 : 1])
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, isDesktopViewport ? 1.2 : 1])
   /* Shine sweeps left→right in first 20% of scroll */
   const shinePositionDelayed = useTransform(scrollYProgress, [0, 0.04, 0.24, 1], ["100% 50%", "100% 50%", "0% 50%", "0% 50%"])
 
@@ -261,7 +262,7 @@ export function Hero() {
               muted
               loop
               playsInline
-              preload={isMobile === true ? "metadata" : "auto"}
+              preload={isDesktopViewport ? "auto" : "metadata"}
               disablePictureInPicture
               disableRemotePlayback
               className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-0 dark:opacity-100 transition-opacity duration-500 ease-out"
@@ -276,7 +277,7 @@ export function Hero() {
               muted
               loop
               playsInline
-              preload={isMobile === true ? "metadata" : "auto"}
+              preload={isDesktopViewport ? "auto" : "metadata"}
               disablePictureInPicture
               disableRemotePlayback
               className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-100 dark:opacity-0 transition-opacity duration-500 ease-out"
@@ -287,7 +288,7 @@ export function Hero() {
             </video>
           </>
         )}
-<div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
+        <div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
         {/* Seamless fade into next section: softer gradient for smooth handoff to stats */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background z-10" />
       </motion.div>
