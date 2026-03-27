@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, useCallback } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
 import { getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
 import { ScrollReveal } from "@/components/scroll-reveal"
@@ -21,14 +21,16 @@ const EVENT_IMAGE_HEIGHT = 800
 function EventCard({
   event,
   index,
-  isInView,
+  isRevealed,
+  enableTilt,
   isHovered,
   onHover,
   onLeave,
 }: {
   event: EventItem
   index: number
-  isInView: boolean
+  isRevealed: boolean
+  enableTilt: boolean
   isHovered: boolean
   onHover: () => void
   onLeave: () => void
@@ -41,7 +43,7 @@ function EventCard({
   const tag = getEventTag(event)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!cardRef.current) return
+    if (!enableTilt || !cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
@@ -60,23 +62,23 @@ function EventCard({
     <motion.article
       ref={cardRef}
       initial={isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: isFirstCard ? 1 : 0, y: isFirstCard ? 0 : 40 }}
       transition={{ duration: 0.45, delay: isFirstCard ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color,transform] duration-150 ease-out shadow-xl"
+      className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX,
-        rotateY,
-        transformPerspective: 800,
-      }}
+      style={
+        enableTilt
+          ? { rotateX, rotateY, transformPerspective: 800 }
+          : { rotateX: 0, rotateY: 0 }
+      }
     >
       <Link href={`/events/${event.slug}`} className="block">
-        <div className="aspect-[16/10] overflow-hidden relative">
+        <div className="aspect-[16/10] overflow-hidden relative bg-muted">
           <motion.div
             className="relative w-full h-full"
-            animate={{ scale: isHovered ? 1.08 : 1 }}
+            animate={{ scale: enableTilt && isHovered ? 1.08 : 1 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
             <Image
@@ -92,11 +94,11 @@ function EventCard({
               className="w-full h-full object-cover object-top"
             />
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <motion.span
             className={`absolute top-5 left-5 sm:top-6 sm:left-6 px-4 py-1.5 text-sm font-bold uppercase tracking-wider rounded-full ${tag.color} text-foreground`}
             initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: index * 0.12 + 0.2 }}
           >
             {tag.label}
@@ -153,13 +155,15 @@ const CAROUSEL_OPTS = {
 
 function EventsCarousel({
   events,
-  isInView,
+  isRevealed,
+  enableTilt,
   hoveredId,
   onHover,
   onLeave,
 }: {
   events: EventItem[]
-  isInView: boolean
+  isRevealed: boolean
+  enableTilt: boolean
   hoveredId: number | null
   onHover: (id: number) => void
   onLeave: () => void
@@ -197,7 +201,8 @@ function EventsCarousel({
               <EventCard
                 event={event}
                 index={i}
-                isInView={isInView}
+                isRevealed={isRevealed}
+                enableTilt={enableTilt}
                 isHovered={hoveredId === event.id}
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
@@ -227,10 +232,29 @@ function EventsCarousel({
   )
 }
 
+function useFinePointerHover(): boolean {
+  const [fine, setFine] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)")
+    const apply = () => setFine(mq.matches)
+    apply()
+    mq.addEventListener("change", apply)
+    return () => mq.removeEventListener("change", apply)
+  }, [])
+  return fine
+}
+
 export function Events() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const inViewNow = useInView(ref, { once: false, margin: "0px 0px 80px 0px", amount: 0.12 })
+  const [hasRevealed, setHasRevealed] = useState(false)
+  useEffect(() => {
+    if (inViewNow) setHasRevealed(true)
+  }, [inViewNow])
+  const isRevealed = hasRevealed
+  const enableTilt = useFinePointerHover()
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const clearHover = useCallback(() => setHoveredId(null), [])
   const upcoming = getUpcomingEvents()
   const past = getPastEvents()
 
@@ -242,10 +266,10 @@ export function Events() {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
-      <ScrollReveal variant="up" className="container mx-auto relative z-10 max-w-7xl">
+      <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 36 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8 sm:mb-10 md:mb-12"
         >
@@ -257,7 +281,7 @@ export function Events() {
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
           transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-20 md:mb-28 lg:mb-32"
         >
@@ -267,10 +291,11 @@ export function Events() {
           {upcoming.length > 0 ? (
             <EventsCarousel
               events={upcoming}
-              isInView={isInView}
+              isRevealed={isRevealed}
+              enableTilt={enableTilt}
               hoveredId={hoveredId}
               onHover={setHoveredId}
-              onLeave={() => setHoveredId(null)}
+              onLeave={clearHover}
             />
           ) : (
             <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
@@ -282,7 +307,7 @@ export function Events() {
         {past.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 24 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="pt-4 pb-8"
           >
@@ -291,10 +316,11 @@ export function Events() {
             </h3>
             <EventsCarousel
               events={past}
-              isInView={isInView}
+              isRevealed={isRevealed}
+              enableTilt={enableTilt}
               hoveredId={hoveredId}
               onHover={setHoveredId}
-              onLeave={() => setHoveredId(null)}
+              onLeave={clearHover}
             />
           </motion.div>
         )}

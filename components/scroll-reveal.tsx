@@ -19,6 +19,11 @@ interface ScrollRevealProps {
   stagger?: number
   /** Extra Y offset when "out" (positive = exit upward). */
   exitY?: number
+  /**
+   * After the block is fully revealed, keep opacity/transform stable (no fade/slide when scrolling past).
+   * Use for heavy content (e.g. carousels) to avoid visible flashing.
+   */
+  freezeAfterReveal?: boolean
 }
 
 const DEFAULT_AMOUNT_IN = 0.2
@@ -31,6 +36,7 @@ function ScrollRevealInner({
   amountOut = DEFAULT_AMOUNT_OUT,
   variant,
   exitY,
+  freezeAfterReveal = false,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -43,21 +49,26 @@ function ScrollRevealInner({
   const exitX = variant === "left" ? 32 : variant === "right" ? -32 : 0
 
   const inputRange = [0, amountIn, 0.5, amountOut, 1] as const
-  const opacity = useTransform(scrollYProgress, inputRange, [0, 1, 1, 1, 0])
+  const opacityEnd = freezeAfterReveal ? 1 : 0
+  const yExit = freezeAfterReveal ? 0 : (exitY ?? 0)
+  const xExit = freezeAfterReveal ? 0 : exitX
+  const scaleExit = freezeAfterReveal ? 1 : variant === "scale" ? 0.96 : 1
+
+  const opacity = useTransform(scrollYProgress, inputRange, [0, 1, 1, 1, opacityEnd])
   const y = useTransform(
     scrollYProgress,
     inputRange,
-    [initialY, 0, 0, exitY ?? 0, exitY ?? 0]
+    [initialY, 0, 0, yExit, yExit]
   )
   const x = useTransform(
     scrollYProgress,
     inputRange,
-    [initialX, 0, 0, exitX, exitX]
+    [initialX, 0, 0, xExit, xExit]
   )
   const scale = useTransform(
     scrollYProgress,
     inputRange,
-    [variant === "scale" ? 0.92 : 1, 1, 1, variant === "scale" ? 0.96 : 1, variant === "scale" ? 0.96 : 1]
+    [variant === "scale" ? 0.92 : 1, 1, 1, scaleExit, scaleExit]
   )
 
   const style: Record<string, unknown> = { opacity }
