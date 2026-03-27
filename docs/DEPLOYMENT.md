@@ -5,7 +5,7 @@
 **Environment.**
 
 - **Required:** `RESEND_API_KEY` – Resend API key with send permission. Without it, contact and newsletter API routes return 500.
-- **Optional:** `RESEND_TO_EMAIL` – Override recipient for contact and newsletter (default: `events@lupfr.com`).
+- **Optional:** `RESEND_TO_EMAIL` – Override recipient for contact and newsletter (default: `will@lupfr.com`).
 
 Set in Vercel: Project → Settings → Environment Variables. No other runtime secrets.
 

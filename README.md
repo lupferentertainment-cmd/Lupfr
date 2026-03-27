@@ -10,7 +10,7 @@ This project uses **Bun** for install, scripts, and lint. Vercel is configured t
 2. Copy environment: `cp .env.example .env.local`
 3. Add your [Resend](https://resend.com) API key to `.env.local`:
    - `RESEND_API_KEY=re_xxxxxxxxx` (get a key at https://resend.com/api-keys)
-   - Required for the contact form and newsletter signup to send email to `events@lupfr.com`
+   - Required for the contact form and newsletter signup to send email to `will@lupfr.com`
 4. Run dev: `bun run dev`
 
 ## Resend

@@ -47,4 +47,4 @@
 
 ---
 
-**Internal.** Resend client: `lib/resend.ts` (`getResendClient()`). Recipient overridable via `RESEND_TO_EMAIL`; default `events@lupfr.com`. Sender: `LUPFR Entertainment <hello@lupfr.com>` (verified domain in Resend).
+**Internal.** Resend client: `lib/resend.ts` (`getResendClient()`). Recipient overridable via `RESEND_TO_EMAIL`; default `will@lupfr.com`. Sender: `LUPFR Entertainment <hello@lupfr.com>` (verified domain in Resend).
