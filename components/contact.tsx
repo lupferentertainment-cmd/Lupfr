@@ -16,6 +16,7 @@ const socialLinks = [
 
 const inquiryTypes = [
   "Book an Event",
+  "Corporate Event",
   "Talent Booking",
   "Submit Your Mix",
   "Venue Partnership",

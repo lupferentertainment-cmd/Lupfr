@@ -10,6 +10,8 @@
     "build": "bun run generate-data && next build",
     "start": "next start",
     "lint": "bunx eslint .",
+    "verify:routes": "bash scripts/verify-routes.sh",
+    "verify": "bun run lint && bun run build && bun run verify:routes",
     "prepare": "bun scripts/install-pre-commit.js"
   },
   "dependencies": {
