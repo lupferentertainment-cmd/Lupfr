@@ -30,7 +30,7 @@ const footerLinks = {
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
-const LUPFR_EMAIL = "events@lupfr.com"
+const LUPFR_EMAIL = "will@lupfr.com"
 
 export function Footer() {
   const pathname = usePathname()
@@ -105,11 +105,11 @@ export function Footer() {
               San Francisco&apos;s premier music event production company. Creating unforgettable experiences in the Bay and beyond.
             </p>
             <motion.a
-              href="mailto:events@lupfr.com"
+              href="mailto:will@lupfr.com"
               className="text-accent hover:underline text-sm mb-4 inline-block"
               whileHover={{ y: -2 }}
             >
-              events@lupfr.com
+              will@lupfr.com
             </motion.a>
             <div className="flex items-center gap-4">
               {footerLinks.social.map((link) => (
