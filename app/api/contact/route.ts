@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getResendClient, RESEND_TO_EMAIL, RESEND_FROM_EMAIL } from "@/lib/resend";
+import { getResendClient, CONTACT_FORM_TO_EMAIL, RESEND_FROM_EMAIL } from "@/lib/resend";
 import { contactFormEmail } from "@/lib/email-templates";
 
 export interface ContactBody {
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await resend.emails.send({
     from: RESEND_FROM_EMAIL,
-    to: RESEND_TO_EMAIL,
+    to: CONTACT_FORM_TO_EMAIL,
     replyTo: email,
     subject: `[LUPFR] ${inquiryType} – ${name}`,
     html,

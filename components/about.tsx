@@ -239,10 +239,10 @@ export function About() {
                 <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
               </div>
             </div>
-            {/* Portrait: fades into section, does not dominate */}
-            <div className="relative w-full max-w-sm mb-8 rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 z-10 pointer-events-none" />
+            {/* Portrait: dark = vignette fade into section; light = minimal overlay so the photo stays clear */}
+            <div className="relative w-full max-w-sm mb-8 rounded-2xl overflow-hidden ring-1 ring-black/[0.06] dark:ring-0">
+              <div className="absolute inset-0 bg-gradient-to-t from-background/25 via-transparent to-transparent dark:from-background dark:via-background/20 z-10 pointer-events-none" />
+              <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background/80 via-transparent to-background/80 z-10 pointer-events-none" />
               <Image
                 src="/images/will_lupfer.jpg"
                 alt="Will Lupfer, Founder & CEO of LUPFR Entertainment"
