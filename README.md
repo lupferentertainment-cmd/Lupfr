@@ -33,6 +33,8 @@ See comments at the top of each `data/*.yml` file for field descriptions. Non-te
 - `bun run build` – runs `generate-data` then production build
 - `bun run start` – run production server
 - `bun run lint` – run ESLint
+- `bun run verify` – lint, build, then route smoke (`scripts/verify-routes.sh`); matches GitHub Actions CI
+- `bun run precommit` – same as `verify`; this sequence also runs automatically before each commit after `bun install` (git hook from `scripts/pre-commit`)
 
 ## Vercel (production deploys)
 

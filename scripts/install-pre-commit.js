@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 "use strict";
-// Installs scripts/pre-commit into .git/hooks/pre-commit so lint + build run before each commit.
+// Installs scripts/pre-commit → .git/hooks/pre-commit (lint + build + verify:routes via bun run verify).
 const fs = require("fs");
 const path = require("path");
 
