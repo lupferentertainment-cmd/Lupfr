@@ -96,10 +96,10 @@ export function Navigation() {
             : ""
         }`}
       >
-        <nav className="container mx-auto px-4 sm:px-6 py-2 md:py-3 flex items-center justify-between">
+        <nav className="container mx-auto px-4 sm:px-6 py-2 md:py-3 flex items-center gap-3 sm:gap-4 min-w-0">
           <MotionLink
             href={isHome ? "#" : "/"}
-            className="flex items-center gap-2 text-2xl font-bold tracking-tighter"
+            className="flex shrink-0 items-center gap-2 text-2xl font-bold tracking-tighter"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             aria-label="LUPFR home"
@@ -109,18 +109,19 @@ export function Navigation() {
               alt="LUPFR"
               width={360}
               height={120}
-              sizes="(max-width: 640px) 140px, (max-width: 768px) 200px, 240px"
-              className="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain"
+              sizes="(max-width: 640px) 140px, (max-width: 768px) 180px, 220px"
+              className="h-12 sm:h-16 md:h-16 lg:h-20 xl:h-24 w-auto object-contain"
               priority
             />
           </MotionLink>
 
-          <div className="hidden md:flex items-center gap-8">
+          {/* One row: toggle + links + CTA share one flex line with wrap + min-w-0 so mid-width never overlaps */}
+          <div className="hidden md:flex min-w-0 flex-1 flex-wrap items-center justify-end gap-x-3 gap-y-2 lg:gap-x-5 xl:gap-x-7">
             <ThemeToggle withSound className="shrink-0" />
             {navLinks.map((link, i) => {
               const isActive = activeSection === link.href.slice(1)
               const href = linkHref(link.href)
-              const linkClass = `text-sm uppercase tracking-widest transition-colors duration-200 ease-snap relative group py-1 ${
+              const linkClass = `shrink-0 text-sm uppercase tracking-widest transition-colors duration-200 ease-snap relative group py-1 ${
                 isActive
                   ? "text-accent font-medium"
                   : isScrolled
@@ -165,33 +166,30 @@ export function Navigation() {
                 </motion.a>
               )
             })}
+            {isHome ? (
+              <MotionLink
+                href={bookHref}
+                className="flex shrink-0 items-center gap-2 whitespace-nowrap px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 500, damping: 28 }}
+              >
+                {bookLabel}
+              </MotionLink>
+            ) : (
+              <motion.a
+                href={bookHref}
+                className="flex shrink-0 items-center gap-2 whitespace-nowrap px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 500, damping: 28 }}
+              >
+                {bookLabel}
+              </motion.a>
+            )}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
-          {isHome ? (
-            <MotionLink
-              href={bookHref}
-              className="flex items-center gap-2 px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full shrink-0 min-w-0 max-w-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 500, damping: 28 }}
-            >
-              {bookLabel}
-            </MotionLink>
-          ) : (
-            <motion.a
-              href={bookHref}
-              className="flex items-center gap-2 px-4 lg:px-5 py-2.5 btn-metallic-gold font-medium uppercase tracking-wide lg:tracking-wider transition-colors rounded-full shrink-0 min-w-0 max-w-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 500, damping: 28 }}
-            >
-              {bookLabel}
-            </motion.a>
-          )}
-          </div>
-
-          <div className="flex md:hidden items-center gap-3 shrink-0">
+          <div className="ml-auto flex md:hidden items-center gap-3 shrink-0">
             <ThemeToggle withSound className="shrink-0" />
             <button
               type="button"

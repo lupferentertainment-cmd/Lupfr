@@ -2,7 +2,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket } from "lucide-react"
-import { getEventBySlug, getEventTag, EVENTS } from "@/lib/events"
+import { getEventBySlug, EVENTS } from "@/lib/events"
+import { EventTagBadge } from "@/components/event-tag-badge"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
@@ -13,6 +14,9 @@ export function generateStaticParams() {
   return EVENTS.map((e) => ({ slug: e.slug }))
 }
 
+/** Refresh event pages periodically so Past / Upcoming badge matches calendar (see lib/events.ts). */
+export const revalidate = 3600
+
 export default async function EventPage({
   params,
 }: {
@@ -21,7 +25,6 @@ export default async function EventPage({
   const { slug } = await params
   const event = getEventBySlug(slug)
   if (!event) notFound()
-  const tag = getEventTag(event)
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
@@ -50,11 +53,10 @@ export default async function EventPage({
                 className="w-full h-full object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-              <span
-                className={`absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${tag.color} text-foreground`}
-              >
-                {tag.label}
-              </span>
+              <EventTagBadge
+                event={event}
+                className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full"
+              />
             </div>
             <div className="p-6 sm:p-8">
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-2">

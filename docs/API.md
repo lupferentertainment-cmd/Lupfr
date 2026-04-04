@@ -6,7 +6,7 @@
 
 ## POST /api/contact
 
-**Purpose.** Submit contact form; send email via Resend to configured inbox.
+**Purpose.** Submit contact form; send email via Resend to `will@lupfr.com` (`CONTACT_FORM_TO_EMAIL` in `lib/resend.ts`). This recipient is not overridden by `RESEND_TO_EMAIL`, so contact leads always reach the same inbox.
 
 **Request.** `Content-Type: application/json`. Body (all strings except where noted):
 
@@ -47,4 +47,4 @@
 
 ---
 
-**Internal.** Resend client: `lib/resend.ts` (`getResendClient()`). Recipient overridable via `RESEND_TO_EMAIL`; default `will@lupfr.com`. Sender: `LUPFR Entertainment <hello@lupfr.com>` (verified domain in Resend).
+**Internal.** Resend client: `lib/resend.ts` (`getResendClient()`). Contact `to`: `CONTACT_FORM_TO_EMAIL` (`will@lupfr.com`). Newsletter internal notification `to`: `RESEND_TO_EMAIL` (env override optional; default `will@lupfr.com`). Sender: `LUPFR Entertainment <hello@lupfr.com>` (verified domain in Resend).

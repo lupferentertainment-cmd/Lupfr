@@ -114,7 +114,7 @@ const jsonLd = {
       logo: `${siteUrl}/logos/will_logo.png`,
       description: defaultDescription,
       sameAs: [
-        'https://www.instagram.com/lupfer_music/',
+        'https://www.instagram.com/lupfr_/',
         'https://www.tiktok.com/@lupfer_entertainment',
         'https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew',
       ],

@@ -6,6 +6,7 @@ import { motion, useInView, useMotionValue, useTransform, useSpring } from "fram
 import { useRef, useState, useEffect, useCallback } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
 import { getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
+import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import {
@@ -26,6 +27,7 @@ function EventCard({
   isHovered,
   onHover,
   onLeave,
+  now,
 }: {
   event: EventItem
   index: number
@@ -34,13 +36,14 @@ function EventCard({
   isHovered: boolean
   onHover: () => void
   onLeave: () => void
+  now: Date
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
-  const tag = getEventTag(event)
+  const tag = getEventTag(event, now)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!enableTilt || !cardRef.current) return
@@ -96,7 +99,8 @@ function EventCard({
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <motion.span
-            className={`absolute top-5 left-5 sm:top-6 sm:left-6 px-4 py-1.5 text-sm font-bold uppercase tracking-wider rounded-full ${tag.color} text-foreground`}
+            suppressHydrationWarning
+            className={`absolute top-5 left-5 sm:top-6 sm:left-6 px-4 py-1.5 text-sm font-bold uppercase tracking-wider rounded-full ${tag.color}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: index * 0.12 + 0.2 }}
@@ -160,6 +164,7 @@ function EventsCarousel({
   hoveredId,
   onHover,
   onLeave,
+  now,
 }: {
   events: EventItem[]
   isRevealed: boolean
@@ -167,6 +172,7 @@ function EventsCarousel({
   hoveredId: number | null
   onHover: (id: number) => void
   onLeave: () => void
+  now: Date
 }) {
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -206,6 +212,7 @@ function EventsCarousel({
                 isHovered={hoveredId === event.id}
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
+                now={now}
               />
             </CarouselItem>
           ))}
@@ -255,8 +262,9 @@ export function Events() {
   const enableTilt = useFinePointerHover()
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const clearHover = useCallback(() => setHoveredId(null), [])
-  const upcoming = getUpcomingEvents()
-  const past = getPastEvents()
+  const now = useEventCalendarClock()
+  const upcoming = getUpcomingEvents(now)
+  const past = getPastEvents(now)
 
   return (
     <section
@@ -296,6 +304,7 @@ export function Events() {
               hoveredId={hoveredId}
               onHover={setHoveredId}
               onLeave={clearHover}
+              now={now}
             />
           ) : (
             <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
@@ -321,6 +330,7 @@ export function Events() {
               hoveredId={hoveredId}
               onHover={setHoveredId}
               onLeave={clearHover}
+              now={now}
             />
           </motion.div>
         )}

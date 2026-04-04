@@ -7,7 +7,7 @@
 - **Data:** `data/*.yml` (source of truth) → `scripts/generate-data.js` → `lib/data/generated/*.json`. Re-exported via `lib/events.ts`, `lib/data/artists.ts`, `lib/data/services.ts`, `lib/data/partners.ts` for type-safe consumption.
 - **UI:** `app/` (routes, layout, metadata), `components/` (sections and UI). Home is a single scroll of sections (Hero, Reviews, Events, Services, Artists, About, Contact, Footer). Event detail at `app/events/[slug]/page.tsx`.
 - **API:** `app/api/contact/route.ts` (POST, form → Resend), `app/api/newsletter/route.ts` (POST, email → Resend; sends internal notification + welcome to subscriber).
-- **Email:** Resend client in `lib/resend.ts`; templates in `lib/email-templates`. Requires `RESEND_API_KEY` in env; optional override `RESEND_TO_EMAIL`.
+- **Email:** Resend client in `lib/resend.ts`; templates in `lib/email-templates`. Requires `RESEND_API_KEY` in env. Contact uses fixed `CONTACT_FORM_TO_EMAIL` (`will@lupfr.com`); newsletter internal copy uses `RESEND_TO_EMAIL` (optional env override).
 
 **Invariants.**
 

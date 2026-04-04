@@ -1,6 +1,9 @@
 import { Resend } from "resend";
 
-/** Recipient for all site emails (contact, newsletter). Use env to override; defaults to events inbox. */
+/** Inbox for contact form leads. Fixed so production misconfiguration cannot route submissions away from Will. */
+export const CONTACT_FORM_TO_EMAIL = "will@lupfr.com";
+
+/** Recipient for newsletter internal notifications. Override with `RESEND_TO_EMAIL` in env; defaults to Will. */
 export const RESEND_TO_EMAIL =
   (typeof process !== "undefined" && process.env.RESEND_TO_EMAIL?.trim()) ||
   "will@lupfr.com";
