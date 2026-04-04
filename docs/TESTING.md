@@ -1,6 +1,6 @@
 # Testing
 
-**Current state.** There is no Jest/Vitest unit suite yet. **CI** (GitHub Actions) runs ESLint, a full Next production build, and **route smoke** (`scripts/verify-routes.sh` via `bun run verify:routes`). **Local/pre-commit:** `scripts/pre-commit` runs `bun run lint` and `bun run build` before each commit (installed via `prepare`).
+**Current state.** There is no Jest/Vitest unit suite yet. **CI** (GitHub Actions) runs ESLint, a full Next production build, and **route smoke** (`scripts/verify-routes.sh` via `bun run verify:routes`). **Local/pre-commit:** `.git/hooks/pre-commit` (copied from `scripts/pre-commit` on `bun install` via `prepare`) runs **`bun run verify`** = `lint` + `build` + **`verify:routes`** (same sequence as CI). Shortcut: `bun run precommit`.
 
 **Definition of done (when tests exist).** A feature is not done until: (1) the feature is explicitly tested and passing; (2) core integration paths (e.g. load home, submit contact form) are covered to avoid regressions; (3) any code that writes files (e.g. generate-data) is tested with real writes and schema/format checks where appropriate.
 

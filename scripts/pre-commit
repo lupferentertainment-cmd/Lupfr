@@ -1,14 +1,15 @@
 #!/bin/sh
-# Pre-commit hook: run lint and build so only working commits are allowed.
-# Installed by "bun run prepare" (or "bun install") from scripts/pre-commit -> .git/hooks/pre-commit.
+# Pre-commit: same checks as CI — lint, production build, route smoke (verify-routes).
+# Install: "bun install" / "bun run prepare" copies this to .git/hooks/pre-commit.
+# Run manually anytime: bun run precommit
 
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
-echo "Running lint..."
-bun run lint || { echo "Pre-commit failed: lint failed."; exit 1; }
+echo "Pre-commit: lint + build + route smoke (see package.json \"verify\")..."
+bun run verify || {
+  echo "Pre-commit failed. Fix errors above, or run: bun run verify"
+  exit 1
+}
 
-echo "Running build..."
-bun run build || { echo "Pre-commit failed: build failed."; exit 1; }
-
-echo "Lint and build passed. Proceeding with commit."
+echo "Pre-commit passed."

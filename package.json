@@ -12,6 +12,7 @@
     "lint": "bunx eslint .",
     "verify:routes": "bash scripts/verify-routes.sh",
     "verify": "bun run lint && bun run build && bun run verify:routes",
+    "precommit": "bun run verify",
     "prepare": "bun scripts/install-pre-commit.js"
   },
   "dependencies": {
