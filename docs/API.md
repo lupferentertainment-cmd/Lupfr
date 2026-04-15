@@ -1,6 +1,6 @@
 # API
 
-**Scope.** The app exposes two HTTP APIs; both are used by the site front-end only. No public API versioning or external contract.
+**Scope.** The app exposes three HTTP APIs; all are used by the site front-end only. No public API versioning or external contract.
 
 ---
 
@@ -48,3 +48,27 @@
 ---
 
 **Internal.** Resend client: `lib/resend.ts` (`getResendClient()`). Contact `to`: `CONTACT_FORM_TO_EMAIL` (`will@lupfr.com`). Newsletter internal notification `to`: `RESEND_TO_EMAIL` (env override optional; default `will@lupfr.com`). Sender: `LUPFR Entertainment <hello@lupfr.com>` (verified domain in Resend).
+
+---
+
+## POST /api/phone-list
+
+**Purpose.** Capture visitor name and phone number from popup and append to Google Sheets via webhook.
+
+**Request.** `Content-Type: application/json`. Body:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| name  | Yes      | Visitor name |
+| phone | Yes      | Visitor phone number |
+
+Phone numbers are validated as a permissive phone pattern (`7-24` chars, digits and common symbols).
+
+**Responses.**
+
+- `200`: `{ "success": true }`
+- `400`: Invalid JSON, missing required fields, or invalid phone format → `{ "error": "..." }`
+- `500`: Google Sheets webhook not configured (`GOOGLE_SHEETS_WEBHOOK_URL` missing) → `{ "error": "..." }`
+- `502`: Webhook network failure or non-OK webhook response → `{ "error": "..." }`
+
+**Internal.** Route forwards `{ name, phone, source, page, userAgent, submittedAt }` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST application/json`.
