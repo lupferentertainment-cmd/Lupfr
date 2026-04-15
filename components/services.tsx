@@ -162,7 +162,7 @@ export function Services() {
     <section
       id="services"
       ref={ref}
-      className="relative overflow-x-hidden py-20 sm:py-24 md:py-32 px-4 sm:px-6"
+      className="relative [overflow-x:clip] py-20 sm:py-24 md:py-32 px-4 sm:px-6"
     >
       {/* Animated background orbs - subtle pulse */}
       <motion.div
