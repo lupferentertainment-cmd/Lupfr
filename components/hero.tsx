@@ -82,13 +82,19 @@ export function Hero() {
   }
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [fallbackToImage, setFallbackToImage] = useState(false)
-  const prefersReducedMotion = useReducedMotion()
+  const [mounted, setMounted] = useState(false)
+  const prefersReducedMotionRaw = useReducedMotion()
+  // Keep null until after mount so SSR and first client render agree,
+  // then update via a normal re-render (not a hydration patch).
+  const prefersReducedMotion = mounted ? prefersReducedMotionRaw : null
   const isMobile = useIsMobile()
   /** Until breakpoint resolves, prefer lite path (SSR + first paint) to avoid mobile ↔ desktop flip jank. */
   const isDesktopViewport = isMobile === false
   /** Fewer continuous Motion animations + lighter imagery on phones (and unknown width). */
   const liteHero = prefersReducedMotion === true || !isDesktopViewport
   const phraseDurationMs = isDesktopViewport ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     const id = setInterval(() => {

@@ -16,6 +16,7 @@ const navLinks = [
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
+  { name: "Gallery", href: "#gallery" },
   { name: "About", href: "#about" },
   { name: "Contact", href: "#contact" },
 ]
@@ -96,7 +97,7 @@ export function Navigation() {
             : ""
         }`}
       >
-        <nav className="container mx-auto px-4 sm:px-6 py-2 md:py-3 flex items-center gap-3 sm:gap-4 min-w-0">
+        <nav className="container mx-auto px-4 sm:px-6 py-2 md:py-3 flex items-center min-w-0 md:grid md:grid-cols-[1fr_auto_1fr]">
           <MotionLink
             href={isHome ? "#" : "/"}
             className="flex shrink-0 items-center gap-2 text-2xl font-bold tracking-tighter"
@@ -115,9 +116,8 @@ export function Navigation() {
             />
           </MotionLink>
 
-          {/* One row: toggle + links + CTA share one flex line with wrap + min-w-0 so mid-width never overlaps */}
-          <div className="hidden md:flex min-w-0 flex-1 flex-wrap items-center justify-end gap-x-3 gap-y-2 lg:gap-x-5 xl:gap-x-7">
-            <ThemeToggle withSound className="shrink-0" />
+          {/* Nav links — centered */}
+          <div className="hidden md:flex items-center justify-center gap-x-3 lg:gap-x-5 xl:gap-x-7">
             {navLinks.map((link, i) => {
               const isActive = activeSection === link.href.slice(1)
               const href = linkHref(link.href)
@@ -166,6 +166,11 @@ export function Navigation() {
                 </motion.a>
               )
             })}
+          </div>
+
+          {/* Theme toggle + CTA — right */}
+          <div className="hidden md:flex items-center justify-end gap-x-3 shrink-0">
+            <ThemeToggle withSound className="shrink-0" />
             {isHome ? (
               <MotionLink
                 href={bookHref}
