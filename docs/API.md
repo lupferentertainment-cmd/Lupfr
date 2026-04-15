@@ -53,22 +53,23 @@
 
 ## POST /api/phone-list
 
-**Purpose.** Capture visitor name and phone number from popup and append to Google Sheets via webhook.
+**Purpose.** Capture visitor contact-list signup from popup/footer/contact sections and append to Google Sheets via webhook.
 
 **Request.** `Content-Type: application/json`. Body:
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | name  | Yes      | Visitor name |
-| phone | Yes      | Visitor phone number |
+| phone | Conditional | Visitor phone number (required when `email` is absent) |
+| email | Conditional | Visitor email (required when `phone` is absent) |
 
-Phone numbers are validated as a permissive phone pattern (`7-24` chars, digits and common symbols).
+Phone numbers are validated as a permissive phone pattern (`7-24` chars, digits and common symbols). Emails are validated with a standard email format pattern.
 
 **Responses.**
 
 - `200`: `{ "success": true }`
-- `400`: Invalid JSON, missing required fields, or invalid phone format → `{ "error": "..." }`
+- `400`: Invalid JSON, missing required fields (`name` and either `phone` or `email`), or invalid phone/email format → `{ "error": "..." }`
 - `500`: Google Sheets webhook not configured (`GOOGLE_SHEETS_WEBHOOK_URL` missing) → `{ "error": "..." }`
 - `502`: Webhook network failure or non-OK webhook response → `{ "error": "..." }`
 
-**Internal.** Route forwards `{ name, phone, source, page, userAgent, submittedAt }` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST application/json`.
+**Internal.** Route forwards `{ name, phone, email, source, page, userAgent, submittedAt }` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST application/json`.
