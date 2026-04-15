@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, Inter, Playfair_Display } from 'next/font/google'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
+import { PhoneListPopup } from '@/components/phone-list-popup'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
@@ -150,6 +151,7 @@ export default function RootLayout({
         <h1 className="sr-only">{defaultTitle}</h1>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}
+          <PhoneListPopup />
           <Toaster />
         </ThemeProvider>
         <DeferredAnalytics />

@@ -5,6 +5,7 @@
 **Environment.**
 
 - **Required:** `RESEND_API_KEY` – Resend API key with send permission. Without it, contact and newsletter API routes return 500.
+- **Required:** `GOOGLE_SHEETS_WEBHOOK_URL` – Google Apps Script web app URL that accepts JSON POST and appends a row in your sheet. Without it, `/api/phone-list` returns 500.
 - **Optional:** `RESEND_TO_EMAIL` – Override recipient for **newsletter internal notifications** only (default: `will@lupfr.com`). Contact form submissions always go to `will@lupfr.com` via `CONTACT_FORM_TO_EMAIL`.
 
 Set in Vercel: Project → Settings → Environment Variables. No other runtime secrets.
