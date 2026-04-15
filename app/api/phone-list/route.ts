@@ -3,9 +3,11 @@ import { NextResponse } from "next/server"
 interface PhoneListBody {
   name?: string
   phone?: string
+  email?: string
 }
 
 const PHONE_PATTERN = /^[0-9+()\-\s]{7,24}$/
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function getSheetsWebhookUrl(): string {
   const raw = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim()
@@ -25,6 +27,10 @@ function sanitizePhone(value: string): string {
   return value.replace(/\s+/g, " ").trim()
 }
 
+function sanitizeEmail(value: string): string {
+  return value.replace(/\s+/g, "").trim().toLowerCase()
+}
+
 export async function POST(request: Request) {
   let body: PhoneListBody
   try {
@@ -35,17 +41,25 @@ export async function POST(request: Request) {
 
   const name = sanitizeName(typeof body.name === "string" ? body.name : "")
   const phone = sanitizePhone(typeof body.phone === "string" ? body.phone : "")
+  const email = sanitizeEmail(typeof body.email === "string" ? body.email : "")
 
-  if (!name || !phone) {
+  if (!name || (!phone && !email)) {
     return NextResponse.json(
-      { error: "Missing required fields: name, phone" },
+      { error: "Missing required fields: name and either phone or email" },
       { status: 400 }
     )
   }
 
-  if (!PHONE_PATTERN.test(phone)) {
+  if (phone && !PHONE_PATTERN.test(phone)) {
     return NextResponse.json(
       { error: "Please enter a valid phone number." },
+      { status: 400 }
+    )
+  }
+
+  if (email && !EMAIL_PATTERN.test(email)) {
+    return NextResponse.json(
+      { error: "Please enter a valid email address." },
       { status: 400 }
     )
   }
@@ -53,14 +67,17 @@ export async function POST(request: Request) {
   let webhookUrl: string
   try {
     webhookUrl = getSheetsWebhookUrl()
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Webhook not configured."
-    return NextResponse.json({ error: message }, { status: 500 })
+  } catch {
+    return NextResponse.json(
+      { error: "Signup is temporarily unavailable. Please try again shortly." },
+      { status: 500 }
+    )
   }
 
   const payload = {
     name,
-    phone,
+    phone: phone || null,
+    email: email || null,
     source: "lupfr.com",
     page: request.headers.get("origin") ?? "unknown",
     userAgent: request.headers.get("user-agent") ?? "unknown",

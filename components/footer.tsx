@@ -41,6 +41,10 @@ function setCookie(name: string, value: string): void {
   document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
 }
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
 function isValidPhone(phone: string): boolean {
   return /^[0-9+()\-\s]{7,24}$/.test(phone)
 }
@@ -58,18 +62,24 @@ export function Footer() {
 
   const [contactListSubmitting, setContactListSubmitting] = useState(false)
   const [contactListName, setContactListName] = useState("")
+  const [contactListEmail, setContactListEmail] = useState("")
   const [contactListPhone, setContactListPhone] = useState("")
 
   const handleContactListSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const cleanName = contactListName.replace(/\s+/g, " ").trim()
+    const cleanEmail = contactListEmail.replace(/\s+/g, "").trim().toLowerCase()
     const cleanPhone = contactListPhone.replace(/\s+/g, " ").trim()
 
-    if (!cleanName || !cleanPhone) {
-      toast.error("Name and phone number are required.")
+    if (!cleanName || !cleanEmail) {
+      toast.error("Name and email are required.")
       return
     }
-    if (!isValidPhone(cleanPhone)) {
+    if (!isValidEmail(cleanEmail)) {
+      toast.error("Please enter a valid email address.")
+      return
+    }
+    if (cleanPhone && !isValidPhone(cleanPhone)) {
       toast.error("Please enter a valid phone number.")
       return
     }
@@ -79,14 +89,15 @@ export function Footer() {
       const res = await fetch("/api/phone-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: cleanName, phone: cleanPhone }),
+        body: JSON.stringify({ name: cleanName, email: cleanEmail, phone: cleanPhone || undefined }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         toast.error("Signup not configured. Opening email to send to LUPFR instead.")
         const subject = encodeURIComponent("[LUPFR] Contact list signup")
         const body = encodeURIComponent(
-          `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nPhone: ${cleanPhone}`
+          `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nEmail: ${cleanEmail}` +
+            (cleanPhone ? `\nPhone: ${cleanPhone}` : "")
         )
         window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
         return
@@ -97,12 +108,14 @@ export function Footer() {
       setCookie(POPUP_SUBMITTED_COOKIE, "1")
       toast.success("You're on the list! We'll be in touch.")
       setContactListName("")
+      setContactListEmail("")
       setContactListPhone("")
     } catch {
       toast.error("Network error. Opening email to send to LUPFR instead.")
       const subject = encodeURIComponent("[LUPFR] Contact list signup")
       const body = encodeURIComponent(
-        `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nPhone: ${cleanPhone}`
+        `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nEmail: ${cleanEmail}` +
+          (cleanPhone ? `\nPhone: ${cleanPhone}` : "")
       )
       window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
     } finally {
@@ -206,11 +219,21 @@ export function Footer() {
                 className="w-full px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
               />
               <input
+                name="email"
+                type="email"
+                required
+                autoComplete="email"
+                placeholder="Email"
+                value={contactListEmail}
+                onChange={(e) => setContactListEmail(e.target.value)}
+                disabled={contactListSubmitting}
+                className="w-full px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
+              />
+              <input
                 name="phone"
                 type="tel"
-                required
                 autoComplete="tel"
-                placeholder="Phone number"
+                placeholder="Phone number (optional)"
                 value={contactListPhone}
                 onChange={(e) => setContactListPhone(e.target.value)}
                 disabled={contactListSubmitting}
