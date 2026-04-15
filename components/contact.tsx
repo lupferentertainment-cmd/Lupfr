@@ -53,6 +53,19 @@ function ProtectedPhone() {
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
 const LUPFR_EMAIL = "will@lupfr.com"
+const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
+const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
+const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
+
+function setCookie(name: string, value: string): void {
+  if (typeof document === "undefined") return
+  document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
+}
+
+function isValidPhone(phone: string): boolean {
+  return /^[0-9+()\-\s]{7,24}$/.test(phone)
+}
 
 function openContactMailto(payload: {
   inquiryType: string
@@ -77,6 +90,9 @@ export function Contact() {
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [contactListName, setContactListName] = useState("")
+  const [contactListPhone, setContactListPhone] = useState("")
+  const [isContactListSubmitting, setIsContactListSubmitting] = useState(false)
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -124,6 +140,50 @@ export function Contact() {
       openContactMailto(payload)
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleContactListSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const cleanName = contactListName.replace(/\s+/g, " ").trim()
+    const cleanPhone = contactListPhone.replace(/\s+/g, " ").trim()
+
+    if (!cleanName || !cleanPhone) {
+      toast.error("Name and phone number are required.")
+      return
+    }
+    if (!isValidPhone(cleanPhone)) {
+      toast.error("Please enter a valid phone number.")
+      return
+    }
+
+    setIsContactListSubmitting(true)
+    try {
+      const res = await fetch("/api/phone-list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: cleanName, phone: cleanPhone }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const message =
+          typeof data?.error === "string" && data.error.length > 0
+            ? data.error
+            : "Unable to save your number right now."
+        toast.error(message)
+        return
+      }
+
+      window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
+      window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
+      setCookie(POPUP_SUBMITTED_COOKIE, "1")
+      toast.success("You are on the contact list.")
+      setContactListName("")
+      setContactListPhone("")
+    } catch {
+      toast.error("Network error. Please try again.")
+    } finally {
+      setIsContactListSubmitting(false)
     }
   }
 
@@ -331,6 +391,47 @@ export function Contact() {
                 )}
               </motion.button>
             </form>
+
+            <div className="mt-8 rounded-2xl border border-border bg-card/60 p-5 sm:p-6">
+              <p className="text-gold-accent uppercase tracking-[0.25em] text-xs mb-2">Join the contact list</p>
+              <h3 className="font-serif text-2xl font-bold tracking-tight mb-4">Stay in the loop</h3>
+              <form onSubmit={handleContactListSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Name</label>
+                  <input
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={contactListName}
+                    onChange={(e) => setContactListName(e.target.value)}
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
+                    placeholder="Mike Lubich"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Phone number</label>
+                  <input
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                    value={contactListPhone}
+                    onChange={(e) => setContactListPhone(e.target.value)}
+                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
+                    placeholder="4152750094"
+                  />
+                </div>
+                <motion.button
+                  type="submit"
+                  disabled={isContactListSubmitting}
+                  className="w-full flex items-center justify-center gap-3 px-8 py-3 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                >
+                  {isContactListSubmitting ? "Saving..." : "Join"}
+                </motion.button>
+              </form>
+            </div>
           </motion.div>
         </div>
       </ScrollReveal>
