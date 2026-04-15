@@ -7,10 +7,23 @@ import { toast } from "sonner"
 
 const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
 const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
+const POPUP_DISMISSED_COOKIE = "lupfr_phone_popup_dismissed"
+const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 const SHOW_DELAY_MS = 2500
 
 function isValidPhone(phone: string): boolean {
   return /^[0-9+()\-\s]{7,24}$/.test(phone)
+}
+
+function hasCookie(name: string): boolean {
+  if (typeof document === "undefined") return false
+  return document.cookie.split(";").some((chunk) => chunk.trim().startsWith(`${name}=`))
+}
+
+function setCookie(name: string, value: string): void {
+  if (typeof document === "undefined") return
+  document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
 }
 
 export function PhoneListPopup() {
@@ -22,7 +35,9 @@ export function PhoneListPopup() {
   useEffect(() => {
     const dismissed = window.localStorage.getItem(POPUP_DISMISSED_KEY) === "1"
     const submitted = window.localStorage.getItem(POPUP_SUBMITTED_KEY) === "1"
-    if (dismissed || submitted) return
+    const dismissedByCookie = hasCookie(POPUP_DISMISSED_COOKIE)
+    const submittedByCookie = hasCookie(POPUP_SUBMITTED_COOKIE)
+    if (dismissed || submitted || dismissedByCookie || submittedByCookie) return
 
     const timer = window.setTimeout(() => {
       setIsOpen(true)
@@ -33,6 +48,7 @@ export function PhoneListPopup() {
 
   const closePopup = () => {
     window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
+    setCookie(POPUP_DISMISSED_COOKIE, "1")
     setIsOpen(false)
   }
 
@@ -70,6 +86,7 @@ export function PhoneListPopup() {
       }
 
       window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
+      setCookie(POPUP_SUBMITTED_COOKIE, "1")
       setIsOpen(false)
       toast.success("You are on the contact list.")
       setName("")

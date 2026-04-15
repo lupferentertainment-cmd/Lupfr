@@ -31,6 +31,19 @@ const footerLinks = {
 
 const ease = [0.22, 1, 0.36, 1] as const
 const LUPFR_EMAIL = "will@lupfr.com"
+const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
+const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
+const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
+
+function setCookie(name: string, value: string): void {
+  if (typeof document === "undefined") return
+  document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
+}
+
+function isValidPhone(phone: string): boolean {
+  return /^[0-9+()\-\s]{7,24}$/.test(phone)
+}
 
 export function Footer() {
   const pathname = usePathname()
@@ -43,39 +56,57 @@ export function Footer() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false)
-  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const [contactListSubmitting, setContactListSubmitting] = useState(false)
+  const [contactListName, setContactListName] = useState("")
+  const [contactListPhone, setContactListPhone] = useState("")
+
+  const handleContactListSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const form = e.currentTarget
-    const email = (new FormData(form).get("email") as string)?.trim()
-    if (!email) {
-      toast.error("Please enter your email.")
+    const cleanName = contactListName.replace(/\s+/g, " ").trim()
+    const cleanPhone = contactListPhone.replace(/\s+/g, " ").trim()
+
+    if (!cleanName || !cleanPhone) {
+      toast.error("Name and phone number are required.")
       return
     }
-    setNewsletterSubmitting(true)
+    if (!isValidPhone(cleanPhone)) {
+      toast.error("Please enter a valid phone number.")
+      return
+    }
+
+    setContactListSubmitting(true)
     try {
-      const res = await fetch("/api/newsletter", {
+      const res = await fetch("/api/phone-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ name: cleanName, phone: cleanPhone }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         toast.error("Signup not configured. Opening email to send to LUPFR instead.")
-        const subject = encodeURIComponent("[LUPFR] Newsletter signup")
-        const body = encodeURIComponent(`Please add me to the LUPFR mailing list:\n\nEmail: ${email}`)
+        const subject = encodeURIComponent("[LUPFR] Contact list signup")
+        const body = encodeURIComponent(
+          `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nPhone: ${cleanPhone}`
+        )
         window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
         return
       }
+
+      window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
+      window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
+      setCookie(POPUP_SUBMITTED_COOKIE, "1")
       toast.success("You're on the list! We'll be in touch.")
-      form.reset()
+      setContactListName("")
+      setContactListPhone("")
     } catch {
       toast.error("Network error. Opening email to send to LUPFR instead.")
-      const subject = encodeURIComponent("[LUPFR] Newsletter signup")
-      const body = encodeURIComponent(`Please add me to the LUPFR mailing list:\n\nEmail: ${email}`)
+      const subject = encodeURIComponent("[LUPFR] Contact list signup")
+      const body = encodeURIComponent(
+        `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nPhone: ${cleanPhone}`
+      )
       window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
     } finally {
-      setNewsletterSubmitting(false)
+      setContactListSubmitting(false)
     }
   }
 
@@ -162,24 +193,38 @@ export function Footer() {
             <p className="text-muted-foreground text-sm mb-4">
               Get notified about upcoming events and exclusive presales.
             </p>
-            <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-2">
+            <form onSubmit={handleContactListSubmit} className="space-y-2">
               <input
-                name="email"
-                type="email"
+                name="name"
+                type="text"
                 required
-                placeholder="Email"
-                disabled={newsletterSubmitting}
-                className="flex-1 px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
+                autoComplete="name"
+                placeholder="Name"
+                value={contactListName}
+                onChange={(e) => setContactListName(e.target.value)}
+                disabled={contactListSubmitting}
+                className="w-full px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
+              />
+              <input
+                name="phone"
+                type="tel"
+                required
+                autoComplete="tel"
+                placeholder="Phone number"
+                value={contactListPhone}
+                onChange={(e) => setContactListPhone(e.target.value)}
+                disabled={contactListSubmitting}
+                className="w-full px-4 py-2 bg-secondary border border-border rounded-full text-sm focus:border-accent focus:outline-none text-foreground placeholder:text-muted-foreground disabled:opacity-70"
               />
               <motion.button
                 type="submit"
-                disabled={newsletterSubmitting}
+                disabled={contactListSubmitting}
                 className="px-4 py-2 btn-metallic-gold rounded-full font-medium disabled:opacity-70"
-                aria-label="Join newsletter"
-                whileHover={newsletterSubmitting ? undefined : { scale: 1.05 }}
-                whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}
+                aria-label="Join contact list"
+                whileHover={contactListSubmitting ? undefined : { scale: 1.05 }}
+                whileTap={contactListSubmitting ? undefined : { scale: 0.95 }}
               >
-                {newsletterSubmitting ? "..." : "Join"}
+                {contactListSubmitting ? "..." : "Join"}
               </motion.button>
             </form>
           </motion.div>
