@@ -40,6 +40,14 @@ See comments at the top of each `data/*.yml` file for field descriptions. Non-te
 
 The site is deployed on Vercel. Pushes to `main` normally trigger an automatic deployment.
 
+Preview-first + tagged production flow (CLI):
+
+- `bun run vercel:env:check` – confirm required Vercel secrets exist in preview and production.
+- `bun run vercel:preview` – run CI and deploy a preview build.
+- Validate forms/signups on preview.
+- Create and push a release tag (`vX.Y.Z`).
+- Check out that tag and run `bun run vercel:prod:from-tag`.
+
 **If a push didn’t trigger a deploy:**
 
 1. **Git integration** – [Vercel → Account → Authentication](https://vercel.com/account/authentication): ensure your GitHub (or Git) login is connected and has access to this repo.
