@@ -10,8 +10,16 @@
     "build": "bun run generate-data && next build",
     "start": "next start",
     "lint": "bunx eslint .",
+    "test": "bunx vitest run",
+    "test:watch": "bunx vitest",
+    "coverage": "bunx vitest run --coverage",
     "verify:routes": "bash scripts/verify-routes.sh",
+    "vercel:env:check": "bash scripts/vercel-env-check.sh",
+    "vercel:preview": "bash scripts/vercel-preview-deploy.sh",
+    "vercel:prod:from-tag": "bash scripts/vercel-deploy-prod-from-tag.sh",
     "verify": "bun run lint && bun run build && bun run verify:routes",
+    "ci": "bun run lint && bun run coverage && bun run build && bun run verify:routes",
+    "ci:vercel": "bun run coverage && bun run build",
     "precommit": "bun run verify",
     "prepare": "bun scripts/install-pre-commit.js"
   },
@@ -76,12 +84,14 @@
     "@types/node": "^22",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "^4.1.4",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^16.0.0",
     "postcss": "^8.5",
     "shadcn": "^4.0.0",
     "tailwindcss": "^4.2.0",
     "tw-animate-css": "1.3.3",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "^16.0.0",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "vitest": "^4.1.4"
   }
 }
