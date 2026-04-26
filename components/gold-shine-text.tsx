@@ -37,11 +37,10 @@ function GoldShineTextStatic({
   children,
 }: Pick<GoldShineTextProps, "className" | "as" | "children">) {
   const MotionComponent = motionByTag[as]
-  const flowClass = as === "span" ? "inline-block" : "block"
 
   return (
     <MotionComponent
-      className={`${flowClass} overflow-visible heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
+      className={`heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
       style={{ backgroundPosition: "50% 50%" }}
     >
       {children}
@@ -74,11 +73,10 @@ function GoldShineTextScroll({
   )
 
   const MotionComponent = motionByTag[as]
-  const flowClass = as === "span" ? "inline-block" : "block"
 
   return (
     <MotionComponent
-      className={`${flowClass} overflow-visible heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
+      className={`heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
       style={{ backgroundPosition }}
     >
       {children}

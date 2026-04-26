@@ -560,8 +560,13 @@
   filter: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
 }
 
-/** Pair with `.heading-metallic-gold` when using scroll-driven shine (`GoldShineText`) — descender room for clip:text. */
+/**
+ * Pair with `.heading-metallic-gold` for scroll-driven shine (`GoldShineText`) — descender room for clip:text.
+ * `display: inline-block` for every tag (h1–span) so the gradient fill matches; block-level h1 was full-width and rendered differently.
+ */
 .gold-shine-text {
+  display: inline-block;
+  overflow: visible;
   line-height: 1.22;
   padding-bottom: 0.08em;
   backface-visibility: visible;

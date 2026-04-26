@@ -73,8 +73,8 @@ function GallerySlide({
             imageReady ? "opacity-100" : "opacity-0"
           )}
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/95 via-card/25 to-transparent" />
-        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 p-5 sm:p-8 md:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/95 via-card/25 to-transparent max-md:via-card/15" />
+        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 p-3 sm:p-5 md:p-8 lg:p-10">
           <motion.div
             initial={false}
             animate={
@@ -84,16 +84,16 @@ function GallerySlide({
             }
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="mb-2">
+            <div className="mb-2 hidden md:block">
               <GalleryEventBreadcrumb folderSegments={item.albumPathSegments} />
             </div>
             {slideDate ? (
-              <p className="mb-2 text-xs font-medium tabular-nums text-muted-foreground sm:text-sm">{slideDate}</p>
+              <p className="mb-2 hidden text-xs font-medium tabular-nums text-muted-foreground sm:text-sm md:block">{slideDate}</p>
             ) : null}
-            <p className="text-gold-accent mb-1 text-xs font-semibold tracking-tight sm:text-sm">
+            <p className="text-gold-accent mb-1 hidden text-xs font-semibold tracking-tight sm:text-sm md:block">
               {item.caption}
             </p>
-            <p className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
+            <p className="font-serif text-base font-bold tracking-tight text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-lg md:text-2xl lg:text-4xl md:drop-shadow-none">
               {item.title}
             </p>
           </motion.div>

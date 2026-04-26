@@ -136,7 +136,7 @@ export function Navigation() {
           }`}
       >
         <nav
-          className="container mx-auto flex w-full min-w-0 max-w-full items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-center lg:justify-normal lg:gap-x-0 lg:gap-y-0 lg:py-3"
+          className="container mx-auto flex w-full min-w-0 max-w-full items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(19rem,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
           aria-label="Primary"
         >
           {/* Col 1: logo top-left. Center links use a separate auto column (grid) so they stay viewport-centered, not nudged by justify-end. */}
@@ -211,7 +211,7 @@ export function Navigation() {
             </ul>
           </div>
 
-          <div className="hidden min-h-[2.5rem] min-w-0 items-center justify-end justify-self-end gap-x-2 self-center [contain:layout] lg:flex xl:gap-x-3">
+          <div className="hidden min-h-[2.5rem] w-full min-w-[19rem] items-center justify-end justify-self-stretch gap-x-2.5 self-center pl-2 [contain:layout] sm:pl-3 lg:flex lg:gap-x-3 xl:gap-x-3.5">
             <ThemeToggle withSound className="shrink-0" />
             <ScheduleCallCta
               tone={scheduleTone}
