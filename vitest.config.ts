@@ -6,7 +6,7 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   test: {
-    setupFiles: ["./tests/setup/rtl.ts"],
+    setupFiles: ["./tests/setup/node-env-react.ts", "./tests/setup/rtl.ts"],
     environment: "node",
     globals: true,
     include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],

@@ -4,6 +4,8 @@
 
 **Current state.** The repo has **Vitest** (unit + integration + RTL behavior tests) with coverage enforcement, plus lint/build/route-smoke checks.
 
+**Vitest, React 19, and `NODE_ENV`.** In React 19, the CJS production `react` build omits `exports.act`; `react-dom` test utils still call `React.act`, so @testing-library/react fails with *React.act is not a function* if tests run under **`NODE_ENV=production`** (e.g. Vercel’s `ci:vercel` step). The first **setup** file, `tests/setup/node-env-react.ts`, sets `NODE_ENV` to `test` when it was `production`, before any React import. Order is fixed in `vitest.config.ts` (`setupFiles`).
+
 **Coverage policy.** Coverage thresholds are enforced in `vitest.config.ts`:
 
 - Statements: `>= 80%`
