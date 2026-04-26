@@ -1,0 +1,13 @@
+---
+description: Editing canonical markdown under docs/ — singleton set, append-first, pair with code.
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+# Editing `docs/*.md`
+
+**Workflow and LLM rules:** See **`.cursor/rules/lupfr-context-engineering.mdc`** (always on).
+
+- **Canonical set only:** OVERVIEW, ARCHITECTURE, DESIGN, REQUIREMENTS, API, DEPLOYMENT, TESTING. No feature-specific docs; no duplicate spec files elsewhere.
+- **Append-first:** Prefer new subsections over parallel documents; use OVERVIEW to point readers to the right file.
+- **Pair with code:** Spec updates that describe runtime behavior should ship with the code that implements them.

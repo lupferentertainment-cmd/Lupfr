@@ -8,6 +8,7 @@ import { Instagram, Music, ExternalLink } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
+import { cn } from "@/lib/utils"
 
 const ARTIST_IMAGE_SIZE = 400
 
@@ -46,6 +47,7 @@ const ArtistCard = memo(function ArtistCard({
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
+  const [imageReady, setImageReady] = useState(false)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -86,10 +88,21 @@ const ArtistCard = memo(function ArtistCard({
         {/* Image + bio overlay on hover */}
         <div className="relative rounded-t-2xl overflow-hidden bg-card">
           <motion.div
-            className="aspect-square w-full overflow-hidden relative bg-muted"
+            className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-muted"
             animate={{ scale: isHovered ? 1.03 : 1 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
+            {!imageError ? (
+              <div
+                className={cn(
+                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  imageReady ? "opacity-0" : "opacity-100"
+                )}
+                aria-hidden
+              />
+            ) : null}
             {imageError ? (
               <img
                 src={FALLBACK_IMAGE}
@@ -104,13 +117,19 @@ const ArtistCard = memo(function ArtistCard({
                 height={ARTIST_IMAGE_SIZE}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 loading="lazy"
-                className="w-full h-full object-cover"
+                className={cn(
+                  "relative z-[1] w-full h-full object-cover",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  imageReady ? "opacity-100" : "opacity-0"
+                )}
                 onError={() => setImageError(true)}
+                onLoadingComplete={() => setImageReady(true)}
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
             <motion.span
-              className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full bg-muted/90 text-foreground backdrop-blur-sm"
+              className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: index * 0.12 + 0.2 }}
@@ -140,7 +159,7 @@ const ArtistCard = memo(function ArtistCard({
         <div className="p-4 md:p-5 rounded-b-2xl bg-card">
           <div className="flex items-center gap-2 mb-1">
             <Music size={14} className="text-accent shrink-0" />
-            <span className="text-xs uppercase tracking-wider text-muted-foreground">{artist.genre}</span>
+            <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
           </div>
           <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
             {artist.name}
@@ -188,7 +207,7 @@ const ArtistCard = memo(function ArtistCard({
           </div>
           {artist.featuredTrack && (
             <div className="mt-4 w-full pt-4 border-t border-border/80">
-              <span className="text-xs font-semibold uppercase tracking-wider text-accent">Listen</span>
+              <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
               <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
                 {artist.featuredTrack.platform === "spotify" && spotifyEmbedUrl(artist.featuredTrack.url) && (
                   <iframe
@@ -243,7 +262,7 @@ export function Artists() {
         >
           <motion.p
             id="artists-section-title"
-            className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4"
+            className="text-gold-accent tracking-tight text-sm mb-4"
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.1 }}
@@ -251,10 +270,10 @@ export function Artists() {
             The Sound · Featured Artists
           </motion.p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+            <h2 className="lupfr-heading-split-leading">
               <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>
               <br />
-              <span className="text-muted-foreground">Artists</span>
+              <span className="lupfr-heading-subline">Artists</span>
             </h2>
             <motion.p
               className="text-muted-foreground max-w-md leading-relaxed"
@@ -297,7 +316,7 @@ export function Artists() {
               window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
               document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
             }}
-            className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors"
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.96 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}

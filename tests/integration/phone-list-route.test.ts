@@ -212,6 +212,31 @@ describe("POST /api/phone-list", () => {
     }
   })
 
+  it("returns 502 when the webhook responds with a non-OK status", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("bad", { status: 502, statusText: "Bad Gateway" }))
+    )
+    const { POST } = await import("@/app/api/phone-list/route")
+
+    const res = await POST(new Request("http://localhost/api/phone-list", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        name: "Jane",
+        email: "jane@example.com",
+      }),
+    }))
+
+    expect(res.status).toBe(502)
+    const json = (await res.json()) as { error?: string; upstreamStatus?: number }
+    expect(json.error).toContain("rejected")
+    expect(json.upstreamStatus).toBe(502)
+  })
+
   it("returns 502 when the webhook request throws", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => {
       throw new Error("network down")

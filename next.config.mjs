@@ -13,6 +13,8 @@ const nextConfig = {
   },
   outputFileTracingRoot: path.resolve(__dirname),
   experimental: {
+    /** Literal HTTP 404 for unknown paths; required for `scripts/verify-routes.sh` missing-URL checks. */
+    globalNotFound: true,
     inlineCss: true,
     imgOptTimeoutInSeconds: 30,
     optimizePackageImports: [
@@ -58,6 +60,26 @@ const nextConfig = {
     ],
   },
   devIndicators: false,
+  /**
+   * Legacy URLs: on-disk album folder is `public/gallery/boiler_boat_003/`; older links used
+   * `/gallery/boiler_boat/` or `/events/boiler_boat_003/...` for the same files.
+   */
+  async rewrites() {
+    return [
+      {
+        source: "/events/boiler_boat_003/:path*",
+        destination: "/gallery/boiler_boat_003/:path*",
+      },
+      {
+        source: "/gallery/boiler_boat/:path*",
+        destination: "/gallery/boiler_boat_003/:path*",
+      },
+      {
+        source: "/gallery/where_is_west_004/:path*",
+        destination: "/gallery/where_is_west/:path*",
+      },
+    ]
+  },
 }
 
 export default nextConfig

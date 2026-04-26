@@ -1,14 +1,24 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import Image from "next/image"
 import { notFound } from "next/navigation"
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket } from "lucide-react"
-import { getEventBySlug, EVENTS } from "@/lib/events"
+import {
+  EVENTS,
+  eventDetailPath,
+  eventHeroAbsoluteUrl,
+  eventShareTitle,
+  getEventBySlug,
+} from "@/lib/events"
+import { EventDetailHeroImage } from "@/components/event-detail-hero-image"
 import { EventTagBadge } from "@/components/event-tag-badge"
+import { GalleryShareRow } from "@/components/gallery-share-row"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { SITE_URL } from "@/lib/site"
 
-const EVENT_IMAGE_WIDTH = 800
-const EVENT_IMAGE_HEIGHT = 600
+/** Intrinsic size hint for layout/CLS; actual display preserves aspect ratio (`object-contain`). */
+const EVENT_POSTER_WIDTH = 1200
+const EVENT_POSTER_HEIGHT = 1800
 
 export function generateStaticParams() {
   return EVENTS.map((e) => ({ slug: e.slug }))
@@ -17,45 +27,84 @@ export function generateStaticParams() {
 /** Refresh event pages periodically so Past / Upcoming badge matches calendar (see lib/events.ts). */
 export const revalidate = 3600
 
-export default async function EventPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
+type EventPageParams = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: EventPageParams): Promise<Metadata> {
+  const { slug } = await params
+  const event = getEventBySlug(slug)
+  if (!event) {
+    return { title: "Events" }
+  }
+  const pageTitle = `LUPFR | ${event.title}`
+  const description =
+    event.description?.trim() ||
+    [event.date, event.time, event.location].filter(Boolean).join(" · ")
+  const url = `${SITE_URL}${eventDetailPath(slug)}`
+  const imageUrl = eventHeroAbsoluteUrl(event, SITE_URL)
+  return {
+    title: pageTitle,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: pageTitle,
+      description,
+      type: "website",
+      url,
+      images: [
+        {
+          url: imageUrl,
+          width: EVENT_POSTER_WIDTH,
+          height: EVENT_POSTER_HEIGHT,
+          alt: event.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description,
+      images: [imageUrl],
+    },
+  }
+}
+
+export default async function EventPage({ params }: EventPageParams) {
   const { slug } = await params
   const event = getEventBySlug(slug)
   if (!event) notFound()
+
+  const shareUrl = `${SITE_URL}${eventDetailPath(event.slug)}`
+  const shareTitle = eventShareTitle(event)
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
       <div className="pt-32 sm:pt-36 md:pt-40 pb-20 px-4 sm:px-6">
-        <div className="container mx-auto max-w-3xl">
+        <div className="container mx-auto max-w-4xl">
           <Link
             href="/#events"
+            prefetch
             className="inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors mb-8 relative z-10"
             aria-label="Back to events list"
           >
             <ArrowLeft size={18} aria-hidden />
-            <span className="text-sm uppercase tracking-wider">Back to Events</span>
+            <span className="text-sm tracking-normal">Back to events</span>
           </Link>
 
-          <div className="rounded-2xl overflow-hidden bg-card border border-border mb-10">
-            <div className="aspect-[4/3] relative">
-              <Image
+          <div className="rounded-2xl overflow-hidden bg-card border border-border mb-10 shadow-xl">
+            <div className="relative">
+              <EventDetailHeroImage
+                key={event.slug}
                 src={event.image}
                 alt={event.title}
-                width={EVENT_IMAGE_WIDTH}
-                height={EVENT_IMAGE_HEIGHT}
-                sizes="(max-width: 768px) 100vw, 672px"
-                priority
+                width={EVENT_POSTER_WIDTH}
+                height={EVENT_POSTER_HEIGHT}
+                sizes="(max-width: 768px) 100vw, 896px"
                 unoptimized={event.image.startsWith("http")}
-                className="w-full h-full object-cover object-top"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
               <EventTagBadge
                 event={event}
-                className="absolute top-4 left-4 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full"
+                className="absolute top-4 left-4 z-10 px-4 py-1.5 text-base sm:text-lg font-semibold tracking-tight rounded-full shadow-md"
               />
             </div>
             <div className="p-6 sm:p-8">
@@ -92,12 +141,24 @@ export default async function EventPage({
                   href={event.ticketLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full max-w-full min-w-0"
+                  className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
                 >
                   <Ticket size={18} />
                   Tickets
                 </a>
               ) : null}
+
+              <div className="mt-10 pt-8 border-t border-border">
+                <p className="text-sm font-medium text-foreground mb-2">Share this event</p>
+                <p className="text-muted-foreground mb-3 text-sm">
+                  Copy the link or use a button — share it wherever your people are.
+                </p>
+                <GalleryShareRow
+                  shareUrl={shareUrl}
+                  shareTitle={shareTitle}
+                  groupAriaLabel="Share this event"
+                />
+              </div>
             </div>
           </div>
         </div>

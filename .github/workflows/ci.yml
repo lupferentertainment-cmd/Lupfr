@@ -17,11 +17,5 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Lint
-        run: bun run lint
-
-      - name: Build (compile + static generation)
-        run: bun run build
-
-      - name: Route smoke (no unexpected 404 on public pages)
-        run: bash scripts/verify-routes.sh
+      - name: Vercel build parity (same as vercel.json buildCommand)
+        run: bun run ci:vercel

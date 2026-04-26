@@ -19,11 +19,13 @@ Contact form submissions and newsletter signups are sent via [Resend](https://re
 
 ## Content and images (data-driven UI)
 
-Site content (events, artists, services, corporate partners) lives in **`data/`** as YAML files. Images live in **`public/`** (e.g. `public/artists/`, `public/events/`, `public/corporate_partners/`). To add or edit content without touching code:
+Site content (events, gallery, artists, services, corporate partners) lives in **`data/`** as YAML files. Images live in **`public/`** (e.g. `public/artists/`, `public/events/` for event card heroes, `public/gallery/` for the home photo carousel, `public/corporate_partners/`). To add or edit content without touching code:
 
-1. **Add or replace images** in the right `public/` subfolder (e.g. `public/artists/`, `public/events/`, `public/past_events/`, `public/corporate_partners/`).
-2. **Edit the matching YAML** in `data/` (e.g. `data/artists.yml`, `data/events.yml`, `data/services.yml`, `data/partners.yml`). Use paths from the site root, e.g. `image: "/artists/yourfile.jpg"` (no `public/` in the path).
+1. **Add or replace images** in the right `public/` subfolder. Event list metadata lives in `data/events.yml` with `image: /events/...` (single hero per event). The home **Gallery** section uses `data/gallery.yml` with paths like `/gallery/...`; those assets are not required to match the events list 1:1. Upcoming vs past is computed from `dateISO`, not from folders.
+2. **Edit the matching YAML** in `data/` (e.g. `data/artists.yml`, `data/events.yml`, `data/services.yml`, `data/partners.yml`). Use paths from the site root, e.g. `image: "/artists/yourfile.webp"` (no `public/` in the path). If you drop in JPEG/PNG, run `bun run public:images:optimize`, then fix any path renames in YAML and `bun run generate-data`.
 3. **Rebuild**: `bun run build` runs `generate-data` first, which turns YAML into JSON under `lib/data/generated/` so the app can use the new content.
+
+**Media formats.** **Photos** for the site (events, artists, gallery, partners, hero stills) are **WebP** in `public/` (favicons under `public/favicon/` and the brand mark under `public/logos/` stay PNG as needed). **Video** uses **MP4** (e.g. hero backgrounds). **M4A/AAC** is for audio files, not images—do not use it for photos.
 
 See comments at the top of each `data/*.yml` file for field descriptions. Non-technical editors can add images and update YAML; no component code changes are required.
 

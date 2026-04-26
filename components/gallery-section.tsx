@@ -12,9 +12,20 @@ import {
 } from "@/components/ui/carousel"
 import type { CarouselApi } from "@/components/ui/carousel"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { GalleryEventBreadcrumb } from "@/components/gallery-breadcrumb"
+import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
 import { GoldShineText } from "@/components/gold-shine-text"
-import { GALLERY_ITEMS, type GalleryItem } from "@/lib/gallery"
+import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
+import {
+  GALLERY_HOME_ALBUM_FOLDERS,
+  GALLERY_ITEMS,
+  albumBreadcrumbForFolder,
+  getGalleryPhotosByAlbumFolder,
+  type GalleryItem,
+} from "@/lib/gallery"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
+import { galleryPhotoDateLabel } from "@/lib/gallery-date"
 
 const GALLERY_W = 1600
 const GALLERY_H = 1000
@@ -38,9 +49,12 @@ function GallerySlide({
   active: boolean
 }) {
   const eager = index === 0
+  const slideDate = galleryPhotoDateLabel(item.dateISO)
+  const [imageReady, setImageReady] = useState(false)
   return (
-    <figure className="relative m-0 w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border bg-muted shadow-xl">
+    <figure className="relative m-0 w-full overflow-hidden rounded-gallery-squircle border border-border/80 bg-muted shadow-xl shadow-black/[0.08] dark:shadow-black/50">
       <div className="relative aspect-[16/10] w-full">
+        <SkeletonShimmerLayer show={!imageReady} />
         <Image
           src={item.src}
           alt={item.alt}
@@ -51,7 +65,13 @@ function GallerySlide({
           loading={eager ? "eager" : "lazy"}
           fetchPriority={eager ? "high" : "low"}
           decoding="async"
-          className="h-full w-full object-cover object-center"
+          onLoadingComplete={() => setImageReady(true)}
+          className={cn(
+            "relative z-[1] h-full w-full object-cover object-center",
+            "motion-safe:transition-opacity motion-safe:duration-300",
+            "motion-reduce:transition-none",
+            imageReady ? "opacity-100" : "opacity-0"
+          )}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/95 via-card/25 to-transparent" />
         <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 p-5 sm:p-8 md:p-10">
@@ -64,7 +84,13 @@ function GallerySlide({
             }
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-gold-accent mb-1 text-xs font-semibold uppercase tracking-[0.25em] sm:text-sm">
+            <div className="mb-2">
+              <GalleryEventBreadcrumb folderSegments={item.albumPathSegments} />
+            </div>
+            {slideDate ? (
+              <p className="mb-2 text-xs font-medium tabular-nums text-muted-foreground sm:text-sm">{slideDate}</p>
+            ) : null}
+            <p className="text-gold-accent mb-1 text-xs font-semibold tracking-tight sm:text-sm">
               {item.caption}
             </p>
             <p className="font-serif text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
@@ -138,14 +164,20 @@ export function GallerySection() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8 sm:mb-10"
         >
-          <p className="text-gold-accent mb-3 text-sm font-medium uppercase tracking-[0.3em] sm:text-base">
-            On the floor
-          </p>
-          <h2 className="font-serif text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-            <GoldShineText scrollTargetRef={ref}>Moments</GoldShineText>
+          <h2 className="lupfr-heading-split-leading">
+            <GoldShineText scrollTargetRef={ref}>Gallery</GoldShineText>
+            <br />
+            <span className="lupfr-heading-subline">Event pics</span>
           </h2>
           <p className="text-muted-foreground mt-3 max-w-2xl text-base sm:text-lg">
-            Rotating scenes from recent nights — drag or use arrows to browse.
+            Drag or use the arrows to browse by event.{" "}
+            <Link
+              href="/gallery"
+              className="text-accent font-medium underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+            >
+              Open the full gallery
+            </Link>{" "}
+            to explore every photo, zoom, and share.
           </p>
         </motion.div>
 
@@ -199,6 +231,48 @@ export function GallerySection() {
             </div>
           ) : null}
         </motion.div>
+
+        <div className="mt-14 space-y-16 sm:mt-16 sm:space-y-20 md:mt-20">
+          {GALLERY_HOME_ALBUM_FOLDERS.map((folder) => {
+            const albumPhotos = getGalleryPhotosByAlbumFolder(folder)
+            if (albumPhotos.length === 0) return null
+            const label = albumBreadcrumbForFolder(folder)
+            const albumDate = albumPhotos[0] ? galleryPhotoDateLabel(albumPhotos[0].dateISO) : null
+            return (
+              <motion.section
+                key={folder}
+                aria-label={`${label} photos`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.45, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className="scroll-mt-28"
+                id={`gallery-${folder}`}
+              >
+                <h3 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl">{label}</h3>
+                {albumDate ? (
+                  <p className="text-muted-foreground mt-1 text-sm font-medium tabular-nums sm:text-base">
+                    {albumDate}
+                  </p>
+                ) : null}
+                <p className="text-muted-foreground mt-1 max-w-2xl text-sm sm:text-base">
+                  Tap a photo for the full page; browser Back returns here.{" "}
+                  <Link
+                    href="/gallery"
+                    className="text-accent font-medium underline decoration-accent/50 underline-offset-2 hover:decoration-accent"
+                  >
+                    Full gallery
+                  </Link>
+                </p>
+                <GalleryPhotoGrid
+                  photos={[...albumPhotos]}
+                  linkFrom="home"
+                  dateSections={false}
+                  className="mt-6"
+                />
+              </motion.section>
+            )
+          })}
+        </div>
       </ScrollReveal>
     </section>
   )

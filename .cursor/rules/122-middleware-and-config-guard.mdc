@@ -1,0 +1,11 @@
+---
+description: Blocklist routes and edge config must stay in sync with docs and verify:routes.
+globs: proxy.ts
+alwaysApply: false
+---
+
+<middleware_docs_guard>
+- **Blocked paths** (`BLOCKED_PREFIXES`, `BLOCKED_ROOT_PATHS`) exist so **`/docs`** and doc-like URLs are not public. Do not remove without replacing an equivalent guarantee and updating **`docs/OVERVIEW.md`**, **`docs/DEPLOYMENT.md`**, **`docs/TESTING.md`**, and **`scripts/verify-routes.sh`**.
+- If you add **`public/docs`** or **`app/docs`**, that would bypass this policy — **do not**; internal specs stay in root **`docs/*.md`** only.
+- For **rewrites / headers** in **`next.config.mjs`** or **`vercel.json`**, align with **`docs/ARCHITECTURE.md`** and **`docs/DEPLOYMENT.md`** when behavior affects URLs or caching.
+</middleware_docs_guard>

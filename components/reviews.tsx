@@ -232,7 +232,7 @@ function StatTile({
             </span>
           )}
         </p>
-        <p className="text-xs sm:text-sm text-muted-foreground uppercase tracking-[0.2em] mt-3 sm:mt-3.5 font-medium leading-snug max-w-[12rem] mx-auto">
+        <p className="text-xs sm:text-sm text-muted-foreground tracking-tight mt-3 sm:mt-3.5 font-medium leading-snug max-w-[12rem] mx-auto">
           {stat.label}
         </p>
       </div>

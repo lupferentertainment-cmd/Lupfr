@@ -1,5 +1,27 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /docs
+Disallow: /docs/
+Disallow: /_docs
+Disallow: /_docs/
+Disallow: /README
+Disallow: /README.md
+Disallow: /readme
+Disallow: /readme.md
+Disallow: /OVERVIEW.md
+Disallow: /overview.md
+Disallow: /ARCHITECTURE.md
+Disallow: /architecture.md
+Disallow: /DESIGN.md
+Disallow: /design.md
+Disallow: /REQUIREMENTS.md
+Disallow: /requirements.md
+Disallow: /API.md
+Disallow: /api.md
+Disallow: /DEPLOYMENT.md
+Disallow: /deployment.md
+Disallow: /TESTING.md
+Disallow: /testing.md
 
 Sitemap: https://lupfr.com/sitemap.xml

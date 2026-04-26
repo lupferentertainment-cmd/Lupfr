@@ -7,6 +7,7 @@ import { Sparkles, Users, Zap } from "lucide-react"
 
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { cn } from "@/lib/utils"
 
 function CountUpOrdinal({ end, isInView }: { end: number; isInView: boolean }) {
   const [display, setDisplay] = useState(0)
@@ -164,7 +165,7 @@ function AboutValueCard({
               animate={{ opacity: isExpanded ? 1 : 0.6 }}
               transition={{ duration: 0.2 }}
             >
-              <span className="uppercase tracking-widest">
+              <span className="tracking-normal">
                 {isExpanded ? "Less" : "More"}
               </span>
               <motion.span
@@ -206,9 +207,10 @@ function AboutValueCard({
 export function About() {
   const ref = useRef(null)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [portraitReady, setPortraitReady] = useState(false)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const containerRef = useRef(null)
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -227,11 +229,11 @@ export function About() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">The Story</p>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-4 sm:mb-6">
+            <p className="text-gold-accent tracking-tight text-sm mb-4">The story</p>
+            <h2 className="lupfr-heading--compact lupfr-heading-stack--tight">
               <GoldShineText scrollTargetRef={ref}>Culture Meets</GoldShineText>
               <br />
-              <span className="text-muted-foreground">Production</span>
+              <span className="lupfr-heading-subline">Production</span>
             </h2>
             <div className="flex flex-col gap-4 mb-6 sm:mb-8">
               <div className="flex items-center gap-6">
@@ -240,16 +242,31 @@ export function About() {
               </div>
             </div>
             {/* Portrait: dark = vignette fade into section; light = minimal overlay so the photo stays clear */}
-            <div className="relative w-full max-w-sm mb-8 rounded-2xl overflow-hidden ring-1 ring-black/[0.06] dark:ring-0">
-              <div className="absolute inset-0 bg-gradient-to-t from-background/25 via-transparent to-transparent dark:from-background dark:via-background/20 z-10 pointer-events-none" />
-              <div className="absolute inset-0 hidden dark:block bg-gradient-to-r from-background/80 via-transparent to-background/80 z-10 pointer-events-none" />
+            <div className="relative w-full max-w-sm mb-8 overflow-hidden rounded-2xl ring-1 ring-black/[0.06] dark:ring-0">
+              <div
+                className={cn(
+                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  portraitReady ? "opacity-0" : "opacity-100"
+                )}
+                aria-hidden
+              />
+              <div className="absolute inset-0 z-[11] bg-gradient-to-t from-background/25 via-transparent to-transparent dark:from-background dark:via-background/20 pointer-events-none" />
+              <div className="absolute inset-0 z-[11] hidden dark:block bg-gradient-to-r from-background/80 via-transparent to-background/80 pointer-events-none" />
               <Image
-                src="/images/will_lupfer.jpg"
+                src="/images/will_lupfer.webp"
                 alt="Will Lupfer, Founder & CEO of LUPFR Entertainment"
                 width={400}
                 height={500}
                 sizes="(max-width: 768px) 100vw, 400px"
-                className="w-full h-auto object-cover object-top"
+                onLoadingComplete={() => setPortraitReady(true)}
+                className={cn(
+                  "relative z-[1] w-full h-auto object-cover object-top",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  portraitReady ? "opacity-100" : "opacity-0"
+                )}
               />
             </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">

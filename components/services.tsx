@@ -21,6 +21,66 @@ const CARD_PERSPECTIVE = 1200
 const services = getServices()
 const partners = getPartners()
 
+function PartnerLogoChip({
+  name,
+  image,
+  imageClassName,
+  ariaLabel,
+  href,
+}: {
+  name: string
+  image: string
+  imageClassName?: string
+  ariaLabel: string
+  href: string
+}) {
+  const [ready, setReady] = useState(false)
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
+        "size-28 sm:size-32 md:size-36 lg:size-40"
+      )}
+      aria-label={ariaLabel}
+    >
+      <div
+        className={cn(
+          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border/75 bg-card p-3 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
+          "dark:border-border/90 dark:bg-card group-hover:scale-[1.03]"
+        )}
+      >
+        <div
+          className={cn(
+            "skeleton-shimmer pointer-events-none absolute inset-0 z-0 rounded-full",
+            "motion-safe:transition-opacity motion-safe:duration-300",
+            "motion-reduce:transition-none",
+            ready ? "opacity-0" : "opacity-100"
+          )}
+          aria-hidden
+        />
+        <Image
+          src={image}
+          alt={name}
+          width={512}
+          height={512}
+          sizes="(max-width: 640px) 7rem, (max-width: 1024px) 8rem, 10rem"
+          onLoadingComplete={() => setReady(true)}
+          className={cn(
+            "relative z-[1]",
+            "motion-safe:transition-opacity motion-safe:duration-300",
+            "motion-reduce:transition-none",
+            ready ? "opacity-100" : "opacity-0",
+            imageClassName
+          )}
+        />
+      </div>
+    </a>
+  )
+}
+
 function ServiceCard({
   service,
   index,
@@ -184,7 +244,7 @@ export function Services() {
           className="text-center mb-12 sm:mb-16 md:mb-20"
         >
           <motion.p
-            className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4"
+            className="text-gold-accent tracking-tight text-sm mb-4"
             initial={{ opacity: 0, x: -24 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ ...SPRING_PUNCH, delay: 0.05 }}
@@ -192,7 +252,7 @@ export function Services() {
             What We Do
           </motion.p>
           <motion.h2
-            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6"
+            className="mb-6"
             initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ ...SPRING_PUNCH, delay: 0.12 }}
@@ -224,13 +284,13 @@ export function Services() {
 
         {/* Corporate partners - same title style as Featured Artists / Culture Meets Production; no strip background */}
         <div className="mt-20 scroll-mt-8 pt-2 sm:mt-24 md:mt-32">
-          <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">
+          <p className="text-gold-accent tracking-tight text-sm mb-4">
             Partners
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-10 sm:mb-12 md:mb-14 leading-[1.08]">
+          <h2 className="lupfr-heading--compact lupfr-heading-stack">
             <GoldShineText scrollTargetRef={ref}>Corporate</GoldShineText>
             <br />
-            <span className="text-muted-foreground">Partners</span>
+            <span className="lupfr-heading-subline">Partners</span>
           </h2>
           <div
             className={cn(
@@ -239,33 +299,14 @@ export function Services() {
             )}
           >
             {partners.map((p) => (
-              <a
+              <PartnerLogoChip
                 key={p.name}
+                name={p.name}
+                image={p.image}
+                imageClassName={p.imageClassName}
+                ariaLabel={p.ariaLabel ?? p.name}
                 href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
-                  "size-28 sm:size-32 md:size-36 lg:size-40"
-                )}
-                aria-label={p.ariaLabel ?? p.name}
-              >
-                <div
-                  className={cn(
-                    "partner-logo-chip flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border/75 bg-card p-3 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
-                    "dark:border-border/90 dark:bg-card group-hover:scale-[1.03]"
-                  )}
-                >
-                  <Image
-                    src={p.image}
-                    alt={p.name}
-                    width={512}
-                    height={512}
-                    sizes="(max-width: 640px) 7rem, (max-width: 1024px) 8rem, 10rem"
-                    className={p.imageClassName}
-                  />
-                </div>
-              </a>
+              />
             ))}
           </div>
         </div>

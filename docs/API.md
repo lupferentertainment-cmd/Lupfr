@@ -23,6 +23,7 @@
 
 - `200`: `{ "success": true, "id": "<resend-id>" }`
 - `400`: Invalid JSON or missing required fields → `{ "error": "..." }`
+- `429`: Too many requests from one client in a short window → `{ "error": "Too many requests. Please try again shortly." }`
 - `500`: Resend not configured (missing `RESEND_API_KEY`) → `{ "error": "..." }`
 - `502`: Resend send failed → `{ "error": "..." }`
 
@@ -42,6 +43,7 @@
 
 - `200`: `{ "success": true, "id": "<resend-id>" }`
 - `400`: Invalid JSON or missing/invalid email → `{ "error": "Email is required" }` (or similar)
+- `429`: Too many requests from one client in a short window → `{ "error": "Too many requests. Please try again shortly." }`
 - `500`: Resend not configured → `{ "error": "..." }`
 - `502`: Resend send failed (internal and/or welcome) → `{ "error": "..." }`
 
@@ -60,16 +62,19 @@
 | Field | Required | Description |
 |-------|----------|-------------|
 | name  | Yes      | Visitor name |
-| phone | Conditional | Visitor phone number (required when `email` is absent) |
-| email | Conditional | Visitor email (required when `phone` is absent) |
+| email | No       | Omitted if not collected; if present, validated as email |
+| phone | No*      | Visitor phone number (`10-15` digits, symbols allowed) |
 
-Phone numbers are validated as a permissive phone pattern (`7-24` chars, digits and common symbols). Emails are validated with a standard email format pattern.
+At least one of `email` or `phone` must be present. The site popup collects **name + phone** only. Footer/contact sections may still collect email and/or phone.
+
+Phone numbers are validated with a permissive phone pattern. Emails, when present, use a standard email format pattern.
 
 **Responses.**
 
 - `200`: `{ "success": true }`
-- `400`: Invalid JSON, missing required fields (`name` and either `phone` or `email`), or invalid phone/email format → `{ "error": "..." }`
+- `400`: Invalid JSON, missing `name`, missing both `email` and `phone`, or invalid email/phone format → `{ "error": "..." }`
+- `429`: Too many requests from one client in a short window → `{ "error": "Too many requests. Please try again shortly." }`
 - `500`: Google Sheets webhook not configured (`GOOGLE_SHEETS_WEBHOOK_URL` missing) → `{ "error": "..." }`
-- `502`: Webhook network failure or non-OK webhook response → `{ "error": "..." }`
+- `502`: Webhook network failure or non-OK webhook response → `{ "error": "...", "upstreamStatus"?: number }` (`upstreamStatus` is the Google endpoint’s HTTP status when the webhook returned a non-2xx response)
 
-**Internal.** Route forwards `{ name, phone, email, source, page, userAgent, submittedAt }` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST application/json`.
+**Internal.** Route forwards `{ name, email, phone, source, page, userAgent, submittedAt }` and, when `GOOGLE_SHEETS_SECRET` is configured, `secret` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST` and body JSON using `Content-Type: text/plain;charset=utf-8` (see `docs/DEPLOYMENT.md`).
