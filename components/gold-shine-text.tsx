@@ -13,6 +13,8 @@ const motionByTag = {
 
 export type GoldShineTextAs = keyof typeof motionByTag
 
+export type GoldShineVariant = "scroll" | "static"
+
 export interface GoldShineTextProps {
   children: React.ReactNode
   /** Optional ref to drive shine from this element's scroll (e.g. section). If not set, uses global scroll. */
@@ -22,19 +24,38 @@ export interface GoldShineTextProps {
   className?: string
   /** Use `h1`–`h4` to render the shine on the heading (no extra wrapper). Default `span` for inline or inside an existing heading. */
   as?: GoldShineTextAs
+  /**
+   * `scroll` (default): shine follows scroll via Framer `useScroll`.
+   * `static`: fixed gradient position — use on mobile hero copy to avoid an extra scroll subscription.
+   */
+  variant?: GoldShineVariant
 }
 
-/**
- * Renders text with a metallic gold gradient whose shine position is driven by scroll.
- * Uses MotionValue directly in style for smooth, scroll-synced shine (no React re-renders).
- */
-export function GoldShineText({
+function GoldShineTextStatic({
+  className = "",
+  as = "span",
+  children,
+}: Pick<GoldShineTextProps, "className" | "as" | "children">) {
+  const MotionComponent = motionByTag[as]
+  const flowClass = as === "span" ? "inline-block" : "block"
+
+  return (
+    <MotionComponent
+      className={`${flowClass} overflow-visible heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
+      style={{ backgroundPosition: "50% 50%" }}
+    >
+      {children}
+    </MotionComponent>
+  )
+}
+
+function GoldShineTextScroll({
   children,
   scrollTargetRef,
   scrollOffset = ["start start", "end start"],
   className = "",
   as = "span",
-}: GoldShineTextProps) {
+}: Omit<GoldShineTextProps, "variant">) {
   const { scrollYProgress } = useScroll(
     scrollTargetRef
       ? {
@@ -53,7 +74,6 @@ export function GoldShineText({
   )
 
   const MotionComponent = motionByTag[as]
-  /** `span` stays inline-level for copy like footers and mid-paragraph brand names; headings must be block so stacked titles wrap lines. */
   const flowClass = as === "span" ? "inline-block" : "block"
 
   return (
@@ -64,4 +84,22 @@ export function GoldShineText({
       {children}
     </MotionComponent>
   )
+}
+
+/**
+ * Renders text with a metallic gold gradient; by default the shine position is driven by scroll.
+ * Uses MotionValue directly in style for smooth, scroll-synced shine (no React re-renders).
+ */
+export function GoldShineText({
+  variant = "scroll",
+  ...props
+}: GoldShineTextProps) {
+  if (variant === "static") {
+    return (
+      <GoldShineTextStatic as={props.as} className={props.className}>
+        {props.children}
+      </GoldShineTextStatic>
+    )
+  }
+  return <GoldShineTextScroll {...props} />
 }
