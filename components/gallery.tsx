@@ -139,23 +139,25 @@ function HomeGalleryCarouselSlide({
           <GallerySlideHitLink photo={photo} photoHref={photoHref} />
         </>
       )}
-      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-background/95 via-background/35 to-transparent pointer-events-none" />
-      <figcaption className="absolute bottom-0 left-0 right-0 z-[2] p-5 sm:p-8 md:p-10 pointer-events-none space-y-2">
-        <GalleryEventBreadcrumb folderSegments={photo.albumPathSegments} className="mb-1" />
-        {slideDateLabel ? (
-          <p className="text-xs font-medium tabular-nums text-muted-foreground sm:text-sm">
-            {slideDateLabel}
-          </p>
-        ) : null}
-        <h3 className="font-serif text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-background/95 via-background/35 to-transparent pointer-events-none max-md:via-background/20" />
+      <figcaption className="absolute bottom-0 left-0 right-0 z-[2] p-3 sm:p-5 md:p-8 lg:p-10 pointer-events-none space-y-1 md:space-y-2">
+        <div className="hidden md:contents">
+          <GalleryEventBreadcrumb folderSegments={photo.albumPathSegments} className="mb-1" />
+          {slideDateLabel ? (
+            <p className="text-xs font-medium tabular-nums text-muted-foreground sm:text-sm">
+              {slideDateLabel}
+            </p>
+          ) : null}
+        </div>
+        <h3 className="font-serif text-base font-bold tracking-tight text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] sm:text-lg md:text-2xl lg:text-3xl md:drop-shadow-none">
           {photo.title}
         </h3>
         {photo.caption ? (
-          <p className="text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
+          <p className="hidden md:block text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
             {photo.caption}
           </p>
         ) : null}
-        <p className="mt-3 text-sm text-muted-foreground">
+        <p className="mt-3 hidden md:block text-sm text-muted-foreground">
           Click or tap the photo to open the full page — back returns to this section.
         </p>
       </figcaption>
