@@ -5,6 +5,8 @@ import { useRef, useState, useEffect } from "react"
 import { Mail, MapPin, Phone, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { LINKS } from "@/lib/links"
+import { isValidEmail, isValidPhone } from "@/lib/contact-input"
+import { getCookieConsentAccepted } from "@/lib/cookie-consent"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
@@ -40,10 +42,9 @@ function ProtectedPhone() {
       aria-label={`Phone: ${decoded}`}
       onCopy={(e) => e.preventDefault()}
       onCut={(e) => e.preventDefault()}
-      style={{ WebkitUserSelect: "none", userSelect: "none" }}
     >
       {decoded.split("").map((char, i) => (
-        <span key={i} className="inline-block" style={{ WebkitUserSelect: "none", userSelect: "none" }}>
+        <span key={i} className="inline-block select-none">
           {char}
         </span>
       ))}
@@ -58,13 +59,9 @@ const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
 const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 
-function setCookie(name: string, value: string): void {
-  if (typeof document === "undefined") return
+function setPhoneListCookie(name: string, value: string): void {
+  if (!getCookieConsentAccepted() || typeof document === "undefined") return
   document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
-}
-
-function isValidPhone(phone: string): boolean {
-  return /^[0-9+()\-\s]{7,24}$/.test(phone)
 }
 
 function openContactMailto(payload: {
@@ -78,9 +75,9 @@ function openContactMailto(payload: {
   const subject = encodeURIComponent(`[LUPFR] ${payload.inquiryType} – ${payload.name}`)
   const body = encodeURIComponent(
     `Inquiry: ${payload.inquiryType}\nName: ${payload.name}\nEmail: ${payload.email}\n` +
-      (payload.company ? `Company: ${payload.company}\n` : "") +
-      (payload.budget ? `Budget: ${payload.budget}\n` : "") +
-      `\nMessage:\n${payload.message}`
+    (payload.company ? `Company: ${payload.company}\n` : "") +
+    (payload.budget ? `Budget: ${payload.budget}\n` : "") +
+    `\nMessage:\n${payload.message}`
   )
   window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
 }
@@ -91,6 +88,7 @@ export function Contact() {
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactListName, setContactListName] = useState("")
+  const [contactListEmail, setContactListEmail] = useState("")
   const [contactListPhone, setContactListPhone] = useState("")
   const [isContactListSubmitting, setIsContactListSubmitting] = useState(false)
 
@@ -146,13 +144,22 @@ export function Contact() {
   const handleContactListSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const cleanName = contactListName.replace(/\s+/g, " ").trim()
+    const cleanEmail = contactListEmail.replace(/\s+/g, "").trim().toLowerCase()
     const cleanPhone = contactListPhone.replace(/\s+/g, " ").trim()
 
-    if (!cleanName || !cleanPhone) {
-      toast.error("Name and phone number are required.")
+    if (!cleanName) {
+      toast.error("Name is required.")
       return
     }
-    if (!isValidPhone(cleanPhone)) {
+    if (!cleanEmail && !cleanPhone) {
+      toast.error("Please provide an email or phone number.")
+      return
+    }
+    if (cleanEmail && !isValidEmail(cleanEmail)) {
+      toast.error("Please enter a valid email address.")
+      return
+    }
+    if (cleanPhone && !isValidPhone(cleanPhone)) {
       toast.error("Please enter a valid phone number.")
       return
     }
@@ -162,7 +169,11 @@ export function Contact() {
       const res = await fetch("/api/phone-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: cleanName, phone: cleanPhone }),
+        body: JSON.stringify({
+          name: cleanName,
+          ...(cleanEmail && { email: cleanEmail }),
+          ...(cleanPhone && { phone: cleanPhone }),
+        }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
@@ -176,9 +187,10 @@ export function Contact() {
 
       window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
       window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
-      setCookie(POPUP_SUBMITTED_COOKIE, "1")
+      setPhoneListCookie(POPUP_SUBMITTED_COOKIE, "1")
       toast.success("You are on the contact list.")
       setContactListName("")
+      setContactListEmail("")
       setContactListPhone("")
     } catch {
       toast.error("Network error. Please try again.")
@@ -188,242 +200,264 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden bg-card/30">
-      {/* Background Elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-[200px]" />
+    <section
+      id="contact"
+      ref={ref}
+      className="relative overflow-hidden bg-card/30 px-4 py-20 sm:px-6 sm:py-24 md:py-32"
+    >
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-24 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-accent/5 blur-[140px]" />
+        <div className="absolute right-0 top-1/2 h-[340px] w-[340px] -translate-y-1/2 rounded-full bg-gold-accent/10 blur-[130px]" />
+      </div>
 
-      <ScrollReveal variant="up" className="container mx-auto relative z-10">
+      <ScrollReveal variant="up" className="container relative z-10 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-10 sm:mb-12 md:mb-16"
+          className="mx-auto mb-10 max-w-4xl text-center sm:mb-12 md:mb-16"
         >
-          <p className="text-gold-accent uppercase tracking-[0.3em] text-sm mb-4">Get In Touch</p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6">
+          <p className="mb-4 text-sm tracking-tight text-gold-accent">Get in touch</p>
+          <h2 className="mb-5 lupfr-heading-split-leading">
             <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>
             <br />
-            <span className="text-muted-foreground">Something</span>
+            <span className="lupfr-heading-subline">Something</span>
           </h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            Tell us what you&apos;re building and we&apos;ll shape the right sound, talent, and production plan around it.
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 sm:gap-12 lg:gap-16">
-          {/* Left - Info */}
-          <motion.div
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-12">
+          <motion.aside
             initial={{ opacity: 0, x: -32 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-2 space-y-8"
+            className="space-y-6 lg:col-span-4 lg:sticky lg:top-24 lg:self-start"
           >
-            <div>
-              <h3 className="text-2xl font-bold mb-6">Ready to elevate your event?</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Whether you&apos;re planning a corporate event, looking for DJ talent, or want to partner on a production—we&apos;d love to hear from you.
+            <div className="rounded-3xl border border-border/80 bg-card/70 p-6 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
+              <h3 className="mb-4 text-2xl font-bold">Ready to elevate your event?</h3>
+              <p className="leading-relaxed text-muted-foreground">
+                Whether you&apos;re planning a corporate event, looking for DJ talent, or want to partner on a production, we&apos;d love to hear from you.
               </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                  <Mail size={20} className="text-accent" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Email us</p>
-                  <a href="mailto:will@lupfr.com" className="text-foreground hover:text-accent transition-colors">
-                    will@lupfr.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                  <MapPin size={20} className="text-accent" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Based in</p>
-                  <p className="text-foreground">San Francisco, CA</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center">
-                  <Phone size={20} className="text-accent" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Call us</p>
-                  <p className="text-foreground">
-                    <ProtectedPhone />
-                  </p>
-                </div>
+              <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
+                Typical response in 24 hours
               </div>
             </div>
 
-            {/* Social Links */}
-            <div>
-              <p className="text-sm text-muted-foreground mb-4">Follow the movement</p>
-              <div className="flex items-center gap-4">
-                {socialLinks.map((social) => (
-                  <motion.a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-secondary rounded-full text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {social.name}
-                  </motion.a>
-                ))}
+            <div className="rounded-3xl border border-border/80 bg-card/60 p-6 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
+              <div className="space-y-5">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
+                    <Mail size={20} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Email us</p>
+                    <a href="mailto:will@lupfr.com" className="text-foreground transition-colors hover:text-accent">
+                      will@lupfr.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
+                    <MapPin size={20} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Based in</p>
+                    <p className="text-foreground">San Francisco, CA</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
+                    <Phone size={20} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Call us</p>
+                    <p className="text-foreground">
+                      <ProtectedPhone />
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-7 border-t border-border/70 pt-5">
+                <p className="mb-3 text-sm text-muted-foreground">Follow the movement</p>
+                <div className="flex flex-wrap gap-3">
+                  {socialLinks.map((social) => (
+                    <motion.a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full bg-secondary px-4 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {social.name}
+                    </motion.a>
+                  ))}
+                </div>
               </div>
             </div>
-          </motion.div>
+          </motion.aside>
 
-          {/* Right - Form */}
           <motion.div
             initial={{ opacity: 0, x: 32 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-3"
+            className="space-y-6 lg:col-span-8"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Inquiry Type – label and tabs match section fold (gold-accent eyebrow + card-style borders) */}
-              <div>
-                <label className="block text-gold-accent uppercase tracking-[0.3em] text-sm mb-3">
-                  What can we help with?
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {inquiryTypes.map((type) => (
-                    <motion.button
-                      key={type}
-                      type="button"
-                      onClick={() => setSelectedType(type)}
-                      className={`px-3 sm:px-4 py-2.5 rounded-2xl text-xs sm:text-sm border transition-[border-color,background-color,color] min-h-[44px] sm:min-h-0 ${
-                        selectedType === type
-                          ? "border-accent bg-accent/10 text-accent"
-                          : "border-border hover:border-accent/50 text-muted-foreground hover:text-foreground bg-card/50"
-                      }`}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      animate={{ scale: selectedType === type ? 1.02 : 1 }}
-                      transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                    >
-                      {type}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Name & Email Row */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="rounded-3xl border border-border/80 bg-card/70 p-5 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Name</label>
-                  <input
-                    name="name"
-                    type="text"
+                  <label className="mb-3 block text-sm font-medium tracking-tight text-gold-accent">
+                    What can we help with?
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {inquiryTypes.map((type) => (
+                      <motion.button
+                        key={type}
+                        type="button"
+                        onClick={() => setSelectedType(type)}
+                        className={`min-h-[44px] rounded-2xl border px-3 py-2.5 text-xs transition-[border-color,background-color,color] sm:min-h-0 sm:px-4 sm:text-sm ${selectedType === type
+                            ? "border-accent bg-accent/10 text-accent"
+                            : "border-border bg-card/50 text-muted-foreground hover:border-accent/50 hover:text-foreground"
+                          }`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        animate={{ scale: selectedType === type ? 1.02 : 1 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                      >
+                        {type}
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Name</label>
+                    <input
+                      name="name"
+                      type="text"
+                      required
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Email</label>
+                    <input
+                      name="email"
+                      type="email"
+                      required
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">
+                      Company / Venue (optional)
+                    </label>
+                    <input
+                      name="company"
+                      type="text"
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="Your organization"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Budget (optional)</label>
+                    <input
+                      name="budget"
+                      type="text"
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="Budget range or amount"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Tell us more</label>
+                  <textarea
+                    name="message"
                     required
-                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                    placeholder="Your name"
+                    rows={4}
+                    className="w-full resize-none rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                    placeholder="Share details about your event, project, or inquiry..."
                   />
                 </div>
-                <div>
-                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Email</label>
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
 
-              {/* Company */}
-              <div>
-                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Company / Venue (optional)</label>
-                <input
-                  name="company"
-                  type="text"
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                  placeholder="Your organization"
-                />
-              </div>
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-metallic-gold group flex min-w-0 w-full items-center justify-center gap-3 rounded-full px-8 py-4 font-semibold tracking-normal transition-opacity hover:opacity-95 disabled:opacity-50"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                >
+                  {isSubmitting ? (
+                    <span>Sending...</span>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </div>
 
-              {/* Budget */}
-              <div>
-                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Budget (optional)</label>
-                <input
-                  name="budget"
-                  type="text"
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                  placeholder="Budget range or amount"
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Tell us more</label>
-                <textarea
-                  name="message"
-                  required
-                  rows={4}
-                  className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors resize-none text-foreground placeholder:text-muted-foreground"
-                  placeholder="Share details about your event, project, or inquiry..."
-                />
-              </div>
-
-              {/* Submit */}
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                className="group w-full flex items-center justify-center gap-3 px-8 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50 min-w-0"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 500, damping: 28 }}
-              >
-                {isSubmitting ? (
-                  <span>Sending...</span>
-                ) : (
-                  <>
-                    <span>Send Message</span>
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </motion.button>
-            </form>
-
-            <div className="mt-8 rounded-2xl border border-border bg-card/60 p-5 sm:p-6">
-              <p className="text-gold-accent uppercase tracking-[0.25em] text-xs mb-2">Join the contact list</p>
-              <h3 className="font-serif text-2xl font-bold tracking-tight mb-4">Stay in the loop</h3>
+            <div className="rounded-3xl border border-border/80 bg-card/60 p-5 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7">
+              <p className="mb-2 text-xs tracking-tight text-gold-accent">Join the contact list</p>
+              <h3 className="mb-1 font-serif text-2xl font-bold tracking-tight">Stay in the loop</h3>
+              <p className="mb-5 text-sm text-muted-foreground">Get priority updates for events, bookings, and announcements.</p>
               <form onSubmit={handleContactListSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Name</label>
+                  <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Name</label>
                   <input
                     type="text"
                     autoComplete="name"
                     required
                     value={contactListName}
                     onChange={(e) => setContactListName(e.target.value)}
-                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                    placeholder="Mike Lubich"
+                    className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                    placeholder="Jane Smith"
                   />
                 </div>
-                <div>
-                  <label className="block text-gold-accent/90 uppercase tracking-[0.2em] text-xs mb-2">Phone number</label>
-                  <input
-                    type="tel"
-                    autoComplete="tel"
-                    required
-                    value={contactListPhone}
-                    onChange={(e) => setContactListPhone(e.target.value)}
-                    className="w-full px-4 py-3 bg-secondary border border-border rounded-xl focus:border-accent focus:outline-none transition-colors text-foreground placeholder:text-muted-foreground"
-                    placeholder="4152750094"
-                  />
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Email</label>
+                    <input
+                      type="email"
+                      autoComplete="email"
+                      value={contactListEmail}
+                      onChange={(e) => setContactListEmail(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Phone number</label>
+                    <input
+                      type="tel"
+                      autoComplete="tel"
+                      value={contactListPhone}
+                      onChange={(e) => setContactListPhone(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      placeholder="(415) 555-0100"
+                    />
+                  </div>
                 </div>
                 <motion.button
                   type="submit"
                   disabled={isContactListSubmitting}
-                  className="w-full flex items-center justify-center gap-3 px-8 py-3 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full hover:opacity-95 transition-opacity disabled:opacity-50"
+                  className="btn-metallic-gold flex w-full items-center justify-center gap-3 rounded-full px-8 py-3 font-semibold tracking-normal transition-opacity hover:opacity-95 disabled:opacity-50"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 500, damping: 28 }}

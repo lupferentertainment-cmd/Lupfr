@@ -1,6 +1,6 @@
 /**
  * Convert legacy DSC*.JPEG in public/gallery to .webp and remove each source after success.
- * Run from repo root: `node scripts/convert-gallery-webp.mjs`
+ * Run from repo root: `bun scripts/convert-gallery-webp.mjs`
  */
 import fs from "fs"
 import path from "path"

@@ -1,0 +1,37 @@
+---
+description: >-
+  LUPFR docs/ is the canonical spec: read and align code with it. Spec is not
+  served at /docs (proxy 404; repo docs/ is not app/ or public/).
+globs:
+  - "docs/**/*.md"
+  - "app/**/*.{ts,tsx}"
+  - "lib/**/*.ts"
+  - "components/**/*.tsx"
+  - "data/**/*.yml"
+  - "proxy.ts"
+  - "next.config.mjs"
+  - "scripts/**/*.{mjs,js,ts}"
+  - "tests/**/*.ts"
+alwaysApply: false
+---
+
+# Context engineering: `docs/` and code
+
+**Always-on policy:** **`.cursor/rules/lupfr-context-engineering.mdc`**.
+
+## Authority
+
+- **`docs/*.md` is the specification** (seven canonical files: OVERVIEW, ARCHITECTURE, DESIGN, REQUIREMENTS, API, DEPLOYMENT, TESTING). Merge new facts into the right file; do not add an eighth top-level spec doc.
+- **Code follows spec.** If behavior or public contracts change, update the relevant `docs/*.md` in the **same** change.
+- **Tests and CI** must stay consistent with `docs/TESTING.md` (and related sections elsewhere).
+
+## Not public site content
+
+- The folder **`docs/`** at the repo root is **not** a Next.js route (not under `app/` or `public/`).
+- **Do not** add `app/docs`, `public/docs`, or rewrites that expose spec files to browsers. **`proxy.ts`** must keep returning **404** for `/docs` and the other blocked patterns in **`scripts/verify-routes.sh`**.
+- Specs are for **private Git** + tooling; they are not linked from the marketing UI.
+
+## When editing
+
+- Map work to the right doc: APIs → **API**; behavior/architecture → **ARCHITECTURE**; UX/visual → **DESIGN**; constraints/stories → **REQUIREMENTS**; hosting/env → **DEPLOYMENT**; tests/CI → **TESTING**; high-level product → **OVERVIEW**.
+

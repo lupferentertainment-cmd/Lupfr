@@ -7,9 +7,11 @@ __v0_jsx-dev-runtime.ts
 node_modules/
 *.tsbuildinfo
 .next/
+coverage/
 .env*.local
 .DS_Store
 .vercel
+.tmp-vercel-v0/
 
 # Original oversized source video (replaced by compressed hero-bg.mp4)
 public/vecteezy_people-dancing-with-mixed-music-suitable-for-all-speeds-in_26462763.mp4

@@ -9,4 +9,6 @@ export const LINKS = {
   youtube: "https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew",
   /** Watch Reel – hero CTA (Instagram). */
   watchReel: "https://www.instagram.com/lupfr_/",
+  /** Google Calendar — book a call (“LUPFR Calls”). */
+  scheduleCall: "https://calendar.app.google/rCnss5ECoUQuDxqo6",
 } as const

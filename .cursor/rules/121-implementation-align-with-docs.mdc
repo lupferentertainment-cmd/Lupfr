@@ -1,0 +1,14 @@
+---
+description: TS/TSX implementation — align with docs/; same change as spec (see always-on lupfr-context-engineering).
+globs: **/*.{ts,tsx}
+alwaysApply: false
+---
+
+<spec_alignment>
+
+**Authoritative workflow** is in **`.cursor/rules/lupfr-context-engineering.mdc`** (`alwaysApply: true`). For TypeScript and TSX, also use **`.cursor/rules/lupfr-code-to-docs-map.mdc`** to pick the right `docs/*.md` before you edit.
+
+- If you **change** `proxy.ts` blocked paths, status, or public URL behavior, update **`docs/OVERVIEW.md`**, **`docs/DEPLOYMENT.md`**, and **`docs/TESTING.md`** (and `scripts/verify-routes.sh` when assertions change) in the same change.
+- **YAML**, generated JSON, and API validation must stay consistent with **`docs/ARCHITECTURE.md`** and **`docs/API.md`**.
+
+</spec_alignment>

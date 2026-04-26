@@ -1,20 +1,26 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { motion, useScroll, useTransform, AnimatePresence, useReducedMotion, type MotionValue } from "framer-motion"
 import { useRef, useState, useEffect, memo } from "react"
 
 import { ArrowDown, Play } from "lucide-react"
+import { GoldShineText } from "@/components/gold-shine-text"
+import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
+import { MotionScheduleCallCta } from "@/components/schedule-call-cta"
 import { LINKS } from "@/lib/links"
+import { cn } from "@/lib/utils"
+import { CONTACT_PAGE_PATH } from "@/lib/site"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 const HERO_PHRASES = [
+  "Sound that moves you. Events that move the city.",
+  "Rooftops, boats, warehouses. One vibe. One city.",
   "Curating unforgettable music experiences. Boat parties, rooftop events, and warehouse sessions that move the city.",
   "Where the Bay dances. Premier music events that define San Francisco nightlife.",
   "From boat parties to warehouses—we turn every night into an experience.",
-  "Sound that moves you. Events that move the city.",
   "San Francisco's pulse. Music, elevated.",
-  "Rooftops, boats, warehouses. One vibe. One city.",
   "We don't just throw parties. We create moments that last.",
   "The city's most iconic music experiences—curated, produced, unforgettable.",
   "Where beats meet the Bay. Where crowds become communities.",
@@ -28,10 +34,34 @@ const FADE_DURATION_S = 0.6
 const HERO_VIDEO_SLOW_MS = 30000
 const HERO_VIDEO_DARK = "/hero/hero_dark.mp4"
 const HERO_VIDEO_LIGHT = "/hero/hero_light_opt.mp4"
-const HERO_POSTER = "/hero/hero-poster.jpg"
+const HERO_POSTER = "/hero/hero-poster.webp"
 const HERO_FALLBACK_IMAGE = HERO_POSTER
 
 const staticShinePositionCss = "50% 50%"
+
+/** Remounts whenever `fallbackToImage` toggles on so poster decode state stays correct. */
+function HeroFallbackPoster() {
+  const [ready, setReady] = useState(false)
+  return (
+    <div className="absolute inset-0">
+      <SkeletonShimmerLayer show={!ready} />
+      <Image
+        src={HERO_POSTER}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        onLoadingComplete={() => setReady(true)}
+        className={cn(
+          "relative z-[1] object-cover object-center",
+          "motion-safe:transition-opacity motion-safe:duration-500 motion-reduce:transition-none",
+          ready ? "opacity-100" : "opacity-0"
+        )}
+        aria-hidden
+      />
+    </div>
+  )
+}
 
 /** LUPFR: same-size letters with gold shine (periodic or static). */
 const HeroLupfrText = memo(function HeroLupfrText({ prefersReducedMotion }: { prefersReducedMotion: boolean | null }) {
@@ -54,7 +84,7 @@ const HeroTitleContent = memo(function HeroTitleContent({
 }) {
   return (
     <h1
-      className="font-serif hero-title-lupfr font-bold tracking-tighter leading-none text-center flex flex-col items-center uppercase gap-1.5 sm:gap-2 md:gap-3"
+      className="font-serif hero-title-lupfr font-bold tracking-tighter leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
     >
       <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
       <motion.span
@@ -93,6 +123,7 @@ export function Hero() {
   /** Fewer continuous Motion animations + lighter imagery on phones (and unknown width). */
   const liteHero = prefersReducedMotion === true || !isDesktopViewport
   const phraseDurationMs = isDesktopViewport ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
+  const reducePhraseMotion = prefersReducedMotion === true
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -201,7 +232,10 @@ export function Hero() {
   const shinePositionDelayed = useTransform(scrollYProgress, [0, 0.04, 0.24, 1], ["100% 50%", "100% 50%", "0% 50%", "0% 50%"])
 
   return (
-    <section ref={containerRef} className="relative min-h-[100vh] min-h-[100dvh] overflow-hidden">
+    <section
+      ref={containerRef}
+      className="lupfr-hero relative min-h-[100vh] min-h-[100dvh] overflow-hidden"
+    >
       {/* Background grid + orbs: static on mobile / reduced-motion to cut continuous Motion work */}
       {liteHero ? (
         <>
@@ -248,19 +282,7 @@ export function Hero() {
       )}
 
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        {fallbackToImage ? (
-          <div className="absolute inset-0">
-            <Image
-              src={HERO_POSTER}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-center"
-              aria-hidden
-            />
-          </div>
-        ) : (
+        {fallbackToImage ? <HeroFallbackPoster /> : (
           <>
             <video
               ref={setVideoDarkRef}
@@ -315,45 +337,71 @@ export function Hero() {
           />
 
           <div
-            className="mt-6 sm:mt-8 min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center w-full max-w-4xl mx-auto px-8 sm:px-12 md:px-20 lg:px-24"
+            className="mt-6 sm:mt-8 min-h-[2.75rem] sm:min-h-[3.25rem] flex items-center justify-center w-full max-w-4xl mx-auto px-8 sm:px-12 md:px-20 lg:px-24"
             aria-live="polite"
             aria-atomic="true"
           >
             <AnimatePresence mode="wait" initial={false}>
-              <motion.p
+              <motion.div
                 key={phraseIndex}
-                className="text-sm sm:text-base md:text-lg font-medium tracking-tight leading-snug text-center max-w-2xl mx-auto text-gold-accent antialiased gpu-accelerate subpixel-antialiased"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+                className="max-w-2xl mx-auto w-full text-center"
+                initial={
+                  reducePhraseMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: 10, filter: "blur(4px)" }
+                }
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={
+                  reducePhraseMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: -8, filter: "blur(3px)" }
+                }
                 transition={{ duration: FADE_DURATION_S, ease: [0.22, 1, 0.36, 1] }}
               >
-                {HERO_PHRASES[phraseIndex]}
-              </motion.p>
+                <GoldShineText
+                  as="div"
+                  scrollTargetRef={containerRef}
+                  className="text-sm sm:text-base md:text-lg font-medium font-sans tracking-tight leading-snug antialiased subpixel-antialiased"
+                >
+                  {HERO_PHRASES[phraseIndex]}
+                </GoldShineText>
+              </motion.div>
             </AnimatePresence>
           </div>
 
-          <motion.div 
-            className="mt-8 sm:mt-10 md:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          <motion.div
+            className="mt-8 sm:mt-10 md:mt-12 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <motion.a
-              href="#contact"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full overflow-hidden relative max-w-full min-w-0 justify-center"
+            <motion.div
+              className="inline-flex max-w-full min-w-0"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >
-              <span className="relative z-10">Book an Event</span>
-            </motion.a>
+              <Link
+                href={CONTACT_PAGE_PATH}
+                className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold tracking-normal rounded-full overflow-hidden relative max-w-full min-w-0 justify-center"
+              >
+                <span className="relative z-10">Book an Event</span>
+              </Link>
+            </motion.div>
+
+            <MotionScheduleCallCta
+              tone="on-dark"
+              size="md"
+              whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(115, 98, 72, 0.2)" }}
+              whileTap={{ scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 500, damping: 28 }}
+            />
 
             <motion.a
               href={LINKS.watchReel}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-white/80 dark:border-border text-white dark:text-foreground font-semibold uppercase tracking-wider rounded-full hover:border-accent hover:text-accent dark:hover:text-accent transition-colors max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug"
+              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-foreground/30 dark:border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug"
               whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(115, 98, 72, 0.25)" }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -373,7 +421,7 @@ export function Hero() {
               className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Scroll to events"
             >
-              <span className="text-xs uppercase tracking-widest">Scroll</span>
+              <span className="text-xs tracking-normal">Scroll</span>
               <ArrowDown size={20} />
             </a>
           </div>
@@ -389,7 +437,7 @@ export function Hero() {
               aria-label="Scroll to events"
               whileHover={{ scale: 1.1 }}
             >
-              <span className="text-xs uppercase tracking-widest">Scroll</span>
+              <span className="text-xs tracking-normal">Scroll</span>
               <motion.span
                 animate={{ y: [0, 4, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}

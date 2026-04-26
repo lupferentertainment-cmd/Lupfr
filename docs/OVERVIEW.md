@@ -4,8 +4,10 @@
 
 **Stack.** Next.js 16 (App Router), React 19, Bun (install/scripts/lint), Tailwind CSS 4, Vercel for hosting. Email via Resend (contact form, newsletter).
 
-**Content model.** Site content is data-driven: YAML in `data/` (events, artists, services, partners) is compiled at build time by `scripts/generate-data.js` into JSON under `lib/data/generated/`. Images live in `public/` (e.g. `public/artists/`, `public/events/`). No CMS; content changes = edit YAML + rebuild.
+**Content model.** Site content is data-driven: YAML in `data/` (events, gallery, artists, services, partners) is compiled at build time by `scripts/generate-data.js` into JSON under `lib/data/generated/`. Raster images in `public/` (except `favicon/` and `logos/`) are **WebP**; `bun run public:images:check` is part of pre-commit. No CMS; content changes = edit YAML + rebuild.
 
-**Docs in this repo.** The files in `docs/` are for **repository context only**: onboarding, Cursor/context engineering, and alignment between code and spec. They are **not** served by the website or exposed to end users.
+**Docs in this repo.** The files in `docs/` are **maintainer- and agent-facing** (private GitHub; spec alignment, CI, and Cursor context). They are the **authoritative** implementation spec, not public marketing copy. Keep them **only** in repo-root `docs/` — do **not** add `app/docs/**` or `public/docs/**` (that would create servable URLs or static files under `/docs`).
 
-**Canonical doc set.** Authoritative specs live in: OVERVIEW (this file), ARCHITECTURE, DESIGN, REQUIREMENTS, API, DEPLOYMENT, TESTING. New knowledge is merged into these; no feature-specific docs.
+**Public exposure guardrails.** **`proxy.ts`** (Next.js 16 request proxy; formerly `middleware`) returns `404` (not a redirect) + `X-Robots-Tag: noindex, nofollow, noarchive` for `/docs`, `/_docs`, their subpaths, and several bare `/*.md` names at the site root (for example `/README.md`, `/API.md`, `/TESTING.md`) so spec text is not browseable on the public hostname. `public/robots.txt` disallows the same patterns. `bun run verify:routes` (after `bun run build` / `bunx --bun next build`) asserts **`/docs`**, **`/docs/overview`**, **`/README.md`**, and **`/api.md`** stay **404** among other checks; see `scripts/verify-routes.sh`.
+
+**Canonical doc set.** Authoritative specs live in: OVERVIEW (this file), ARCHITECTURE, DESIGN, REQUIREMENTS, API, DEPLOYMENT, TESTING. New knowledge is merged into these; no feature-specific docs. **Cursor / LLM policy** for keeping code and `docs/` in lockstep: `.cursor/rules/lupfr-context-engineering.mdc` (always on) and `.cursor/rules/lupfr-code-to-docs-map.mdc` (code area → doc).

@@ -1,13 +1,16 @@
 "use client"
 
-import Image from "next/image"
+import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { ArrowUp } from "lucide-react"
 import { toast } from "sonner"
+import { MotionScheduleCallCta } from "@/components/schedule-call-cta"
 import { LINKS } from "@/lib/links"
+import { isValidEmail, isValidPhone } from "@/lib/contact-input"
+import { getCookieConsentAccepted } from "@/lib/cookie-consent"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
@@ -15,6 +18,7 @@ const footerLinks = {
   company: [
     { name: "About", href: "#about" },
     { name: "Events", href: "#events" },
+    { name: "Gallery", href: "/gallery" },
     { name: "Services", href: "#services" },
     { name: "Contact", href: "#contact" },
   ],
@@ -24,29 +28,20 @@ const footerLinks = {
     { name: "YouTube", href: LINKS.youtube },
   ],
   legal: [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
+    { name: "Privacy & cookies", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
   ],
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
-const LUPFR_EMAIL = "will@lupfr.com"
 const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
 const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
 const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
 const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 
-function setCookie(name: string, value: string): void {
-  if (typeof document === "undefined") return
+function setPhoneListCookie(name: string, value: string): void {
+  if (!getCookieConsentAccepted() || typeof document === "undefined") return
   document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
-}
-
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-}
-
-function isValidPhone(phone: string): boolean {
-  return /^[0-9+()\-\s]{7,24}$/.test(phone)
 }
 
 export function Footer() {
@@ -54,7 +49,10 @@ export function Footer() {
   const isHome = pathname === "/"
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
-  const companyHref = (hash: string) => (isHome ? hash : `/${hash}`)
+  const companyHref = (href: string) => {
+    if (href === "/gallery") return "/gallery"
+    return isHome ? href : `/${href}`
+  }
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -71,15 +69,15 @@ export function Footer() {
     const cleanEmail = contactListEmail.replace(/\s+/g, "").trim().toLowerCase()
     const cleanPhone = contactListPhone.replace(/\s+/g, " ").trim()
 
-    if (!cleanName || !cleanEmail) {
-      toast.error("Name and email are required.")
+    if (!cleanName || !cleanEmail || !cleanPhone) {
+      toast.error("Name, email, and phone number are required.")
       return
     }
     if (!isValidEmail(cleanEmail)) {
       toast.error("Please enter a valid email address.")
       return
     }
-    if (cleanPhone && !isValidPhone(cleanPhone)) {
+    if (!isValidPhone(cleanPhone)) {
       toast.error("Please enter a valid phone number.")
       return
     }
@@ -89,35 +87,26 @@ export function Footer() {
       const res = await fetch("/api/phone-list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: cleanName, email: cleanEmail, phone: cleanPhone || undefined }),
+        body: JSON.stringify({ name: cleanName, email: cleanEmail, phone: cleanPhone }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        toast.error("Signup not configured. Opening email to send to LUPFR instead.")
-        const subject = encodeURIComponent("[LUPFR] Contact list signup")
-        const body = encodeURIComponent(
-          `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nEmail: ${cleanEmail}` +
-            (cleanPhone ? `\nPhone: ${cleanPhone}` : "")
-        )
-        window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
+        const message = typeof data?.error === "string" && data.error.length > 0
+          ? data.error
+          : "Unable to save your contact info right now."
+        toast.error(message)
         return
       }
 
       window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
       window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
-      setCookie(POPUP_SUBMITTED_COOKIE, "1")
+      setPhoneListCookie(POPUP_SUBMITTED_COOKIE, "1")
       toast.success("You're on the list! We'll be in touch.")
       setContactListName("")
       setContactListEmail("")
       setContactListPhone("")
     } catch {
-      toast.error("Network error. Opening email to send to LUPFR instead.")
-      const subject = encodeURIComponent("[LUPFR] Contact list signup")
-      const body = encodeURIComponent(
-        `Please add me to the LUPFR contact list:\n\nName: ${cleanName}\nEmail: ${cleanEmail}` +
-          (cleanPhone ? `\nPhone: ${cleanPhone}` : "")
-      )
-      window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
+      toast.error("Network error. Please try again.")
     } finally {
       setContactListSubmitting(false)
     }
@@ -136,25 +125,24 @@ export function Footer() {
             transition={{ duration: 0.5, ease }}
           >
             <Link href={isHome ? "#" : "/"} className="inline-block mb-6" aria-label="LUPFR home">
-              <Image
-                src="/logos/will_logo.png"
-                alt="LUPFR"
-                width={200}
-                height={66}
-                sizes="140px"
-                className="h-14 w-auto object-contain"
-              />
+              <LupfrLogoImage width={200} height={66} sizes="140px" className="h-14 w-auto object-contain" />
             </Link>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6">
               San Francisco&apos;s premier music event production company. Creating unforgettable experiences in the Bay and beyond.
             </p>
             <motion.a
               href="mailto:will@lupfr.com"
-              className="text-accent hover:underline text-sm mb-4 inline-block"
+              className="text-accent hover:underline text-sm mb-3 inline-block"
               whileHover={{ y: -2 }}
             >
               will@lupfr.com
             </motion.a>
+            <MotionScheduleCallCta
+              tone="on-surface"
+              size="md"
+              className="mb-4 w-full sm:w-auto self-start justify-center sm:justify-start"
+              whileHover={{ y: -2 }}
+            />
             <div className="flex items-center gap-4">
               {footerLinks.social.map((link) => (
                 <motion.a
@@ -177,7 +165,7 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.08, ease }}
           >
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Company</h4>
+            <h4 className="text-sm font-semibold tracking-tight mb-6">Company</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link, i) => (
                 <li key={link.name}>
@@ -202,7 +190,7 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.12, ease }}
           >
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-6">Stay in the loop</h4>
+            <h4 className="text-sm font-semibold tracking-tight mb-6">Stay in the loop</h4>
             <p className="text-muted-foreground text-sm mb-4">
               Get notified about upcoming events and exclusive presales.
             </p>
@@ -232,8 +220,9 @@ export function Footer() {
               <input
                 name="phone"
                 type="tel"
+                required
                 autoComplete="tel"
-                placeholder="Phone number (optional)"
+                placeholder="Phone number"
                 value={contactListPhone}
                 onChange={(e) => setContactListPhone(e.target.value)}
                 disabled={contactListSubmitting}
@@ -266,13 +255,13 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-sm text-muted-foreground text-center sm:text-left">
             <span>&copy; {new Date().getFullYear()} <GoldShineText scrollTargetRef={ref}>LUPFR Entertainment</GoldShineText>. All rights reserved.</span>
             {footerLinks.legal.map((link) => (
-              <a 
+              <Link
                 key={link.name}
                 href={link.href}
                 className="hover:text-foreground transition-colors hidden md:inline"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -294,7 +283,7 @@ export function Footer() {
           </motion.button>
         </motion.div>
 
-        <p className="mt-6 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground/80">
+        <p className="mt-10 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground/80">
           Made with{" "}
           <span className="text-accent/90" aria-hidden>♥</span>
           {" "}by{" "}

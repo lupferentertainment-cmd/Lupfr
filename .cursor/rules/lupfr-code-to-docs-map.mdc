@@ -1,0 +1,17 @@
+---
+description: When editing app, components, lib, or proxy — which docs/ files to consult or update.
+globs: app/**/*.ts,app/**/*.tsx,components/**/*.ts,components/**/*.tsx,lib/**/*.ts,proxy.ts
+alwaysApply: false
+---
+
+# Code area → `docs/`
+
+| Area | Read / update |
+|------|----------------|
+| Pages, layout, metadata, visual UX, privacy/terms, cookie bar | DESIGN, ARCHITECTURE |
+| `app/api/*` routes, validation, rate limits | API, REQUIREMENTS |
+| `data/`, generated JSON, gallery/events | ARCHITECTURE, TESTING |
+| Env, Vercel, deploy scripts | DEPLOYMENT |
+| `proxy.ts`, security headers, blocked paths | ARCHITECTURE, DEPLOYMENT, OVERVIEW, TESTING (when `verify:routes` changes) |
+
+If the change is user-visible or changes a contract, update the relevant canonical doc in the same change set.

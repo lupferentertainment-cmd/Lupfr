@@ -3,18 +3,31 @@
 import dynamic from "next/dynamic"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
-import { Reviews } from "@/components/reviews"
-import { Events } from "@/components/events"
-import { Services } from "@/components/services"
-import { Artists } from "@/components/artists"
-import { About } from "@/components/about"
-import { Contact } from "@/components/contact"
-import { Footer } from "@/components/footer"
-import { Gallery } from "@/components/gallery"
+import { ScrollProgress } from "@/components/scroll-progress"
 
-const ScrollProgress = dynamic(
-  () => import("@/components/scroll-progress").then((m) => ({ default: m.ScrollProgress })),
-  { ssr: false }
+const Reviews = dynamic(() =>
+  import("@/components/reviews").then((m) => ({ default: m.Reviews }))
+)
+const Events = dynamic(() =>
+  import("@/components/events").then((m) => ({ default: m.Events }))
+)
+const Services = dynamic(() =>
+  import("@/components/services").then((m) => ({ default: m.Services }))
+)
+const Artists = dynamic(() =>
+  import("@/components/artists").then((m) => ({ default: m.Artists }))
+)
+const Gallery = dynamic(() =>
+  import("@/components/gallery").then((m) => ({ default: m.Gallery }))
+)
+const About = dynamic(() =>
+  import("@/components/about").then((m) => ({ default: m.About }))
+)
+const Contact = dynamic(() =>
+  import("@/components/contact").then((m) => ({ default: m.Contact }))
+)
+const Footer = dynamic(() =>
+  import("@/components/footer").then((m) => ({ default: m.Footer }))
 )
 
 export function HomePage() {

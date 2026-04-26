@@ -2,27 +2,27 @@
   {
     "name": "Umbrella",
     "url": "https://umbrellalive.com",
-    "image": "/corporate_partners/umbrella.png",
+    "image": "/corporate_partners/umbrella.webp",
     "logoTreatment": "outline",
     "imageClassName": "scale-[1.38]"
   },
   {
     "name": "Eria",
     "url": "https://www.eriaevents.co",
-    "image": "/corporate_partners/eria.png",
+    "image": "/corporate_partners/eria.webp",
     "imageClassName": "scale-[0.88]"
   },
   {
     "name": "Venn Social",
     "url": "https://vennsocial.com",
-    "image": "/corporate_partners/venn_social.png",
+    "image": "/corporate_partners/venn_social.webp",
     "logoTreatment": "natural",
     "imageClassName": "scale-[0.92]"
   },
   {
     "name": "Brixton Bar SF",
     "url": "https://brixtonbarsf.com",
-    "image": "/corporate_partners/brixton.png",
+    "image": "/corporate_partners/brixton.webp",
     "logoTreatment": "outline",
     "imageClassName": "scale-[0.9]"
   }

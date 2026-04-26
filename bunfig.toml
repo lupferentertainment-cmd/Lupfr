@@ -1,0 +1,5 @@
+[test]
+# The suite in `tests/` is written for Vitest (`vi`, happy-dom, RTL setup). Bun's
+# built-in runner is incompatible. `bun test` runs only
+# `scripts/bun-vitest-delegate.test.ts`, which shells out to `bunx vitest run`.
+root = "scripts"

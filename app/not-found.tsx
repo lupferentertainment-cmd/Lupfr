@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Image from "next/image"
+import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
@@ -9,16 +9,17 @@ export default function NotFound() {
       <Navigation />
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-24 sm:py-32 text-center">
         <Link href="/" className="mb-10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-2xl">
-          <Image
-            src="/logos/will_logo.png"
-            alt="LUPFR Entertainment"
+          <LupfrLogoImage
             width={120}
             height={120}
-            className="mx-auto h-24 w-24 sm:h-28 sm:w-28 object-contain opacity-95"
+            sizes="120px"
+            readyClassName="opacity-95"
+            className="mx-auto h-24 w-24 sm:h-28 sm:w-28 object-contain"
+            alt="LUPFR Entertainment"
             priority
           />
         </Link>
-        <p className="text-gold-accent uppercase tracking-[0.3em] text-xs sm:text-sm mb-4">404</p>
+        <p className="text-gold-accent tracking-tight text-xs sm:text-sm mb-4">404</p>
         <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-4">
           Page not found
         </h1>
@@ -27,7 +28,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center px-8 py-4 btn-metallic-gold font-semibold uppercase tracking-wider rounded-full"
+          className="inline-flex items-center justify-center px-8 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full"
         >
           Back to home
         </Link>

@@ -2,6 +2,17 @@
 
 import { motion, useScroll, useTransform } from "framer-motion"
 
+const motionByTag = {
+  h1: motion.h1,
+  h2: motion.h2,
+  h3: motion.h3,
+  h4: motion.h4,
+  div: motion.div,
+  span: motion.span,
+} as const
+
+export type GoldShineTextAs = keyof typeof motionByTag
+
 export interface GoldShineTextProps {
   children: React.ReactNode
   /** Optional ref to drive shine from this element's scroll (e.g. section). If not set, uses global scroll. */
@@ -9,7 +20,8 @@ export interface GoldShineTextProps {
   /** Scroll offset when using scrollTargetRef: [startInView, endInView]. Default global: [0, 1] -> shine 50% to 100%. */
   scrollOffset?: [string, string]
   className?: string
-  as?: "span" | "div"
+  /** Use `h1`–`h4` to render the shine on the heading (no extra wrapper). Default `span` for inline or inside an existing heading. */
+  as?: GoldShineTextAs
 }
 
 /**
@@ -21,7 +33,7 @@ export function GoldShineText({
   scrollTargetRef,
   scrollOffset = ["start start", "end start"],
   className = "",
-  as: Tag = "span",
+  as = "span",
 }: GoldShineTextProps) {
   const { scrollYProgress } = useScroll(
     scrollTargetRef
@@ -40,14 +52,16 @@ export function GoldShineText({
     ["50% 50%", "100% 50%"]
   )
 
-  const Component = Tag === "div" ? motion.div : motion.span
+  const MotionComponent = motionByTag[as]
+  /** `span` stays inline-level for copy like footers and mid-paragraph brand names; headings must be block so stacked titles wrap lines. */
+  const flowClass = as === "span" ? "inline-block" : "block"
 
   return (
-    <Component
-      className={`inline-block overflow-visible heading-metallic-gold-scroll gpu-accelerate ${className}`.trim()}
+    <MotionComponent
+      className={`${flowClass} overflow-visible heading-metallic-gold gold-shine-text gpu-accelerate ${className}`.trim()}
       style={{ backgroundPosition }}
     >
       {children}
-    </Component>
+    </MotionComponent>
   )
 }

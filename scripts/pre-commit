@@ -6,6 +6,16 @@
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
+echo "Pre-commit: data integrity (gallery ↔ events, assets)..."
+bun run test:precommit || {
+  echo "Fix data/gallery.yml, data/events.yml, and public/ paths (see tests/unit/data-integrity.test.ts)."
+  exit 1
+}
+echo "Pre-commit: public/ raster gate (WebP)..."
+bun run public:images:check || {
+  echo "Add WebP: bun run public:images:optimize  then update data/*.yml + bun run generate-data (see README)."
+  exit 1
+}
 echo "Pre-commit: lint + build + route smoke (see package.json \"verify\")..."
 bun run verify || {
   echo "Pre-commit failed. Fix errors above, or run: bun run verify"

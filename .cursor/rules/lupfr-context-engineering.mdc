@@ -1,0 +1,25 @@
+---
+description: LUPFR — canonical docs/ spec; LLMs update docs with code; never serve specs over HTTP.
+alwaysApply: true
+---
+
+# Context engineering (`docs/`)
+
+## Authoritative set
+
+The **seven** files in repo-root `docs/` are the only top-level spec: **OVERVIEW**, **ARCHITECTURE**, **DESIGN**, **REQUIREMENTS**, **API**, **DEPLOYMENT**, **TESTING**. **Do not** add an eighth canonical file or feature-specific `docs/**` files. Append knowledge by **section** inside the owning file.
+
+## When you change the product (agents and humans)
+
+1. **Find the owning doc** before you code. Use `.cursor/rules/lupfr-code-to-docs-map.mdc` (area → doc). In short: HTTP contracts → `docs/API.md`; app structure, data pipeline, `proxy` → `docs/ARCHITECTURE.md`; UX, motion, cookies, legal pages → `docs/DESIGN.md`; product rules and constraints → `docs/REQUIREMENTS.md`; Vercel, env, deploy scripts → `docs/DEPLOYMENT.md`; tests, coverage, CI commands → `docs/TESTING.md`; stack summary and public-exposure guardrails → `docs/OVERVIEW.md`.
+2. **Same change set:** If runtime behavior, public contracts, env vars, or user-visible flows change, update the spec **in the same PR or commit** as the code. Code-only drift is a failure mode.
+3. **Tests and CI:** If you change test scope, coverage expectations, or CI/pre-commit commands, update `docs/TESTING.md` in the same change.
+4. **Verification:** Before you say work is complete, run `bun run ci` (or the repo’s documented full verify) from the project root and fix failures.
+
+## Not public HTTP
+
+Specs live in **Git** only. **Do not** add `app/docs/**` or `public/docs/**` or rewrites that expose `docs/*.md` to the browser. `proxy.ts` returns **404** for `/docs` and related patterns; `bun run verify:routes` checks that internal-doc URLs stay **404**. `docs/` is not visitor-facing marketing copy; on-page copy stays in `app/` and `components/`.
+
+## Editing style for `docs/*.md`
+
+Match each file’s existing tone and headings. **Do not** paste the same long prose into two files; one topic, one owner (e.g. request/response detail stays in `docs/API.md`).

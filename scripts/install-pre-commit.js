@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 "use strict";
 // Installs scripts/pre-commit → .git/hooks/pre-commit (lint + build + verify:routes via bun run verify).
 const fs = require("fs");

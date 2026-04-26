@@ -87,15 +87,23 @@
   --btn-gold-filter-edge: oklch(0.56 0.12 88 / 0.4);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
   --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
+  /* Gallery tiles / carousel hero frames: token radius + squircle curve where supported (see .rounded-gallery-squircle) */
+  --lupfr-gallery-squircle-radius: clamp(1.25rem, 0.45rem + 3.25vw, 2.875rem);
   /* Partner row: mono marks ≈ foreground on light chips (see .partner-logo) */
   --partner-logo-opacity: 0.92;
   --partner-logo-opacity-outline: 0.93;
   --partner-logo-opacity-solid: 0.88;
   --partner-logo-opacity-natural: 0.94;
+  /* Split h2 second line — re-resolves `muted-foreground` per element (light/dark) */
+  --lupfr-heading-subline-fg: var(--muted-foreground);
+  /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
+  --entertainment-line-start: oklch(0.88 0.08 75);
+  --entertainment-line-mid: oklch(0.82 0.12 70);
+  --entertainment-line-end: oklch(0.68 0.16 55);
 }
 
 .dark {
-  /* Gold in dark mode: white gold (cooler, less yellow) */
+  /* Gold in dark mode: white gold (cooler, less yellow) — matches last committed theme */
   --btn-gold-text: oklch(0.09 0.01 75);
   --gold-shadow: oklch(0.50 0.06 75);
   --gold-dark: oklch(0.62 0.07 78);
@@ -314,6 +322,70 @@
   .ease-snap {
     transition-timing-function: var(--ease-snap);
   }
+  /**
+   * Gallery “squircle” frames: `border-radius` for all engines; iOS-style curve
+   * where `corner-shape` exists (Chromium; Safari falls back to rounded rect).
+   * Use on the element with `overflow-hidden` that clips the image.
+   */
+  .rounded-gallery-squircle {
+    border-radius: var(--lupfr-gallery-squircle-radius);
+  }
+  @supports (corner-shape: squircle) {
+    .rounded-gallery-squircle {
+      corner-shape: squircle;
+    }
+  }
+
+  /**
+   * Photo / image card loading: neutral slab + slow gold sweep (`shimmer-sweep`).
+   * Use on an `absolute inset-0` layer under the real image; parent should be
+   * `position: relative; overflow: hidden;` and set border-radius (inherited
+   * here). Hide with `opacity-0` when the image has fired `onLoadingComplete`.
+   * `.gallery-grid-tile-placeholder` is an alias for the same look on `/gallery` tiles.
+   */
+  .skeleton-shimmer,
+  .gallery-grid-tile-placeholder {
+    border-radius: inherit;
+    background:
+      radial-gradient(
+        ellipse 130% 120% at 50% 38%,
+        color-mix(in oklch, var(--gold) 10%, var(--muted)) 0%,
+        color-mix(in oklch, var(--muted) 88%, var(--card)) 52%,
+        color-mix(in oklch, var(--muted) 75%, var(--border)) 100%
+      );
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--border) 50%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent);
+    overflow: hidden;
+  }
+
+  .skeleton-shimmer::after,
+  .gallery-grid-tile-placeholder::after {
+    content: "";
+    position: absolute;
+    top: -55%;
+    bottom: -55%;
+    left: -70%;
+    width: 58%;
+    background: linear-gradient(
+      105deg,
+      transparent 0%,
+      color-mix(in oklch, var(--gold-specular) 18%, transparent) 42%,
+      color-mix(in oklch, var(--gold-bright) 26%, transparent) 50%,
+      color-mix(in oklch, var(--gold-specular) 18%, transparent) 58%,
+      transparent 100%
+    );
+    animation: shimmer-sweep 2.35s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer::after,
+    .gallery-grid-tile-placeholder::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
 }
 
 /* Luxurious metallic gold text – scroll-driven shine, sleek modern look */
@@ -460,7 +532,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Section headings: static gold (no animation) – use GoldShineText for scroll-driven shine */
+/**
+ * Metallic gold text fill. Default `background-position: 50% 50%` (static).
+ * `GoldShineText` sets inline `backgroundPosition` from scroll for the moving shine; add `.gold-shine-text`
+ * with that component for descender-safe metrics (clip:text).
+ */
 .heading-metallic-gold {
   background: linear-gradient(
     90deg,
@@ -484,32 +560,87 @@
   filter: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
 }
 
-/* Same gold bar as heading-metallic-gold but scroll-driven: shine starts center, moves right (no animation) */
-.heading-metallic-gold-scroll {
-  background: linear-gradient(
-    90deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 15%,
-    var(--gold) 28%,
-    var(--gold-dark) 35%,
-    var(--gold-specular) 42%,
-    var(--gold-bright) 48%,
-    var(--gold-specular) 54%,
-    var(--gold-dark) 62%,
-    var(--gold) 75%,
-    var(--gold-dark) 88%,
-    var(--gold-shadow) 100%
-  );
-  background-size: 220% 100%;
-  background-position: var(--scroll-shine, 50%) 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
-  /* Room for descenders (g, p, y) — clip:text + tight leading can crop bottoms in WebKit */
+/** Pair with `.heading-metallic-gold` when using scroll-driven shine (`GoldShineText`) — descender room for clip:text. */
+.gold-shine-text {
   line-height: 1.22;
   padding-bottom: 0.08em;
   backface-visibility: visible;
+}
+
+/**
+ * LUPFR document headings inside `<main>`: use real `h1`–`h3` with global display styles.
+ * Scroll-linked metallic gold: `GoldShineText` (`.heading-metallic-gold` + `.gold-shine-text` + inline position).
+ * Static metallic (no scroll): `.heading-metallic-gold` only. Event card gold badges use `GoldShineText` like section titles.
+ * Two-line section titles: `.lupfr-heading-stack` or `.lupfr-heading-stack--tight` on the `h2`, second line `.lupfr-heading-subline` (theme via `--lupfr-heading-subline-fg`); flex-row splits use `.lupfr-heading-split-leading` for line-height only.
+ * Hero (`.lupfr-hero`) is excluded from margin/scale interference via targeted reset + existing `.hero-title-*` classes.
+ */
+@layer base {
+  main h1,
+  main h2 {
+    @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
+    margin: 0;
+  }
+  /* About story + Corporate partners: one step smaller at md/lg than primary section titles */
+  main h1.lupfr-heading--compact,
+  main h2.lupfr-heading--compact {
+    @apply md:text-5xl lg:text-6xl;
+  }
+}
+
+.lupfr-heading-eyebrow {
+  color: var(--gold);
+  @apply tracking-tight text-sm sm:text-base;
+}
+
+.lupfr-hero h1 {
+  margin: 0;
+}
+
+/* Subsection display (h3) — add to `h3` + `GoldShineText as="h3"` for events Upcoming/Past, etc. */
+.lupfr-heading-sub {
+  @apply font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter;
+  margin: 0;
+}
+
+/**
+ * Stacked `h1`/`h2`: line 1 = `GoldShineText`, line 2 = `.lupfr-heading-subline`.
+ * Keeps metallic + GPU classes on the shine span only; subline colors follow theme via `--lupfr-heading-subline-fg`.
+ */
+.lupfr-heading-stack {
+  @apply mb-10 sm:mb-12 md:mb-14;
+  line-height: 1.08;
+}
+
+.lupfr-heading-stack--tight {
+  @apply mb-4 sm:mb-6;
+  line-height: 1.08;
+}
+
+/** Same stacked line rhythm as `.lupfr-heading-stack*` without block margins (e.g. title inside a flex row). */
+.lupfr-heading-split-leading {
+  line-height: 1.08;
+}
+
+.lupfr-heading-subline {
+  color: var(--lupfr-heading-subline-fg);
+}
+
+/** Tertiary line: mix resolves on the element so light/dark stay correct (no baked :root mix). */
+.lupfr-heading-subline--soft {
+  color: color-mix(in oklch, var(--muted-foreground) 82%, var(--background) 18%);
+}
+
+/* Back-compat — prefer `main h1`/`h2` and `.lupfr-heading-sub` */
+.lupfr-section-kicker {
+  color: var(--gold);
+  @apply tracking-tight text-sm sm:text-base;
+}
+.lupfr-section-title {
+  @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
+}
+.lupfr-subsection-title {
+  @apply font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter;
+  margin: 0;
 }
 
 /* Gold accent for labels and small caps (no animation) */
@@ -535,13 +666,13 @@
   line-height: 1.2;
 }
 
-/* Hero title: "Entertainment" – horizontal gradient (peachy left → darker orange right) */
+/* Hero title: "Entertainment" – horizontal gradient; stops from `--entertainment-line-*` in `:root` */
 .hero-entertainment-gradient {
   background: linear-gradient(
     90deg,
-    oklch(0.88 0.08 75) 0%,
-    oklch(0.82 0.12 70) 35%,
-    oklch(0.68 0.16 55) 100%
+    var(--entertainment-line-start) 0%,
+    var(--entertainment-line-mid) 35%,
+    var(--entertainment-line-end) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;

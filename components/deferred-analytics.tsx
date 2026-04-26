@@ -2,29 +2,43 @@
 
 import { useEffect, useState } from "react"
 import { Analytics } from "@vercel/analytics/next"
+import {
+  getCookieConsentAccepted,
+  LUPFR_CONSENT_EVENT,
+} from "@/lib/cookie-consent"
 
 /**
- * Renders Vercel Analytics only after the page is interactive (idle or after load).
- * Defers WebSocket and script work so LCP and main-thread aren't blocked, and
- * improves back/forward cache eligibility.
+ * Renders Vercel Analytics only after cookie consent, then after idle/timeout
+ * (defers work for LCP / bfcache). Without consent, analytics does not load.
  */
 export function DeferredAnalytics() {
-  const [mounted, setMounted] = useState(false)
+  const [consent, setConsent] = useState(false)
+  const [idle, setIdle] = useState(false)
 
   useEffect(() => {
+    if (getCookieConsentAccepted()) setConsent(true)
+    const onConsent = () => {
+      setConsent(true)
+    }
+    window.addEventListener(LUPFR_CONSENT_EVENT, onConsent)
+    return () => window.removeEventListener(LUPFR_CONSENT_EVENT, onConsent)
+  }, [])
+
+  useEffect(() => {
+    if (!consent) return
     const schedule = () => {
       if (typeof requestIdleCallback !== "undefined") {
         const id = requestIdleCallback(
-          () => setMounted(true),
+          () => setIdle(true),
           { timeout: 3500 }
         )
         return () => cancelIdleCallback(id)
       }
-      const t = setTimeout(() => setMounted(true), 0)
+      const t = setTimeout(() => setIdle(true), 0)
       return () => clearTimeout(t)
     }
     return schedule()
-  }, [])
+  }, [consent])
 
-  return mounted ? <Analytics /> : null
+  return consent && idle ? <Analytics /> : null
 }

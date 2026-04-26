@@ -1,0 +1,28 @@
+---
+description: Authoritative use of repo docs/ — when editing or summarizing canonical specs.
+globs: docs/**/*.md
+alwaysApply: false
+---
+
+<context_engineering_docs>
+## Authority
+
+- `docs/*.md` is the **authoritative spec** (append-only: merge new knowledge into the right file; do not add an 8th top-level spec file — see `docs/OVERVIEW.md`).
+- **Canonical set:** `OVERVIEW`, `ARCHITECTURE`, `DESIGN`, `REQUIREMENTS`, `API`, `DEPLOYMENT`, `TESTING` — each exists **once**; no feature-specific docs in `docs/`.
+
+## Workflow
+
+- The always-on rule **`.cursor/rules/lupfr-context-engineering.mdc`** defines the full agent workflow (doc ownership, same-change updates, `bun run ci`).
+- Before stating how the **deployed site** behaves, confirm against **`docs/DEPLOYMENT.md`**, **`docs/ARCHITECTURE.md`**, and code (`proxy.ts`, routes).
+- Internal docs are **not** a public `/docs` URL: the live site blocks those paths; specs are for Git + team + agents.
+
+## When editing a doc
+
+- Match the tone and section style of the file you are extending.
+- If you document a **new public behavior or contract**, cross-check the same change lands in **tests** and **`docs/TESTING.md`** when test scope changes.
+- Do not duplicate long prose across files; link conceptually to the single owning doc (e.g. API details stay in `docs/API.md`).
+
+## Non-goals
+
+- `docs/` is not marketing copy for visitors; it does not replace on-page content in `app/` or `components/`.
+</context_engineering_docs>

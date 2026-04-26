@@ -1,52 +1,205 @@
-# Home photo carousel (#gallery). Images sourced from /events and /past_events.
+# Home photo carousel (#gallery). Image paths use /gallery/... (files under public/gallery/).
+# The folder segment after /gallery/ (e.g. boiler_boat_003, where_is_west) must match a directory under
+# public/gallery/. Breadcrumb labels use the event title from data/events.yml (same night as
+# GALLERY_ALBUM_FOLDER_DEFAULT_DATES in lib/data/gallery.ts); optional per-row `album: "…"` overrides.
+# Optional per-row `date: "YYYY-MM-DD"` sets the shoot/event day for captions and /gallery grouping;
+# if omitted, lib/data/gallery.ts uses GALLERY_ALBUM_FOLDER_DEFAULT_DATES for known folders.
+# Carousel entries are independent of data/events.yml; they may reference the same night as an event or not.
+# Optional per-row `showOnHome: false` excludes a row from the #gallery carousel (still listed on /gallery).
 # --- Boiler Boat 003 (Apr 2026) ---
 - id: 7
-  image: /events/boiler_boat_003/boiler_boat_003_01.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_01.webp
   title: Boiler Boat 003
   caption: Night kicks off — early crowd finding their footing on the water.
   alt: Guests arriving at the LUPFR Boiler Boat 003 event on the SF Bay.
 - id: 8
-  image: /events/boiler_boat_003/boiler_boat_003_02.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_02.webp
   title: Boiler Boat 003
   caption: Open deck, city lights, bass at full send.
   alt: Open-air deck scene at the LUPFR Boiler Boat 003 event.
 - id: 9
-  image: /events/boiler_boat_003/boiler_boat_003_03.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_03.webp
   title: Boiler Boat 003
   caption: SF Bay rolling out behind the crowd — nowhere else you'd rather be.
   alt: Crowd on the boat deck with the SF Bay in the background.
 - id: 10
-  image: /events/boiler_boat_003/boiler_boat_003_04.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_04.webp
   title: Boiler Boat 003
   caption: The dance floor found its rhythm early and never let go.
   alt: Guests dancing at the LUPFR Boiler Boat 003 event.
 - id: 11
-  image: /events/boiler_boat_003/boiler_boat_003_05.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_05.webp
   title: Boiler Boat 003
   caption: Tight quarters, big energy — the boat was rocking.
   alt: Close-up of the crowd at LUPFR Boiler Boat 003.
 - id: 12
-  image: /events/boiler_boat_003/boiler_boat_003_06.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_06.webp
   title: Boiler Boat 003
   caption: Midway through the set — peak hours, peak vibes.
   alt: Mid-event shot of guests at the LUPFR Boiler Boat 003 event.
 - id: 13
-  image: /events/boiler_boat_003/boiler_boat_003_07.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_07.webp
   title: Boiler Boat 003
   caption: The crew locked in — everyone felt it at the same time.
   alt: Group of attendees at the LUPFR Boiler Boat 003 event.
 - id: 14
-  image: /events/boiler_boat_003/boiler_boat_003_08.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_08.webp
   title: Boiler Boat 003
   caption: Late night on the water — city skyline, full send.
   alt: Night-time view from the deck of LUPFR Boiler Boat 003.
 - id: 15
-  image: /events/boiler_boat_003/boiler_boat_003_09.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_09.webp
   title: Boiler Boat 003
   caption: The set peaked and the crowd went with it.
   alt: Crowd at peak energy at the LUPFR Boiler Boat 003 event.
 - id: 16
-  image: /events/boiler_boat_003/boiler_boat_003_10.jpg
+  image: /gallery/boiler_boat_003/boiler_boat_003_10.webp
   title: Boiler Boat 003
   caption: Last light, last track — the boat pulled back to shore.
   alt: Final moments of the LUPFR Boiler Boat 003 event on the water.
+# --- Where's West? 004 — photos: public/gallery/where_is_west/ (WebP) ---
+- id: 17
+  image: /gallery/where_is_west/_DSC8623.webp
+  title: "Where's West? 004"
+  caption: "Under the lights—crowd and sound locked in."
+  alt: "LUPFR Where's West? 004 — Under the lights—crowd and sound locked in. Bay Area event photography."
+- id: 18
+  image: /gallery/where_is_west/_DSC8633.webp
+  title: "Where's West? 004"
+  caption: "Waterfront room, LUPFR energy on the floor."
+  alt: "LUPFR Where's West? 004 — Waterfront room, LUPFR energy on the floor. Bay Area event photography."
+- id: 19
+  image: /gallery/where_is_west/_DSC8669.webp
+  title: "Where's West? 004"
+  caption: "Late set, full send—faces in the haze."
+  alt: "LUPFR Where's West? 004 — Late set, full send—faces in the haze. Bay Area event photography."
+- id: 20
+  image: /gallery/where_is_west/_DSC8672.webp
+  title: "Where's West? 004"
+  caption: "Between drops—everyone on the same pulse."
+  alt: "LUPFR Where's West? 004 — Between drops—everyone on the same pulse. Bay Area event photography."
+- id: 21
+  image: /gallery/where_is_west/_DSC8748.webp
+  title: "Where's West? 004"
+  caption: "Speakers, smiles, and Bay night air."
+  alt: "LUPFR Where's West? 004 — Speakers, smiles, and Bay night air. Bay Area event photography."
+- id: 22
+  image: /gallery/where_is_west/_DSC8764.webp
+  title: "Where's West? 004"
+  caption: "Hands up, lights down, bass up."
+  alt: "LUPFR Where's West? 004 — Hands up, lights down, bass up. Bay Area event photography."
+- id: 23
+  image: /gallery/where_is_west/_DSC8807.webp
+  title: "Where's West? 004"
+  caption: "The room tilted; nobody wanted out."
+  alt: "LUPFR Where's West? 004 — The room tilted; nobody wanted out. Bay Area event photography."
+- id: 24
+  image: /gallery/where_is_west/_DSC8808.webp
+  title: "Where's West? 004"
+  caption: "Midnight color—Where's West on a Saturday."
+  alt: "LUPFR Where's West? 004 — Midnight color—Where's West on a Saturday. Bay Area event photography."
+- id: 25
+  image: /gallery/where_is_west/_DSC8857.webp
+  title: "Where's West? 004"
+  caption: "Stepping back—you feel the size of the night."
+  alt: "LUPFR Where's West? 004 — Stepping back—you feel the size of the night. Bay Area event photography."
+- id: 26
+  image: /gallery/where_is_west/_DSC8863.webp
+  title: "Where's West? 004"
+  caption: "Tight pack, big vibe—SF house in the room."
+  alt: "LUPFR Where's West? 004 — Tight pack, big vibe—SF house in the room. Bay Area event photography."
+- id: 27
+  image: /gallery/where_is_west/_DSC8872.webp
+  title: "Where's West? 004"
+  caption: "One more build—then the roof came off (almost)."
+  alt: "LUPFR Where's West? 004 — One more build—then the roof came off (almost). Bay Area event photography."
+- id: 28
+  image: /gallery/where_is_west/_DSC8948.webp
+  title: "Where's West? 004"
+  caption: "Dockside to dance floor without losing the thread."
+  alt: "LUPFR Where's West? 004 — Dockside to dance floor without losing the thread. Bay Area event photography."
+- id: 29
+  image: /gallery/where_is_west/_DSC8956.webp
+  title: "Where's West? 004"
+  caption: "Sparkle and thump; that's the brief."
+  alt: "LUPFR Where's West? 004 — Sparkle and thump; that's the brief. Bay Area event photography."
+- id: 30
+  image: /gallery/where_is_west/_DSC9008.webp
+  title: "Where's West? 004"
+  caption: "Friends in frame—night documented right."
+  alt: "LUPFR Where's West? 004 — Friends in frame—night documented right. Bay Area event photography."
+- id: 31
+  image: /gallery/where_is_west/_DSC9090.webp
+  title: "Where's West? 004"
+  caption: "Horizon and hi-hats; same view, better kick."
+  alt: "LUPFR Where's West? 004 — Horizon and hi-hats; same view, better kick. Bay Area event photography."
+- id: 32
+  image: /gallery/where_is_west/_DSC9105.webp
+  title: "Where's West? 004"
+  caption: "Slow blend into peak hour; that's the arc."
+  alt: "LUPFR Where's West? 004 — Slow blend into peak hour; that's the arc. Bay Area event photography."
+- id: 33
+  image: /gallery/where_is_west/_DSC9139.webp
+  title: "Where's West? 004"
+  caption: "Sweat, brass, and a little bit of luck."
+  alt: "LUPFR Where's West? 004 — Sweat, brass, and a little bit of luck. Bay Area event photography."
+- id: 34
+  image: /gallery/where_is_west/_DSC9149.webp
+  title: "Where's West? 004"
+  caption: "You could read the set by the grins alone."
+  alt: "LUPFR Where's West? 004 — You could read the set by the grins alone. Bay Area event photography."
+- id: 35
+  image: /gallery/where_is_west/_DSC9160.webp
+  title: "Where's West? 004"
+  caption: "Tables became islands; the floor was a continent."
+  alt: "LUPFR Where's West? 004 — Tables became islands; the floor was a continent. Bay Area event photography."
+- id: 36
+  image: /gallery/where_is_west/_DSC9164.webp
+  title: "Where's West? 004"
+  caption: "Exit light, enter groove—LUPFR tag on the night."
+  alt: "LUPFR Where's West? 004 — Exit light, enter groove—LUPFR tag on the night. Bay Area event photography."
+- id: 37
+  image: /gallery/where_is_west/_DSC9223.webp
+  title: "Where's West? 004"
+  caption: "Cables, cans, and confidence—operators on deck."
+  alt: "LUPFR Where's West? 004 — Cables, cans, and confidence—operators on deck. Bay Area event photography."
+- id: 38
+  image: /gallery/where_is_west/_DSC9300.webp
+  title: "Where's West? 004"
+  caption: "Someone yelled once; the room answered in bass."
+  alt: "LUPFR Where's West? 004 — Someone yelled once; the room answered in bass. Bay Area event photography."
+- id: 39
+  image: /gallery/where_is_west/_DSC9322.webp
+  title: "Where's West? 004"
+  caption: "Rope lights, real joy."
+  alt: "LUPFR Where's West? 004 — Rope lights, real joy. Bay Area event photography."
+- id: 40
+  image: /gallery/where_is_west/_DSC9457.webp
+  title: "Where's West? 004"
+  caption: "When the strobe hit, time skipped a bar."
+  alt: "LUPFR Where's West? 004 — When the strobe hit, time skipped a bar. Bay Area event photography."
+- id: 41
+  image: /gallery/where_is_west/_DSC9460.webp
+  title: "Where's West? 004"
+  caption: "Sausalito after dark—no wrong doors."
+  alt: "LUPFR Where's West? 004 — Sausalito after dark—no wrong doors. Bay Area event photography."
+- id: 42
+  image: /gallery/where_is_west/_DSC9560.webp
+  title: "Where's West? 004"
+  caption: "Candid chaos in the best way."
+  alt: "LUPFR Where's West? 004 — Candid chaos in the best way. Bay Area event photography."
+- id: 43
+  image: /gallery/where_is_west/_DSC9612.webp
+  title: "Where's West? 004"
+  caption: "The snapback crew—still here for the B-section."
+  alt: "LUPFR Where's West? 004 — The snapback crew—still here for the B-section. Bay Area event photography."
+- id: 44
+  image: /gallery/where_is_west/_DSC9622-2.webp
+  title: "Where's West? 004"
+  caption: "Air moved; phones stayed down (mostly)."
+  alt: "LUPFR Where's West? 004 — Air moved; phones stayed down (mostly). Bay Area event photography."
+- id: 45
+  image: /gallery/where_is_west/_DSC9640.webp
+  title: "Where's West? 004"
+  caption: "Last look—same room, new memory."
+  alt: "LUPFR Where's West? 004 — Last look—same room, new memory. Bay Area event photography."

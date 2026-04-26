@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState, useEffect, useCallback } from "react"
+import { useRef, useState, useEffect, useCallback, type RefObject } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
 import { getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
@@ -15,6 +15,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel"
 import type { CarouselApi } from "@/components/ui/carousel"
+import { cn } from "@/lib/utils"
 
 const EVENT_IMAGE_WIDTH = 1200
 const EVENT_IMAGE_HEIGHT = 800
@@ -28,6 +29,7 @@ function EventCard({
   onHover,
   onLeave,
   now,
+  shineSectionRef,
 }: {
   event: EventItem
   index: number
@@ -37,8 +39,10 @@ function EventCard({
   onHover: () => void
   onLeave: () => void
   now: Date
+  shineSectionRef: RefObject<HTMLElement | null>
 }) {
   const cardRef = useRef<HTMLElement>(null)
+  const [imageReady, setImageReady] = useState(false)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -79,8 +83,17 @@ function EventCard({
     >
       <Link href={`/events/${event.slug}`} className="block">
         <div className="aspect-[16/10] overflow-hidden relative bg-muted">
+          <div
+            className={cn(
+              "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+              "motion-safe:transition-opacity motion-safe:duration-300",
+              "motion-reduce:transition-none",
+              imageReady ? "opacity-0" : "opacity-100"
+            )}
+            aria-hidden
+          />
           <motion.div
-            className="relative w-full h-full"
+            className="relative z-[1] w-full h-full"
             animate={{ scale: enableTilt && isHovered ? 1.08 : 1 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
@@ -94,18 +107,32 @@ function EventCard({
               loading={index === 0 ? "eager" : "lazy"}
               fetchPriority={index === 0 ? "high" : undefined}
               unoptimized={event.image.startsWith("http")}
-              className="w-full h-full object-cover object-top"
+              onLoadingComplete={() => setImageReady(true)}
+              className={cn(
+                "w-full h-full object-cover object-top",
+                "motion-safe:transition-opacity motion-safe:duration-300",
+                "motion-reduce:transition-none",
+                imageReady ? "opacity-100" : "opacity-0"
+              )}
             />
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <motion.span
             suppressHydrationWarning
-            className={`absolute top-5 left-5 sm:top-6 sm:left-6 px-4 py-1.5 text-sm font-bold uppercase tracking-wider rounded-full ${tag.color}`}
+            className={`absolute top-5 left-5 sm:top-6 sm:left-6 ${tag.pillClass}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: index * 0.12 + 0.2 }}
           >
-            {tag.label}
+            <h4 suppressHydrationWarning className={tag.textClass}>
+              {tag.kind === "today" ? (
+                tag.label
+              ) : (
+                <GoldShineText as="span" scrollTargetRef={shineSectionRef}>
+                  {tag.label}
+                </GoldShineText>
+              )}
+            </h4>
           </motion.span>
         </div>
 
@@ -165,6 +192,7 @@ function EventsCarousel({
   onHover,
   onLeave,
   now,
+  shineSectionRef,
 }: {
   events: EventItem[]
   isRevealed: boolean
@@ -173,6 +201,7 @@ function EventsCarousel({
   onHover: (id: number) => void
   onLeave: () => void
   now: Date
+  shineSectionRef: RefObject<HTMLElement | null>
 }) {
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -213,6 +242,7 @@ function EventsCarousel({
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
                 now={now}
+                shineSectionRef={shineSectionRef}
               />
             </CarouselItem>
           ))}
@@ -281,8 +311,7 @@ export function Events() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8 sm:mb-10 md:mb-12"
         >
-          <p className="text-gold-accent uppercase tracking-[0.3em] text-sm sm:text-base mb-4">Gallery</p>
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter">
+          <h2>
             <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
           </h2>
         </motion.div>
@@ -293,9 +322,13 @@ export function Events() {
           transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-20 md:mb-28 lg:mb-32"
         >
-          <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
-            <GoldShineText scrollTargetRef={ref}>Upcoming</GoldShineText>
-          </h3>
+          <GoldShineText
+            as="h3"
+            scrollTargetRef={ref}
+            className="lupfr-heading-sub mb-8 md:mb-10"
+          >
+            Upcoming
+          </GoldShineText>
           {upcoming.length > 0 ? (
             <EventsCarousel
               events={upcoming}
@@ -305,6 +338,7 @@ export function Events() {
               onHover={setHoveredId}
               onLeave={clearHover}
               now={now}
+              shineSectionRef={ref}
             />
           ) : (
             <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
@@ -320,9 +354,13 @@ export function Events() {
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="pt-4 pb-8"
           >
-            <h3 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-8 md:mb-10">
-              <GoldShineText scrollTargetRef={ref}>Past</GoldShineText>
-            </h3>
+            <GoldShineText
+              as="h3"
+              scrollTargetRef={ref}
+              className="lupfr-heading-sub mb-8 md:mb-10"
+            >
+              Past
+            </GoldShineText>
             <EventsCarousel
               events={past}
               isRevealed={isRevealed}
@@ -331,6 +369,7 @@ export function Events() {
               onHover={setHoveredId}
               onLeave={clearHover}
               now={now}
+              shineSectionRef={ref}
             />
           </motion.div>
         )}

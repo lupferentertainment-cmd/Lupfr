@@ -8,7 +8,7 @@
     "dateISO": "2026-04-04",
     "time": "3-6 PM",
     "location": "Pier 40, SF",
-    "image": "/events/boiler_boat.png",
+    "image": "/events/boiler_boat.webp",
     "ticketLink": "https://www.eventbrite.com/e/boiler-boat-003-yacht-edition-feat-hlwa-soch-tickets-1981381998896?aff=oddtdtcreator",
     "ticketLabel": "Tickets",
     "description": "Boiler Boat returns with a yacht edition on the Bay featuring HLWA."
@@ -22,22 +22,22 @@
     "dateISO": "2026-04-18",
     "time": "11 AM - 2 PM",
     "location": "Eria Events, Sausalito",
-    "image": "/events/wheres_west.jpeg",
+    "image": "/events/wheres_west.webp",
     "ticketLink": "https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito",
     "ticketLabel": "Tickets",
     "description": "Waterfront day party in Sausalito with Corbin Mason."
   },
   {
-    "id": 6,
-    "slug": "warehouse-sessions",
-    "title": "Warehouse Sessions",
-    "subtitle": "",
-    "date": "Date TBD",
-    "dateISO": null,
-    "time": "TBD",
-    "location": "Location TBD",
-    "image": "/hero/hero-poster.jpg",
-    "description": "Intimate warehouse energy—details coming soon."
+    "id": 7,
+    "slug": "third-thursdays-operator-sf-eria",
+    "title": "Third Thursday's",
+    "subtitle": "feat. Operator SF",
+    "date": "May 21st, 2026",
+    "dateISO": "2026-05-21",
+    "time": "7-11 PM",
+    "location": "Eria Events, 562 Bridgeway, Sausalito, CA",
+    "image": "/events/third_thursdays_operator_sf.webp",
+    "description": "LUPFR presents Third Thursday’s at Eria Events with Operator SF. Powered by Umbrella."
   },
   {
     "id": 2,
@@ -48,7 +48,7 @@
     "dateISO": "2025-03-14",
     "time": "9 PM - 1 AM",
     "location": "Brixton Bar, Marina District",
-    "image": "/events/shamrock_house.jpeg",
+    "image": "/events/shamrock_house.webp",
     "description": "St. Patrick's season house music at Brixton Bar."
   },
   {
@@ -60,7 +60,7 @@
     "dateISO": "2025-01-31",
     "time": "2-4 PM",
     "location": "Fisherman's Wharf",
-    "image": "/past_events/boiler_boat_002_apres_ski_edition.jpg",
+    "image": "/events/boiler_boat_002_apres_ski_edition.webp",
     "description": "Boiler Boat brings apres to the bay."
   },
   {
@@ -72,7 +72,7 @@
     "dateISO": "2024-11-01",
     "time": "9 PM - 1 AM",
     "location": "Brixton Bar, Marina District",
-    "image": "/past_events/haunted_at_brixton.jpg",
+    "image": "/events/haunted_at_brixton.webp",
     "description": "Spooky house tunes and extreme dancing."
   }
 ]
