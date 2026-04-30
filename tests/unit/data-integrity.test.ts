@@ -7,7 +7,10 @@ import {
   GALLERY_PHOTOS,
   albumBreadcrumbForFolder,
 } from "@/lib/data/gallery"
-import { EVENTS } from "@/lib/events"
+import {
+  EVENTS,
+  getUpcomingEvents,
+} from "@/lib/events"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -45,6 +48,24 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
       const dir = join(process.cwd(), "public", "gallery", folder)
       expect(existsSync(dir), `missing directory for home album: public/gallery/${folder}`).toBe(true)
     }
+  })
+
+  it("every upcoming event has ticketLink (warns each miss, then fails)", () => {
+    const upcoming = getUpcomingEvents()
+    const missing = upcoming.filter(
+      (e) => typeof e.ticketLink !== "string" || e.ticketLink.trim().length === 0
+    )
+    for (const e of missing) {
+      console.warn(
+        `[data-integrity] Upcoming event has no ticketLink: slug="${e.slug}" title="${e.title}". Add ticketLink in data/events.yml.`,
+      )
+    }
+    expect(
+      missing,
+      missing.length === 0
+        ? ""
+        : `Missing ticketLink for upcoming event(s): ${missing.map((e) => e.slug).join(", ")}. Warnings logged above.`,
+    ).toEqual([])
   })
 
   it("event hero image paths exist under public/", () => {

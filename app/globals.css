@@ -87,6 +87,8 @@
   --btn-gold-filter-edge: oklch(0.56 0.12 88 / 0.4);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
   --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
+  /* Fixed nav (`components/navigation.tsx`): keep `#section` scroll targets below the bar (match SECTION_SPY_OFFSET_PX ≈ 120) */
+  --lupfr-fixed-header-scroll-padding: 7.5rem;
   /* Gallery tiles / carousel hero frames: token radius + squircle curve where supported (see .rounded-gallery-squircle) */
   --lupfr-gallery-squircle-radius: clamp(1.25rem, 0.45rem + 3.25vw, 2.875rem);
   /* Partner row: mono marks ≈ foreground on light chips (see .partner-logo) */
@@ -278,6 +280,7 @@
   /* auto: avoids fighting Framer scroll-linked transforms (smooth + wheel = jank/flicker) */
   html {
     scroll-behavior: auto;
+    scroll-padding-top: var(--lupfr-fixed-header-scroll-padding);
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
   }
