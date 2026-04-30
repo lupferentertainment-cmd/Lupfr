@@ -47,6 +47,7 @@ const nextConfig = {
       '@radix-ui/react-toggle-group',
       '@radix-ui/react-tooltip',
       'recharts',
+      'framer-motion',
     ],
   },
   images: {

@@ -144,7 +144,7 @@ export default async function EventPage({ params }: EventPageParams) {
                   className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
                 >
                   <Ticket size={18} />
-                  Tickets
+                  {event.ticketLabel?.trim() || "Tickets"}
                 </a>
               ) : null}
 
