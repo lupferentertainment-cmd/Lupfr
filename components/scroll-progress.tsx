@@ -3,6 +3,7 @@
 import { motion, useScroll } from "framer-motion"
 
 import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
+import { shouldUseDesktopExperience } from "@/lib/device-profile"
 
 /** Separate so `useScroll` is not subscribed on phones (saves scroll-linked work per frame). */
 function ScrollProgressBar() {
@@ -23,7 +24,7 @@ export function ScrollProgress() {
   const isMobile = useIsMobile()
   const isLowCompute = useIsLowComputeDevice()
   /* Hide until we know desktop — avoids bar flash on mobile and SSR/hydration mismatch. */
-  if (isMobile !== false || isLowCompute !== false) {
+  if (!shouldUseDesktopExperience({ isMobile, isLowCompute })) {
     return null
   }
   return <ScrollProgressBar />

@@ -12,6 +12,7 @@ import {
 } from "@/components/hero-shared"
 import { useClientPrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
+import { shouldUseDesktopExperience } from "@/lib/device-profile"
 
 const HeroDesktopViewport = dynamic(() => import("@/components/hero-desktop"), {
   ssr: true,
@@ -33,9 +34,7 @@ export function Hero() {
   const prefersReducedMotion = mounted ? prefersReducedMotionRaw : null
   const isMobile = useIsMobile()
   const isLowCompute = useIsLowComputeDevice()
-  /** Strict `false` only — laptop/desktop keeps the rich hero; do not use truthiness here. */
-  const isDesktopViewport = isMobile === false
-  const shouldUseDesktopHero = isDesktopViewport && isLowCompute !== true
+  const shouldUseDesktopHero = shouldUseDesktopExperience({ isMobile, isLowCompute })
   const liteHero = prefersReducedMotion === true || !shouldUseDesktopHero
   const phraseDurationMs = shouldUseDesktopHero ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
   const reducePhraseMotion = prefersReducedMotion === true

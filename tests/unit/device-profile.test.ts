@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { isLikelyLowComputeDevice } from "@/lib/device-profile"
+import { isLikelyLowComputeDevice, shouldUseDesktopExperience } from "@/lib/device-profile"
 
 describe("device profile", () => {
   it("marks save-data as low-compute", () => {
@@ -31,5 +31,13 @@ describe("device profile", () => {
         effectiveType: "4g",
       })
     ).toBe(false)
+  })
+
+  it("uses lighter path until both desktop and non-low-compute are confirmed", () => {
+    expect(shouldUseDesktopExperience({ isMobile: undefined, isLowCompute: undefined })).toBe(false)
+    expect(shouldUseDesktopExperience({ isMobile: false, isLowCompute: undefined })).toBe(false)
+    expect(shouldUseDesktopExperience({ isMobile: false, isLowCompute: true })).toBe(false)
+    expect(shouldUseDesktopExperience({ isMobile: true, isLowCompute: false })).toBe(false)
+    expect(shouldUseDesktopExperience({ isMobile: false, isLowCompute: false })).toBe(true)
   })
 })

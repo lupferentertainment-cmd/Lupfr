@@ -13,6 +13,7 @@ import {
 } from "framer-motion"
 
 import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
+import { shouldUseDesktopExperience } from "@/lib/device-profile"
 
 const STAT_TILT_SPRING = { stiffness: 380, damping: 34 }
 const STAT_PERSPECTIVE = 1100
@@ -270,7 +271,7 @@ export function Reviews() {
   const reducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
   const isLowCompute = useIsLowComputeDevice()
-  const shouldUseDesktopMotion = isMobile === false && isLowCompute !== true
+  const shouldUseDesktopMotion = shouldUseDesktopExperience({ isMobile, isLowCompute })
   const canTiltStats = useFinePointerHover()
   const sectionRef = useRef<HTMLElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)

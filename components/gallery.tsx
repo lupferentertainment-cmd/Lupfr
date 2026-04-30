@@ -23,6 +23,7 @@ import {
 import type { CarouselApi } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { shouldUseDesktopExperience } from "@/lib/device-profile"
 import { ArrowRight, Images } from "lucide-react"
 
 const CAROUSEL_OPTS = {
@@ -176,7 +177,7 @@ export function Gallery() {
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
   const isLowCompute = useIsLowComputeDevice()
-  const shouldUseDesktopMotion = isMobile === false && isLowCompute !== true
+  const shouldUseDesktopMotion = shouldUseDesktopExperience({ isMobile, isLowCompute })
 
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)

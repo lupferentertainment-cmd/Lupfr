@@ -12,6 +12,11 @@ export type DeviceComputeSignals = {
   effectiveType?: EffectiveConnectionType | string
 }
 
+export type DeviceModeSignals = {
+  isMobile: boolean | undefined
+  isLowCompute: boolean | undefined
+}
+
 export function isLikelyLowComputeDevice({
   hardwareConcurrency,
   deviceMemory,
@@ -41,4 +46,12 @@ export function isLikelyLowComputeDevice({
   }
 
   return weakSignalCount >= WEAK_SIGNAL_THRESHOLD
+}
+
+/**
+ * Enable desktop-heavy motion/video only after both signals are known and favorable.
+ * Unknown detection state defaults to the lighter path.
+ */
+export function shouldUseDesktopExperience({ isMobile, isLowCompute }: DeviceModeSignals): boolean {
+  return isMobile === false && isLowCompute === false
 }
