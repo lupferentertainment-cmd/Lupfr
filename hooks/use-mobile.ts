@@ -61,7 +61,7 @@ export function useIsMobile(): boolean | undefined {
 export function useIsLowComputeDevice(): boolean | undefined {
   const [isLowCompute, setIsLowCompute] = React.useState<boolean | undefined>(undefined)
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     const connection = getNetworkInformation(window.navigator)
     const onChange = () => {
       setIsLowCompute(detectLowComputeDevice(window.navigator))
