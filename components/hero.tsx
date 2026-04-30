@@ -35,9 +35,9 @@ export function Hero() {
   const isLowCompute = useIsLowComputeDevice()
   /** Strict `false` only — laptop/desktop keeps the rich hero; do not use truthiness here. */
   const isDesktopViewport = isMobile === false
-  const useDesktopHero = isDesktopViewport && isLowCompute !== true
-  const liteHero = prefersReducedMotion === true || !useDesktopHero
-  const phraseDurationMs = useDesktopHero ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
+  const shouldUseDesktopHero = isDesktopViewport && isLowCompute !== true
+  const liteHero = prefersReducedMotion === true || !shouldUseDesktopHero
+  const phraseDurationMs = shouldUseDesktopHero ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
   const reducePhraseMotion = prefersReducedMotion === true
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function Hero() {
       ref={containerRef}
       className="lupfr-hero relative min-h-[100vh] min-h-[100dvh] overflow-hidden"
     >
-      {useDesktopHero ? (
+      {shouldUseDesktopHero ? (
         <HeroDesktopViewport
           containerRef={containerRef}
           liteHero={liteHero}

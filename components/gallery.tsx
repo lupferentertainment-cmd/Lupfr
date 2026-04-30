@@ -176,7 +176,7 @@ export function Gallery() {
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
   const isLowCompute = useIsLowComputeDevice()
-  const useDesktopMotion = isMobile === false && isLowCompute !== true
+  const shouldUseDesktopMotion = isMobile === false && isLowCompute !== true
 
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -229,8 +229,8 @@ export function Gallery() {
 
   const autoplayMs = useMemo(() => {
     if (!api || !inViewNow || prefersReducedMotion === true || isPaused || snapCount < 2) return 0
-    return useDesktopMotion ? AUTOPLAY_DESKTOP_MS : AUTOPLAY_MOBILE_MS
-  }, [api, inViewNow, prefersReducedMotion, isPaused, snapCount, useDesktopMotion])
+    return shouldUseDesktopMotion ? AUTOPLAY_DESKTOP_MS : AUTOPLAY_MOBILE_MS
+  }, [api, inViewNow, prefersReducedMotion, isPaused, snapCount, shouldUseDesktopMotion])
 
   useEffect(() => {
     if (!api || autoplayMs <= 0) return
