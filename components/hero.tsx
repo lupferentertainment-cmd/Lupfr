@@ -11,7 +11,7 @@ import {
   PHRASE_DURATION_MS,
 } from "@/components/hero-shared"
 import { useClientPrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
 
 const HeroDesktopViewport = dynamic(() => import("@/components/hero-desktop"), {
   ssr: true,
@@ -32,10 +32,12 @@ export function Hero() {
   const prefersReducedMotionRaw = useClientPrefersReducedMotion()
   const prefersReducedMotion = mounted ? prefersReducedMotionRaw : null
   const isMobile = useIsMobile()
+  const isLowCompute = useIsLowComputeDevice()
   /** Strict `false` only — laptop/desktop keeps the rich hero; do not use truthiness here. */
   const isDesktopViewport = isMobile === false
-  const liteHero = prefersReducedMotion === true || !isDesktopViewport
-  const phraseDurationMs = isDesktopViewport ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
+  const useDesktopHero = isDesktopViewport && isLowCompute !== true
+  const liteHero = prefersReducedMotion === true || !useDesktopHero
+  const phraseDurationMs = useDesktopHero ? PHRASE_DURATION_MS : PHRASE_DURATION_MOBILE_MS
   const reducePhraseMotion = prefersReducedMotion === true
 
   useEffect(() => {
@@ -54,7 +56,7 @@ export function Hero() {
       ref={containerRef}
       className="lupfr-hero relative min-h-[100vh] min-h-[100dvh] overflow-hidden"
     >
-      {isDesktopViewport ? (
+      {useDesktopHero ? (
         <HeroDesktopViewport
           containerRef={containerRef}
           liteHero={liteHero}

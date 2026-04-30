@@ -10,7 +10,7 @@ import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
 import { GALLERY_CAROUSEL_PHOTOS, type GalleryPhoto } from "@/lib/data/gallery"
 import { galleryPhotoDateLabel } from "@/lib/gallery-date"
 import { galleryPhotoHref, homeHistoryReplaceForGalleryBack } from "@/lib/gallery-nav"
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import {
@@ -175,6 +175,8 @@ export function Gallery() {
   const isRevealed = hasRevealed
   const prefersReducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
+  const isLowCompute = useIsLowComputeDevice()
+  const useDesktopMotion = isMobile === false && isLowCompute !== true
 
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -227,8 +229,8 @@ export function Gallery() {
 
   const autoplayMs = useMemo(() => {
     if (!api || !inViewNow || prefersReducedMotion === true || isPaused || snapCount < 2) return 0
-    return isMobile === false ? AUTOPLAY_DESKTOP_MS : AUTOPLAY_MOBILE_MS
-  }, [api, inViewNow, prefersReducedMotion, isPaused, snapCount, isMobile])
+    return useDesktopMotion ? AUTOPLAY_DESKTOP_MS : AUTOPLAY_MOBILE_MS
+  }, [api, inViewNow, prefersReducedMotion, isPaused, snapCount, useDesktopMotion])
 
   useEffect(() => {
     if (!api || autoplayMs <= 0) return

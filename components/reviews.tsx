@@ -12,7 +12,7 @@ import {
   useSpring,
 } from "framer-motion"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+import { useIsLowComputeDevice, useIsMobile } from "@/hooks/use-mobile"
 
 const STAT_TILT_SPRING = { stiffness: 380, damping: 34 }
 const STAT_PERSPECTIVE = 1100
@@ -269,13 +269,15 @@ function StatsCarouselSlide({
 export function Reviews() {
   const reducedMotion = useReducedMotion()
   const isMobile = useIsMobile()
+  const isLowCompute = useIsLowComputeDevice()
+  const useDesktopMotion = isMobile === false && isLowCompute !== true
   const canTiltStats = useFinePointerHover()
   const sectionRef = useRef<HTMLElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
   const isStatsInView = useInView(statsRef, { once: true, amount: 0.2 })
   const [statsSlideIndex, setStatsSlideIndex] = useState(0)
 
-  const skipScrollLinkedFade = reducedMotion === true || isMobile !== false
+  const skipScrollLinkedFade = reducedMotion === true || !useDesktopMotion
 
   // Scroll-driven fade: seamless transition from hero as section enters viewport
   const { scrollYProgress } = useScroll({
@@ -288,8 +290,9 @@ export function Reviews() {
     skipScrollLinkedFade ? [1, 1] : [0, 1]
   )
 
-  const statsIntervalMs =
-    isMobile === false ? STATS_CAROUSEL_INTERVAL_MS : STATS_CAROUSEL_INTERVAL_MOBILE_MS
+  const statsIntervalMs = useDesktopMotion
+    ? STATS_CAROUSEL_INTERVAL_MS
+    : STATS_CAROUSEL_INTERVAL_MOBILE_MS
 
   // Rotate metrics carousel when stats section is in view
   useEffect(() => {
