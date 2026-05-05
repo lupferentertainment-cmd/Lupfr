@@ -8,33 +8,33 @@
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
   /* Light base - pristine white luxury surface with crisp charcoal contrast. */
-  --background: oklch(0.996 0.001 95);
-  --foreground: oklch(0.125 0.018 265);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.11 0.016 265);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.125 0.018 265);
+  --card-foreground: oklch(0.11 0.016 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.125 0.018 265);
-  --primary: oklch(0.16 0.02 265);
-  --primary-foreground: oklch(0.996 0.001 95);
-  --secondary: oklch(0.965 0.004 105);
-  --secondary-foreground: oklch(0.18 0.02 265);
-  --muted: oklch(0.945 0.006 100);
-  --muted-foreground: oklch(0.365 0.022 262);
+  --popover-foreground: oklch(0.11 0.016 265);
+  --primary: oklch(0.145 0.018 265);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.972 0.004 98);
+  --secondary-foreground: oklch(0.16 0.018 265);
+  --muted: oklch(0.952 0.006 96);
+  --muted-foreground: oklch(0.34 0.02 262);
   /* Metallic gold - light mode: bright polished gold with dark enough cuts to read on white. */
-  --gold-shadow: oklch(0.42 0.075 76);
-  --gold-dark: oklch(0.55 0.105 78);
-  --gold: oklch(0.69 0.14 82);
-  --gold-bright: oklch(0.86 0.095 88);
-  --gold-specular: oklch(0.975 0.025 95);
-  --gold-filter-shadow: oklch(0.23 0.055 76 / 0.48);
-  --gold-filter-edge: oklch(0.52 0.09 80 / 0.28);
-  --btn-gold-text: oklch(0.995 0.001 95);
+  --gold-shadow: oklch(0.36 0.085 74);
+  --gold-dark: oklch(0.5 0.13 77);
+  --gold: oklch(0.64 0.17 82);
+  --gold-bright: oklch(0.84 0.13 88);
+  --gold-specular: oklch(0.985 0.026 96);
+  --gold-filter-shadow: oklch(0.2 0.06 74 / 0.52);
+  --gold-filter-edge: oklch(0.48 0.12 80 / 0.34);
+  --btn-gold-text: oklch(1 0 0);
   --accent: var(--gold);
   --accent-foreground: oklch(0.12 0.02 280);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.86 0.012 95);
-  --input: oklch(0.948 0.006 100);
+  --border: oklch(0.875 0.014 95);
+  --input: oklch(0.956 0.006 98);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -47,13 +47,13 @@
   --transition-fast: 120ms;
   --transition-snap: 200ms;
   --transition-smooth: 280ms;
-  --sidebar: oklch(0.975 0.003 100);
-  --sidebar-foreground: oklch(0.125 0.018 265);
+  --sidebar: oklch(0.982 0.002 98);
+  --sidebar-foreground: oklch(0.11 0.016 265);
   --sidebar-primary: var(--gold);
   --sidebar-primary-foreground: oklch(0.12 0.02 265);
-  --sidebar-accent: oklch(0.945 0.006 100);
-  --sidebar-accent-foreground: oklch(0.125 0.018 265);
-  --sidebar-border: oklch(0.86 0.012 95);
+  --sidebar-accent: oklch(0.952 0.006 96);
+  --sidebar-accent-foreground: oklch(0.11 0.016 265);
+  --sidebar-border: oklch(0.875 0.014 95);
   --sidebar-ring: var(--gold);
   --gradient-hero-gold: linear-gradient(90deg,
       color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 0%,
@@ -66,17 +66,17 @@
       var(--gold-bright) 84%,
       color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 100%);
   --gradient-heading-gold: linear-gradient(90deg,
-      color-mix(in oklch, var(--gold-shadow) 92%, black) 0%,
+      color-mix(in oklch, var(--gold-shadow) 96%, black) 0%,
       var(--gold-dark) 13%,
-      color-mix(in oklch, var(--gold) 88%, var(--gold-dark)) 27%,
+      color-mix(in oklch, var(--gold) 82%, var(--gold-dark)) 27%,
       var(--gold-shadow) 35%,
-      color-mix(in oklch, var(--gold-specular) 78%, var(--gold-bright)) 42%,
+      color-mix(in oklch, var(--gold-specular) 70%, var(--gold-bright)) 42%,
       var(--gold-bright) 48%,
       color-mix(in oklch, var(--gold-specular) 72%, var(--gold-dark)) 54%,
       var(--gold-dark) 63%,
       var(--gold) 76%,
       var(--gold-dark) 88%,
-      color-mix(in oklch, var(--gold-shadow) 92%, black) 100%);
+      color-mix(in oklch, var(--gold-shadow) 96%, black) 100%);
   --gradient-btn-brass: linear-gradient(180deg,
       var(--gold-bright) 0%,
       var(--gold) 25%,
@@ -84,13 +84,13 @@
       var(--gold-shadow) 100%);
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 2px 8px oklch(0.22 0.06 76 / 0.42)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
   /* Light mode buttons: luxury gold CTA with readable white text and polished depth. */
-  --btn-gold-shadow: oklch(0.43 0.085 76);
-  --btn-gold-dark: oklch(0.56 0.12 78);
-  --btn-gold: oklch(0.66 0.15 82);
-  --btn-gold-bright: oklch(0.83 0.11 88);
-  --btn-gold-specular: oklch(0.97 0.025 95);
-  --btn-gold-filter-shadow: oklch(0.23 0.055 76 / 0.58);
-  --btn-gold-filter-edge: oklch(0.52 0.09 80 / 0.32);
+  --btn-gold-shadow: oklch(0.38 0.1 75);
+  --btn-gold-dark: oklch(0.51 0.14 78);
+  --btn-gold: oklch(0.62 0.17 82);
+  --btn-gold-bright: oklch(0.82 0.13 88);
+  --btn-gold-specular: oklch(0.985 0.026 96);
+  --btn-gold-filter-shadow: oklch(0.2 0.06 74 / 0.62);
+  --btn-gold-filter-edge: oklch(0.48 0.12 80 / 0.36);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
   --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
   /* Fixed nav (`components/navigation.tsx`): keep `#section` scroll targets below the bar (match SECTION_SPY_OFFSET_PX ≈ 120) */
@@ -103,11 +103,11 @@
   --partner-logo-opacity-solid: 0.88;
   --partner-logo-opacity-natural: 0.94;
   /* Split h2 second line — re-resolves `muted-foreground` per element (light/dark) */
-  --lupfr-heading-subline-fg: oklch(0.34 0.022 262);
+  --lupfr-heading-subline-fg: oklch(0.31 0.02 262);
   /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
   --entertainment-line-start: oklch(0.985 0.018 95);
-  --entertainment-line-mid: oklch(0.86 0.12 84);
-  --entertainment-line-end: oklch(0.64 0.15 70);
+  --entertainment-line-mid: oklch(0.84 0.14 84);
+  --entertainment-line-end: oklch(0.58 0.17 70);
 }
 
 .dark {
@@ -331,14 +331,14 @@
   html:not(.dark) body {
     background:
       radial-gradient(ellipse 100% 70% at 50% -18%,
-        color-mix(in oklch, var(--gold-specular) 42%, transparent) 0%,
+        color-mix(in oklch, var(--gold-specular) 52%, transparent) 0%,
         transparent 54%),
       radial-gradient(ellipse 52% 34% at 12% 18%,
-        color-mix(in oklch, var(--gold-bright) 12%, transparent) 0%,
+        color-mix(in oklch, var(--gold-bright) 16%, transparent) 0%,
         transparent 70%),
       linear-gradient(180deg,
         oklch(1 0 0) 0%,
-        var(--background) 38%,
+        oklch(0.998 0.001 95) 38%,
         color-mix(in oklch, var(--background) 92%, var(--secondary)) 100%);
     background-attachment: fixed;
   }
