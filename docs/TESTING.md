@@ -69,3 +69,5 @@
 **Hero video performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero loads one active theme video over the poster, falls back quickly when playback is slow, and keeps immutable cache headers on `/hero/*` media.
 
 **Data layer performance guardrail.** `tests/performance/data-layer-budgets.test.ts` uses warmup plus best-of timing samples for ratio checks so CI timer jitter does not hide real regressions or create false failures.
+
+**Light gold visual guardrail.** `tests/unit/globals-gold-theme.test.ts` now treats the accepted light mode as a canonical visual contract: true white surfaces, charcoal foregrounds, platinum muted/border tokens, the richer polished gold OKLCH values, button gold values, Entertainment line stops, and the full `--gradient-heading-gold` contrast/specular recipe. This protects the approved light-mode metrics/headings/CTA look from drifting back toward pale champagne or cream while keeping the dark-mode white-gold lock intact.
