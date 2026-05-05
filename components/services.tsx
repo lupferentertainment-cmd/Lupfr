@@ -222,7 +222,7 @@ export function Services() {
     <section
       id="services"
       ref={ref}
-      className="relative [overflow-x:clip] py-20 sm:py-24 md:py-32 px-4 sm:px-6"
+      className="relative [overflow-x:clip] py-14 sm:py-16 md:py-20 px-4 sm:px-6"
     >
       {/* Animated background orbs - subtle pulse */}
       <motion.div
@@ -241,7 +241,7 @@ export function Services() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ ...SPRING_SNAPPY, delay: 0.1 }}
-          className="text-center mb-12 sm:mb-16 md:mb-20"
+          className="text-center mb-10 sm:mb-12 md:mb-14"
         >
           <motion.p
             className="text-gold-accent tracking-tight text-sm mb-4"
@@ -283,7 +283,7 @@ export function Services() {
         </div>
 
         {/* Corporate partners - same title style as Featured Artists / Culture Meets Production; no strip background */}
-        <div className="mt-20 scroll-mt-8 pt-2 sm:mt-24 md:mt-32">
+        <div className="mt-14 scroll-mt-8 pt-2 sm:mt-16 md:mt-20">
           <p className="text-gold-accent tracking-tight text-sm mb-4">
             Partners
           </p>

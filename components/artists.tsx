@@ -259,7 +259,7 @@ export function Artists() {
     <section
       id="artists"
       ref={ref}
-      className="pt-4 sm:pt-6 md:pt-8 pb-20 sm:pb-24 md:pb-32 px-4 sm:px-6 relative overflow-hidden bg-card/50"
+      className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
       <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto relative z-10">
@@ -267,7 +267,7 @@ export function Artists() {
           initial={{ opacity: 0, y: 36 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-12 sm:mb-16 md:mb-20"
+          className="mb-10 sm:mb-12 md:mb-14"
         >
           <motion.p
             id="artists-section-title"
@@ -314,7 +314,7 @@ export function Artists() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 text-center"
+          className="mt-12 text-center"
         >
           <p className="text-muted-foreground mb-6">
             Are you a DJ or producer? We&apos;re always looking for fresh talent.

@@ -219,10 +219,10 @@ export function About() {
   const y = useTransform(scrollYProgress, [0, 1], [100, -100])
 
   return (
-    <section id="about" ref={ref} className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 relative overflow-hidden">
+    <section id="about" ref={ref} className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
         <div ref={containerRef} className="container mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 items-center">
           {/* Left - Content */}
           <motion.div
             initial={{ opacity: 0, x: -32 }}
@@ -288,7 +288,7 @@ export function About() {
             style={{ y }}
             className="relative"
           >
-            <div className="space-y-8">
+            <div className="space-y-6">
               {values.map((value, i) => (
                 <AboutValueCard
                   key={value.number}

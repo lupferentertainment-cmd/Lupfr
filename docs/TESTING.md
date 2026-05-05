@@ -19,7 +19,7 @@
 
 **Test suites.**
 
-- `tests/unit/globals-gold-theme.test.ts` – **`app/globals.css`**: locked OKLCH values for **light** vs **.dark** “white gold” (`--gold*` / buttons / entertainment line tokens) and presence of **hero** metallic shine (`--gradient-hero-gold`, `hero-shine-pass`, `hero-gold-shine-periodic`); prevents accidental reintroduction of removed dark **bronze/copper** main `--gold` or loss of the shine pipeline.
+- `tests/unit/globals-gold-theme.test.ts` – **`app/globals.css`**: locked OKLCH values for **light** vs **.dark** “white gold” (`--gold*` / buttons / entertainment line tokens), the theme-specific `--gradient-heading-gold` used by section headings and metric numerals, and presence of **hero** metallic shine (`--gradient-hero-gold`, `hero-shine-pass`, `hero-gold-shine-periodic`); prevents accidental reintroduction of removed dark **bronze/copper** main `--gold` or loss of the shine pipeline.
 - `tests/unit/contact-input.test.ts` – sanitization and phone/email validation rules.
 - `tests/unit/rate-limit.test.ts` – per-key request limiting behavior, `x-forwarded-for` / `x-real-ip` / fallback IP extraction, and window reset.
 - `tests/unit/cookie-consent.test.ts` – `cookie-consent` library: storage read/write and custom event; guardrails when `localStorage` throws.
