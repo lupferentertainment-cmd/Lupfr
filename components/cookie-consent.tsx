@@ -35,14 +35,15 @@ export function CookieConsent() {
             role="region"
             aria-label="Cookie notice"
             className={cn(
-                "fixed bottom-0 left-0 right-0 z-[110] border-t border-border bg-card/95 px-4 py-4",
-                "backdrop-blur-sm shadow-lg pb-[max(1rem,env(safe-area-inset-bottom))]"
+                "fixed left-1/2 z-[110] w-[calc(100vw-2rem)] max-w-md -translate-x-1/2",
+                "bottom-[max(1rem,env(safe-area-inset-bottom))] rounded-md border border-border/80",
+                "bg-card/95 p-4 text-card-foreground shadow-2xl backdrop-blur-md"
             )}
         >
-            <div className="container mx-auto flex max-w-4xl flex-col gap-4 sm:flex-row sm:items-stretch sm:gap-6">
+            <div className="flex flex-col gap-4">
                 <div
                     className={cn(
-                        "min-h-0 flex-1 space-y-2 pr-1",
+                        "min-h-0 space-y-2 pr-1",
                         "text-xs text-muted-foreground sm:text-sm"
                     )}
                 >
@@ -66,17 +67,17 @@ export function CookieConsent() {
                         </Link>
                     </p>
                 </div>
-                <div className="flex shrink-0 flex-col justify-end sm:justify-center">
-                <button
-                    type="button"
-                    onClick={() => {
-                        acceptCookieConsent()
-                        setVisible(false)
-                    }}
-                    className="w-full rounded-full btn-metallic-gold px-6 py-2.5 text-sm font-semibold tracking-normal sm:w-auto"
-                >
-                    Accept
-                </button>
+                <div className="flex justify-end">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            acceptCookieConsent()
+                            setVisible(false)
+                        }}
+                        className="min-w-28 rounded-md btn-metallic-gold px-6 py-2.5 text-sm font-semibold tracking-normal"
+                    >
+                        Accept
+                    </button>
                 </div>
             </div>
         </div>

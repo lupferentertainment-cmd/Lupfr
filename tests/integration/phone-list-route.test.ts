@@ -1,3 +1,11 @@
+type RecordedFetchCall = [string, RequestInit]
+
+function getFirstFetchCall(fetchMock: { mock: { calls: unknown[][] } }): RecordedFetchCall {
+  const call = fetchMock.mock.calls[0]
+  expect(call).toBeDefined()
+  return call as unknown as RecordedFetchCall
+}
+
 describe("POST /api/phone-list", () => {
   beforeEach(() => {
     vi.restoreAllMocks()
@@ -64,10 +72,7 @@ describe("POST /api/phone-list", () => {
     const payload = await res.json()
     expect(payload.success).toBe(true)
     expect(fetchMock).toHaveBeenCalledTimes(1)
-    const [calledUrl, init] = fetchMock.mock.calls[0] as [
-      string,
-      RequestInit,
-    ]
+    const [calledUrl, init] = getFirstFetchCall(fetchMock)
     expect(calledUrl).toBe("https://example.test/webhook")
     expect(init?.method).toBe("POST")
     expect(init?.headers).toMatchObject({
@@ -101,7 +106,7 @@ describe("POST /api/phone-list", () => {
     }))
 
     expect(res.status).toBe(200)
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [, init] = getFirstFetchCall(fetchMock)
     const forwarded = JSON.parse(String(init?.body)) as Record<string, string>
     expect(forwarded.email).toBe("jane@example.com")
     expect("phone" in forwarded).toBe(false)
@@ -125,7 +130,7 @@ describe("POST /api/phone-list", () => {
     }))
 
     expect(res.status).toBe(200)
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [, init] = getFirstFetchCall(fetchMock)
     const forwarded = JSON.parse(String(init?.body)) as Record<string, string>
     expect(forwarded.phone).toBe("+1 (415) 555-0100")
     expect("email" in forwarded).toBe(false)
@@ -279,7 +284,7 @@ describe("POST /api/phone-list", () => {
     }))
 
     expect(res.status).toBe(200)
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [, init] = getFirstFetchCall(fetchMock)
     const body = JSON.parse(String(init?.body)) as { secret: string; name: string }
     expect(body.secret).toBe("test-shared-secret")
     expect(body.name).toBe("Jane Doe")
@@ -306,7 +311,7 @@ describe("POST /api/phone-list", () => {
     }))
 
     expect(res.status).toBe(200)
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [, init] = getFirstFetchCall(fetchMock)
     const body = JSON.parse(String(init?.body)) as { apiSecret: string; secret?: string }
     expect(body.apiSecret).toBe("test-shared-secret")
     expect(body.secret).toBeUndefined()
