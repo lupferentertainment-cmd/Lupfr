@@ -1,14 +1,15 @@
 "use client"
 
-import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState, useEffect, useCallback, type RefObject } from "react"
 import { Calendar, MapPin, Clock } from "lucide-react"
-import { getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
+import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { EventDetailLink } from "@/components/event-detail-link"
 import {
   Carousel,
   CarouselContent,
@@ -23,6 +24,7 @@ const EVENT_IMAGE_HEIGHT = 800
 function EventCard({
   event,
   index,
+  prioritizeImage,
   isRevealed,
   enableTilt,
   isHovered,
@@ -33,6 +35,7 @@ function EventCard({
 }: {
   event: EventItem
   index: number
+  prioritizeImage: boolean
   isRevealed: boolean
   enableTilt: boolean
   isHovered: boolean
@@ -81,7 +84,7 @@ function EventCard({
           : { rotateX: 0, rotateY: 0 }
       }
     >
-      <Link href={`/events/${event.slug}`} className="block">
+      <EventDetailLink slug={event.slug}>
         <div className="aspect-[16/10] overflow-hidden relative bg-muted">
           <div
             className={cn(
@@ -103,11 +106,11 @@ function EventCard({
               width={EVENT_IMAGE_WIDTH}
               height={EVENT_IMAGE_HEIGHT}
               sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
-              priority={index === 0}
-              loading={index === 0 ? "eager" : "lazy"}
-              fetchPriority={index === 0 ? "high" : undefined}
+              priority={prioritizeImage}
+              loading={prioritizeImage ? "eager" : "lazy"}
+              fetchPriority={prioritizeImage ? "high" : undefined}
               unoptimized={event.image.startsWith("http")}
-              onLoadingComplete={() => setImageReady(true)}
+              onLoad={() => setImageReady(true)}
               className={cn(
                 "w-full h-full object-cover object-top",
                 "motion-safe:transition-opacity motion-safe:duration-300",
@@ -166,7 +169,7 @@ function EventCard({
             </div>
           </div>
         </div>
-      </Link>
+      </EventDetailLink>
 
       <motion.div
         className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl bg-accent/5"
@@ -193,6 +196,8 @@ function EventsCarousel({
   onLeave,
   now,
   shineSectionRef,
+  prefetchDetails,
+  prioritizeFirstImage,
 }: {
   events: EventItem[]
   isRevealed: boolean
@@ -202,10 +207,40 @@ function EventsCarousel({
   onLeave: () => void
   now: Date
   shineSectionRef: RefObject<HTMLElement | null>
+  prefetchDetails: boolean
+  prioritizeFirstImage: boolean
 }) {
+  const router = useRouter()
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [snapCount, setSnapCount] = useState(0)
+  const eventSlugs = events.map((event) => event.slug).join("|")
+
+  useEffect(() => {
+    if (!prefetchDetails) return
+    const hrefs = eventSlugs.split("|").filter(Boolean).map(eventDetailPath)
+    if (hrefs.length === 0) return
+
+    let cancelled = false
+    const prefetchRoutes = () => {
+      if (cancelled) return
+      hrefs.forEach((href) => router.prefetch(href))
+    }
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(prefetchRoutes, { timeout: 1500 })
+      return () => {
+        cancelled = true
+        window.cancelIdleCallback(idleId)
+      }
+    }
+
+    const timeoutId = window.setTimeout(prefetchRoutes, 250)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timeoutId)
+    }
+  }, [eventSlugs, prefetchDetails, router])
 
   useEffect(() => {
     if (!api) return
@@ -236,6 +271,7 @@ function EventsCarousel({
               <EventCard
                 event={event}
                 index={i}
+                prioritizeImage={prioritizeFirstImage && i === 0}
                 isRevealed={isRevealed}
                 enableTilt={enableTilt}
                 isHovered={hoveredId === event.id}
@@ -255,11 +291,10 @@ function EventsCarousel({
               key={i}
               type="button"
               onClick={() => api?.scrollTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-200 ease-snap ${
-                i === selectedIndex
-                  ? "w-6 bg-foreground/80"
-                  : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
-              }`}
+              className={`h-1.5 rounded-full transition-all duration-200 ease-snap ${i === selectedIndex
+                ? "w-6 bg-foreground/80"
+                : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
+                }`}
               aria-label={`Go to events slide ${i + 1} of ${snapCount}`}
             />
           ))}
@@ -290,6 +325,7 @@ export function Events() {
   }, [inViewNow])
   const isRevealed = hasRevealed
   const enableTilt = useFinePointerHover()
+  const isMobile = useIsMobile()
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const clearHover = useCallback(() => setHoveredId(null), [])
   const now = useEventCalendarClock()
@@ -339,6 +375,8 @@ export function Events() {
               onLeave={clearHover}
               now={now}
               shineSectionRef={ref}
+              prefetchDetails={isMobile === false}
+              prioritizeFirstImage={isMobile === false}
             />
           ) : (
             <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
@@ -370,6 +408,8 @@ export function Events() {
               onLeave={clearHover}
               now={now}
               shineSectionRef={ref}
+              prefetchDetails={isMobile === false}
+              prioritizeFirstImage={isMobile === false}
             />
           </motion.div>
         )}

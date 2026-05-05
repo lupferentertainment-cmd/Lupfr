@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer"
 import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Contact",
   description:
     "Get in touch with LUPFR Entertainment for bookings, events, talent, and partnerships.",

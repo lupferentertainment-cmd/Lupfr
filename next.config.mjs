@@ -2,12 +2,14 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const distDir = process.env.NEXT_DIST_DIR
 
 /**
  * @type {import('next').NextConfig}
  * Lighthouse: run against production (next build && next start) for minify/LCP metrics.
  */
 const nextConfig = {
+  ...(distDir ? { distDir } : {}),
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -78,6 +80,19 @@ const nextConfig = {
       {
         source: "/gallery/where_is_west_004/:path*",
         destination: "/gallery/where_is_west/:path*",
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: "/hero/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
       },
     ]
   },

@@ -1,24 +1,42 @@
 /** Apple Photos–style labels for gallery stills: `Apr 4, 2026` (en-US, UTC calendar date). */
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/
+const GALLERY_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+})
+const validDateCache = new Map<string, boolean>()
+const dateLabelCache = new Map<string, string>()
 
 export function isValidGalleryDateISO(s: string): boolean {
+  const cached = validDateCache.get(s)
+  if (cached !== undefined) return cached
+
+  let valid = false
   if (!ISO.test(s)) return false
-  const [y, m, d] = s.split("-").map(Number)
+  const y = Number(s.slice(0, 4))
+  const m = Number(s.slice(5, 7))
+  const d = Number(s.slice(8, 10))
   const dt = new Date(Date.UTC(y, m - 1, d))
-  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d
+  valid = dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d
+  validDateCache.set(s, valid)
+  return valid
 }
 
 export function formatGalleryDateLabel(iso: string): string {
+  const cached = dateLabelCache.get(iso)
+  if (cached !== undefined) return cached
+
   if (!isValidGalleryDateISO(iso)) return ""
-  const [y, m, d] = iso.split("-").map(Number)
+  const y = Number(iso.slice(0, 4))
+  const m = Number(iso.slice(5, 7))
+  const d = Number(iso.slice(8, 10))
   const dt = new Date(Date.UTC(y, m - 1, d))
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(dt)
+  const label = GALLERY_DATE_FORMATTER.format(dt)
+  dateLabelCache.set(iso, label)
+  return label
 }
 
 export function galleryPhotoDateLabel(dateISO: string | null): string | null {

@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/site"
 const title = "Privacy & cookies"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title,
   description:
     "How LUPFR uses browser storage, cookies, and form data on lupfr.com.",

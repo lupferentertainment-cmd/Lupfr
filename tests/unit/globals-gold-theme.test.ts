@@ -18,12 +18,13 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(fs.existsSync(globalsPath), globalsPath).toBe(true)
   })
 
-  it("keeps :root (light) main gold and yellow-gold family for headings/buttons", () => {
+  it("keeps :root (light) main gold in a clean champagne family for headings/buttons", () => {
     const rootClose = css.indexOf("\n}\n\n.dark {")
     expect(rootClose).toBeGreaterThan(0)
     const rootBlock = css.slice(0, rootClose)
-    expect(rootBlock).toContain("  --gold: oklch(0.70 0.16 88);")
-    expect(rootBlock).toContain("  --btn-gold: oklch(0.68 0.16 88);")
+    expect(rootBlock).toContain("  --background: oklch(0.985 0.003 270);")
+    expect(rootBlock).toContain("  --gold: oklch(0.66 0.10 80);")
+    expect(rootBlock).toContain("  --btn-gold: oklch(0.65 0.11 80);")
     expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.68 0.16 55);")
   })
 

@@ -33,7 +33,10 @@ export async function generateMetadata({ params }: EventPageParams): Promise<Met
   const { slug } = await params
   const event = getEventBySlug(slug)
   if (!event) {
-    return { title: "Events" }
+    return {
+      metadataBase: new URL(SITE_URL),
+      title: "Events",
+    }
   }
   const pageTitle = `LUPFR | ${event.title}`
   const description =
@@ -42,6 +45,7 @@ export async function generateMetadata({ params }: EventPageParams): Promise<Met
   const url = `${SITE_URL}${eventDetailPath(slug)}`
   const imageUrl = eventHeroAbsoluteUrl(event, SITE_URL)
   return {
+    metadataBase: new URL(SITE_URL),
     title: pageTitle,
     description,
     alternates: { canonical: url },

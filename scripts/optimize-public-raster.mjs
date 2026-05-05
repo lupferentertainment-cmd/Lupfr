@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Standardize photos in public/ to WebP: same aspect ratio, optional downscale (cap width).
- * Excludes: public/favicon (fixed PNG/ICO for browsers), public/logos (Satori/OG + brand marks as PNG),
+ * Excludes: favicon PNG/ICO files, public/favicon (fixed PNG/ICO for browsers), public/logos (Satori/OG + brand marks as PNG),
  *   and non-raster (svg, ico, mp4, m4a, webmanifest, txt).
  *
  * Usage:
@@ -21,6 +21,7 @@ const publicDir = path.join(root, "public")
 
 /** Paths under public/ that must stay as authored (favicons, touch icons, logo PNG for OG). */
 const EXCLUDE_DIR_PREFIXES = ["favicon", "logos"]
+const EXCLUDE_FILE_NAMES = new Set(["apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png"])
 
 const RASTER_IN = new Set([".png", ".jpg", ".jpeg"])
 const RASTER_OK = new Set([".webp"])
@@ -31,7 +32,7 @@ const WEBP_EFFORT = 4
 
 function isExcluded(relPosix) {
   const first = relPosix.split("/")[0]
-  return EXCLUDE_DIR_PREFIXES.includes(first)
+  return EXCLUDE_DIR_PREFIXES.includes(first) || EXCLUDE_FILE_NAMES.has(relPosix)
 }
 
 /**
@@ -129,7 +130,7 @@ async function convertOne(inPath) {
 async function check() {
   const files = await listConvertibleRasters()
   if (files.length === 0) {
-    console.log("public-raster: OK (no PNG/JPEG to convert under public/, excluding favicon/ logos/)")
+    console.log("public-raster: OK (no PNG/JPEG to convert under public/, excluding favicon assets and logos/)")
     return
   }
   console.error("public-raster: convert these to WebP (or add to exclusions in scripts/optimize-public-raster.mjs):")

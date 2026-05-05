@@ -35,6 +35,7 @@ describe("events list ordering", () => {
       "boiler-boat-003-wheres-west-warehouse-session",
       "wheres-west-corbin-mason",
       "third-thursdays-operator-sf-eria",
+      "boiler-room-marina-lupfr-baum",
     ])
   })
 
@@ -42,6 +43,7 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
+      "boiler-room-marina-lupfr-baum",
       "third-thursdays-operator-sf-eria",
       "wheres-west-corbin-mason",
       "boiler-boat-003-wheres-west-warehouse-session",

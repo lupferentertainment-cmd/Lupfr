@@ -7,34 +7,34 @@
 /* Lupfer Entertainment - Metallic Gold & Black Theme */
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
-  /* Light base – high contrast for accessibility */
-  --background: oklch(0.98 0.006 85);
+  /* Light base - cool porcelain, not cream, so gold reads polished instead of staining the page */
+  --background: oklch(0.985 0.003 270);
   --foreground: oklch(0.18 0.02 280);
-  --card: oklch(1 0 0);
+  --card: oklch(0.998 0.001 270);
   --card-foreground: oklch(0.18 0.02 280);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.998 0.001 270);
   --popover-foreground: oklch(0.18 0.02 280);
   --primary: oklch(0.25 0.02 280);
-  --primary-foreground: oklch(0.98 0.006 85);
-  --secondary: oklch(0.94 0.02 85);
+  --primary-foreground: oklch(0.985 0.003 270);
+  --secondary: oklch(0.948 0.005 270);
   --secondary-foreground: oklch(0.22 0.02 280);
-  --muted: oklch(0.92 0.015 85);
+  --muted: oklch(0.925 0.004 270);
   --muted-foreground: oklch(0.45 0.02 280);
-  /* Metallic gold – light mode: more yellow (flipping phrases, Entertainment, accents) */
-  --gold-shadow: oklch(0.50 0.14 88);
-  --gold-dark: oklch(0.62 0.15 88);
-  --gold: oklch(0.70 0.16 88);
-  --gold-bright: oklch(0.78 0.12 88);
-  --gold-specular: oklch(0.88 0.06 88);
-  --gold-filter-shadow: oklch(0.35 0.10 88 / 0.55);
-  --gold-filter-edge: oklch(0.55 0.12 88 / 0.35);
-  --btn-gold-text: oklch(0.98 0.004 85);
+  /* Metallic gold - light mode: quieter champagne so white surfaces stay clean */
+  --gold-shadow: oklch(0.47 0.08 76);
+  --gold-dark: oklch(0.58 0.09 78);
+  --gold: oklch(0.66 0.10 80);
+  --gold-bright: oklch(0.78 0.07 82);
+  --gold-specular: oklch(0.91 0.025 86);
+  --gold-filter-shadow: oklch(0.30 0.06 76 / 0.45);
+  --gold-filter-edge: oklch(0.50 0.08 78 / 0.28);
+  --btn-gold-text: oklch(0.985 0.003 270);
   --accent: var(--gold);
   --accent-foreground: oklch(0.12 0.02 280);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.88 0.015 85);
-  --input: oklch(0.92 0.01 85);
+  --border: oklch(0.875 0.006 270);
+  --input: oklch(0.925 0.004 270);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -47,44 +47,40 @@
   --transition-fast: 120ms;
   --transition-snap: 200ms;
   --transition-smooth: 280ms;
-  --sidebar: oklch(0.96 0.01 85);
+  --sidebar: oklch(0.962 0.004 270);
   --sidebar-foreground: oklch(0.18 0.02 280);
   --sidebar-primary: var(--gold);
   --sidebar-primary-foreground: oklch(0.12 0.02 280);
-  --sidebar-accent: oklch(0.92 0.02 85);
+  --sidebar-accent: oklch(0.925 0.004 270);
   --sidebar-accent-foreground: oklch(0.18 0.02 280);
-  --sidebar-border: oklch(0.88 0.015 85);
+  --sidebar-border: oklch(0.875 0.006 270);
   --sidebar-ring: var(--gold);
-  --gradient-hero-gold: linear-gradient(
-    90deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 15%,
-    var(--gold) 28%,
-    var(--gold-dark) 35%,
-    var(--gold-specular) 42%,
-    var(--gold-bright) 48%,
-    var(--gold-specular) 54%,
-    var(--gold-dark) 62%,
-    var(--gold) 75%,
-    var(--gold-dark) 88%,
-    var(--gold-shadow) 100%
-  );
-  --gradient-btn-brass: linear-gradient(
-    180deg,
-    var(--gold-bright) 0%,
-    var(--gold) 25%,
-    var(--gold-dark) 50%,
-    var(--gold-shadow) 100%
-  );
+  --gradient-hero-gold: linear-gradient(90deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 15%,
+      var(--gold) 28%,
+      var(--gold-dark) 35%,
+      var(--gold-specular) 42%,
+      var(--gold-bright) 48%,
+      var(--gold-specular) 54%,
+      var(--gold-dark) 62%,
+      var(--gold) 75%,
+      var(--gold-dark) 88%,
+      var(--gold-shadow) 100%);
+  --gradient-btn-brass: linear-gradient(180deg,
+      var(--gold-bright) 0%,
+      var(--gold) 25%,
+      var(--gold-dark) 50%,
+      var(--gold-shadow) 100%);
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
-  /* Light mode buttons: more yellow gold (Book an event, etc.) */
-  --btn-gold-shadow: oklch(0.52 0.14 88);
-  --btn-gold-dark: oklch(0.60 0.15 88);
-  --btn-gold: oklch(0.68 0.16 88);
-  --btn-gold-bright: oklch(0.76 0.13 88);
-  --btn-gold-specular: oklch(0.88 0.06 88);
-  --btn-gold-filter-shadow: oklch(0.35 0.10 88 / 0.6);
-  --btn-gold-filter-edge: oklch(0.56 0.12 88 / 0.4);
+  /* Light mode buttons: deeper champagne CTA without yellow spill */
+  --btn-gold-shadow: oklch(0.48 0.09 76);
+  --btn-gold-dark: oklch(0.57 0.10 78);
+  --btn-gold: oklch(0.65 0.11 80);
+  --btn-gold-bright: oklch(0.77 0.08 82);
+  --btn-gold-specular: oklch(0.91 0.025 86);
+  --btn-gold-filter-shadow: oklch(0.30 0.06 76 / 0.55);
+  --btn-gold-filter-edge: oklch(0.50 0.08 78 / 0.34);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
   --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
   /* Fixed nav (`components/navigation.tsx`): keep `#section` scroll targets below the bar (match SECTION_SPY_OFFSET_PX ≈ 120) */
@@ -270,13 +266,17 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
   /* Faster tap response on touch devices */
-  button, a {
+  button,
+  a {
     touch-action: manipulation;
   }
+
   *::-webkit-scrollbar {
     display: none;
   }
+
   /* auto: avoids fighting Framer scroll-linked transforms (smooth + wheel = jank/flicker) */
   html {
     scroll-behavior: auto;
@@ -284,6 +284,7 @@
     overscroll-behavior-y: none;
     -webkit-overflow-scrolling: touch;
   }
+
   html {
     overflow-x: clip;
     min-width: 0;
@@ -291,6 +292,7 @@
     max-width: 100%;
     -webkit-text-size-adjust: 100%;
   }
+
   body {
     @apply bg-background text-foreground;
     /* Instant theme paint — long color transitions read as flicker next to scroll-driven motion */
@@ -310,21 +312,26 @@
   .font-display {
     font-family: var(--font-serif), ui-serif, serif;
   }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   /* GPU layer promotion for animated elements - use sparingly */
   .gpu-accelerate {
     transform: translateZ(0);
     backface-visibility: hidden;
   }
+
   .ease-snap {
     transition-timing-function: var(--ease-snap);
   }
+
   /**
    * Gallery “squircle” frames: `border-radius` for all engines; iOS-style curve
    * where `corner-shape` exists (Chromium; Safari falls back to rounded rect).
@@ -333,6 +340,7 @@
   .rounded-gallery-squircle {
     border-radius: var(--lupfr-gallery-squircle-radius);
   }
+
   @supports (corner-shape: squircle) {
     .rounded-gallery-squircle {
       corner-shape: squircle;
@@ -343,19 +351,17 @@
    * Photo / image card loading: neutral slab + slow gold sweep (`shimmer-sweep`).
    * Use on an `absolute inset-0` layer under the real image; parent should be
    * `position: relative; overflow: hidden;` and set border-radius (inherited
-   * here). Hide with `opacity-0` when the image has fired `onLoadingComplete`.
+   * here). Hide with `opacity-0` when the image has fired `onLoad`.
    * `.gallery-grid-tile-placeholder` is an alias for the same look on `/gallery` tiles.
    */
   .skeleton-shimmer,
   .gallery-grid-tile-placeholder {
     border-radius: inherit;
     background:
-      radial-gradient(
-        ellipse 130% 120% at 50% 38%,
+      radial-gradient(ellipse 130% 120% at 50% 38%,
         color-mix(in oklch, var(--gold) 10%, var(--muted)) 0%,
         color-mix(in oklch, var(--muted) 88%, var(--card)) 52%,
-        color-mix(in oklch, var(--muted) 75%, var(--border)) 100%
-      );
+        color-mix(in oklch, var(--muted) 75%, var(--border)) 100%);
     box-shadow:
       inset 0 0 0 1px color-mix(in oklch, var(--border) 50%, transparent),
       inset 0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent);
@@ -370,19 +376,18 @@
     bottom: -55%;
     left: -70%;
     width: 58%;
-    background: linear-gradient(
-      105deg,
-      transparent 0%,
-      color-mix(in oklch, var(--gold-specular) 18%, transparent) 42%,
-      color-mix(in oklch, var(--gold-bright) 26%, transparent) 50%,
-      color-mix(in oklch, var(--gold-specular) 18%, transparent) 58%,
-      transparent 100%
-    );
+    background: linear-gradient(105deg,
+        transparent 0%,
+        color-mix(in oklch, var(--gold-specular) 18%, transparent) 42%,
+        color-mix(in oklch, var(--gold-bright) 26%, transparent) 50%,
+        color-mix(in oklch, var(--gold-specular) 18%, transparent) 58%,
+        transparent 100%);
     animation: shimmer-sweep 2.35s ease-in-out infinite;
     will-change: transform;
   }
 
   @media (prefers-reduced-motion: reduce) {
+
     .skeleton-shimmer::after,
     .gallery-grid-tile-placeholder::after {
       animation: none;
@@ -391,27 +396,102 @@
   }
 }
 
+@layer components {
+  .lupfr-site-header {
+    isolation: isolate;
+  }
+
+  .lupfr-site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 0;
+    height: calc(100% + 3.25rem);
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 74% 140% at 50% -18%,
+        color-mix(in oklch, var(--gold) 5%, transparent) 0%,
+        color-mix(in oklch, var(--gold) 2%, transparent) 38%,
+        transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 82%, transparent) 0%,
+        color-mix(in oklch, var(--background) 54%, transparent) 46%,
+        color-mix(in oklch, var(--background) 22%, transparent) 72%,
+        transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
+    -webkit-backdrop-filter: blur(9px) saturate(1.04);
+    backdrop-filter: blur(9px) saturate(1.04);
+    opacity: 0.86;
+    transition:
+      height var(--transition-snap) var(--ease-snap),
+      opacity var(--transition-snap) var(--ease-snap),
+      background var(--transition-snap) var(--ease-snap),
+      -webkit-backdrop-filter var(--transition-snap) var(--ease-snap),
+      backdrop-filter var(--transition-snap) var(--ease-snap);
+  }
+
+  .dark .lupfr-site-header::before {
+    background:
+      radial-gradient(ellipse 74% 140% at 50% -18%,
+        color-mix(in oklch, var(--gold) 18%, transparent) 0%,
+        color-mix(in oklch, var(--gold) 8%, transparent) 40%,
+        transparent 72%),
+      linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 86%, transparent) 0%,
+        color-mix(in oklch, var(--background) 58%, transparent) 48%,
+        color-mix(in oklch, var(--background) 28%, transparent) 74%,
+        transparent 100%);
+  }
+
+  .lupfr-site-header[data-lupfr-nav-state="settled"]::before {
+    height: calc(100% + 2rem);
+    background:
+      radial-gradient(ellipse 68% 130% at 50% -20%,
+        color-mix(in oklch, var(--gold) 4%, transparent) 0%,
+        transparent 62%),
+      linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 92%, transparent) 0%,
+        color-mix(in oklch, var(--background) 76%, transparent) 44%,
+        color-mix(in oklch, var(--background) 38%, transparent) 75%,
+        transparent 100%);
+    -webkit-backdrop-filter: blur(18px) saturate(1.12);
+    backdrop-filter: blur(18px) saturate(1.12);
+    opacity: 0.98;
+  }
+
+  .dark .lupfr-site-header[data-lupfr-nav-state="settled"]::before {
+    background:
+      radial-gradient(ellipse 68% 130% at 50% -20%,
+        color-mix(in oklch, var(--gold) 12%, transparent) 0%,
+        transparent 62%),
+      linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 94%, transparent) 0%,
+        color-mix(in oklch, var(--background) 78%, transparent) 44%,
+        color-mix(in oklch, var(--background) 42%, transparent) 76%,
+        transparent 100%);
+  }
+}
+
 /* Luxurious metallic gold text – scroll-driven shine, sleek modern look */
 .text-metallic-gold {
   /* --scroll-shine set on parent (e.g. hero h1) for scroll-driven shine; fallback 0% */
   /* Brushed metal: deep shadow → sharp specular streak → bright → mid → repeat */
-  background: linear-gradient(
-    110deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 8%,
-    var(--gold) 16%,
-    var(--gold-specular) 22%,
-    var(--gold-bright) 26%,
-    var(--gold) 32%,
-    var(--gold-dark) 42%,
-    var(--gold) 52%,
-    var(--gold-specular) 58%,
-    var(--gold-bright) 62%,
-    var(--gold) 68%,
-    var(--gold-dark) 78%,
-    var(--gold) 88%,
-    var(--gold-shadow) 100%
-  );
+  background: linear-gradient(110deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 8%,
+      var(--gold) 16%,
+      var(--gold-specular) 22%,
+      var(--gold-bright) 26%,
+      var(--gold) 32%,
+      var(--gold-dark) 42%,
+      var(--gold) 52%,
+      var(--gold-specular) 58%,
+      var(--gold-bright) 62%,
+      var(--gold) 68%,
+      var(--gold-dark) 78%,
+      var(--gold) 88%,
+      var(--gold-shadow) 100%);
   background-size: 280% 100%;
   background-position: var(--scroll-shine, 0%) 50%;
   -webkit-background-clip: text;
@@ -423,9 +503,12 @@
 
 /* Idle shimmer – same luxurious gradient */
 @keyframes metallic-shimmer {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -433,20 +516,18 @@
 
 /* Static gold gradient (no animation) – kept for fallback; use GoldShineText for scroll-driven shine */
 .gold-unison-gradient {
-  background: linear-gradient(
-    90deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 15%,
-    var(--gold) 28%,
-    var(--gold-dark) 35%,
-    var(--gold-specular) 42%,
-    var(--gold-bright) 48%,
-    var(--gold-specular) 54%,
-    var(--gold-dark) 62%,
-    var(--gold) 75%,
-    var(--gold-dark) 88%,
-    var(--gold-shadow) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 15%,
+      var(--gold) 28%,
+      var(--gold-dark) 35%,
+      var(--gold-specular) 42%,
+      var(--gold-bright) 48%,
+      var(--gold-specular) 54%,
+      var(--gold-dark) 62%,
+      var(--gold) 75%,
+      var(--gold-dark) 88%,
+      var(--gold-shadow) 100%);
   background-size: 220% 100%;
   background-position: 50% 50%;
   -webkit-background-clip: text;
@@ -457,20 +538,18 @@
 
 /* Static gold (no animation) – use GoldShineText for scroll-driven shine */
 .text-metallic-gold-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 15%,
-    var(--gold) 28%,
-    var(--gold-dark) 35%,
-    var(--gold-specular) 42%,
-    var(--gold-bright) 48%,
-    var(--gold-specular) 54%,
-    var(--gold-dark) 62%,
-    var(--gold) 75%,
-    var(--gold-dark) 88%,
-    var(--gold-shadow) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 15%,
+      var(--gold) 28%,
+      var(--gold-dark) 35%,
+      var(--gold-specular) 42%,
+      var(--gold-bright) 48%,
+      var(--gold-specular) 54%,
+      var(--gold-dark) 62%,
+      var(--gold) 75%,
+      var(--gold-dark) 88%,
+      var(--gold-shadow) 100%);
   background-size: 220% 100%;
   background-position: 50% 50%;
   -webkit-background-clip: text;
@@ -487,52 +566,123 @@
 
 /* ========== High-end animation keyframes (Martin Garrix / Peggy Gou style) ========== */
 @keyframes float {
-  0%, 100% { transform: translateY(0) translateX(0); }
-  50% { transform: translateY(-12px) translateX(6px); }
+
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+
+  50% {
+    transform: translateY(-12px) translateX(6px);
+  }
 }
 
 /* Floating orbs around section labels (e.g. Corporate Partners) */
-.animate-float { animation: float 4s ease-in-out infinite; }
-.animate-float-delay-1 { animation: float 5s ease-in-out 0.5s infinite; }
-.animate-float-delay-2 { animation: float 4.5s ease-in-out 1s infinite; }
-.animate-float-delay-3 { animation: float 5.5s ease-in-out 1.5s infinite; }
-.animate-float-delay-4 { animation: float 4s ease-in-out 2s infinite; }
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-float-delay-1 {
+  animation: float 5s ease-in-out 0.5s infinite;
+}
+
+.animate-float-delay-2 {
+  animation: float 4.5s ease-in-out 1s infinite;
+}
+
+.animate-float-delay-3 {
+  animation: float 5.5s ease-in-out 1.5s infinite;
+}
+
+.animate-float-delay-4 {
+  animation: float 4s ease-in-out 2s infinite;
+}
 
 /* Compositor-friendly: opacity + transform only (no filter animation) */
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
 }
 
 @keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes line-reveal {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-100%) skewX(-15deg); }
-  100% { transform: translateX(200%) skewX(-15deg); }
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
 }
 
 @keyframes border-glow {
-  0%, 100% { border-color: var(--border); box-shadow: 0 0 0 0 transparent; }
-  50% { border-color: color-mix(in oklch, var(--gold) 50%, transparent); box-shadow: 0 0 30px color-mix(in oklch, var(--gold) 15%, transparent); }
+
+  0%,
+  100% {
+    border-color: var(--border);
+    box-shadow: 0 0 0 0 transparent;
+  }
+
+  50% {
+    border-color: color-mix(in oklch, var(--gold) 50%, transparent);
+    box-shadow: 0 0 30px color-mix(in oklch, var(--gold) 15%, transparent);
+  }
 }
 
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /**
@@ -541,20 +691,18 @@
  * with that component for descender-safe metrics (clip:text).
  */
 .heading-metallic-gold {
-  background: linear-gradient(
-    90deg,
-    var(--gold-shadow) 0%,
-    var(--gold-dark) 15%,
-    var(--gold) 28%,
-    var(--gold-dark) 35%,
-    var(--gold-specular) 42%,
-    var(--gold-bright) 48%,
-    var(--gold-specular) 54%,
-    var(--gold-dark) 62%,
-    var(--gold) 75%,
-    var(--gold-dark) 88%,
-    var(--gold-shadow) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 15%,
+      var(--gold) 28%,
+      var(--gold-dark) 35%,
+      var(--gold-specular) 42%,
+      var(--gold-bright) 48%,
+      var(--gold-specular) 54%,
+      var(--gold-dark) 62%,
+      var(--gold) 75%,
+      var(--gold-dark) 88%,
+      var(--gold-shadow) 100%);
   background-size: 220% 100%;
   background-position: 50% 50%;
   -webkit-background-clip: text;
@@ -583,11 +731,13 @@
  * Hero (`.lupfr-hero`) is excluded from margin/scale interference via targeted reset + existing `.hero-title-*` classes.
  */
 @layer base {
+
   main h1,
   main h2 {
     @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
     margin: 0;
   }
+
   /* About story + Corporate partners: one step smaller at md/lg than primary section titles */
   main h1.lupfr-heading--compact,
   main h2.lupfr-heading--compact {
@@ -643,9 +793,11 @@
   color: var(--gold);
   @apply tracking-tight text-sm sm:text-base;
 }
+
 .lupfr-section-title {
   @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
 }
+
 .lupfr-subsection-title {
   @apply font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter;
   margin: 0;
@@ -660,6 +812,7 @@
 .hero-entertainment-text {
   color: var(--gold);
 }
+
 .dark .hero-entertainment-text {
   color: var(--muted-foreground);
 }
@@ -669,6 +822,7 @@
   font-size: clamp(3.5rem, 12vw + 2rem, 12rem);
   line-height: 1;
 }
+
 .hero-title-entertainment {
   font-size: clamp(1.25rem, 3.5vw + 0.75rem, 3.5rem);
   line-height: 1.2;
@@ -676,12 +830,10 @@
 
 /* Hero title: "Entertainment" – horizontal gradient; stops from `--entertainment-line-*` in `:root` */
 .hero-entertainment-gradient {
-  background: linear-gradient(
-    90deg,
-    var(--entertainment-line-start) 0%,
-    var(--entertainment-line-mid) 35%,
-    var(--entertainment-line-end) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--entertainment-line-start) 0%,
+      var(--entertainment-line-mid) 35%,
+      var(--entertainment-line-end) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -699,38 +851,37 @@
     box-shadow var(--transition-snap) var(--ease-snap),
     filter var(--transition-snap) var(--ease-snap),
     transform var(--transition-fast) var(--ease-snap);
-  background: linear-gradient(
-    180deg,
-    var(--btn-gold-bright) 0%,
-    var(--btn-gold) 35%,
-    var(--btn-gold-dark) 65%,
-    var(--btn-gold-shadow) 100%
-  );
+  background: linear-gradient(180deg,
+      var(--btn-gold-bright) 0%,
+      var(--btn-gold) 35%,
+      var(--btn-gold-dark) 65%,
+      var(--btn-gold-shadow) 100%);
   color: var(--btn-gold-text);
   border: none;
   box-shadow: inset 0 1px 0 var(--btn-gold-specular);
   filter: none;
 }
+
 .btn-metallic-gold::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    oklch(1 0 0 / 0.45) 50%,
-    transparent 65%
-  );
+  background: linear-gradient(110deg,
+      transparent 35%,
+      oklch(1 0 0 / 0.45) 50%,
+      transparent 65%);
   background-size: 200% 100%;
   background-position: 100% 50%;
   pointer-events: none;
   transition: background-position var(--transition-snap) var(--ease-snap);
 }
+
 .btn-metallic-gold:hover {
   box-shadow: inset 0 1px 0 var(--btn-gold-specular);
   filter: none;
 }
+
 .btn-metallic-gold:hover::before {
   background-position: 0% 50%;
 }
@@ -747,37 +898,36 @@
     box-shadow var(--transition-snap) var(--ease-snap),
     filter var(--transition-snap) var(--ease-snap),
     transform var(--transition-fast) var(--ease-snap);
-  background: linear-gradient(
-    180deg,
-    var(--btn-gold-bright) 0%,
-    var(--btn-gold) 35%,
-    var(--btn-gold-dark) 65%,
-    var(--btn-gold-shadow) 100%
-  );
+  background: linear-gradient(180deg,
+      var(--btn-gold-bright) 0%,
+      var(--btn-gold) 35%,
+      var(--btn-gold-dark) 65%,
+      var(--btn-gold-shadow) 100%);
   color: var(--btn-gold-text);
   border: none;
   box-shadow: inset 0 1px 0 var(--btn-gold-specular);
   filter: none;
 }
+
 .btn-metallic-brass::before {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    oklch(1 0 0 / 0.45) 50%,
-    transparent 65%
-  );
+  background: linear-gradient(110deg,
+      transparent 35%,
+      oklch(1 0 0 / 0.45) 50%,
+      transparent 65%);
   background-size: 200% 100%;
   background-position: 100% 50%;
   pointer-events: none;
   transition: background-position var(--transition-snap) var(--ease-snap);
 }
+
 .btn-metallic-brass:hover {
   box-shadow: inset 0 1px 0 var(--btn-gold-specular);
 }
+
 .btn-metallic-brass:hover::before {
   background-position: 0% 50%;
 }
@@ -787,9 +937,11 @@
   0% {
     background-position: 120% 50%;
   }
+
   50% {
     background-position: -20% 50%;
   }
+
   100% {
     background-position: 120% 50%;
   }
@@ -802,10 +954,7 @@
     -webkit-background-clip: text;
     background-image: var(--gradient-hero-gold);
     background-size: 220% 100%;
-    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow))
-            drop-shadow(0 2px 4px oklch(0.28 0.08 82 / 0.6))
-            drop-shadow(0 0 0 1px var(--gold-filter-edge))
-            var(--filter-hero-gold);
+    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 2px 4px oklch(0.28 0.08 82 / 0.6)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) var(--filter-hero-gold);
   }
 
   /* Static position for reduced-motion (no animation); LUPFR renders once, no inline style updates */
@@ -823,7 +972,10 @@
 
 /* Reduce motion: respect user preference */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

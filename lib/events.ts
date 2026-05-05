@@ -13,6 +13,13 @@ import eventsJson from "@/lib/data/generated/events.json"
 /** IANA zone for event calendar bucketing (Bay Area). */
 export const LUPFR_EVENT_TIMEZONE = "America/Los_Angeles"
 
+const EVENT_TZ_DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: LUPFR_EVENT_TIMEZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+})
+
 export interface EventItem {
   id: number
   slug: string
@@ -66,12 +73,7 @@ export function eventShareTitle(event: EventItem): string {
 
 /** Today as YYYY-MM-DD in the event timezone (lexicographic compare works). */
 export function todayDateISOInEventTZ(now: Date = new Date()): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: LUPFR_EVENT_TIMEZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(now)
+  return EVENT_TZ_DATE_FORMATTER.format(now)
 }
 
 function compareByDateISOThenId(a: EventItem, b: EventItem): number {

@@ -42,7 +42,7 @@ export function LupfrLogoImage({
         height={height}
         sizes={sizes}
         priority={priority}
-        onLoadingComplete={() => setReady(true)}
+        onLoad={() => setReady(true)}
         className={cn(
           "relative z-[1]",
           "motion-safe:transition-opacity motion-safe:duration-300",

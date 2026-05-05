@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useTheme } from "next-themes"
 import { memo, useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, AnimatePresence, type MotionValue } from "framer-motion"
 import { ArrowDown, Play } from "lucide-react"
@@ -18,9 +19,10 @@ import {
 import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
-const HERO_VIDEO_SLOW_MS = 30000
+const HERO_VIDEO_SLOW_MS = 8000
 const HERO_VIDEO_DARK = "/hero/hero_dark.mp4"
 const HERO_VIDEO_LIGHT = "/hero/hero_light_opt.mp4"
+const VIDEO_READY_STATE_HAS_CURRENT_DATA = 2
 
 const staticShinePositionCss = "50% 50%"
 
@@ -94,47 +96,49 @@ function HeroDesktopParallaxSection({
   phraseIndex,
   reducePhraseMotion,
 }: HeroDesktopParallaxSectionProps) {
-  const videoDarkRef = useRef<HTMLVideoElement | null>(null)
-  const videoLightRef = useRef<HTMLVideoElement | null>(null)
-
-  const setVideoDarkRef = (el: HTMLVideoElement | null) => {
-    videoDarkRef.current = el
-    if (el) el.loop = true
-  }
-  const setVideoLightRef = (el: HTMLVideoElement | null) => {
-    videoLightRef.current = el
-    if (el) el.loop = true
-  }
+  const { resolvedTheme } = useTheme()
+  const videoRef = useRef<HTMLVideoElement | null>(null)
   const [fallbackToImage, setFallbackToImage] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
+  const activeVideoSrc = resolvedTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
+
+  useEffect(() => {
+    setFallbackToImage(false)
+    setVideoReady(false)
+  }, [activeVideoSrc])
 
   useEffect(() => {
     if (fallbackToImage) return
-    const darkEl = videoDarkRef.current
-    const lightEl = videoLightRef.current
-    if (!darkEl || !lightEl) return
+    const video = videoRef.current
+    if (!video) return
 
-    const videos = [darkEl, lightEl]
-    videos.forEach((v) => {
-      v.loop = true
-    })
+    video.autoplay = true
+    video.loop = true
+    video.muted = true
+    video.playsInline = true
 
     const triggerFallback = () => setFallbackToImage(true)
     const timeoutId = setTimeout(triggerFallback, HERO_VIDEO_SLOW_MS)
 
-    const ensurePlaying = () => {
-      videos.forEach((video) => {
-        if (video.paused) {
-          if (video.ended) video.currentTime = 0
-          video.play().catch(() => {})
-        }
-      })
+    const markVideoReady = () => {
+      clearTimeout(timeoutId)
+      setVideoReady(true)
     }
 
-    const onCanPlay = () => {
+    const handlePlaybackError = (error: unknown) => {
+      if (error instanceof DOMException && error.name === "AbortError") return
       clearTimeout(timeoutId)
-      videos.forEach((v) => {
-        v.loop = true
-      })
+      triggerFallback()
+    }
+
+    const ensurePlaying = () => {
+      if (!video.paused && !video.ended) return
+      if (video.ended) video.currentTime = 0
+      video.play().then(markVideoReady).catch(handlePlaybackError)
+    }
+
+    const onVideoReady = () => {
+      markVideoReady()
       ensurePlaying()
     }
     const onError = () => {
@@ -142,61 +146,62 @@ function HeroDesktopParallaxSection({
       triggerFallback()
     }
     const onPause = () => ensurePlaying()
-    const restartVideo = (video: HTMLVideoElement) => {
+    const restartVideo = () => {
       video.loop = true
       video.currentTime = 0
-      video.play().catch(() => {})
+      video.play().then(markVideoReady).catch(handlePlaybackError)
     }
-    const onEnded = (e: Event) => {
-      const video = e.target as HTMLVideoElement
-      if (video) restartVideo(video)
-    }
+    const onEnded = () => restartVideo()
     const onTimeUpdate = () => {
-      videos.forEach((video) => {
-        if (video.ended || (video.duration > 0 && video.currentTime >= video.duration - 0.25)) {
-          restartVideo(video)
-        }
-      })
+      if (video.ended || (video.duration > 0 && video.currentTime >= video.duration - 0.25)) {
+        restartVideo()
+      }
     }
-    const onStalled = () => {
-      videos.forEach((v) => v.play().catch(() => {}))
-    }
+    const onStalled = () => ensurePlaying()
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") ensurePlaying()
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) ensurePlaying()
-      },
-      { threshold: 0.1 }
-    )
-    videos.forEach((v) => observer.observe(v))
+    const observer = typeof IntersectionObserver === "undefined"
+      ? null
+      : new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) ensurePlaying()
+        },
+        { threshold: 0.1 }
+      )
+    observer?.observe(video)
 
-    videos.forEach((video) => {
-      video.addEventListener("canplay", onCanPlay, { once: true })
-      video.addEventListener("error", onError, { once: true })
-      video.addEventListener("pause", onPause)
-      video.addEventListener("ended", onEnded)
-      video.addEventListener("timeupdate", onTimeUpdate)
-      video.addEventListener("stalled", onStalled)
-    })
+    video.addEventListener("loadeddata", onVideoReady)
+    video.addEventListener("canplay", onVideoReady)
+    video.addEventListener("playing", onVideoReady)
+    video.addEventListener("error", onError, { once: true })
+    video.addEventListener("pause", onPause)
+    video.addEventListener("ended", onEnded)
+    video.addEventListener("timeupdate", onTimeUpdate)
+    video.addEventListener("stalled", onStalled)
     document.addEventListener("visibilitychange", onVisibilityChange)
+
+    if (video.readyState >= VIDEO_READY_STATE_HAS_CURRENT_DATA) {
+      onVideoReady()
+    } else {
+      ensurePlaying()
+    }
 
     return () => {
       clearTimeout(timeoutId)
-      observer.disconnect()
-      videos.forEach((video) => {
-        video.removeEventListener("canplay", onCanPlay)
-        video.removeEventListener("error", onError)
-        video.removeEventListener("pause", onPause)
-        video.removeEventListener("ended", onEnded)
-        video.removeEventListener("timeupdate", onTimeUpdate)
-        video.removeEventListener("stalled", onStalled)
-      })
+      observer?.disconnect()
+      video.removeEventListener("loadeddata", onVideoReady)
+      video.removeEventListener("canplay", onVideoReady)
+      video.removeEventListener("playing", onVideoReady)
+      video.removeEventListener("error", onError)
+      video.removeEventListener("pause", onPause)
+      video.removeEventListener("ended", onEnded)
+      video.removeEventListener("timeupdate", onTimeUpdate)
+      video.removeEventListener("stalled", onStalled)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [fallbackToImage])
+  }, [activeVideoSrc, fallbackToImage])
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -216,41 +221,25 @@ function HeroDesktopParallaxSection({
   return (
     <>
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        {fallbackToImage ? (
-          <HeroFallbackPoster />
-        ) : (
-          <>
-            <video
-              ref={setVideoDarkRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              disablePictureInPicture
-              disableRemotePlayback
-              className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-0 dark:opacity-100 transition-opacity duration-500 ease-out"
-              poster={HERO_POSTER}
-              aria-hidden
-            >
-              <source src={HERO_VIDEO_DARK} type="video/mp4" />
-            </video>
-            <video
-              ref={setVideoLightRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              disablePictureInPicture
-              disableRemotePlayback
-              className="absolute inset-0 w-full h-full object-cover object-center [image-rendering:auto] opacity-100 dark:opacity-0 transition-opacity duration-500 ease-out"
-              poster={HERO_POSTER}
-              aria-hidden
-            >
-              <source src={HERO_VIDEO_LIGHT} type="video/mp4" />
-            </video>
-          </>
+        <HeroFallbackPoster />
+        {!fallbackToImage && (
+          <video
+            key={activeVideoSrc}
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            className={`absolute inset-0 z-[2] w-full h-full object-cover object-center [image-rendering:auto] transition-opacity duration-500 ease-out ${videoReady ? "opacity-100" : "opacity-0"
+              }`}
+            poster={HERO_POSTER}
+            aria-hidden
+          >
+            <source src={activeVideoSrc} type="video/mp4" />
+          </video>
         )}
         <div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
         <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background z-10" />

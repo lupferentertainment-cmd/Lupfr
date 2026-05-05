@@ -40,7 +40,7 @@ export function HeroFallbackPoster() {
         fill
         priority
         sizes="100vw"
-        onLoadingComplete={() => setReady(true)}
+        onLoad={() => setReady(true)}
         className={cn(
           "relative z-[1] object-cover object-center",
           "motion-safe:transition-opacity motion-safe:duration-500 motion-reduce:transition-none",

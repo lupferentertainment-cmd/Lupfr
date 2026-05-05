@@ -3,6 +3,7 @@ import path from "node:path"
 import { defineConfig } from "vitest/config"
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
+const coverageReportsDirectory = process.env.VITEST_COVERAGE_DIR ?? "coverage"
 
 export default defineConfig({
   test: {
@@ -13,6 +14,7 @@ export default defineConfig({
     environmentMatchGlobs: [["tests/**/*.test.tsx", "happy-dom"]],
     coverage: {
       provider: "v8",
+      reportsDirectory: coverageReportsDirectory,
       reporter: ["text", "lcov"],
       thresholds: {
         statements: 80,
