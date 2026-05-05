@@ -48,7 +48,7 @@ function ScrollRevealInner({
   const initialX = variant === "left" ? -56 : variant === "right" ? 56 : 0
   const exitX = variant === "left" ? 32 : variant === "right" ? -32 : 0
 
-  const inputRange = [0, amountIn, 0.5, amountOut, 1] as const
+  const inputRange = [0, amountIn, 0.5, amountOut, 1]
   const opacityEnd = freezeAfterReveal ? 1 : 0
   const yExit = freezeAfterReveal ? 0 : (exitY ?? 0)
   const xExit = freezeAfterReveal ? 0 : exitX

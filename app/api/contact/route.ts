@@ -76,8 +76,8 @@ export async function POST(request: Request) {
       subject: `[LUPFR] ${inquiryType} – ${name}`,
       html,
     });
-    data = result.data;
-    sendError = result.error;
+    data = result.data ?? undefined;
+    sendError = result.error ?? undefined;
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to send email";
     return NextResponse.json({ error: message }, { status: 502 });

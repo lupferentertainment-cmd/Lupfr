@@ -236,10 +236,10 @@ function EventsCarousel({
       }
     }
 
-    const timeoutId = window.setTimeout(prefetchRoutes, 250)
+    const timeoutId = globalThis.setTimeout(prefetchRoutes, 250)
     return () => {
       cancelled = true
-      window.clearTimeout(timeoutId)
+      globalThis.clearTimeout(timeoutId)
     }
   }, [eventSlugs, prefetchDetails, router])
 

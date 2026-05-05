@@ -36,12 +36,13 @@ export function CustomCursor() {
     // Check for interactive elements
     const handleElementHover = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      const isInteractive = 
+      const isInteractive = Boolean(
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
         target.closest("a") ||
         target.closest("button") ||
         target.classList.contains("cursor-pointer")
+      )
       
       setIsHovering(isInteractive)
     }

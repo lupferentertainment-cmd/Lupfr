@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, type UseInViewOptions } from "framer-motion"
 import { useRef, type ReactNode } from "react"
 
 const defaultTransition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }
@@ -16,7 +16,7 @@ export function FadeInSection({
   className?: string
   delay?: number
   once?: boolean
-  margin?: string
+  margin?: UseInViewOptions["margin"]
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once, margin })
