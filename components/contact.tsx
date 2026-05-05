@@ -6,7 +6,13 @@ import { Mail, MapPin, Phone, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
-import { getCookieConsentAccepted } from "@/lib/cookie-consent"
+import {
+  PHONE_LIST_DISMISSED_KEY,
+  PHONE_LIST_SUBMITTED_COOKIE,
+  PHONE_LIST_SUBMITTED_KEY,
+  setPhoneListCookie,
+  setPhoneListPreference,
+} from "@/lib/phone-list-preferences"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
@@ -54,15 +60,6 @@ function ProtectedPhone() {
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
 const LUPFR_EMAIL = "will@lupfr.com"
-const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
-const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
-const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
-const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
-
-function setPhoneListCookie(name: string, value: string): void {
-  if (!getCookieConsentAccepted() || typeof document === "undefined") return
-  document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
-}
 
 function openContactMailto(payload: {
   inquiryType: string
@@ -185,9 +182,9 @@ export function Contact() {
         return
       }
 
-      window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
-      window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
-      setPhoneListCookie(POPUP_SUBMITTED_COOKIE, "1")
+      setPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
+      setPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
+      setPhoneListCookie(PHONE_LIST_SUBMITTED_COOKIE)
       toast.success("You are on the contact list.")
       setContactListName("")
       setContactListEmail("")

@@ -10,7 +10,13 @@ import { toast } from "sonner"
 import { MotionScheduleCallCta } from "@/components/schedule-call-cta"
 import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
-import { getCookieConsentAccepted } from "@/lib/cookie-consent"
+import {
+  PHONE_LIST_DISMISSED_KEY,
+  PHONE_LIST_SUBMITTED_COOKIE,
+  PHONE_LIST_SUBMITTED_KEY,
+  setPhoneListCookie,
+  setPhoneListPreference,
+} from "@/lib/phone-list-preferences"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 
@@ -34,15 +40,6 @@ const footerLinks = {
 }
 
 const ease = [0.22, 1, 0.36, 1] as const
-const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
-const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
-const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
-const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
-
-function setPhoneListCookie(name: string, value: string): void {
-  if (!getCookieConsentAccepted() || typeof document === "undefined") return
-  document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
-}
 
 export function Footer() {
   const pathname = usePathname()
@@ -98,9 +95,9 @@ export function Footer() {
         return
       }
 
-      window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
-      window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
-      setPhoneListCookie(POPUP_SUBMITTED_COOKIE, "1")
+      setPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
+      setPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
+      setPhoneListCookie(PHONE_LIST_SUBMITTED_COOKIE)
       toast.success("You're on the list! We'll be in touch.")
       setContactListName("")
       setContactListEmail("")
