@@ -7,34 +7,34 @@
 /* Lupfer Entertainment - Metallic Gold & Black Theme */
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
-  /* Light base - cool porcelain, not cream, so gold reads polished instead of staining the page */
-  --background: oklch(0.985 0.003 270);
-  --foreground: oklch(0.18 0.02 280);
-  --card: oklch(0.998 0.001 270);
-  --card-foreground: oklch(0.18 0.02 280);
-  --popover: oklch(0.998 0.001 270);
-  --popover-foreground: oklch(0.18 0.02 280);
-  --primary: oklch(0.25 0.02 280);
-  --primary-foreground: oklch(0.985 0.003 270);
-  --secondary: oklch(0.948 0.005 270);
-  --secondary-foreground: oklch(0.22 0.02 280);
-  --muted: oklch(0.925 0.004 270);
-  --muted-foreground: oklch(0.45 0.02 280);
-  /* Metallic gold - light mode: quieter champagne so white surfaces stay clean */
-  --gold-shadow: oklch(0.47 0.08 76);
-  --gold-dark: oklch(0.58 0.09 78);
-  --gold: oklch(0.66 0.10 80);
-  --gold-bright: oklch(0.78 0.07 82);
-  --gold-specular: oklch(0.91 0.025 86);
-  --gold-filter-shadow: oklch(0.30 0.06 76 / 0.45);
-  --gold-filter-edge: oklch(0.50 0.08 78 / 0.28);
-  --btn-gold-text: oklch(0.985 0.003 270);
+  /* Light base - cool gallery porcelain with ink contrast; never cream/yellow. */
+  --background: oklch(0.989 0.004 255);
+  --foreground: oklch(0.145 0.024 272);
+  --card: oklch(0.999 0.001 255);
+  --card-foreground: oklch(0.145 0.024 272);
+  --popover: oklch(0.999 0.001 255);
+  --popover-foreground: oklch(0.145 0.024 272);
+  --primary: oklch(0.175 0.025 272);
+  --primary-foreground: oklch(0.989 0.004 255);
+  --secondary: oklch(0.952 0.009 250);
+  --secondary-foreground: oklch(0.2 0.025 272);
+  --muted: oklch(0.936 0.007 252);
+  --muted-foreground: oklch(0.405 0.026 268);
+  /* Metallic gold - light mode: smoked champagne, polished but restrained on white. */
+  --gold-shadow: oklch(0.39 0.055 78);
+  --gold-dark: oklch(0.53 0.075 80);
+  --gold: oklch(0.635 0.085 82);
+  --gold-bright: oklch(0.78 0.055 86);
+  --gold-specular: oklch(0.94 0.018 92);
+  --gold-filter-shadow: oklch(0.25 0.045 78 / 0.42);
+  --gold-filter-edge: oklch(0.48 0.07 80 / 0.24);
+  --btn-gold-text: oklch(0.99 0.003 255);
   --accent: var(--gold);
   --accent-foreground: oklch(0.12 0.02 280);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.875 0.006 270);
-  --input: oklch(0.925 0.004 270);
+  --border: oklch(0.855 0.011 252);
+  --input: oklch(0.928 0.009 252);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -47,13 +47,13 @@
   --transition-fast: 120ms;
   --transition-snap: 200ms;
   --transition-smooth: 280ms;
-  --sidebar: oklch(0.962 0.004 270);
-  --sidebar-foreground: oklch(0.18 0.02 280);
+  --sidebar: oklch(0.966 0.006 252);
+  --sidebar-foreground: oklch(0.145 0.024 272);
   --sidebar-primary: var(--gold);
-  --sidebar-primary-foreground: oklch(0.12 0.02 280);
-  --sidebar-accent: oklch(0.925 0.004 270);
-  --sidebar-accent-foreground: oklch(0.18 0.02 280);
-  --sidebar-border: oklch(0.875 0.006 270);
+  --sidebar-primary-foreground: oklch(0.12 0.02 272);
+  --sidebar-accent: oklch(0.936 0.007 252);
+  --sidebar-accent-foreground: oklch(0.145 0.024 272);
+  --sidebar-border: oklch(0.855 0.011 252);
   --sidebar-ring: var(--gold);
   --gradient-hero-gold: linear-gradient(90deg,
       var(--gold-shadow) 0%,
@@ -73,14 +73,14 @@
       var(--gold-dark) 50%,
       var(--gold-shadow) 100%);
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
-  /* Light mode buttons: deeper champagne CTA without yellow spill */
-  --btn-gold-shadow: oklch(0.48 0.09 76);
-  --btn-gold-dark: oklch(0.57 0.10 78);
-  --btn-gold: oklch(0.65 0.11 80);
-  --btn-gold-bright: oklch(0.77 0.08 82);
-  --btn-gold-specular: oklch(0.91 0.025 86);
-  --btn-gold-filter-shadow: oklch(0.30 0.06 76 / 0.55);
-  --btn-gold-filter-edge: oklch(0.50 0.08 78 / 0.34);
+  /* Light mode buttons: richer smoked-champagne CTA without yellow spill. */
+  --btn-gold-shadow: oklch(0.42 0.065 76);
+  --btn-gold-dark: oklch(0.55 0.085 78);
+  --btn-gold: oklch(0.64 0.095 81);
+  --btn-gold-bright: oklch(0.79 0.06 86);
+  --btn-gold-specular: oklch(0.95 0.018 92);
+  --btn-gold-filter-shadow: oklch(0.25 0.045 78 / 0.56);
+  --btn-gold-filter-edge: oklch(0.48 0.07 80 / 0.3);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
   --lupfr-pill-cta-fs: clamp(0.625rem, 0.28rem + 1.1vw, 1rem);
   /* Fixed nav (`components/navigation.tsx`): keep `#section` scroll targets below the bar (match SECTION_SPY_OFFSET_PX ≈ 120) */
@@ -93,11 +93,11 @@
   --partner-logo-opacity-solid: 0.88;
   --partner-logo-opacity-natural: 0.94;
   /* Split h2 second line — re-resolves `muted-foreground` per element (light/dark) */
-  --lupfr-heading-subline-fg: var(--muted-foreground);
+  --lupfr-heading-subline-fg: oklch(0.37 0.024 268);
   /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
-  --entertainment-line-start: oklch(0.88 0.08 75);
-  --entertainment-line-mid: oklch(0.82 0.12 70);
-  --entertainment-line-end: oklch(0.68 0.16 55);
+  --entertainment-line-start: oklch(0.9 0.045 86);
+  --entertainment-line-mid: oklch(0.76 0.085 78);
+  --entertainment-line-end: oklch(0.56 0.095 64);
 }
 
 .dark {
@@ -305,6 +305,18 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
+
+  html:not(.dark) body {
+    background:
+      radial-gradient(ellipse 120% 82% at 50% -18%,
+        color-mix(in oklch, var(--gold-specular) 28%, transparent) 0%,
+        transparent 48%),
+      linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 96%, var(--secondary)) 0%,
+        var(--background) 36%,
+        color-mix(in oklch, var(--background) 86%, var(--muted)) 100%);
+    background-attachment: fixed;
+  }
 }
 
 /* Hide scrollbar but keep functionality */
@@ -410,19 +422,19 @@
     pointer-events: none;
     background:
       radial-gradient(ellipse 74% 140% at 50% -18%,
-        color-mix(in oklch, var(--gold) 5%, transparent) 0%,
-        color-mix(in oklch, var(--gold) 2%, transparent) 38%,
+        color-mix(in oklch, var(--gold) 3%, transparent) 0%,
+        color-mix(in oklch, var(--gold) 1%, transparent) 38%,
         transparent 72%),
       linear-gradient(180deg,
-        color-mix(in oklch, var(--background) 82%, transparent) 0%,
-        color-mix(in oklch, var(--background) 54%, transparent) 46%,
-        color-mix(in oklch, var(--background) 22%, transparent) 72%,
+        color-mix(in oklch, var(--background) 68%, transparent) 0%,
+        color-mix(in oklch, var(--background) 36%, transparent) 46%,
+        color-mix(in oklch, var(--background) 14%, transparent) 72%,
         transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
     mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
     -webkit-backdrop-filter: blur(9px) saturate(1.04);
     backdrop-filter: blur(9px) saturate(1.04);
-    opacity: 0.86;
+    opacity: 0.72;
     transition:
       height var(--transition-snap) var(--ease-snap),
       opacity var(--transition-snap) var(--ease-snap),
@@ -442,6 +454,20 @@
         color-mix(in oklch, var(--background) 58%, transparent) 48%,
         color-mix(in oklch, var(--background) 28%, transparent) 74%,
         transparent 100%);
+  }
+
+  .lupfr-hero-media-wash {
+    background: linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 14%, transparent) 0%,
+        color-mix(in oklch, var(--background) 28%, transparent) 56%,
+        color-mix(in oklch, var(--background) 78%, transparent) 100%);
+  }
+
+  .dark .lupfr-hero-media-wash {
+    background: linear-gradient(180deg,
+        color-mix(in oklch, var(--background) 18%, transparent) 0%,
+        color-mix(in oklch, var(--background) 34%, transparent) 56%,
+        color-mix(in oklch, var(--background) 84%, transparent) 100%);
   }
 
   .lupfr-site-header[data-lupfr-nav-state="settled"]::before {

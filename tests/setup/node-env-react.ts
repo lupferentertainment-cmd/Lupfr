@@ -6,5 +6,5 @@
  * "React.act is not a function" (see react-dom cjs `react-dom-test-utils.production.js`).
  */
 if (process.env.NODE_ENV === "production") {
-  process.env.NODE_ENV = "test"
+  Reflect.set(process.env, "NODE_ENV", "test")
 }

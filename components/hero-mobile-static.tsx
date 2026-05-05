@@ -28,8 +28,8 @@ export function HeroMobileStaticSection({
     <>
       <div className="absolute inset-0 bg-black">
         <HeroFallbackPoster />
-        <div className="absolute inset-0 bg-black/35 z-[5]" aria-hidden />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/55 to-background z-10" />
+        <div className="absolute inset-0 bg-black/25 z-[5]" aria-hidden />
+        <div className="absolute inset-0 lupfr-hero-media-wash z-10" aria-hidden />
       </div>
 
       <div className="relative z-20 h-full flex flex-col items-center justify-center px-4 sm:px-6 pt-28 sm:pt-36 md:pt-40 pb-24 sm:pb-28 md:pb-32">

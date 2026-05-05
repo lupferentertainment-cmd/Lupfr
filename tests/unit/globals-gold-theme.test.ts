@@ -22,14 +22,16 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     const rootClose = css.indexOf("\n}\n\n.dark {")
     expect(rootClose).toBeGreaterThan(0)
     const rootBlock = css.slice(0, rootClose)
-    expect(rootBlock).toContain("  --background: oklch(0.985 0.003 270);")
-    expect(rootBlock).toContain("  --gold: oklch(0.66 0.10 80);")
-    expect(rootBlock).toContain("  --btn-gold: oklch(0.65 0.11 80);")
-    expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.68 0.16 55);")
+    expect(rootBlock).toContain("  --background: oklch(0.989 0.004 255);")
+    expect(rootBlock).toContain("  --foreground: oklch(0.145 0.024 272);")
+    expect(rootBlock).toContain("  --gold: oklch(0.635 0.085 82);")
+    expect(rootBlock).toContain("  --btn-gold: oklch(0.64 0.095 81);")
+    expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.56 0.095 64);")
+    expect(css).toContain("html:not(.dark) body")
   })
 
   it("keeps .dark (white gold): cooler chroma, not legacy copper-bronze main --gold", () => {
-    const darkMatch = css.match(/\.dark\s*\{[^]*?\n\}\n\n\/\*\n \* Corporate partner/s)
+    const darkMatch = css.match(/\.dark\s*\{[\s\S]*?\n\}\n\n\/\*\n \* Corporate partner/)
     expect(darkMatch?.[0], "expected .dark { … } before Corporate partner block").toBeDefined()
     const darkBlock = darkMatch![0]
     expect(darkBlock).toMatch(/white gold/i)
