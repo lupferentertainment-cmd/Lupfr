@@ -1,6 +1,8 @@
 "use client"
 
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, type UseScrollOptions } from "framer-motion"
+
+const DEFAULT_SCROLL_OFFSET: NonNullable<UseScrollOptions["offset"]> = ["start start", "end start"]
 
 const motionByTag = {
   h1: motion.h1,
@@ -20,7 +22,7 @@ export interface GoldShineTextProps {
   /** Optional ref to drive shine from this element's scroll (e.g. section). If not set, uses global scroll. */
   scrollTargetRef?: React.RefObject<HTMLElement | null>
   /** Scroll offset when using scrollTargetRef: [startInView, endInView]. Default global: [0, 1] -> shine 50% to 100%. */
-  scrollOffset?: [string, string]
+  scrollOffset?: UseScrollOptions["offset"]
   className?: string
   /** Use `h1`–`h4` to render the shine on the heading (no extra wrapper). Default `span` for inline or inside an existing heading. */
   as?: GoldShineTextAs
@@ -51,20 +53,19 @@ function GoldShineTextStatic({
 function GoldShineTextScroll({
   children,
   scrollTargetRef,
-  scrollOffset = ["start start", "end start"],
+  scrollOffset = DEFAULT_SCROLL_OFFSET,
   className = "",
   as = "span",
 }: Omit<GoldShineTextProps, "variant">) {
-  const { scrollYProgress } = useScroll(
-    scrollTargetRef
-      ? {
-          target: scrollTargetRef,
-          offset: scrollOffset,
-          /* Parent section ref is attached after child layout effects (Strict Mode / streaming); useEffect avoids Framer ref warning. */
-          layoutEffect: false,
-        }
-      : {}
-  )
+  const scrollOptions: UseScrollOptions = scrollTargetRef
+    ? {
+        target: scrollTargetRef,
+        offset: scrollOffset,
+        /* Parent section ref is attached after child layout effects (Strict Mode / streaming); useEffect avoids Framer ref warning. */
+        layoutEffect: false,
+      }
+    : {}
+  const { scrollYProgress } = useScroll(scrollOptions)
 
   const backgroundPosition = useTransform(
     scrollYProgress,
