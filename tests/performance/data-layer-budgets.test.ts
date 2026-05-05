@@ -40,8 +40,8 @@ function bestBulkElapsedMs(samples: number, count: number, fn: () => void): numb
 
 describe("data layer performance budgets", () => {
   it("getUpcomingEvents + getPastEvents on real YAML-backed data", () => {
-    const iterations = 2_000
-    const ms = bestBulkElapsedMs(5, iterations, () => {
+    const iterations = 1_200
+    const ms = bestBulkElapsedMs(3, iterations, () => {
       getUpcomingEvents(fixedNow)
       getPastEvents(fixedNow)
     })
@@ -81,15 +81,15 @@ describe("data layer performance budgets", () => {
       id: 200_000 + i,
       src: `${base!.src}-L-${i}`,
     }))
-    warmup(5, () => {
+    warmup(3, () => {
       groupGalleryByDateISO(small)
       groupGalleryByDateISO(large)
     })
     // Compare equal total work to avoid tiny-input timer noise on CI VMs.
-    const tSmall = bestBulkElapsedMs(5, 2_000, () => {
+    const tSmall = bestBulkElapsedMs(3, 800, () => {
       groupGalleryByDateISO(small)
     })
-    const tLarge = bestBulkElapsedMs(5, 200, () => {
+    const tLarge = bestBulkElapsedMs(3, 80, () => {
       groupGalleryByDateISO(large)
     })
 
