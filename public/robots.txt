@@ -2,26 +2,45 @@
 User-agent: *
 Allow: /
 Disallow: /docs
-Disallow: /docs/
 Disallow: /_docs
-Disallow: /_docs/
 Disallow: /README
-Disallow: /README.md
 Disallow: /readme
-Disallow: /readme.md
-Disallow: /OVERVIEW.md
-Disallow: /overview.md
-Disallow: /ARCHITECTURE.md
-Disallow: /architecture.md
-Disallow: /DESIGN.md
-Disallow: /design.md
-Disallow: /REQUIREMENTS.md
-Disallow: /requirements.md
-Disallow: /API.md
-Disallow: /api.md
-Disallow: /DEPLOYMENT.md
-Disallow: /deployment.md
-Disallow: /TESTING.md
-Disallow: /testing.md
+Disallow: /*.md$
+
+User-agent: GPTBot
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
+
+User-agent: Claude-User
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /docs
+Disallow: /_docs
+Disallow: /*.md$
 
 Sitemap: https://lupfr.com/sitemap.xml

@@ -47,7 +47,7 @@ function GridTileImage({
         priority={eager}
         fetchPriority={fetchPriority}
         decoding="async"
-        onLoadingComplete={() => setReady(true)}
+        onLoad={() => setReady(true)}
       />
     </>
   )

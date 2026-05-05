@@ -105,7 +105,7 @@ function HomeGallerySlideDecodingImage({
           fetchPriority={isLcpCandidate ? "high" : "low"}
           decoding="async"
           draggable={false}
-          onLoadingComplete={() => setReady(true)}
+          onLoad={() => setReady(true)}
         />
       </GallerySlideHitLink>
     </>

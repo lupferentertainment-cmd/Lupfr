@@ -130,13 +130,11 @@ export function Navigation() {
     <>
       <header
         data-lupfr-nav-menu-open={isOpen ? "true" : "false"}
-        className={`fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap ${isScrolled || isOpen
-            ? "bg-background/60 dark:bg-background/50 backdrop-blur-xl backdrop-saturate-150 border-b border-border/60 shadow-sm"
-            : ""
-          }`}
+        data-lupfr-nav-state={isScrolled || isOpen ? "settled" : "hero"}
+        className="lupfr-site-header fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap"
       >
         <nav
-          className="container mx-auto flex w-full min-w-0 max-w-full items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(19rem,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
+          className="container relative z-10 mx-auto flex w-full min-w-0 max-w-full items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(19rem,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
           aria-label="Primary"
         >
           {/* Col 1: logo top-left. Center links use a separate auto column (grid) so they stay viewport-centered, not nudged by justify-end. */}

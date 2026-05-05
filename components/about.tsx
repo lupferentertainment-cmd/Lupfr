@@ -260,7 +260,7 @@ export function About() {
                 width={400}
                 height={500}
                 sizes="(max-width: 768px) 100vw, 400px"
-                onLoadingComplete={() => setPortraitReady(true)}
+                onLoad={() => setPortraitReady(true)}
                 className={cn(
                   "relative z-[1] w-full h-auto object-cover object-top",
                   "motion-safe:transition-opacity motion-safe:duration-300",

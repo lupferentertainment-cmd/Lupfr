@@ -12,6 +12,7 @@ const title = "Photo gallery"
 const description = "LUPFR photo gallery."
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title,
   description,
   openGraph: { title, description },

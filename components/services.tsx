@@ -67,7 +67,7 @@ function PartnerLogoChip({
           width={512}
           height={512}
           sizes="(max-width: 640px) 7rem, (max-width: 1024px) 8rem, 10rem"
-          onLoadingComplete={() => setReady(true)}
+          onLoad={() => setReady(true)}
           className={cn(
             "relative z-[1]",
             "motion-safe:transition-opacity motion-safe:duration-300",

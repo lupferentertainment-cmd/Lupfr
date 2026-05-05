@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 
 type SkeletonShimmerLayerProps = {
-  /** `false` after the real image has fired `onLoadingComplete`, or for empty slots that should not show shimmer. */
+  /** `false` after the real image has fired `onLoad`, or for empty slots that should not show shimmer. */
   show: boolean
   className?: string
   zIndexClassName?: string

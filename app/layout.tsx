@@ -34,7 +34,7 @@ const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
 const defaultDescription = "San Francisco's premier music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable experiences in the Bay and beyond."
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL("https://lupfr.com"),
   applicationName: siteName,
   title: {
     default: defaultTitle,
@@ -67,7 +67,16 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    'max-snippet': -1,
+    'max-image-preview': 'large',
+    'max-video-preview': -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-snippet': -1,
+      'max-image-preview': 'large',
+      'max-video-preview': -1,
+    },
   },
   openGraph: {
     title: defaultTitle,
@@ -77,22 +86,27 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     images: [
-      { url: '/opengraph-image', width: 1200, height: 630, alt: defaultTitle },
+      { url: `${SITE_URL}/opengraph-image`, width: 1200, height: 630, alt: defaultTitle },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: defaultTitle,
     description: defaultDescription,
-    images: [{ url: '/twitter-image', width: 1200, height: 630, alt: defaultTitle }],
+    images: [{ url: `${SITE_URL}/twitter-image`, width: 1200, height: 630, alt: defaultTitle }],
   },
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
       { url: '/favicon/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
+    shortcut: [{ url: '/favicon.ico' }],
     apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       { url: '/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },

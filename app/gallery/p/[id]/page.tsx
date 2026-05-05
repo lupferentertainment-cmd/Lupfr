@@ -47,12 +47,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const id = parseIdParam(raw)
   const photo = getGalleryPhotoById(id)
   if (!photo) {
-    return { title: "Gallery" }
+    return {
+      metadataBase: new URL(SITE_URL),
+      title: "Gallery",
+    }
   }
   const pageTitle = `LUPFR | ${photo.title}`
   const absolute = `${SITE_URL}${photo.src}`
   const canonical = `${SITE_URL}/gallery/p/${photo.id}`
   return {
+    metadataBase: new URL(SITE_URL),
     title: pageTitle,
     description: photo.caption || photo.alt,
     alternates: { canonical },

@@ -1,0 +1,16 @@
+LUPFR Entertainment website AI access policy
+Crawl status: allowed for public website routes.
+
+Preferred entry points
+https://lupfr.com/
+https://lupfr.com/events
+https://lupfr.com/gallery
+https://lupfr.com/contact
+
+Machine-readable discovery
+https://lupfr.com/robots.txt
+https://lupfr.com/sitemap.xml
+
+Internal docs and markdown mirror paths are not intended for indexing.
+Primary contact
+https://lupfr.com/contact

@@ -168,7 +168,7 @@ export function GalleryLightbox({
               loading={open ? "eager" : "lazy"}
               fetchPriority={open ? "high" : "low"}
               decoding="async"
-              onLoadingComplete={() => setDecodedId(currentId)}
+              onLoad={() => setDecodedId(currentId)}
             />
           </div>
         </div>
@@ -267,7 +267,7 @@ function MasonryThumb({
         loading={eagerThumb ? "eager" : "lazy"}
         fetchPriority={fetchPriority}
         decoding="async"
-        onLoadingComplete={() => setThumbReady(true)}
+        onLoad={() => setThumbReady(true)}
         className={cn(
           "z-[1] rounded-gallery-squircle object-cover object-center transition duration-500 ease-snap motion-reduce:transition-none group-hover:scale-[1.04] motion-reduce:group-hover:scale-100",
           "transition-opacity duration-300 ease-out motion-reduce:transition-none",

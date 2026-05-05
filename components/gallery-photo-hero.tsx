@@ -79,7 +79,7 @@ export function GalleryPhotoHero({
           priority
           fetchPriority="high"
           decoding="async"
-          onLoadingComplete={() => setDecodedSrc(src)}
+          onLoad={() => setDecodedSrc(src)}
           className={cn(
             "absolute inset-0 z-[2] h-full w-full object-contain object-center",
             "transition-opacity duration-300 ease-out motion-reduce:transition-none",

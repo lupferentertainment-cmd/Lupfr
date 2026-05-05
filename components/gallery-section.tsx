@@ -65,7 +65,7 @@ function GallerySlide({
           loading={eager ? "eager" : "lazy"}
           fetchPriority={eager ? "high" : "low"}
           decoding="async"
-          onLoadingComplete={() => setImageReady(true)}
+          onLoad={() => setImageReady(true)}
           className={cn(
             "relative z-[1] h-full w-full object-cover object-center",
             "motion-safe:transition-opacity motion-safe:duration-300",

@@ -7,6 +7,7 @@ __v0_jsx-dev-runtime.ts
 node_modules/
 *.tsbuildinfo
 .next/
+.next-ci/
 coverage/
 .env*.local
 .DS_Store

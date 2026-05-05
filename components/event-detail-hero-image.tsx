@@ -44,7 +44,7 @@ export function EventDetailHeroImage({
         sizes={sizes}
         priority
         unoptimized={unoptimized}
-        onLoadingComplete={() => setReady(true)}
+        onLoad={() => setReady(true)}
         className={cn(
           "relative z-[1] h-auto max-h-[min(88vh,2000px)] w-auto max-w-full object-contain",
           "transition-opacity duration-300 ease-out motion-reduce:transition-none",

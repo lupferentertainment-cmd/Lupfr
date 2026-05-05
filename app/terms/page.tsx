@@ -8,6 +8,7 @@ import { SITE_URL } from "@/lib/site"
 const title = "Terms of Service"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title,
   description: "LUPFR terms and commercial inquiries for lupfr.com.",
   alternates: { canonical: `${SITE_URL}/terms` },

@@ -48,6 +48,7 @@ const ArtistCard = memo(function ArtistCard({
   const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
   const [imageReady, setImageReady] = useState(false)
+  const [isTrackLoaded, setIsTrackLoaded] = useState(false)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -70,6 +71,12 @@ const ArtistCard = memo(function ArtistCard({
 
   const hasSpotify = "spotify" in artist && artist.spotify
   const hasAppleMusic = "appleMusic" in artist && artist.appleMusic
+  const featuredTrackEmbedUrl = artist.featuredTrack
+    ? artist.featuredTrack.platform === "spotify"
+      ? spotifyEmbedUrl(artist.featuredTrack.url)
+      : soundcloudEmbedUrl(artist.featuredTrack.url)
+    : ""
+  const featuredTrackLabel = artist.featuredTrack?.platform === "spotify" ? "Spotify" : "SoundCloud"
 
   return (
     <motion.article
@@ -124,7 +131,7 @@ const ArtistCard = memo(function ArtistCard({
                   imageReady ? "opacity-100" : "opacity-0"
                 )}
                 onError={() => setImageError(true)}
-                onLoadingComplete={() => setImageReady(true)}
+                onLoad={() => setImageReady(true)}
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
@@ -205,31 +212,33 @@ const ArtistCard = memo(function ArtistCard({
               </motion.a>
             )}
           </div>
-          {artist.featuredTrack && (
+          {artist.featuredTrack && featuredTrackEmbedUrl && (
             <div className="mt-4 w-full pt-4 border-t border-border/80">
               <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
               <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
-                {artist.featuredTrack.platform === "spotify" && spotifyEmbedUrl(artist.featuredTrack.url) && (
+                {isTrackLoaded ? (
                   <iframe
-                    src={spotifyEmbedUrl(artist.featuredTrack.url)}
+                    src={featuredTrackEmbedUrl}
                     width="100%"
-                    height="80"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
+                    height={artist.featuredTrack.platform === "spotify" ? "80" : "166"}
+                    allow={
+                      artist.featuredTrack.platform === "spotify"
+                        ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        : "autoplay; encrypted-media; fullscreen"
+                    }
                     className="border-0"
-                    title={`Listen to ${artist.name} on Spotify`}
+                    title={`Listen to ${artist.name} on ${featuredTrackLabel}`}
                   />
-                )}
-                {artist.featuredTrack.platform === "soundcloud" && (
-                  <iframe
-                    src={soundcloudEmbedUrl(artist.featuredTrack.url)}
-                    width="100%"
-                    height="166"
-                    allow="autoplay; encrypted-media; fullscreen"
-                    loading="lazy"
-                    className="border-0"
-                    title={`Listen to ${artist.name} on SoundCloud`}
-                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsTrackLoaded(true)}
+                    className="flex h-20 w-full items-center justify-center gap-2 px-4 text-sm font-semibold text-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    aria-label={`Load ${featuredTrackLabel} player for ${artist.name}`}
+                  >
+                    <Music size={16} aria-hidden />
+                    Load {featuredTrackLabel} player
+                  </button>
                 )}
               </div>
             </div>
