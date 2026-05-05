@@ -118,25 +118,25 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <Reviews />
-      <DeferredHomeSection id="events" estimatedHeightClassName="min-h-[980px] sm:min-h-[1120px]">
+      <DeferredHomeSection id="events" estimatedHeightClassName="min-h-[860px] sm:min-h-[980px]">
         <Events />
       </DeferredHomeSection>
-      <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[900px] sm:min-h-[980px]">
+      <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[740px] sm:min-h-[820px]">
         <Services />
       </DeferredHomeSection>
       <DeferredHomeSection
         id="artists"
-        estimatedHeightClassName="min-h-[1300px] sm:min-h-[980px] lg:min-h-[860px]"
+        estimatedHeightClassName="min-h-[1120px] sm:min-h-[860px] lg:min-h-[760px]"
       >
         <Artists />
       </DeferredHomeSection>
-      <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[760px] sm:min-h-[820px]">
+      <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[620px] sm:min-h-[700px]">
         <Gallery />
       </DeferredHomeSection>
-      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[1300px] lg:min-h-[900px]">
+      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[1120px] lg:min-h-[780px]">
         <About />
       </DeferredHomeSection>
-      <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[980px]">
+      <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         <Contact />
         <Footer />
       </DeferredHomeSection>

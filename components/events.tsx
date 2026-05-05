@@ -337,7 +337,7 @@ export function Events() {
     <section
       id="events"
       ref={ref}
-      className="pt-14 sm:pt-16 md:pt-20 lg:pt-24 pb-32 sm:pb-36 md:pb-40 lg:pb-48 px-4 sm:px-6 lg:px-8 relative overflow-visible"
+      className="pt-10 sm:pt-12 md:pt-14 lg:pt-16 pb-20 sm:pb-24 md:pb-28 lg:pb-32 px-4 sm:px-6 lg:px-8 relative overflow-visible"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
@@ -346,7 +346,7 @@ export function Events() {
           initial={{ opacity: 0, y: 36 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8 sm:mb-10 md:mb-12"
+          className="mb-6 sm:mb-8 md:mb-10"
         >
           <h2>
             <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
@@ -357,7 +357,7 @@ export function Events() {
           initial={{ opacity: 0, y: 24 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
           transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20 md:mb-28 lg:mb-32"
+          className="mb-14 md:mb-18 lg:mb-20"
         >
           <GoldShineText
             as="h3"
@@ -391,7 +391,7 @@ export function Events() {
             initial={{ opacity: 0, y: 24 }}
             animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="pt-4 pb-8"
+            className="pt-2 pb-4"
           >
             <GoldShineText
               as="h3"

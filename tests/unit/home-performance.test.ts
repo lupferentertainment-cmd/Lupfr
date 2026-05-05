@@ -29,6 +29,13 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("id=\"contact\"")
     })
 
+    it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[860px] sm:min-h-[980px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[740px] sm:min-h-[820px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[620px] sm:min-h-[700px]"')
+        expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
+    })
+
     it("keeps heavyweight lower sections out of the initial server/client payload", () => {
         expect(homePage).toContain("{ ssr: false }")
         expect(homePage).toContain("<Services />")

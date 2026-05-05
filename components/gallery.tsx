@@ -247,7 +247,7 @@ export function Gallery() {
     <section
       id="gallery"
       ref={ref}
-      className="relative scroll-mt-24 sm:scroll-mt-28 overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 md:pt-16 pb-14 sm:pb-16 md:pb-20 border-y border-border/40 bg-muted/15"
+      className="relative scroll-mt-24 sm:scroll-mt-28 overflow-hidden px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-12 pb-10 sm:pb-12 md:pb-14 border-y border-border/40 bg-muted/15"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background pointer-events-none" />
 
@@ -256,7 +256,7 @@ export function Gallery() {
           initial={{ opacity: 0, y: 36 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8 sm:mb-10 md:mb-12 text-center md:text-left"
+          className="mb-6 sm:mb-8 md:mb-10 text-center md:text-left"
         >
           <h2 className="lupfr-heading-split-leading">
             <GoldShineText scrollTargetRef={ref}>Gallery</GoldShineText>

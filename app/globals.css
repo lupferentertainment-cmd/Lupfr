@@ -55,29 +55,39 @@
   --sidebar-accent-foreground: oklch(0.145 0.024 272);
   --sidebar-border: oklch(0.855 0.011 252);
   --sidebar-ring: var(--gold);
-  --gradient-hero-gold: linear-gradient(90deg,
-      var(--gold-shadow) 0%,
-      var(--gold-dark) 15%,
-      var(--gold) 28%,
-      var(--gold-dark) 35%,
-      var(--gold-specular) 42%,
+    --gradient-hero-gold: linear-gradient(90deg,
+      color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 0%,
+      var(--gold) 12%,
+      var(--gold-bright) 26%,
+      var(--gold-specular) 38%,
       var(--gold-bright) 48%,
-      var(--gold-specular) 54%,
-      var(--gold-dark) 62%,
-      var(--gold) 75%,
-      var(--gold-dark) 88%,
-      var(--gold-shadow) 100%);
+      var(--gold) 60%,
+      var(--gold-specular) 72%,
+      var(--gold-bright) 84%,
+      color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 100%);
+      --gradient-heading-gold: linear-gradient(90deg,
+        color-mix(in oklch, var(--gold-shadow) 88%, black) 0%,
+        var(--gold-dark) 13%,
+        color-mix(in oklch, var(--gold) 86%, var(--gold-dark)) 27%,
+        var(--gold-shadow) 35%,
+        color-mix(in oklch, var(--gold-specular) 74%, var(--gold-bright)) 42%,
+        var(--gold-bright) 48%,
+        color-mix(in oklch, var(--gold-specular) 70%, var(--gold-dark)) 54%,
+        var(--gold-dark) 63%,
+        var(--gold) 76%,
+        var(--gold-dark) 88%,
+        color-mix(in oklch, var(--gold-shadow) 88%, black) 100%);
   --gradient-btn-brass: linear-gradient(180deg,
       var(--gold-bright) 0%,
       var(--gold) 25%,
       var(--gold-dark) 50%,
       var(--gold-shadow) 100%);
-  --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
+  --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 2px 8px oklch(0.22 0.06 76 / 0.42)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
   /* Light mode buttons: richer smoked-champagne CTA without yellow spill. */
-  --btn-gold-shadow: oklch(0.42 0.065 76);
-  --btn-gold-dark: oklch(0.55 0.085 78);
-  --btn-gold: oklch(0.64 0.095 81);
-  --btn-gold-bright: oklch(0.79 0.06 86);
+  --btn-gold-shadow: oklch(0.46 0.08 76);
+  --btn-gold-dark: oklch(0.58 0.1 78);
+  --btn-gold: oklch(0.69 0.12 82);
+  --btn-gold-bright: oklch(0.84 0.075 86);
   --btn-gold-specular: oklch(0.95 0.018 92);
   --btn-gold-filter-shadow: oklch(0.25 0.045 78 / 0.56);
   --btn-gold-filter-edge: oklch(0.48 0.07 80 / 0.3);
@@ -95,9 +105,9 @@
   /* Split h2 second line — re-resolves `muted-foreground` per element (light/dark) */
   --lupfr-heading-subline-fg: oklch(0.37 0.024 268);
   /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
-  --entertainment-line-start: oklch(0.9 0.045 86);
-  --entertainment-line-mid: oklch(0.76 0.085 78);
-  --entertainment-line-end: oklch(0.56 0.095 64);
+  --entertainment-line-start: oklch(0.96 0.035 90);
+  --entertainment-line-mid: oklch(0.82 0.11 80);
+  --entertainment-line-end: oklch(0.66 0.13 68);
 }
 
 .dark {
@@ -117,6 +127,18 @@
   --btn-gold-specular: oklch(0.94 0.03 76);
   --btn-gold-filter-shadow: oklch(0.28 0.04 70 / 0.75);
   --btn-gold-filter-edge: oklch(0.55 0.06 72 / 0.45);
+  --gradient-heading-gold: linear-gradient(90deg,
+      var(--gold-shadow) 0%,
+      var(--gold-dark) 15%,
+      var(--gold) 28%,
+      var(--gold-dark) 35%,
+      var(--gold-specular) 42%,
+      var(--gold-bright) 48%,
+      var(--gold-specular) 54%,
+      var(--gold-dark) 62%,
+      var(--gold) 75%,
+      var(--gold-dark) 88%,
+      var(--gold-shadow) 100%);
   --background: oklch(0.055 0.004 280);
   --foreground: oklch(0.96 0.008 85);
   --card: oklch(0.085 0.005 280);
@@ -717,18 +739,7 @@
  * with that component for descender-safe metrics (clip:text).
  */
 .heading-metallic-gold {
-  background: linear-gradient(90deg,
-      var(--gold-shadow) 0%,
-      var(--gold-dark) 15%,
-      var(--gold) 28%,
-      var(--gold-dark) 35%,
-      var(--gold-specular) 42%,
-      var(--gold-bright) 48%,
-      var(--gold-specular) 54%,
-      var(--gold-dark) 62%,
-      var(--gold) 75%,
-      var(--gold-dark) 88%,
-      var(--gold-shadow) 100%);
+  background: var(--gradient-heading-gold);
   background-size: 220% 100%;
   background-position: 50% 50%;
   -webkit-background-clip: text;
@@ -834,13 +845,16 @@
   color: var(--gold);
 }
 
-/* Hero "Entertainment" line: gold in light mode, muted in dark */
+/* Hero "Entertainment" line: explicit metallic gold highlight. */
 .hero-entertainment-text {
-  color: var(--gold);
-}
-
-.dark .hero-entertainment-text {
-  color: var(--muted-foreground);
+  background: linear-gradient(90deg,
+      var(--entertainment-line-start) 0%,
+      var(--entertainment-line-mid) 46%,
+      var(--entertainment-line-end) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: var(--filter-hero-gold);
 }
 
 /* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */
@@ -884,8 +898,10 @@
       var(--btn-gold-shadow) 100%);
   color: var(--btn-gold-text);
   border: none;
-  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
-  filter: none;
+  box-shadow:
+    inset 0 1px 0 var(--btn-gold-specular),
+    0 10px 28px color-mix(in oklch, var(--btn-gold) 28%, transparent);
+  filter: drop-shadow(0 1px 2px var(--btn-gold-filter-shadow));
 }
 
 .btn-metallic-gold::before {
@@ -904,8 +920,10 @@
 }
 
 .btn-metallic-gold:hover {
-  box-shadow: inset 0 1px 0 var(--btn-gold-specular);
-  filter: none;
+  box-shadow:
+    inset 0 1px 0 var(--btn-gold-specular),
+    0 12px 34px color-mix(in oklch, var(--btn-gold-bright) 34%, transparent);
+  filter: drop-shadow(0 1px 2px var(--btn-gold-filter-shadow));
 }
 
 .btn-metallic-gold:hover::before {
@@ -980,7 +998,12 @@
     -webkit-background-clip: text;
     background-image: var(--gradient-hero-gold);
     background-size: 220% 100%;
-    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 2px 4px oklch(0.28 0.08 82 / 0.6)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) var(--filter-hero-gold);
+    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 4px 16px oklch(0.24 0.07 78 / 0.62)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) var(--filter-hero-gold);
+  }
+
+  .lupfr-hero .heading-metallic-gold {
+    background-image: var(--gradient-hero-gold);
+    filter: var(--filter-hero-gold);
   }
 
   /* Static position for reduced-motion (no animation); LUPFR renders once, no inline style updates */

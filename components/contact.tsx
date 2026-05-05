@@ -200,7 +200,7 @@ export function Contact() {
     <section
       id="contact"
       ref={ref}
-      className="relative overflow-hidden bg-card/30 px-4 py-20 sm:px-6 sm:py-24 md:py-32"
+      className="relative overflow-hidden bg-card/30 px-4 py-14 sm:px-6 sm:py-16 md:py-20"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-24 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-accent/5 blur-[140px]" />
@@ -212,7 +212,7 @@ export function Contact() {
           initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-10 max-w-4xl text-center sm:mb-12 md:mb-16"
+          className="mx-auto mb-8 max-w-4xl text-center sm:mb-10 md:mb-12"
         >
           <p className="mb-4 text-sm tracking-tight text-gold-accent">Get in touch</p>
           <h2 className="mb-5 lupfr-heading-split-leading">

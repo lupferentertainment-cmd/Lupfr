@@ -8,6 +8,7 @@ node_modules/
 *.tsbuildinfo
 .next/
 .next-ci/
+.next-preview-*/
 coverage/
 .env*.local
 .DS_Store
