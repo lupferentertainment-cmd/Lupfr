@@ -9,7 +9,7 @@ const globalsPath = path.join(rootDir, "app", "globals.css")
 /**
  * Guardrail: `app/globals.css` is the single source for LUPFR gold.
  * Intention: avoid regressions (e.g. dark “bronze/copper” vs agreed “white gold” light chroma on black).
- * When the palette is deliberately updated, change this file and `docs/DESIGN.md` together.
+ * When the palette is deliberately updated, change this file, `docs/DESIGN.md`, and `docs/TESTING.md` together.
  */
 describe("app/globals.css gold theme (canonical tokens)", () => {
   const css = fs.readFileSync(globalsPath, "utf8")
@@ -25,14 +25,35 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(rootBlock).toContain("  --background: oklch(1 0 0);")
     expect(rootBlock).toContain("  --foreground: oklch(0.11 0.016 265);")
     expect(rootBlock).toContain("  --card: oklch(1 0 0);")
+    expect(rootBlock).toContain("  --card-foreground: oklch(0.11 0.016 265);")
+    expect(rootBlock).toContain("  --popover: oklch(1 0 0);")
+    expect(rootBlock).toContain("  --secondary: oklch(0.972 0.004 98);")
+    expect(rootBlock).toContain("  --muted: oklch(0.952 0.006 96);")
+    expect(rootBlock).toContain("  --muted-foreground: oklch(0.34 0.02 262);")
+    expect(rootBlock).toContain("  --border: oklch(0.875 0.014 95);")
     expect(rootBlock).toContain("  --gold: oklch(0.64 0.17 82);")
+    expect(rootBlock).toContain("  --gold-shadow: oklch(0.36 0.085 74);")
+    expect(rootBlock).toContain("  --gold-dark: oklch(0.5 0.13 77);")
+    expect(rootBlock).toContain("  --gold-bright: oklch(0.84 0.13 88);")
+    expect(rootBlock).toContain("  --gold-specular: oklch(0.985 0.026 96);")
     expect(rootBlock).toContain("  --btn-gold: oklch(0.62 0.17 82);")
+    expect(rootBlock).toContain("  --btn-gold-shadow: oklch(0.38 0.1 75);")
+    expect(rootBlock).toContain("  --btn-gold-dark: oklch(0.51 0.14 78);")
+    expect(rootBlock).toContain("  --btn-gold-bright: oklch(0.82 0.13 88);")
+    expect(rootBlock).toContain("  --btn-gold-specular: oklch(0.985 0.026 96);")
     expect(rootBlock).toContain("  --gradient-heading-gold: linear-gradient(90deg,")
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-shadow) 96%, black) 0%,")
+    expect(rootBlock).toContain("      color-mix(in oklch, var(--gold) 82%, var(--gold-dark)) 27%,")
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-specular) 70%, var(--gold-bright)) 42%,")
+    expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-shadow) 96%, black) 100%);")
+    expect(rootBlock).toContain("  --lupfr-heading-subline-fg: oklch(0.31 0.02 262);")
+    expect(rootBlock).toContain("  --entertainment-line-start: oklch(0.985 0.018 95);")
+    expect(rootBlock).toContain("  --entertainment-line-mid: oklch(0.84 0.14 84);")
     expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.58 0.17 70);")
     expect(css).toContain("html:not(.dark) body")
     expect(css).toContain("oklch(1 0 0) 0%")
+    expect(rootBlock).not.toContain("  --background: oklch(0.996 0.001 95);")
+    expect(rootBlock).not.toContain("  --gold: oklch(0.69 0.14 82);")
   })
 
   it("keeps .dark (white gold): locked black-mode metal, not legacy copper-bronze", () => {
