@@ -5,24 +5,18 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { isValidPhone } from "@/lib/contact-input"
-import { getCookieConsentAccepted } from "@/lib/cookie-consent"
+import {
+    hasPhoneListCookie,
+    hasPhoneListPreference,
+    PHONE_LIST_DISMISSED_COOKIE,
+    PHONE_LIST_DISMISSED_KEY,
+    PHONE_LIST_SUBMITTED_COOKIE,
+    PHONE_LIST_SUBMITTED_KEY,
+    setPhoneListCookie,
+    setPhoneListPreference,
+} from "@/lib/phone-list-preferences"
 
-const POPUP_DISMISSED_KEY = "lupfr-phone-popup-dismissed"
-const POPUP_SUBMITTED_KEY = "lupfr-phone-popup-submitted"
-const POPUP_DISMISSED_COOKIE = "lupfr_phone_popup_dismissed"
-const POPUP_SUBMITTED_COOKIE = "lupfr_phone_popup_submitted"
-const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 const SHOW_DELAY_MS = 2500
-
-function hasCookie(name: string): boolean {
-    if (typeof document === "undefined") return false
-    return document.cookie.split(";").some((chunk) => chunk.trim().startsWith(`${name}=`))
-}
-
-function setPhoneListCookie(name: string, value: string): void {
-    if (!getCookieConsentAccepted() || typeof document === "undefined") return
-    document.cookie = `${name}=${value}; Max-Age=${COOKIE_MAX_AGE_SECONDS}; Path=/; SameSite=Lax`
-}
 
 export function PhoneListPopup() {
     const [isOpen, setIsOpen] = useState(false)
@@ -31,10 +25,10 @@ export function PhoneListPopup() {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     useEffect(() => {
-        const dismissed = window.localStorage.getItem(POPUP_DISMISSED_KEY) === "1"
-        const submitted = window.localStorage.getItem(POPUP_SUBMITTED_KEY) === "1"
-        const dismissedByCookie = hasCookie(POPUP_DISMISSED_COOKIE)
-        const submittedByCookie = hasCookie(POPUP_SUBMITTED_COOKIE)
+        const dismissed = hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
+        const submitted = hasPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
+        const dismissedByCookie = hasPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)
+        const submittedByCookie = hasPhoneListCookie(PHONE_LIST_SUBMITTED_COOKIE)
         if (dismissed || submitted || dismissedByCookie || submittedByCookie) return
 
         const timer = window.setTimeout(() => {
@@ -45,8 +39,8 @@ export function PhoneListPopup() {
     }, [])
 
     const closePopup = useCallback(() => {
-        window.localStorage.setItem(POPUP_DISMISSED_KEY, "1")
-        setPhoneListCookie(POPUP_DISMISSED_COOKIE, "1")
+        setPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
+        setPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)
         setIsOpen(false)
     }, [])
 
@@ -92,8 +86,8 @@ export function PhoneListPopup() {
                 return
             }
 
-            window.localStorage.setItem(POPUP_SUBMITTED_KEY, "1")
-            setPhoneListCookie(POPUP_SUBMITTED_COOKIE, "1")
+            setPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
+            setPhoneListCookie(PHONE_LIST_SUBMITTED_COOKIE)
             setIsOpen(false)
             toast.success("You are on the contact list.")
             setName("")
