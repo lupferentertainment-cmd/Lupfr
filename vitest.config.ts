@@ -10,6 +10,8 @@ const testConfig = {
   globals: true,
   include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
   environmentMatchGlobs: [["tests/**/*.test.tsx", "happy-dom"]],
+  maxWorkers: "50%" as const,
+  minWorkers: 1,
   coverage: {
     provider: "v8" as const,
     reportsDirectory: coverageReportsDirectory,

@@ -170,7 +170,9 @@ export function Gallery() {
   const inViewNow = useInView(ref, { once: false, margin: "0px 0px 80px 0px", amount: 0.15 })
   const [hasRevealed, setHasRevealed] = useState(false)
   useEffect(() => {
-    if (inViewNow) setHasRevealed(true)
+    if (!inViewNow) return
+    const timeoutId = window.setTimeout(() => setHasRevealed(true), 0)
+    return () => window.clearTimeout(timeoutId)
   }, [inViewNow])
   const isRevealed = hasRevealed
   const prefersReducedMotion = useReducedMotion()

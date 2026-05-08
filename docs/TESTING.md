@@ -33,7 +33,8 @@
 - `tests/unit/escape-back.test.ts` – `getEscapeBackHref` targets by route + query (including `/contact` → `/`); `isDocumentBlockingEscapeBack` with minimal document doubles; `isEscapeBackFormFieldTarget` for form fields (happy-dom).
 - `tests/unit/site.test.ts` – `CONTACT_PAGE_PATH` for `/contact` (Book an Event).
 - `tests/unit/seo-discovery-assets.test.ts` – SEO discovery contracts: `public/robots.txt` includes sitemap + explicit AI crawler groups, root and `/favicon/` icon fallbacks exist, and `public/llms.txt` + `public/site.webmanifest` publish crawl/discovery targets.
-- `tests/unit/events-list.test.ts` – `getUpcomingEvents` / `getPastEvents` sort order (`dateISO` ascending for upcoming with TBD last; newest-first for past); `getEventBySlug` / `eventDetailPath`; `todayDateISOInEventTZ`; `getEventTag` (TBD / past / today / upcoming); `eventShareTitle` / `eventHeroAbsoluteUrl` (including relative image paths) for event detail sharing and OG image URLs.
+- `tests/unit/artists-list.test.ts` – YAML-generated featured artist contract: six-card display order, retired artist removal, and new artist social / featured track links.
+- `tests/unit/events-list.test.ts` – `getUpcomingEvents` / `getPastEvents` sort order (`dateISO` ascending for upcoming with TBD last; newest-first for past); `getEventBySlug` / `eventDetailPath`; event `contentLinks` loaded from YAML-generated data; `todayDateISOInEventTZ`; `getEventTag` (TBD / past / today / upcoming); `eventShareTitle` / `eventHeroAbsoluteUrl` (including relative image paths) for event detail sharing and OG image URLs.
 - `tests/components/event-detail-link.behavior.test.tsx` – **RTL**: event card link wrapper renders canonical `/events/[slug]` hrefs, prefetches once on focus/hover, and sets `data-pending="true"` immediately on touch activation for mobile tap feedback.
 - `tests/unit/links.test.ts` – `LINKS` contract: required keys and `https` URLs for external destinations.
 - `tests/integration/phone-list-route.test.ts` – API validation (name required; **email and/or phone**); webhook JSON omits empty contact fields; optional `GOOGLE_SHEETS_SECRET` and `GOOGLE_SHEETS_SECRET_FIELD` in the forwarded JSON; invalid JSON / missing webhook URL / upstream fetch failure / non-OK webhook response (502); and 429 protection.
@@ -47,27 +48,27 @@
 - `bun run test` – run Vitest suite.
 - `bun test` – also runs the full Vitest suite (via `bunfig.toml` + `scripts/bun-vitest-delegate.test.ts`; the repo is Vitest-based, not Bun’s default test runner on `tests/**` directly).
 - `bun run test:precommit` – run `data-integrity.test.ts` only (also invoked at the start of `bun run precommit` and `scripts/pre-commit`).
-- `bun run coverage` – run Vitest with coverage + thresholds.
+- `bun run coverage` – run Vitest with coverage + thresholds using dot reporter output to keep local/CI log volume low.
 - `bun run lint` – ESLint.
 - `bun run build` – `generate-data` + `bunx --bun next build --webpack`.
 - `bun run verify:routes` – production route smoke checks; asserts public crawl/discovery endpoints respond (`/robots.txt`, `/sitemap.xml`, `/site.webmanifest`, `/llms.txt`, `/opengraph-image`, `/twitter-image`, and favicon root fallbacks), and still enforces **404** for internal-doc URLs (`/docs`, `/docs/overview`, `/README.md`, `/api.md`) so they never become accidental public routes (see `proxy.ts`). Unknown paths must return **404** (not streamed 200): the app enables **`experimental.globalNotFound`** and `app/global-not-found.tsx` so crawlers and this script see a real status code.
 - **Same clone as `next dev`:** Do not run **`bun run build`** / **`bun run ci`** while dev is writing **`.next/`**; stop dev first or you may see lock errors, missing manifests, or **`verify:routes`** / **`next start`** failing. If **`4310`** is taken, use e.g. **`VERIFY_ROUTES_PORT=43990 bun run verify:routes`**.
 - `bun run verify` – lint + build + route smoke.
-- `bun run ci` – lint + coverage + build + route smoke. This command is safe for multiple agents to run concurrently in the same clone: it isolates coverage under a per-run temp directory, builds into a per-run Next dist directory under `.next-ci/`, and assigns route smoke checks a per-run port unless `VERIFY_ROUTES_PORT` is explicitly set.
-- `bun run ci:vercel` – public raster check + lint + coverage + build + `verify:routes` (same order as the Vercel `buildCommand`; mirrors `ci` plus the image gate, and includes post-build route smoke).
+- `bun run ci` – lint + coverage + build + route smoke. The command stays directly in `package.json`; there is no separate CI shell wrapper.
+- `bun run ci:vercel` – public raster check + `bun run ci`; keeps Vercel on the same package-script path as local CI, plus the image gate and post-build route smoke.
 - `bun run public:images:check` – fails if `public/` still has non-favicon, non-logo JPEG/PNG that should be WebP (same as the pre-commit raster gate).
 - `bun run public:images:optimize` – convert those rasters to WebP in place, then update `data/*.yml` paths and run `bun run generate-data`.
 
-**Vercel enforcement.** `vercel.json` uses `buildCommand: "bun run ci:vercel"`, so Preview and Production builds fail if lint, Vitest/coverage, **`bunx --bun next build`**, or post-build `verify:routes` fails (same script as **GitHub Actions** `CI` job, so the two stay aligned).
+**Vercel enforcement.** `vercel.json` uses `buildCommand: "bun run ci:vercel"`, so Preview and Production builds fail if the public raster check, lint, Vitest/coverage, **`bunx --bun next build`**, or post-build `verify:routes` fails. The Vercel command delegates to `bun run ci` after the image gate so local and deployment CI use the same package-script flow.
 
 **Docs.** Any change to test scope, thresholds, or CI commands must be reflected in this file.
 
 **Navigation visual guardrail.** `tests/unit/navigation-veil.test.ts` asserts that `components/navigation.tsx` uses the `.lupfr-site-header` stateful gradient veil and that `app/globals.css` keeps the masked gradient/backdrop blur surface. This protects the fixed nav from regressing to a flat transparent-or-solid strip with a hard edge.
 
-**Home performance guardrail.** `tests/unit/home-performance.test.ts` asserts that the home page keeps lower sections behind intersection-observed hash placeholders and that artist cards render local opt-in buttons before creating Spotify/SoundCloud iframes. This protects mobile initial transfer and hydration cost from regressing.
+**Home performance guardrail.** `tests/unit/home-performance.test.ts` asserts that the home page keeps lower sections behind intersection-observed hash placeholders and that artist cards lazy-load Spotify/SoundCloud iframes without extra opt-in buttons. This protects mobile transfer and keeps the artist card UX consistent across light and dark modes.
 
 **Hero video performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero loads one active theme video over the poster, falls back quickly when playback is slow, and keeps immutable cache headers on `/hero/*` media.
 
-**Data layer performance guardrail.** `tests/performance/data-layer-budgets.test.ts` uses warmup plus best-of timing samples for ratio checks so CI timer jitter does not hide real regressions or create false failures.
+**Data layer performance guardrail.** `tests/performance/data-layer-budgets.test.ts` uses warmup plus small best-of timing samples for ratio checks so CI timer jitter does not hide real regressions or create false failures without making the coverage run spend excessive time inside benchmark loops.
 
 **Light gold visual guardrail.** `tests/unit/globals-gold-theme.test.ts` now treats the accepted light mode as a canonical visual contract: true white surfaces, charcoal foregrounds, platinum muted/border tokens, the richer polished gold OKLCH values, button gold values, Entertainment line stops, and the full `--gradient-heading-gold` contrast/specular recipe. This protects the approved light-mode metrics/headings/CTA look from drifting back toward pale champagne or cream while keeping the dark-mode white-gold lock intact.

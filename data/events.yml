@@ -17,6 +17,13 @@
   ticketLink: https://www.eventbrite.com/e/boiler-boat-003-yacht-edition-feat-hlwa-soch-tickets-1981381998896?aff=oddtdtcreator
   ticketLabel: Tickets
   description: Boiler Boat returns with a yacht edition on the Bay featuring HLWA.
+  contentLinks:
+    - label: GoPro Footage
+      url: https://gopro.com/v/1778da2d-d76a-4897-9e05-0a3f3c8ef463
+    - label: Yohei Photos
+      url: https://drive.google.com/drive/folders/1HYKhIfdG2_IxR0k7U2wZw5Pl82t6eXGR
+    - label: James Videos
+      url: https://www.dropbox.com/scl/fo/ycr5vdoah1stre5d9dgia/AB0di8Qybx7M7BknTFwfCsI?dl=0&e=1&rlkey=9a1xbvo35u9j21rb0ladvo3ja&st=u5xe8wtn
 
 - id: 5
   slug: wheres-west-corbin-mason
@@ -30,6 +37,13 @@
   ticketLink: https://www.eriaevents.co/product/events/wheres-west-waterfront-day-party-in-sausalito
   ticketLabel: Tickets
   description: Waterfront day party in Sausalito with Corbin Mason.
+  contentLinks:
+    - label: Photos
+      url: https://drive.google.com/drive/folders/1F8h2-muaIfuoCdSH7C6dVQ3AlUhE7BUw?usp=sharing
+    - label: Video
+      url: https://drive.google.com/drive/folders/1S39j1c-277_z76K9O6i9V_RrLkxsM9We
+    - label: Drone
+      url: https://drive.google.com/drive/folders/1GDy76AOwDTR5ohgXDygl1pA8nzahz6cK?usp=sharing
 
 - id: 7
   slug: third-thursdays-operator-sf-eria
@@ -67,6 +81,11 @@
   location: Brixton Bar, Marina District
   image: /events/shamrock_house.webp
   description: St. Patrick's season house music at Brixton Bar.
+  contentLinks:
+    - label: Photos
+      url: https://drive.google.com/drive/folders/12I8qlBpc_tNwEY1J_j9mKt26CN35Tksd
+    - label: Videos
+      url: https://drive.google.com/drive/folders/1DNd0y0tTAFRrw_875YzeIeiayYA51N2Z
 
 - id: 3
   slug: boiler-boat-002-apres-ski-edition

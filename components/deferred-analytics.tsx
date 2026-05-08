@@ -16,12 +16,17 @@ export function DeferredAnalytics() {
   const [idle, setIdle] = useState(false)
 
   useEffect(() => {
-    if (getCookieConsentAccepted()) setConsent(true)
+    const timeoutId = getCookieConsentAccepted()
+      ? window.setTimeout(() => setConsent(true), 0)
+      : null
     const onConsent = () => {
       setConsent(true)
     }
     window.addEventListener(LUPFR_CONSENT_EVENT, onConsent)
-    return () => window.removeEventListener(LUPFR_CONSENT_EVENT, onConsent)
+    return () => {
+      if (timeoutId !== null) window.clearTimeout(timeoutId)
+      window.removeEventListener(LUPFR_CONSENT_EVENT, onConsent)
+    }
   }, [])
 
   useEffect(() => {

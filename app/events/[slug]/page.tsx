@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Calendar, MapPin, Clock, ArrowLeft, Ticket } from "lucide-react"
+import { Calendar, MapPin, Clock, ArrowLeft, Ticket, ExternalLink } from "lucide-react"
 import {
   EVENTS,
   eventDetailPath,
@@ -150,6 +150,26 @@ export default async function EventPage({ params }: EventPageParams) {
                   <Ticket size={18} />
                   {event.ticketLabel?.trim() || "Tickets"}
                 </a>
+              ) : null}
+
+              {event.contentLinks && event.contentLinks.length > 0 ? (
+                <div className="mt-10 pt-8 border-t border-border">
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-3">Content links</h2>
+                  <div className="flex flex-wrap gap-3">
+                    {event.contentLinks.map((link) => (
+                      <a
+                        key={`${link.label}:${link.url}`}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex max-w-full min-w-0 items-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
+                      >
+                        <ExternalLink size={16} className="shrink-0" aria-hidden />
+                        <span className="truncate">{link.label}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
               ) : null}
 
               <div className="mt-10 pt-8 border-t border-border">

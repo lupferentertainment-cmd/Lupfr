@@ -19,7 +19,8 @@ export function CookieConsent() {
 
     useEffect(() => {
         if (getCookieConsentAccepted()) return
-        setVisible(true)
+        const timeoutId = window.setTimeout(() => setVisible(true), 0)
+        return () => window.clearTimeout(timeoutId)
     }, [])
 
     useEffect(() => {
