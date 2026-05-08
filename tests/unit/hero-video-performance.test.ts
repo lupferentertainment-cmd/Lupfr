@@ -14,7 +14,8 @@ describe("hero video performance guardrails", () => {
     it("loads only the active theme video over the poster", () => {
         expect(heroDesktop).toContain("useTheme")
         expect(heroDesktop).toContain("activeVideoSrc")
-        expect(heroDesktop).toContain("<HeroFallbackPoster />")
+        expect(heroDesktop).toContain("<HeroFallbackPoster posterSrc={activePosterSrc} />")
+        expect(heroDesktop).toContain("activePosterSrc")
         expect(heroDesktop).toContain("key={activeVideoSrc}")
         expect(heroDesktop).toContain("src={activeVideoSrc}")
         expect(heroDesktop).not.toContain("videoDarkRef")

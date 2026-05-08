@@ -14,7 +14,8 @@ import {
   HeroLiteOrbs,
   HeroLupfrText,
   HERO_PHRASES,
-  HERO_POSTER,
+  HERO_POSTER_DARK,
+  HERO_POSTER_LIGHT,
 } from "@/components/hero-shared"
 import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
@@ -101,10 +102,14 @@ function HeroDesktopParallaxSection({
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
   const activeVideoSrc = resolvedTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
+  const activePosterSrc = resolvedTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
 
   useEffect(() => {
-    setFallbackToImage(false)
-    setVideoReady(false)
+    const timeoutId = window.setTimeout(() => {
+      setFallbackToImage(false)
+      setVideoReady(false)
+    }, 0)
+    return () => window.clearTimeout(timeoutId)
   }, [activeVideoSrc])
 
   useEffect(() => {
@@ -221,7 +226,7 @@ function HeroDesktopParallaxSection({
   return (
     <>
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
-        <HeroFallbackPoster />
+        <HeroFallbackPoster posterSrc={activePosterSrc} />
         {!fallbackToImage && (
           <video
             key={activeVideoSrc}
@@ -235,7 +240,7 @@ function HeroDesktopParallaxSection({
             disableRemotePlayback
             className={`absolute inset-0 z-[2] w-full h-full object-cover object-center [image-rendering:auto] transition-opacity duration-500 ease-out ${videoReady ? "opacity-100" : "opacity-0"
               }`}
-            poster={HERO_POSTER}
+            poster={activePosterSrc}
             aria-hidden
           >
             <source src={activeVideoSrc} type="video/mp4" />

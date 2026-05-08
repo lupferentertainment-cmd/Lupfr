@@ -1,6 +1,20 @@
 [
   {
     "id": 1,
+    "name": "Zubesi",
+    "genre": "House",
+    "image": "/artists/zubesi.webp",
+    "bio": "Producer and DJ with a groove-forward sound built for late nights, intimate rooms, and high-energy dance floors.",
+    "spotify": "https://open.spotify.com/artist/22tU9RAG5HZ9BatYWY66UH",
+    "youtube": "https://www.youtube.com/@Zusebi",
+    "instagram": "https://www.instagram.com/zusebimusic/",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/6tAiVWmsaW50BtiHXSogJt?si=a65f6501dc6f4a6e",
+      "platform": "spotify"
+    }
+  },
+  {
+    "id": 2,
     "name": "Where's West?",
     "genre": "Indie",
     "image": "/artists/wheres_west.webp",
@@ -14,7 +28,7 @@
     }
   },
   {
-    "id": 2,
+    "id": 3,
     "name": "HLWA",
     "genre": "Melodic House",
     "image": "/artists/hlwa.webp",
@@ -28,30 +42,16 @@
     }
   },
   {
-    "id": 3,
-    "name": "Tommy Guala",
-    "genre": "Deep House",
-    "image": "/artists/tommy_guala.webp",
-    "bio": "Artist and DJ with a deep house edge. Soulful grooves and heady vibes across SoundCloud and Beatport—built for late nights and locked-in crowds.",
-    "spotify": "https://open.spotify.com/artist/5gXe3UJr2VZq0bMKAgxsTY",
-    "appleMusic": "https://music.apple.com/artist/tommy-guala",
-    "instagram": "https://www.instagram.com/tommy.guala/",
-    "featuredTrack": {
-      "url": "https://open.spotify.com/track/23ginYDRCdhtUo2C2QuAn9?si=Ec4mu8JsTQuymbR8XqxO6A",
-      "platform": "spotify"
-    }
-  },
-  {
     "id": 4,
-    "name": "Mike Stern",
-    "genre": "Afro House",
-    "image": "/artists/mike_stern.webp",
-    "bio": "Afro house selector bringing percussion-heavy, sun-soaked grooves to the Bay. Rhythmic, hypnotic sets that keep the floor moving.",
-    "spotify": "https://open.spotify.com/artist/6AKgtbnwiE2SIzlIChxLRZ",
-    "instagram": "https://www.instagram.com/mikeystern/",
+    "name": "BAUM",
+    "genre": "Deep House",
+    "image": "/artists/baum.webp",
+    "bio": "Bay Area DJ with a deep, driving sound shaped for pop-ups, boat parties, and rooms that want to move.",
+    "soundcloud": "https://soundcloud.com/user-999208104/tracks",
+    "instagram": "https://www.instagram.com/baum_dj/",
     "featuredTrack": {
-      "url": "https://open.spotify.com/track/5ckLDvsEVpVJKHqRmf3KKh?si=opWTucJhQdKtz_2951ouCw",
-      "platform": "spotify"
+      "url": "https://soundcloud.com/user-999208104/bunker-pop-up-3-7",
+      "platform": "soundcloud"
     }
   },
   {

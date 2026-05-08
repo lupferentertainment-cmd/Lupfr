@@ -156,7 +156,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preload" as="image" href="/hero/hero-poster.webp" />
+        <link rel="preload" as="image" href="/hero/hero-poster-dark.webp" media="(prefers-color-scheme: dark)" />
+        <link rel="preload" as="image" href="/hero/hero-poster-light.webp" media="(prefers-color-scheme: light)" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
       <body className={`${spaceGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>

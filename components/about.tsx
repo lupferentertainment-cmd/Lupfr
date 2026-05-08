@@ -30,15 +30,15 @@ const values = [
   {
     number: 1,
     title: "Curation",
-    description: "Every artist, every venue, every detail is intentionally selected to create cohesive experiences.",
+    description: "Every artist, venue, and detail is intentionally selected to create a unique music experience.",
     detail: "From lineup selection to venue fit and vibe alignment, we treat each event as a single narrative. No filler sets, no random bookings—every slot earns its place.",
     strength: 100,
   },
   {
     number: 2,
-    title: "Community",
-    description: "We build connections that last beyond the dancefloor. Our events are where friendships form.",
-    detail: "Regulars become friends; newcomers feel welcome. We foster a respectful, inclusive crowd so the energy stays high and the room stays safe. That’s the LUPFR standard.",
+    title: "Expertise",
+    description: "Our experience and connections in the industry allow us to build exactly what you envision.",
+    detail: "We pair venue relationships, artist curation, and production know-how so every event feels intentional from first brief to final track.",
     strength: 100,
   },
   {
@@ -231,14 +231,14 @@ export function About() {
           >
             <p className="text-gold-accent tracking-tight text-sm mb-4">The story</p>
             <h2 className="lupfr-heading--compact lupfr-heading-stack--tight">
-              <GoldShineText scrollTargetRef={ref}>Culture Meets</GoldShineText>
+              <GoldShineText scrollTargetRef={ref}>Redefining the Music</GoldShineText>
               <br />
-              <span className="lupfr-heading-subline">Production</span>
+              <span className="lupfr-heading-subline">Experience</span>
             </h2>
             <div className="flex flex-col gap-4 mb-6 sm:mb-8">
               <div className="flex items-center gap-6">
                 <div className="w-16 h-px bg-accent" />
-                <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR Entertainment</p>
+                <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR</p>
               </div>
             </div>
             {/* Portrait: dark = vignette fade into section; light = minimal overlay so the photo stays clear */}
@@ -256,7 +256,7 @@ export function About() {
               <div className="absolute inset-0 z-[11] hidden dark:block bg-gradient-to-r from-background/80 via-transparent to-background/80 pointer-events-none" />
               <Image
                 src="/images/will_lupfer.webp"
-                alt="Will Lupfer, Founder & CEO of LUPFR Entertainment"
+                alt="Will Lupfer, Founder & CEO of LUPFR"
                 width={400}
                 height={500}
                 sizes="(max-width: 768px) 100vw, 400px"
@@ -271,13 +271,13 @@ export function About() {
             </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
-                <GoldShineText scrollTargetRef={ref}>LUPFR Entertainment</GoldShineText> was born from a simple idea: San Francisco deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
+                <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> redefines the music experience. We blend non-traditional venues with specially curated artists to create a one of a kind music experience. LUPFR was founded in 2025 with a simple idea: San Francisco deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
               </p>
               <p>
-                Today, we produce boat parties on the Bay, rooftop sessions with skyline views, warehouse events, and anything in between that bring back the raw energy of the city—all while maintaining the polish that attracts SF&apos;s young professional crowd.
+                Today, we produce unique events in both San Francisco and Los Angeles; ranging from yacht parties, boiler room style nights, corporate events, warehouse events, and anything in between that creates a one of a kind music experience.
               </p>
               <p>
-                Whether you&apos;re a venue looking to elevate your programming, a brand seeking authentic nightlife partnerships, or simply someone who wants to dance to great music with a great crowd—we&apos;re here to make it happen.
+                Whether you&apos;re a venue looking to elevate your programming, a brand seeking a high caliber artist for a launch party, or simply someone who wants to dance to great music with a great crowd - we&apos;re here to make it happen.
               </p>
             </div>
 

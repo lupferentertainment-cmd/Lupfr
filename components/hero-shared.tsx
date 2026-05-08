@@ -26,16 +26,18 @@ export const PHRASE_DURATION_MOBILE_MS = 9000
 
 export const FADE_DURATION_S = 0.6
 
-export const HERO_POSTER = "/hero/hero-poster.webp"
+export const HERO_POSTER_DARK = "/hero/hero-poster-dark.webp"
+export const HERO_POSTER_LIGHT = "/hero/hero-poster-light.webp"
+export const HERO_POSTER = HERO_POSTER_DARK
 
 /** Remounts whenever `fallbackToImage` toggles on so poster decode state stays correct. */
-export function HeroFallbackPoster() {
+export function HeroFallbackPoster({ posterSrc = HERO_POSTER }: { posterSrc?: string }) {
   const [ready, setReady] = useState(false)
   return (
     <div className="absolute inset-0">
       <SkeletonShimmerLayer show={!ready} />
       <Image
-        src={HERO_POSTER}
+        src={posterSrc}
         alt=""
         fill
         priority
