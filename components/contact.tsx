@@ -39,7 +39,10 @@ const PHONE_CHAR_CODES = [53, 48, 51, 45, 52, 48, 55, 45, 54, 49, 48, 57]
 function ProtectedPhone() {
   const [decoded, setDecoded] = useState<string | null>(null)
   useEffect(() => {
-    setDecoded(String.fromCharCode(...PHONE_CHAR_CODES))
+    const timeoutId = window.setTimeout(() => {
+      setDecoded(String.fromCharCode(...PHONE_CHAR_CODES))
+    }, 0)
+    return () => window.clearTimeout(timeoutId)
   }, [])
   if (!decoded) return <span className="inline-block min-w-[10ch]" aria-hidden />
   return (

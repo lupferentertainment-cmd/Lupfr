@@ -27,10 +27,15 @@ import {
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = '16rem'
-const SIDEBAR_WIDTH_MOBILE = '18rem'
-const SIDEBAR_WIDTH_ICON = '3rem'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
+const SIDEBAR_SKELETON_WIDTH_CLASSES = [
+  'max-w-[50%]',
+  'max-w-[58%]',
+  'max-w-[66%]',
+  'max-w-[74%]',
+  'max-w-[82%]',
+  'max-w-[90%]',
+] as const
 
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed'
@@ -58,7 +63,6 @@ function SidebarProvider({
   open: openProp,
   onOpenChange: setOpenProp,
   className,
-  style,
   children,
   ...props
 }: React.ComponentProps<'div'> & {
@@ -132,15 +136,8 @@ function SidebarProvider({
       <TooltipProvider delayDuration={0}>
         <div
           data-slot="sidebar-wrapper"
-          style={
-            {
-              '--sidebar-width': SIDEBAR_WIDTH,
-              '--sidebar-width-icon': SIDEBAR_WIDTH_ICON,
-              ...style,
-            } as React.CSSProperties
-          }
           className={cn(
-            'group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full',
+            'group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full [--sidebar-width-icon:3rem] [--sidebar-width:16rem]',
             className,
           )}
           {...props}
@@ -188,12 +185,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
-          style={
-            {
-              '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
+          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [--sidebar-width:18rem] [&>button]:hidden"
           side={side}
         >
           <SheetHeader className="sr-only">
@@ -607,10 +599,12 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<'div'> & {
   showIcon?: boolean
 }) {
-  // Random width between 50 to 90%.
-  const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
-  }, [])
+  const stableId = React.useId()
+  const widthIndex = Array.from(stableId).reduce(
+    (total, char) => total + char.charCodeAt(0),
+    0,
+  ) % SIDEBAR_SKELETON_WIDTH_CLASSES.length
+  const widthClassName = SIDEBAR_SKELETON_WIDTH_CLASSES[widthIndex]
 
   return (
     <div
@@ -626,13 +620,8 @@ function SidebarMenuSkeleton({
         />
       )}
       <Skeleton
-        className="h-4 max-w-(--skeleton-width) flex-1"
+        className={cn('h-4 flex-1', widthClassName)}
         data-sidebar="menu-skeleton-text"
-        style={
-          {
-            '--skeleton-width': width,
-          } as React.CSSProperties
-        }
       />
     </div>
   )

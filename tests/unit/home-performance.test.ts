@@ -55,10 +55,13 @@ describe("home page mobile transfer guardrails", () => {
         expect(events).toContain("priority={prioritizeImage}")
     })
 
-    it("does not create third-party music iframes until a visitor opts in", () => {
-        expect(artists).toContain("isTrackLoaded")
-        expect(artists).toContain("setIsTrackLoaded(true)")
-        expect(artists).toContain("Load {featuredTrackLabel} player")
+    it("lazy-loads third-party music iframes without extra opt-in buttons", () => {
+        expect(artists).not.toContain("isTrackLoaded")
+        expect(artists).not.toContain("setIsTrackLoaded(true)")
+        expect(artists).not.toContain("Load {featuredTrackLabel} player")
+        expect(artists).toContain('loading="lazy"')
+        expect(artists).toContain("?theme=0")
+        expect(artists).toContain("visual=false")
         expect(artists).toContain("src={featuredTrackEmbedUrl}")
     })
 })

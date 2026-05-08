@@ -63,14 +63,14 @@ function DeferredHomeSection({
   useEffect(() => {
     const matchesHash = () => window.location.hash === `#${id}`
     if (matchesHash()) {
-      setShouldMount(true)
-      return
+      const timeoutId = window.setTimeout(() => setShouldMount(true), 0)
+      return () => window.clearTimeout(timeoutId)
     }
 
     const node = anchorRef.current
     if (!node || !("IntersectionObserver" in window)) {
-      setShouldMount(true)
-      return
+      const timeoutId = window.setTimeout(() => setShouldMount(true), 0)
+      return () => window.clearTimeout(timeoutId)
     }
 
     const observer = new IntersectionObserver(

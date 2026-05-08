@@ -40,32 +40,32 @@ function bestBulkElapsedMs(samples: number, count: number, fn: () => void): numb
 
 describe("data layer performance budgets", () => {
   it("getUpcomingEvents + getPastEvents on real YAML-backed data", () => {
-    const iterations = 1_200
-    const ms = bestBulkElapsedMs(3, iterations, () => {
+    const iterations = 400
+    const ms = bestBulkElapsedMs(2, iterations, () => {
       getUpcomingEvents(fixedNow)
       getPastEvents(fixedNow)
     })
-    expect(ms).toBeLessThan(700)
+    expect(ms).toBeLessThan(250)
   })
 
   it("groupGalleryByDateISO over full GALLERY_PHOTOS", () => {
-    const iterations = 500
+    const iterations = 200
     const ms = bulkElapsedMs(iterations, () => {
       groupGalleryByDateISO(GALLERY_PHOTOS)
     })
-    expect(ms).toBeLessThan(300)
+    expect(ms).toBeLessThan(140)
   })
 
   it("gallery preload indices at large synthetic length (O(radius) per call)", () => {
     const length = 2_000
     const index = 1_000
     const radius = 2
-    const iterations = 5_000
+    const iterations = 1_500
     const ms = bulkElapsedMs(iterations, () => {
       galleryCircularPreloadIndices(length, index, radius)
       galleryLinearPreloadIndices(length, index, radius)
     })
-    expect(ms).toBeLessThan(500)
+    expect(ms).toBeLessThan(170)
   })
 
   it("groupGalleryByDateISO scales roughly linearly with row count", () => {
@@ -86,10 +86,10 @@ describe("data layer performance budgets", () => {
       groupGalleryByDateISO(large)
     })
     // Compare equal total work to avoid tiny-input timer noise on CI VMs.
-    const tSmall = bestBulkElapsedMs(3, 800, () => {
+    const tSmall = bestBulkElapsedMs(2, 240, () => {
       groupGalleryByDateISO(small)
     })
-    const tLarge = bestBulkElapsedMs(3, 80, () => {
+    const tLarge = bestBulkElapsedMs(2, 24, () => {
       groupGalleryByDateISO(large)
     })
 

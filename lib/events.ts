@@ -33,6 +33,12 @@ export interface EventItem {
   ticketLink?: string
   ticketLabel?: string
   description?: string
+  contentLinks?: EventContentLink[]
+}
+
+export interface EventContentLink {
+  label: string
+  url: string
 }
 
 const EVENTS_DATA: EventItem[] = (eventsJson as EventItem[]).map((e) => ({

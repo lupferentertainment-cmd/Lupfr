@@ -109,7 +109,9 @@ export function GallerySection() {
   const inView = useInView(ref, { once: false, margin: "0px 0px 100px 0px", amount: 0.15 })
   const [hasRevealed, setHasRevealed] = useState(false)
   useEffect(() => {
-    if (inView) setHasRevealed(true)
+    if (!inView) return
+    const timeoutId = window.setTimeout(() => setHasRevealed(true), 0)
+    return () => window.clearTimeout(timeoutId)
   }, [inView])
   const isRevealed = hasRevealed
 
@@ -213,13 +215,11 @@ export function GallerySection() {
           </Carousel>
 
           {snapCount > 1 ? (
-            <div className="mt-6 flex flex-wrap justify-center gap-2.5" role="tablist" aria-label="Gallery slides">
+            <div className="mt-6 flex flex-wrap justify-center gap-2.5" aria-label="Gallery slides">
               {Array.from({ length: snapCount }).map((_, i) => (
                 <button
                   key={items[i]?.slug ?? i}
                   type="button"
-                  role="tab"
-                  aria-selected={i === selectedIndex}
                   onClick={() => scrollTo(i)}
                   className={cn(
                     "h-2 rounded-full transition-all duration-200 ease-out",

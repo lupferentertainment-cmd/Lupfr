@@ -45,12 +45,19 @@ describe("rate limiting", () => {
 
   it("resets after the window", async () => {
     const key = `unit-reset-${randomUUID()}`
+    const now = Date.UTC(2026, 4, 7, 12, 0, 0)
     const windowMs = 400
+    const nowSpy = vi.spyOn(Date, "now")
 
-    expect(enforceRateLimit({ key, limit: 1, windowMs })).toBeNull()
-    expect(enforceRateLimit({ key, limit: 1, windowMs })?.status).toBe(429)
+    try {
+      nowSpy.mockReturnValue(now)
+      expect(enforceRateLimit({ key, limit: 1, windowMs })).toBeNull()
+      expect(enforceRateLimit({ key, limit: 1, windowMs })?.status).toBe(429)
 
-    await new Promise((resolve) => setTimeout(resolve, windowMs + 50))
-    expect(enforceRateLimit({ key, limit: 1, windowMs })).toBeNull()
+      nowSpy.mockReturnValue(now + windowMs + 1)
+      expect(enforceRateLimit({ key, limit: 1, windowMs })).toBeNull()
+    } finally {
+      nowSpy.mockRestore()
+    }
   })
 })

@@ -102,6 +102,24 @@ describe("event routes and lookup", () => {
   it("eventDetailPath is the App Router event page path", () => {
     expect(eventDetailPath("shamrock-house")).toBe("/events/shamrock-house")
   })
+
+  it("post-event content links are loaded from generated event data", () => {
+    const event = getEventBySlug("wheres-west-corbin-mason")
+    expect(event?.contentLinks).toEqual([
+      {
+        label: "Photos",
+        url: "https://drive.google.com/drive/folders/1F8h2-muaIfuoCdSH7C6dVQ3AlUhE7BUw?usp=sharing",
+      },
+      {
+        label: "Video",
+        url: "https://drive.google.com/drive/folders/1S39j1c-277_z76K9O6i9V_RrLkxsM9We",
+      },
+      {
+        label: "Drone",
+        url: "https://drive.google.com/drive/folders/1GDy76AOwDTR5ohgXDygl1pA8nzahz6cK?usp=sharing",
+      },
+    ])
+  })
 })
 
 describe("event timezone and badges", () => {
