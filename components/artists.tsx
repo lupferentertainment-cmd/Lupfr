@@ -4,7 +4,7 @@ import { memo } from "react"
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
-import { Instagram, Music, ExternalLink } from "lucide-react"
+import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
@@ -18,13 +18,13 @@ const artists = getArtists()
 function spotifyEmbedUrl(trackUrl: string): string {
   const m = trackUrl.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/)
   const id = m ? m[1] : ""
-  return id ? `https://open.spotify.com/embed/track/${id}` : ""
+  return id ? `https://open.spotify.com/embed/track/${id}?theme=0` : ""
 }
 
 /** SoundCloud track URL -> embed player URL. */
 function soundcloudEmbedUrl(trackUrl: string): string {
   const encoded = encodeURIComponent(trackUrl.startsWith("http") ? trackUrl : `https://${trackUrl}`)
-  return `https://w.soundcloud.com/player/?url=${encoded}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false`
+  return `https://w.soundcloud.com/player/?url=${encoded}&color=%23a88234&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=false`
 }
 
 const FALLBACK_IMAGE =
@@ -48,7 +48,6 @@ const ArtistCard = memo(function ArtistCard({
   const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
   const [imageReady, setImageReady] = useState(false)
-  const [isTrackLoaded, setIsTrackLoaded] = useState(false)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -71,6 +70,8 @@ const ArtistCard = memo(function ArtistCard({
 
   const hasSpotify = "spotify" in artist && artist.spotify
   const hasAppleMusic = "appleMusic" in artist && artist.appleMusic
+  const hasYoutube = "youtube" in artist && artist.youtube
+  const hasSoundcloud = "soundcloud" in artist && artist.soundcloud
   const featuredTrackEmbedUrl = artist.featuredTrack
     ? artist.featuredTrack.platform === "spotify"
       ? spotifyEmbedUrl(artist.featuredTrack.url)
@@ -111,9 +112,12 @@ const ArtistCard = memo(function ArtistCard({
               />
             ) : null}
             {imageError ? (
-              <img
+              <Image
                 src={FALLBACK_IMAGE}
                 alt={`${artist.name}, ${artist.genre}`}
+                width={ARTIST_IMAGE_SIZE}
+                height={ARTIST_IMAGE_SIZE}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -211,35 +215,50 @@ const ArtistCard = memo(function ArtistCard({
                 <Instagram size={16} />
               </motion.a>
             )}
+            {hasYoutube && (
+              <motion.a
+                href={artist.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.92 }}
+                aria-label="YouTube"
+              >
+                <Youtube size={16} />
+              </motion.a>
+            )}
+            {hasSoundcloud && (
+              <motion.a
+                href={artist.soundcloud}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.92 }}
+                aria-label="SoundCloud"
+              >
+                <ExternalLink size={16} />
+              </motion.a>
+            )}
           </div>
           {artist.featuredTrack && featuredTrackEmbedUrl && (
             <div className="mt-4 w-full pt-4 border-t border-border/80">
               <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
               <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
-                {isTrackLoaded ? (
-                  <iframe
-                    src={featuredTrackEmbedUrl}
-                    width="100%"
-                    height={artist.featuredTrack.platform === "spotify" ? "80" : "166"}
-                    allow={
-                      artist.featuredTrack.platform === "spotify"
-                        ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        : "autoplay; encrypted-media; fullscreen"
-                    }
-                    className="border-0"
-                    title={`Listen to ${artist.name} on ${featuredTrackLabel}`}
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setIsTrackLoaded(true)}
-                    className="flex h-20 w-full items-center justify-center gap-2 px-4 text-sm font-semibold text-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                    aria-label={`Load ${featuredTrackLabel} player for ${artist.name}`}
-                  >
-                    <Music size={16} aria-hidden />
-                    Load {featuredTrackLabel} player
-                  </button>
-                )}
+                <iframe
+                  src={featuredTrackEmbedUrl}
+                  width="100%"
+                  height={artist.featuredTrack.platform === "spotify" ? "80" : "166"}
+                  loading="lazy"
+                  allow={
+                    artist.featuredTrack.platform === "spotify"
+                      ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      : "autoplay; encrypted-media; fullscreen"
+                  }
+                  className="border-0"
+                  title={`Listen to ${artist.name} on ${featuredTrackLabel}`}
+                />
               </div>
             </div>
           )}
