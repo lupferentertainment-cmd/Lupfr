@@ -4,7 +4,7 @@ import { getArtists } from "@/lib/data/artists"
 describe("featured artist data", () => {
   it("keeps the requested six-card artist order", () => {
     expect(getArtists().map((artist) => artist.name)).toEqual([
-      "Zubesi",
+      "Zusebi",
       "Where's West?",
       "HLWA",
       "BAUM",
@@ -20,12 +20,12 @@ describe("featured artist data", () => {
   })
 
   it("loads new artist social links and featured tracks", () => {
-    const zubesi = getArtists().find((artist) => artist.name === "Zubesi")
+    const zusebi = getArtists().find((artist) => artist.name === "Zusebi")
     const baum = getArtists().find((artist) => artist.name === "BAUM")
 
-    expect(zubesi?.instagram).toBe("https://www.instagram.com/zusebimusic/")
-    expect(zubesi?.youtube).toBe("https://www.youtube.com/@Zusebi")
-    expect(zubesi?.featuredTrack).toEqual({
+    expect(zusebi?.instagram).toBe("https://www.instagram.com/zusebimusic/")
+    expect(zusebi?.youtube).toBe("https://www.youtube.com/@Zusebi")
+    expect(zusebi?.featuredTrack).toEqual({
       url: "https://open.spotify.com/track/6tAiVWmsaW50BtiHXSogJt?si=a65f6501dc6f4a6e",
       platform: "spotify",
     })

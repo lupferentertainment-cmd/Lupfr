@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "name": "Zubesi",
+    "name": "Zusebi",
     "genre": "House",
-    "image": "/artists/zubesi.webp",
+    "image": "/artists/zusebi.webp",
     "bio": "Producer and DJ with a groove-forward sound built for late nights, intimate rooms, and high-energy dance floors.",
     "spotify": "https://open.spotify.com/artist/22tU9RAG5HZ9BatYWY66UH",
     "youtube": "https://www.youtube.com/@Zusebi",
@@ -44,7 +44,7 @@
   {
     "id": 4,
     "name": "BAUM",
-    "genre": "Deep House",
+    "genre": "Tech House",
     "image": "/artists/baum.webp",
     "bio": "Bay Area DJ with a deep, driving sound shaped for pop-ups, boat parties, and rooms that want to move.",
     "soundcloud": "https://soundcloud.com/user-999208104/tracks",
