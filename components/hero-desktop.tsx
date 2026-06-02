@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { memo, useEffect, useRef, useState } from "react"
-import { motion, useScroll, useTransform, AnimatePresence, type MotionValue } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { ArrowDown, Play } from "lucide-react"
 
 import { GoldShineText } from "@/components/gold-shine-text"
@@ -21,8 +21,8 @@ import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 const HERO_VIDEO_SLOW_MS = 8000
-const HERO_VIDEO_DARK = "/hero/hero_dark.mp4"
-const HERO_VIDEO_LIGHT = "/hero/hero_light_opt.mp4"
+const HERO_VIDEO_DARK = ""
+const HERO_VIDEO_LIGHT = ""
 const VIDEO_READY_STATE_HAS_CURRENT_DATA = 2
 
 const staticShinePositionCss = "50% 50%"
@@ -33,7 +33,7 @@ const HeroTitleContentDesktop = memo(function HeroTitleContentDesktop({
   shinePositionDelayed,
 }: {
   prefersReducedMotion: boolean | null
-  shinePositionDelayed: MotionValue<string>
+  shinePosition: string
 }) {
   return (
     <h1
@@ -42,7 +42,7 @@ const HeroTitleContentDesktop = memo(function HeroTitleContentDesktop({
       <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
       <motion.span
         className="block hero-title-entertainment font-medium hero-entertainment-text normal-case tracking-normal"
-        style={{ backgroundPosition: prefersReducedMotion ? staticShinePositionCss : shinePositionDelayed }}
+        style={{ backgroundPosition: prefersReducedMotion ? staticShinePositionCss : shinePosition }}
       >
         Entertainment
       </motion.span>
@@ -103,6 +103,7 @@ function HeroDesktopParallaxSection({
   const [videoReady, setVideoReady] = useState(false)
   const activeVideoSrc = resolvedTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
   const activePosterSrc = resolvedTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
+  const hasHeroVideo = activeVideoSrc.length > 0
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -113,7 +114,7 @@ function HeroDesktopParallaxSection({
   }, [activeVideoSrc])
 
   useEffect(() => {
-    if (fallbackToImage) return
+    if (!hasHeroVideo || fallbackToImage) return
     const video = videoRef.current
     if (!video) return
 
@@ -206,28 +207,18 @@ function HeroDesktopParallaxSection({
       video.removeEventListener("stalled", onStalled)
       document.removeEventListener("visibilitychange", onVisibilityChange)
     }
-  }, [activeVideoSrc, fallbackToImage])
+  }, [activeVideoSrc, fallbackToImage, hasHeroVideo])
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-    layoutEffect: false,
-  })
-
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 1.2])
-  const shinePositionDelayed = useTransform(
-    scrollYProgress,
-    [0, 0.04, 0.24, 1],
-    ["100% 50%", "100% 50%", "0% 50%", "0% 50%"]
-  )
+  const y = "0%"
+  const opacity = 1
+  const scale = 1
+  const shinePosition = staticShinePositionCss
 
   return (
     <>
       <motion.div style={{ y, scale }} className="absolute inset-0 bg-black">
         <HeroFallbackPoster posterSrc={activePosterSrc} />
-        {!fallbackToImage && (
+        {!fallbackToImage && hasHeroVideo && (
           <video
             key={activeVideoSrc}
             ref={videoRef}
@@ -262,7 +253,7 @@ function HeroDesktopParallaxSection({
         >
           <HeroTitleContentDesktop
             prefersReducedMotion={prefersReducedMotion}
-            shinePositionDelayed={shinePositionDelayed}
+            shinePosition={shinePosition}
           />
 
           <div

@@ -2,6 +2,10 @@
 
 **Scope.** The app exposes three HTTP APIs; all are used by the site front-end only. No public API versioning or external contract.
 
+**External links.** Public CTA destinations live in `lib/links.ts`. `LINKS.scheduleCall` points to the current Google Calendar booking page (`https://calendar.app.google/85eJL1R8euGnsjbw9`), and the reusable Schedule a call button reads from that single source of truth.
+
+**Event CTAs.** Event detail pages read `ticketLink`, `ticketLabel`, and optional `ticketStatus` from `data/events.yml`. `ticketStatus: tbd` renders the same event CTA as a disabled “link TBD” button instead of an outbound link.
+
 ---
 
 ## POST /api/contact

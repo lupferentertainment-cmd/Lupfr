@@ -9,16 +9,7 @@ import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
 
 /** Shared hero copy rotation (mounted in parent for phrase interval). */
 export const HERO_PHRASES = [
-  "Sound that moves you. Events that move the city.",
-  "Rooftops, boats, warehouses. One vibe. One city.",
-  "Curating unforgettable music experiences. Boat parties, rooftop events, and warehouse sessions that move the city.",
-  "Where the Bay dances. Premier music events that define San Francisco nightlife.",
-  "From boat parties to warehouses—we turn every night into an experience.",
-  "San Francisco's pulse. Music, elevated.",
-  "We don't just throw parties. We create moments that last.",
-  "The city's most iconic music experiences—curated, produced, unforgettable.",
-  "Where beats meet the Bay. Where crowds become communities.",
-  "Ten years of moving dance floors. One mission: make every night matter.",
+  "Redefining the Music Experience",
 ]
 
 export const PHRASE_DURATION_MS = 4500

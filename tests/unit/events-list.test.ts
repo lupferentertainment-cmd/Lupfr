@@ -36,6 +36,8 @@ describe("events list ordering", () => {
       "wheres-west-corbin-mason",
       "third-thursdays-operator-sf-eria",
       "boiler-room-marina-lupfr-baum",
+      "fifa-world-cup-watch-party-eria-marina",
+      "marina-music-002-fromclay-thatfranco",
     ])
   })
 
@@ -43,6 +45,8 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
+      "marina-music-002-fromclay-thatfranco",
+      "fifa-world-cup-watch-party-eria-marina",
       "boiler-room-marina-lupfr-baum",
       "third-thursdays-operator-sf-eria",
       "wheres-west-corbin-mason",
@@ -119,6 +123,16 @@ describe("event routes and lookup", () => {
         url: "https://drive.google.com/drive/folders/1GDy76AOwDTR5ohgXDygl1pA8nzahz6cK?usp=sharing",
       },
     ])
+  })
+
+  it("loads ticket availability state from generated event data", () => {
+    const fifa = getEventBySlug("fifa-world-cup-watch-party-eria-marina")
+    const marina = getEventBySlug("marina-music-002-fromclay-thatfranco")
+
+    expect({ fifaLink: fifa?.ticketLink, marinaStatus: marina?.ticketStatus }).toEqual({
+      fifaLink: "https://partiful.com/e/qzqeUgwc3iMmBrt6A0MC",
+      marinaStatus: "tbd",
+    })
   })
 })
 

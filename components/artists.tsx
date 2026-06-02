@@ -9,10 +9,25 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { cn } from "@/lib/utils"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselDots,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 const ARTIST_IMAGE_SIZE = 400
+const ARTISTS_PER_SLIDE = 6
+
+function getArtistSlides(items: ArtistItem[]): ArtistItem[][] {
+  const count = Math.ceil(items.length / ARTISTS_PER_SLIDE)
+  return Array.from({ length: count }, (_, i) => items.slice(i * ARTISTS_PER_SLIDE, (i + 1) * ARTISTS_PER_SLIDE))
+}
 
 const artists = getArtists()
+const artistSlides = getArtistSlides(artists)
 
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
@@ -268,6 +283,45 @@ const ArtistCard = memo(function ArtistCard({
   )
 })
 
+function ArtistCarousel({
+  isInView,
+  hoveredId,
+  onHover,
+  onLeave,
+}: {
+  isInView: boolean
+  hoveredId: number | null
+  onHover: (id: number) => void
+  onLeave: () => void
+}) {
+  return (
+    <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
+      <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
+        {artistSlides.map((slide, slideIndex) => (
+          <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {slide.map((artist, i) => (
+                <ArtistCard
+                  key={artist.id}
+                  artist={artist}
+                  index={slideIndex * ARTISTS_PER_SLIDE + i}
+                  isInView={isInView}
+                  isHovered={hoveredId === artist.id}
+                  onHover={() => onHover(artist.id)}
+                  onLeave={onLeave}
+                />
+              ))}
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      {artistSlides.length > 1 ? <CarouselPrevious className="left-1 top-[45%] sm:-left-4 lg:-left-10" /> : null}
+      {artistSlides.length > 1 ? <CarouselNext className="right-1 top-[45%] sm:-right-4 lg:-right-10" /> : null}
+      <CarouselDots />
+    </Carousel>
+  )
+}
+
 export function Artists() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
@@ -314,19 +368,12 @@ export function Artists() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {artists.map((artist, i) => (
-            <ArtistCard
-              key={artist.id}
-              artist={artist}
-              index={i}
-              isInView={isInView}
-              isHovered={hoveredId === artist.id}
-              onHover={() => setHoveredId(artist.id)}
-              onLeave={() => setHoveredId(null)}
-            />
-          ))}
-        </div>
+        <ArtistCarousel
+          isInView={isInView}
+          hoveredId={hoveredId}
+          onHover={setHoveredId}
+          onLeave={() => setHoveredId(null)}
+        />
 
         {/* CTA */}
         <motion.div

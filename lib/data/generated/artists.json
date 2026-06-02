@@ -1,5 +1,19 @@
 [
   {
+    "id": 7,
+    "name": "fromclay",
+    "genre": "UK Garage",
+    "image": "/artists/fromclay.webp",
+    "bio": "Dance-forward producer with crisp garage energy, soulful hooks, and tracks made for peak-hour movement.",
+    "spotify": "https://open.spotify.com/artist/0EwNsbQywFna5Y83fmTwpu",
+    "appleMusic": "https://share.google/RWil4VXF6rEh8ZTbe",
+    "instagram": "https://instagram.com/itsfromclay",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/4675Tp7PNxE8ogRBTzL9Ek?si=582fef0278bf490c",
+      "platform": "spotify"
+    }
+  },
+  {
     "id": 1,
     "name": "Zusebi",
     "genre": "House",
@@ -24,6 +38,20 @@
     "instagram": "https://www.instagram.com/wheres__west/",
     "featuredTrack": {
       "url": "https://open.spotify.com/track/0BK8GoKCMBh3kAiOZ3t6hE?si=k4bNj7mVQ52t2qxvDyHg_g",
+      "platform": "spotify"
+    }
+  },
+  {
+    "id": 8,
+    "name": "thatfranco",
+    "genre": "House",
+    "image": "/artists/thatfranco.webp",
+    "bio": "High-energy house artist bringing groove-heavy records, polished club momentum, and festival-ready hooks.",
+    "spotify": "https://open.spotify.com/artist/7g1wGpkV1xFxx6APTrp7bv",
+    "appleMusic": "https://share.google/Xy2FL6mawFFMFbOkt",
+    "instagram": "https://instagram.com/thatfrancomusic",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/5JJ0eUdq1cIJV9fozbUYE1?si=6e2da29ea4a24e55",
       "platform": "spotify"
     }
   },

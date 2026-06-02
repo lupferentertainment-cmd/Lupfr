@@ -11,11 +11,14 @@ describe("hero video performance guardrails", () => {
     const heroDesktop = fs.readFileSync(heroDesktopPath, "utf8")
     const nextConfig = fs.readFileSync(nextConfigPath, "utf8")
 
-    it("loads only the active theme video over the poster", () => {
+    it("uses a real event photo poster while video media is paused", () => {
         expect(heroDesktop).toContain("useTheme")
         expect(heroDesktop).toContain("activeVideoSrc")
         expect(heroDesktop).toContain("<HeroFallbackPoster posterSrc={activePosterSrc} />")
         expect(heroDesktop).toContain("activePosterSrc")
+        expect(heroDesktop).toContain('const HERO_VIDEO_DARK = ""')
+        expect(heroDesktop).toContain('const HERO_VIDEO_LIGHT = ""')
+        expect(heroDesktop).toContain("hasHeroVideo")
         expect(heroDesktop).toContain("key={activeVideoSrc}")
         expect(heroDesktop).toContain("src={activeVideoSrc}")
         expect(heroDesktop).not.toContain("videoDarkRef")

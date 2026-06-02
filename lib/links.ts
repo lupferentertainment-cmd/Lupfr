@@ -10,5 +10,5 @@ export const LINKS = {
   /** Watch Reel – hero CTA (Instagram). */
   watchReel: "https://www.instagram.com/lupfr_/",
   /** Google Calendar — book a call (“LUPFR Calls”). */
-  scheduleCall: "https://calendar.app.google/rCnss5ECoUQuDxqo6",
+  scheduleCall: "https://calendar.app.google/85eJL1R8euGnsjbw9",
 } as const

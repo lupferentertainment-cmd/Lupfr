@@ -235,6 +235,54 @@ function CarouselNext({
   )
 }
 
+function CarouselDots({ className }: { className?: string }) {
+  const { api } = useCarousel()
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const [snapCount, setSnapCount] = React.useState(0)
+  React.useEffect(() => {
+    if (!api) return
+    const onSelect = () => {
+      setSelectedIndex(api.selectedScrollSnap())
+      setSnapCount(api.scrollSnapList().length)
+    }
+    onSelect()
+    api.on('select', onSelect)
+    api.on('reInit', onSelect)
+    return () => {
+      api.off('select', onSelect)
+      api.off('reInit', onSelect)
+    }
+  }, [api])
+  if (snapCount <= 1) return null
+  return <CarouselDotButtons api={api} selectedIndex={selectedIndex} snapCount={snapCount} className={className} />
+}
+
+function CarouselDotButtons({
+  api,
+  selectedIndex,
+  snapCount,
+  className,
+}: {
+  api: CarouselApi
+  selectedIndex: number
+  snapCount: number
+  className?: string
+}) {
+  return (
+    <div className={cn('flex justify-center gap-2.5 mt-4 md:mt-5', className)} aria-hidden>
+      {Array.from({ length: snapCount }).map((_, i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => api?.scrollTo(i)}
+          className={cn('h-1.5 rounded-full transition-all duration-200 ease-snap', i === selectedIndex ? 'w-6 bg-foreground/80' : 'w-1.5 bg-foreground/30 hover:bg-foreground/50')}
+          aria-label={`Go to carousel slide ${i + 1} of ${snapCount}`}
+        />
+      ))}
+    </div>
+  )
+}
+
 export {
   type CarouselApi,
   Carousel,
@@ -242,4 +290,5 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  CarouselDots,
 }

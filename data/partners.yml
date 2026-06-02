@@ -25,3 +25,15 @@
   image: /corporate_partners/brixton.webp
   logoTreatment: outline
   imageClassName: scale-[0.9]
+
+- name: Nazarian Law
+  url: https://nazarianfirm.com
+  image: /corporate_partners/nazarian_law.webp
+  logoTreatment: natural
+  imageClassName: scale-[0.92]
+
+- name: Empress Yachts
+  url: https://www.empressevents.com
+  image: /corporate_partners/empress_events.webp
+  logoTreatment: natural
+  imageClassName: scale-[0.9]

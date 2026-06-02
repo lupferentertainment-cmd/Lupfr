@@ -50,14 +50,14 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
     }
   })
 
-  it("every upcoming event has ticketLink (warns each miss, then fails)", () => {
+  it("every upcoming event has ticketLink or explicit TBD status", () => {
     const upcoming = getUpcomingEvents()
     const missing = upcoming.filter(
-      (e) => typeof e.ticketLink !== "string" || e.ticketLink.trim().length === 0
+      (e) => (typeof e.ticketLink !== "string" || e.ticketLink.trim().length === 0) && e.ticketStatus !== "tbd"
     )
     for (const e of missing) {
       console.warn(
-        `[data-integrity] Upcoming event has no ticketLink: slug="${e.slug}" title="${e.title}". Add ticketLink in data/events.yml.`,
+        `[data-integrity] Upcoming event has no ticketLink or ticketStatus=tbd: slug="${e.slug}" title="${e.title}".`,
       )
     }
     expect(
