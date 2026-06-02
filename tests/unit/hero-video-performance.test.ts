@@ -25,6 +25,12 @@ describe("hero video performance guardrails", () => {
         expect(heroDesktop).not.toContain("videoLightRef")
     })
 
+    it("defines the static shine position before passing it to the hero title", () => {
+        expect(heroDesktop).toContain("const shinePosition = staticShinePositionCss")
+        expect(heroDesktop).toContain("shinePosition={shinePosition}")
+        expect(heroDesktop).not.toContain("shinePositionDelayed")
+    })
+
     it("falls back quickly if desktop video playback is too slow", () => {
         expect(heroDesktop).toContain("const HERO_VIDEO_SLOW_MS = 8000")
         expect(heroDesktop).toContain("VIDEO_READY_STATE_HAS_CURRENT_DATA")
