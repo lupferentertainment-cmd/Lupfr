@@ -32,6 +32,7 @@ export interface EventItem {
   image: string
   ticketLink?: string
   ticketLabel?: string
+  ticketStatus?: "tbd"
   description?: string
   contentLinks?: EventContentLink[]
 }

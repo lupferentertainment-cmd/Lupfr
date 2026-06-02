@@ -84,6 +84,34 @@
     "description": "BOILER ROOM: MARINA brings LUPFR and BAUM to ERIA MARINA in the Marina District."
   },
   {
+    "id": 9,
+    "slug": "fifa-world-cup-watch-party-eria-marina",
+    "title": "FIFA World Cup Watch Party",
+    "subtitle": "LUPFR at ERIA MARINA",
+    "date": "June 19th, 2026",
+    "dateISO": "2026-06-19",
+    "time": "11 AM - 3 PM",
+    "location": "ERIA MARINA, 2300 Chestnut Street, Marina District",
+    "image": "/events/fifa_world_cup_watch_party.webp",
+    "ticketLink": "https://partiful.com/e/qzqeUgwc3iMmBrt6A0MC",
+    "ticketLabel": "Event Info",
+    "description": "LUPFR hosts a free-entry FIFA World Cup watch party at ERIA MARINA with doors at 11 AM, kickoff at noon, full bar access, and a live DJ postgame."
+  },
+  {
+    "id": 10,
+    "slug": "marina-music-002-fromclay-thatfranco",
+    "title": "fromclay + thatfranco",
+    "subtitle": "Marina Music 002",
+    "date": "7/25",
+    "dateISO": "2026-07-25",
+    "time": "9 PM - 1 AM",
+    "location": "ERIA MARINA, 2300 Chestnut Street, Marina District",
+    "image": "/events/marina_music_002_fromclay_thatfranco.webp",
+    "ticketLabel": "Event Info",
+    "ticketStatus": "tbd",
+    "description": "Marina Music returns with fromclay and thatfranco at ERIA MARINA."
+  },
+  {
     "id": 2,
     "slug": "shamrock-house",
     "title": "Shamrock & House",

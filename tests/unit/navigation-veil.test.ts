@@ -17,12 +17,12 @@ describe("navigation header gradient veil", () => {
     expect(navigation).not.toContain("bg-background/60 dark:bg-background/50")
   })
 
-  it("softens the fixed header edge with a masked gradient and blur", () => {
+  it("softens the fixed header edge with a masked gradient without backdrop blur", () => {
     expect(css).toContain(".lupfr-site-header::before")
     expect(css).toContain("mask-image: linear-gradient")
     expect(css).toContain("radial-gradient")
     expect(css).toContain("color-mix(in oklch, var(--background)")
-    expect(css).toContain("backdrop-filter: blur")
+    expect(css).not.toContain("backdrop-filter: blur")
     expect(css).toContain('[data-lupfr-nav-state="settled"]')
   })
 })

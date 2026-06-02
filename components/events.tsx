@@ -14,9 +14,9 @@ import { EventDetailLink } from "@/components/event-detail-link"
 import {
   Carousel,
   CarouselContent,
+  CarouselDots,
   CarouselItem,
 } from "@/components/ui/carousel"
-import type { CarouselApi } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 
 const EVENT_IMAGE_WIDTH = 1200
@@ -212,9 +212,6 @@ function EventsCarousel({
   prioritizeFirstImage: boolean
 }) {
   const router = useRouter()
-  const [api, setApi] = useState<CarouselApi | null>(null)
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [snapCount, setSnapCount] = useState(0)
   const eventSlugs = events.map((event) => event.slug).join("|")
 
   useEffect(() => {
@@ -243,23 +240,10 @@ function EventsCarousel({
     }
   }, [eventSlugs, prefetchDetails, router])
 
-  useEffect(() => {
-    if (!api) return
-    const onSelect = () => {
-      setSelectedIndex(api.selectedScrollSnap())
-      setSnapCount(api.scrollSnapList().length)
-    }
-    onSelect()
-    api.on("select", onSelect)
-    return () => {
-      api.off("select", onSelect)
-    }
-  }, [api])
-
   if (events.length === 0) return null
   return (
     <div className="w-full">
-      <Carousel opts={CAROUSEL_OPTS} className="w-full" setApi={setApi}>
+      <Carousel opts={CAROUSEL_OPTS} className="w-full">
         <CarouselContent
           className="-ml-4 md:-ml-6 lg:-ml-8"
           viewportClassName="py-6 md:py-8"
@@ -284,23 +268,8 @@ function EventsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
+        <CarouselDots />
       </Carousel>
-      {snapCount > 1 && (
-        <div className="flex justify-center gap-2.5 mt-4 md:mt-5" aria-hidden>
-          {Array.from({ length: snapCount }).map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => api?.scrollTo(i)}
-              className={`h-1.5 rounded-full transition-all duration-200 ease-snap ${i === selectedIndex
-                ? "w-6 bg-foreground/80"
-                : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
-                }`}
-              aria-label={`Go to events slide ${i + 1} of ${snapCount}`}
-            />
-          ))}
-        </div>
-      )}
     </div>
   )
 }

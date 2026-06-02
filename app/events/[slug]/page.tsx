@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket, ExternalLink } from "lucide-react"
 import {
   EVENTS,
+  type EventItem,
   eventDetailPath,
   eventHeroAbsoluteUrl,
   eventShareTitle,
@@ -19,6 +20,38 @@ import { SITE_URL } from "@/lib/site"
 /** Intrinsic size hint for layout/CLS; actual display preserves aspect ratio (`object-contain`). */
 const EVENT_POSTER_WIDTH = 1200
 const EVENT_POSTER_HEIGHT = 1800
+
+function EventTicketCta({ event }: { event: EventItem }) {
+  const label = event.ticketLabel?.trim() || "Tickets"
+  if (event.ticketStatus === "tbd") return <EventTicketTbd label={label} />
+  if (!event.ticketLink) return null
+  return (
+    <a
+      href={event.ticketLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
+    >
+      <Ticket size={18} />
+      {label}
+    </a>
+  )
+}
+
+function EventTicketTbd({ label }: { label: string }) {
+  return (
+    <span title="Link TBD" className="inline-flex max-w-full min-w-0" aria-label={`${label}: link TBD`}>
+      <button
+        type="button"
+        aria-disabled="true"
+        className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-border bg-muted px-6 py-4 font-semibold tracking-normal text-muted-foreground opacity-75"
+      >
+        <Ticket size={18} />
+        {label}
+      </button>
+    </span>
+  )
+}
 
 export function generateStaticParams() {
   return EVENTS.map((e) => ({ slug: e.slug }))
@@ -140,17 +173,7 @@ export default async function EventPage({ params }: EventPageParams) {
                 </p>
               ) : null}
 
-              {event.ticketLink ? (
-                <a
-                  href={event.ticketLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
-                >
-                  <Ticket size={18} />
-                  {event.ticketLabel?.trim() || "Tickets"}
-                </a>
-              ) : null}
+              <EventTicketCta event={event} />
 
               {event.contentLinks && event.contentLinks.length > 0 ? (
                 <div className="mt-10 pt-8 border-t border-border">

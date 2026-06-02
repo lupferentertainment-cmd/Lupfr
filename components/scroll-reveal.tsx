@@ -1,7 +1,7 @@
 "use client"
 
-import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef, type ReactNode } from "react"
+import { motion } from "framer-motion"
+import { type ReactNode } from "react"
 
 const ease = [0.22, 1, 0.36, 1] as const
 
@@ -27,57 +27,41 @@ interface ScrollRevealProps {
 }
 
 const DEFAULT_AMOUNT_IN = 0.2
-const DEFAULT_AMOUNT_OUT = 0.8
+
+const initialByVariant: Record<RevealVariant, Record<string, number>> = {
+  up: { opacity: 0, y: 48 },
+  down: { opacity: 0, y: -40 },
+  left: { opacity: 0, x: -56 },
+  right: { opacity: 0, x: 56 },
+  scale: { opacity: 0, scale: 0.92 },
+  none: { opacity: 0 },
+}
+
+const revealedByVariant: Record<RevealVariant, Record<string, number>> = {
+  up: { opacity: 1, y: 0 },
+  down: { opacity: 1, y: 0 },
+  left: { opacity: 1, x: 0 },
+  right: { opacity: 1, x: 0 },
+  scale: { opacity: 1, scale: 1 },
+  none: { opacity: 1 },
+}
+
+const revealTransition = { duration: 0.5, ease } as const
 
 function ScrollRevealInner({
   children,
   className,
   amountIn = DEFAULT_AMOUNT_IN,
-  amountOut = DEFAULT_AMOUNT_OUT,
-  variant,
-  exitY,
-  freezeAfterReveal = false,
+  variant = "none",
 }: ScrollRevealProps) {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  })
-
-  const initialY = variant === "up" ? 48 : variant === "down" ? -40 : 0
-  const initialX = variant === "left" ? -56 : variant === "right" ? 56 : 0
-  const exitX = variant === "left" ? 32 : variant === "right" ? -32 : 0
-
-  const inputRange = [0, amountIn, 0.5, amountOut, 1]
-  const opacityEnd = freezeAfterReveal ? 1 : 0
-  const yExit = freezeAfterReveal ? 0 : (exitY ?? 0)
-  const xExit = freezeAfterReveal ? 0 : exitX
-  const scaleExit = freezeAfterReveal ? 1 : variant === "scale" ? 0.96 : 1
-
-  const opacity = useTransform(scrollYProgress, inputRange, [0, 1, 1, 1, opacityEnd])
-  const y = useTransform(
-    scrollYProgress,
-    inputRange,
-    [initialY, 0, 0, yExit, yExit]
-  )
-  const x = useTransform(
-    scrollYProgress,
-    inputRange,
-    [initialX, 0, 0, xExit, xExit]
-  )
-  const scale = useTransform(
-    scrollYProgress,
-    inputRange,
-    [variant === "scale" ? 0.92 : 1, 1, 1, scaleExit, scaleExit]
-  )
-
-  const style: Record<string, unknown> = { opacity }
-  if (variant === "left" || variant === "right") style.x = x
-  else style.y = y
-  if (variant === "scale") style.scale = scale
-
   return (
-    <motion.div ref={ref} className={className ? `gpu-accelerate ${className}` : "gpu-accelerate"} style={style}>
+    <motion.div
+      className={className ? `gpu-accelerate ${className}` : "gpu-accelerate"}
+      initial={initialByVariant[variant]}
+      whileInView={revealedByVariant[variant]}
+      viewport={{ once: true, amount: amountIn, margin: "0px 0px -80px 0px" }}
+      transition={revealTransition}
+    >
       {children}
     </motion.div>
   )

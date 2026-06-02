@@ -90,7 +90,7 @@ function GoldShineTextScroll({
  * Uses MotionValue directly in style for smooth, scroll-synced shine (no React re-renders).
  */
 export function GoldShineText({
-  variant = "scroll",
+  variant = "static",
   ...props
 }: GoldShineTextProps) {
   if (variant === "static") {
