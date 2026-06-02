@@ -4,7 +4,7 @@
 
 **Current state.** The repo has **Vitest** (unit + integration + RTL behavior tests) with coverage enforcement, plus lint/build/route-smoke checks.
 
-**Vitest, React 19, and `NODE_ENV`.** In React 19, the CJS production `react` build omits `exports.act`; `react-dom` test utils still call `React.act`, so @testing-library/react fails with *React.act is not a function* if tests run under **`NODE_ENV=production`** (e.g. Vercel’s `ci:vercel` step). The first **setup** file, `tests/setup/node-env-react.ts`, sets `NODE_ENV` to `test` when it was `production`, before any React import. Order is fixed in `vitest.config.ts` (`setupFiles`).
+**Vitest, React 19, and `NODE_ENV`.** In React 19, the CJS production `react` build omits `exports.act`; `react-dom` test utils still call `React.act`, so @testing-library/react fails with *React.act is not a function* if tests run under **`NODE_ENV=production`** (e.g. Vercel’s `ci:vercel` step). The first **setup** file, `tests/setup/node-env-react.ts`, sets `NODE_ENV` to `test` when it was `production`, before any React import. Order is fixed in `vitest.config.ts` (`setupFiles`). The RTL setup also replaces malformed Bun/Vitest `localStorage` globals with a test-local `Storage` implementation when required, so cookie/contact preference tests are not dependent on shell-local `--localstorage-file` state.
 
 **Coverage policy.** Coverage thresholds are enforced in `vitest.config.ts`:
 
@@ -51,15 +51,16 @@
 - `bun run coverage` – run Vitest with coverage + thresholds using dot reporter output to keep local/CI log volume low.
 - `bun run lint` – ESLint.
 - `bun run build` – `generate-data` + `bunx --bun next build --webpack`.
+- `bun run verify:client-bundle` – scans built `.next/static/chunks/**/*.js` for the exact retired hero shine references that caused a production client crash (`shinePositionDelayed` or bare `shinePosition` shorthand). Run after `bun run build`; it is part of `verify`, `ci`, and Vercel.
 - `bun run verify:routes` – production route smoke checks; asserts public crawl/discovery endpoints respond (`/robots.txt`, `/sitemap.xml`, `/site.webmanifest`, `/llms.txt`, `/opengraph-image`, `/twitter-image`, and favicon root fallbacks), and still enforces **404** for internal-doc URLs (`/docs`, `/docs/overview`, `/README.md`, `/api.md`) so they never become accidental public routes (see `proxy.ts`). Unknown paths must return **404** (not streamed 200): the app enables **`experimental.globalNotFound`** and `app/global-not-found.tsx` so crawlers and this script see a real status code.
 - **Same clone as `next dev`:** Do not run **`bun run build`** / **`bun run ci`** while dev is writing **`.next/`**; stop dev first or you may see lock errors, missing manifests, or **`verify:routes`** / **`next start`** failing. If **`4310`** is taken, use e.g. **`VERIFY_ROUTES_PORT=43990 bun run verify:routes`**.
-- `bun run verify` – lint + build + route smoke.
-- `bun run ci` – lint + coverage + build + route smoke. The command stays directly in `package.json`; there is no separate CI shell wrapper.
+- `bun run verify` – lint + build + client-bundle scan + route smoke.
+- `bun run ci` – lint + coverage + build + client-bundle scan + route smoke. The command stays directly in `package.json`; there is no separate CI shell wrapper.
 - `bun run ci:vercel` – public raster check + `bun run ci`; keeps Vercel on the same package-script path as local CI, plus the image gate and post-build route smoke.
 - `bun run public:images:check` – fails if `public/` still has non-favicon, non-logo JPEG/PNG that should be WebP (same as the pre-commit raster gate).
 - `bun run public:images:optimize` – convert those rasters to WebP in place, then update `data/*.yml` paths and run `bun run generate-data`.
 
-**Vercel enforcement.** `vercel.json` uses `buildCommand: "bun run ci:vercel"`, so Preview and Production builds fail if the public raster check, lint, Vitest/coverage, **`bunx --bun next build`**, or post-build `verify:routes` fails. The Vercel command delegates to `bun run ci` after the image gate so local and deployment CI use the same package-script flow.
+**Vercel enforcement.** `vercel.json` uses `buildCommand: "bun run ci:vercel"`, so Preview and Production builds fail if the public raster check, lint, Vitest/coverage, **`bunx --bun next build`**, post-build `verify:client-bundle`, or post-build `verify:routes` fails. The Vercel command delegates to `bun run ci` after the image gate so local and deployment CI use the same package-script flow.
 
 **Docs.** Any change to test scope, thresholds, or CI commands must be reflected in this file.
 
@@ -67,7 +68,7 @@
 
 **Home performance guardrail.** `tests/unit/home-performance.test.ts` asserts that the home page keeps lower sections behind intersection-observed hash placeholders and that artist cards lazy-load Spotify/SoundCloud iframes without extra opt-in buttons. This protects mobile transfer and keeps the artist card UX consistent across light and dark modes.
 
-**Hero media performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero uses the optimized real ERIA Marina event video with a poster fallback and keeps immutable cache headers on `/hero/*` media.
+**Hero media performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero uses the optimized real ERIA Marina event video with a poster fallback, keeps immutable cache headers on `/hero/*` media, and binds the static shine position before passing it to the title. `scripts/verify-client-bundle.mjs` adds the deploy-time compiled-bundle check so a stale bare `shinePosition` client reference fails CI before production.
 
 **Data layer performance guardrail.** `tests/performance/data-layer-budgets.test.ts` uses warmup plus small best-of timing samples for ratio checks so CI timer jitter does not hide real regressions or create false failures without making the coverage run spend excessive time inside benchmark loops.
 

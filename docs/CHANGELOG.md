@@ -17,3 +17,5 @@ All notable project changes are recorded here.
 - Renamed the July 25 Marina Music event display to `fromclay + thatfranco` and updated its time to 9 PM - 1 AM.
 - Reduced homepage scroll flicker by removing fixed-background and backdrop-blur repaint triggers, making section reveals one-shot, and using static metallic shine by default.
 - Enabled the desktop hero video with an optimized real ERIA Marina event loop and poster fallback.
+- Added a post-build client-bundle verification gate to block the retired hero shine references that caused the production client crash.
+- Hardened Vitest browser-storage setup so malformed local `localStorage` globals no longer break cookie/contact preference tests.
