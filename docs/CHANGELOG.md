@@ -4,6 +4,8 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-06-01
+
 ### Changed
 
 - Added the Yahsek Dropbox video folder to Boiler Boat 003 post-event content links.
