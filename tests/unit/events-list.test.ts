@@ -108,19 +108,23 @@ describe("event routes and lookup", () => {
   })
 
   it("post-event content links are loaded from generated event data", () => {
-    const event = getEventBySlug("wheres-west-corbin-mason")
+    const event = getEventBySlug("boiler-boat-003-wheres-west-warehouse-session")
     expect(event?.contentLinks).toEqual([
       {
-        label: "Photos",
-        url: "https://drive.google.com/drive/folders/1F8h2-muaIfuoCdSH7C6dVQ3AlUhE7BUw?usp=sharing",
+        label: "GoPro Footage",
+        url: "https://gopro.com/v/1778da2d-d76a-4897-9e05-0a3f3c8ef463",
       },
       {
-        label: "Video",
-        url: "https://drive.google.com/drive/folders/1S39j1c-277_z76K9O6i9V_RrLkxsM9We",
+        label: "Yohei Photos",
+        url: "https://drive.google.com/drive/folders/1HYKhIfdG2_IxR0k7U2wZw5Pl82t6eXGR",
       },
       {
-        label: "Drone",
-        url: "https://drive.google.com/drive/folders/1GDy76AOwDTR5ohgXDygl1pA8nzahz6cK?usp=sharing",
+        label: "James Videos",
+        url: "https://www.dropbox.com/scl/fo/ycr5vdoah1stre5d9dgia/AB0di8Qybx7M7BknTFwfCsI?dl=0&e=1&rlkey=9a1xbvo35u9j21rb0ladvo3ja&st=u5xe8wtn",
+      },
+      {
+        label: "Yahsek Videos",
+        url: "https://www.dropbox.com/scl/fo/bupowh3f1u49mg5ma6cgx/ACGn633EjoeSRaHvtPs-mCc?rlkey=movr07k3ea27q9qpkpr62f45v&st=ht8g6t67&dl=0",
       },
     ])
   })

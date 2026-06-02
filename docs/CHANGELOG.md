@@ -6,6 +6,7 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- Added the Yahsek Dropbox video folder to Boiler Boat 003 post-event content links.
 - Updated the homepage hero tagline to `Redefining the Music Experience` and paused desktop hero video playback in favor of real event-photo poster media.
 - Added June 19, 2026 FIFA World Cup Watch Party and July 25, 2026 Marina Music 002 events with optimized poster assets.
 - Added fromclay and thatfranco to Featured Artists, keeping the requested six artists first and enabling carousel pagination for more than six artists.
