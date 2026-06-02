@@ -67,7 +67,7 @@
 
 **Home performance guardrail.** `tests/unit/home-performance.test.ts` asserts that the home page keeps lower sections behind intersection-observed hash placeholders and that artist cards lazy-load Spotify/SoundCloud iframes without extra opt-in buttons. This protects mobile transfer and keeps the artist card UX consistent across light and dark modes.
 
-**Hero media performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero is poster-first while hero video sources are paused, keeps the video fallback path available for future real event video, and keeps immutable cache headers on `/hero/*` media.
+**Hero media performance guardrail.** `tests/unit/hero-video-performance.test.ts` asserts that the desktop hero uses the optimized real ERIA Marina event video with a poster fallback and keeps immutable cache headers on `/hero/*` media.
 
 **Data layer performance guardrail.** `tests/performance/data-layer-budgets.test.ts` uses warmup plus small best-of timing samples for ratio checks so CI timer jitter does not hide real regressions or create false failures without making the coverage run spend excessive time inside benchmark loops.
 

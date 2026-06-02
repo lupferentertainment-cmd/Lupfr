@@ -21,16 +21,16 @@ import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 const HERO_VIDEO_SLOW_MS = 8000
-const HERO_VIDEO_DARK = ""
-const HERO_VIDEO_LIGHT = ""
+const HERO_VIDEO_DARK = "/hero/hero_event_eria_marina.mp4"
+const HERO_VIDEO_LIGHT = "/hero/hero_event_eria_marina.mp4"
 const VIDEO_READY_STATE_HAS_CURRENT_DATA = 2
 
 const staticShinePositionCss = "50% 50%"
 
-/** Desktop: Entertainment line shine follows hero scroll. */
+/** Desktop: Entertainment line uses static shine to avoid scroll-time repaint flicker. */
 const HeroTitleContentDesktop = memo(function HeroTitleContentDesktop({
   prefersReducedMotion,
-  shinePositionDelayed,
+  shinePosition,
 }: {
   prefersReducedMotion: boolean | null
   shinePosition: string
