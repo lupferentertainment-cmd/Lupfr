@@ -38,6 +38,7 @@ describe("events list ordering", () => {
       "boiler-party-marina-lupfr-baum",
       "fifa-world-cup-watch-party-eria-marina",
       "rhythm-n-friends",
+      "gas-money-eria-marina",
       "marina-music-002-fromclay-thatfranco",
     ])
   })
@@ -47,6 +48,7 @@ describe("events list ordering", () => {
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
       "marina-music-002-fromclay-thatfranco",
+      "gas-money-eria-marina",
       "rhythm-n-friends",
       "fifa-world-cup-watch-party-eria-marina",
       "boiler-party-marina-lupfr-baum",

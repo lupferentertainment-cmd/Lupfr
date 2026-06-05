@@ -99,6 +99,17 @@
   ticketLabel: Tickets
   description: Rhythm n Friends brings Rhythm N Sound and guests to ERIA MARINA in the Marina District.
 
+- id: 12
+  slug: gas-money-eria-marina
+  title: GAS MONEY
+  date: June 20th, 2026
+  dateISO: "2026-06-20"
+  time: 10 PM - 12 AM
+  location: ERIA MARINA, 2300 Chestnut St, Marina District
+  image: /events/gas_money.webp
+  ticketStatus: tbd
+  description: GAS MONEY at ERIA MARINA in the Marina District.
+
 - id: 10
   slug: marina-music-002-fromclay-thatfranco
   title: fromclay + thatfranco

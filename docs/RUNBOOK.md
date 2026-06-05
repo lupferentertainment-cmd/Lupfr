@@ -16,6 +16,17 @@ Edit source content in `data/*.yml` and place optimized public assets under `pub
 
 Update the relevant canonical spec in `docs/` before committing any behavior, deployment, testing, content, or public-surface change. Use `docs/RUNBOOK.md` for operator workflow changes, `docs/DEPLOYMENT.md` for Vercel/staging/production changes, `docs/TESTING.md` for verification pipeline changes, `docs/API.md` for public routes/env/schema changes, `docs/ARCHITECTURE.md` for app structure changes, and `docs/CHANGELOG.md` for every user-visible or workflow change under `[Unreleased]`.
 
+## AI-assisted content updates
+
+When Claude Code (or any AI agent) performs a content update (new events, poster swaps, asset additions):
+
+1. **Assets** — convert source PNG/JPEG to WebP (`cwebp -q 85`) and place under `public/events/` or the relevant `public/` subfolder.
+2. **Data** — edit `data/events.yml` (or the relevant `data/*.yml`). Increment `id`; keep `dateISO` in `YYYY-MM-DD`; keep `image` paths as `/events/<file>.webp`.
+3. **Verify** — run `bun run test`. All route checks and browser console crawl must pass.
+4. **Document** — add a `### Added (Content — YYYY-MM-DD)` entry in `docs/CHANGELOG.md` noting the AI tool used.
+5. **Stage** — run `bun run ship:dev` to push to the `dev` branch for Vercel Preview review.
+6. **Promote** — after stakeholder sign-off on Preview, run `bun run promote:prod` to fast-forward `main`.
+
 ## Verification
 
 Use `bun run test` as the single full verification gate before shipping or promoting. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. The pre-commit hook, GitHub Actions, and Vercel all run this same command. Use `bun run smoke` only for faster local smoke checks; focused gallery checks remain inside the full Vitest coverage run.

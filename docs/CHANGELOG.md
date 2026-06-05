@@ -18,6 +18,11 @@ All notable project changes are recorded here.
 - Added `bun run ship:dev` and `bun run promote:prod` scripts (`scripts/ship-dev.sh`, `scripts/promote-prod.sh`) implementing the documented branch-based staging flow: `ship:dev` fast-forward pushes the current commit to `dev` for a Vercel staging Preview, and `promote:prod` fast-forwards `main` to the validated `dev` commit (refuses on divergence, prints the promoted commits, requires a typed `yes`, never force-pushes). Resolves the drift where `docs/DEPLOYMENT.md` referenced these scripts before they existed.
 - Added Soundcheck to Corporate Partners with an optimized WebP sponsor logo asset and non-linked partner rendering support.
 
+### Added (Content — 2026-06-05)
+
+- Added **GAS MONEY** event (June 20th, 2026, ERIA MARINA) with poster `public/events/gas_money.webp` via Claude Code AI-assisted content update; entry lives in `data/events.yml` id 12.
+- Updated **Rhythm n Friends** poster (`public/events/rhythm_n_friends.webp`) with the revised artwork from the 604 Website Update zip.
+
 ### Fixed
 
 - Replaced the Rhythm n Friends event poster with the blue Rhythm N Friends artwork (`public/events/rhythm_n_friends.webp`).
