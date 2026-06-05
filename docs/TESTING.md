@@ -42,6 +42,7 @@
 - `tests/integration/contact-route.test.ts` – contact API validation, invalid JSON / missing fields, Resend misconfiguration and send failures (including non-`Error` throws), mail success path, and 429 protection.
 - `tests/integration/newsletter-route.test.ts` – newsletter API validation, invalid JSON / empty email, dual-send success and per-send failures, non-`Error` send failures, and 429 protection.
 - `tests/unit/email-templates.test.ts` – contact email HTML includes optional company/budget rows.
+- `tests/unit/test-suite-gate.test.ts` – package/script wiring contract for the single LLM-safe gate: `bun run test:suite` delegates to CI mode, CI mode runs full Vitest coverage, route dynamic-link QA, and browser runtime crawl, and the focused gallery script keeps the home-gallery journey coverage visible.
 
 **Commands.**
 
