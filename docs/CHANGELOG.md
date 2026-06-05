@@ -20,6 +20,7 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Replaced the Rhythm n Friends event poster with the blue Rhythm N Friends artwork (`public/events/rhythm_n_friends.webp`).
 - Restored the Where's West event poster (`public/events/wheres_west.webp`) to the original 1080x1350 event artwork while keeping the updated artist photo at `public/artists/wheres_west.webp`.
 - Hardened the browser console crawl so intentionally blocked heavy media/font/image requests and aborted Next RSC prefetches do not fail the gate while same-origin HTTP errors and real request failures still do.
 - Improved first-screen performance by removing Framer Motion from the fixed navigation and keeping the base schedule-call CTA free of motion-only imports; the navigation section spy now avoids redundant DOM scans during scroll.
