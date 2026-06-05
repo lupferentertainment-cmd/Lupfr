@@ -75,17 +75,17 @@
   },
   {
     "id": 8,
-    "slug": "boiler-room-marina-lupfr-baum",
-    "title": "BOILER ROOM: MARINA",
+    "slug": "boiler-party-marina-lupfr-baum",
+    "title": "BOILER PARTY: MARINA",
     "subtitle": "Feat. LUPFR + BAUM",
     "date": "June 5th, 2026",
     "dateISO": "2026-06-05",
     "time": "9:30 PM - 1 AM",
     "location": "ERIA MARINA, 2300 Chestnut Street, Marina District",
-    "image": "/events/boiler_room_marina.webp",
+    "image": "/events/boiler_party_marina.webp",
     "ticketLink": "https://partiful.com/e/bhs8mgHSVde5MKILbUku",
     "ticketLabel": "Tickets",
-    "description": "BOILER ROOM: MARINA brings LUPFR and BAUM to ERIA MARINA in the Marina District."
+    "description": "BOILER PARTY: MARINA brings LUPFR and BAUM to ERIA MARINA in the Marina District."
   },
   {
     "id": 9,
