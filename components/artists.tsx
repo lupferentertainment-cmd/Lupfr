@@ -324,7 +324,7 @@ function ArtistCarousel({
 
 export function Artists() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
 
   /* The featured artists section is a grid of artist cards. */

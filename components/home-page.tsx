@@ -24,7 +24,12 @@ const Artists = dynamic(() =>
   import("@/components/artists").then((m) =>
     resolveDynamicComponent(m, "Artists", "@/components/artists")
   ),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[760px] sm:min-h-[860px] lg:min-h-[760px]" aria-hidden />
+    ),
+  }
 )
 const Gallery = dynamic(() =>
   import("@/components/gallery").then((m) =>
