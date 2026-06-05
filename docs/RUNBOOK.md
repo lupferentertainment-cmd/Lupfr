@@ -18,7 +18,7 @@ Update the relevant canonical spec in `docs/` before committing any behavior, de
 
 ## Verification
 
-Use `bun run ci` as the full local verification gate. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. Use `bun run public:images:check` before deployment-focused checks to ensure no non-exempt PNG/JPEG assets remain under `public/`.
+Use `bun run test:suite` as the single full local verification gate before shipping or promoting. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. `bun run ci`, the pre-commit hook, and Vercel `ci:vercel` all delegate to this same suite. Use `bun run test:smoke` only for faster local smoke checks, and `bun run test:gallery` for focused gallery/content validation while editing gallery data or assets.
 
 ## Common failures
 

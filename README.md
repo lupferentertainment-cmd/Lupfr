@@ -36,8 +36,10 @@ See comments at the top of each `data/*.yml` file for field descriptions. Non-te
 - `bun run lint` – run ESLint
 - `bun run typecheck` – strict TypeScript validation with `tsc --noEmit`
 - `bun run build` – generate data, run strict TypeScript validation, then production Next build
-- `bun run verify` – lint, build, client-bundle scan, then route smoke (`scripts/verify-routes.sh`); matches GitHub Actions CI
-- `bun run precommit` – data-integrity test, public image check, then `verify`; this sequence also runs automatically before each commit after `bun install` (git hook from `scripts/pre-commit`)
+- `bun run test:suite` – one canonical full gate: lint, coverage, typecheck/build, client-bundle scan, route/external-link QA, and browser console/runtime crawl; this is what local CI, pre-commit, and Vercel use
+- `bun run test:smoke` – faster local smoke gate (same as `bun run verify`)
+- `bun run test:gallery` – focused gallery/content tests for gallery asset/data changes
+- `bun run precommit` – public image check, then `test:suite`; this sequence also runs automatically before each commit after `bun install` (git hook from `scripts/pre-commit`)
 
 ## Vercel (production deploys)
 
