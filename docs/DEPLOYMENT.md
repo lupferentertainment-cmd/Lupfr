@@ -8,17 +8,19 @@ Lean, two-environment model so updates are validated on a staging URL before the
 
 | Branch | Vercel environment | URL | When it deploys |
 | --- | --- | --- | --- |
-| `dev` | **Preview (staging)** | stable Vercel Preview URL | every push to `dev` |
+| `dev` | **Preview (staging)** | https://lupfr-git-dev-lupferentertainment-5199s-projects.vercel.app | every push to `dev` |
 | `main` | **Production** | lupfr.com | only when `dev` is promoted to `main` |
 
 How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel automatically builds a **Preview deployment** for every other branch, so the `dev` branch is your staging environment for free — there is nothing to crash on production while testing.
 
 **Daily flow:**
 
-1. `git checkout dev` and do your work there (commit normally).
-2. `bun run ship:dev` — runs the full gate, then pushes your branch to `dev`; Vercel builds the staging Preview. Find the URL in the Vercel project **Deployments** tab (the `dev` branch entry).
-3. Open that Preview URL and check the change (forms, signups, the page you edited).
-4. When it looks right: `bun run promote:prod` — fast-forwards `main` to `dev` and Vercel deploys production. The script prints the exact commits and asks you to type `yes` first. It refuses to run if `main` and `dev` have diverged, and never force-pushes, so production history is safe.
+1. Do your work on any local branch (including local `main`). Commit normally — the pre-commit hook runs `bun run test`.
+2. `bun run ship:dev` — runs the full gate, then **force-pushes HEAD to `origin/dev`**; Vercel builds the staging Preview. `dev` is staging-only and is always overwritten with whatever is ready; divergence from `origin/dev` is not an error. Find the Preview URL in the Vercel project **Deployments** tab (the `dev` branch entry).
+3. Open that Preview URL and review the change.
+4. When it looks right: `bun run promote:prod` — fast-forwards `origin/main` to the validated `origin/dev` commit; Vercel deploys production. The script prints the exact commits and asks you to type `yes`. It never force-pushes `main`, so production history is safe.
+
+**Rule:** nothing goes to `origin/main` (production) without first passing through `origin/dev` (staging Preview) and a human review step. `ship:dev` may be run as many times as needed; `promote:prod` is the gate.
 
 **Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Internal maintainers can run `bun run _vercel:env:check` when auditing Vercel secrets.
 
@@ -57,9 +59,9 @@ If missing, add each variable interactively:
 **Preview-first flow (Git).**
 
 1. Commit normally; the pre-commit hook runs `bun run test`.
-2. `bun run ship:dev` runs `bun run test`, then pushes the current clean commit to `origin/dev`; Vercel builds the staging Preview.
-3. Validate signup flow on the Preview URL.
-4. `bun run promote:prod` fast-forwards `origin/main` to the validated `origin/dev` commit after typed confirmation; Vercel deploys production.
+2. `bun run ship:dev` runs `bun run test`, then **force-pushes HEAD to `origin/dev`**; Vercel builds the staging Preview. `dev` is always overwritten — no reconciliation needed.
+3. Validate the change on the Preview URL.
+4. `bun run promote:prod` fast-forwards `origin/main` to the validated commit after typed confirmation; Vercel deploys production. Never force-pushes `main`.
 
 If preview or production returns `Google Sheets webhook rejected the request.`, validate the Google Apps Script deployment access is set to allow unauthenticated web app POST calls ("Anyone") and confirm the current deployment URL is authorized by your script policy. In **development** (`next dev`), a non-OK webhook response can include a `debug` object on the JSON: if `upstreamPreview` shows HTML (for example a Google “Page Not Found” page) while `upstreamStatus` is `401` or `404`, the **`GOOGLE_SHEETS_WEBHOOK_URL` is likely stale or mistyped** — open the script, **Deploy → Manage deployments**, create a new web app version if needed, and paste the new **Web app** URL (must end in `/exec` for the current deployment) into Vercel and `.env.local`.
 

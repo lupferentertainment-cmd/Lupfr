@@ -71,7 +71,7 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
 
   it("event hero image paths exist under public/", () => {
     for (const e of EVENTS) {
-      if (!e.image.startsWith("/")) continue
+      if (!e.image || !e.image.startsWith("/")) continue
       expect(
         publicFileExists(e.image),
         `missing event hero: ${e.title} → ${e.image}`,

@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # ship:dev — push the current commit to the `dev` branch so Vercel builds the
-# staging Preview deployment. Safe by design: runs the full local gate first,
-# fast-forward pushes only (never --force), requires a clean working tree, and
-# reconciles with origin/dev first.
+# staging Preview deployment. Runs the full local gate first, then force-pushes
+# to origin/dev (dev is staging-only; force-overwrite is intentional and safe).
+# Never touches origin/main (production).
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -28,11 +28,10 @@ bun run test
 echo "ship-dev: fetching origin"
 git fetch origin
 
-# Fast-forward push only. If origin/dev has commits not in HEAD, this push is
-# rejected (no --force), so production-bound history is never rewritten.
-if ! git push origin "HEAD:dev"; then
-  echo "ship-dev: push rejected — origin/dev has diverged from your HEAD."
-  echo "  reconcile first:  git pull --rebase origin dev   (then rerun)"
+# Force-push to dev (staging branch). dev is intentionally overwritten with
+# whatever is in HEAD; it is never the source of production history.
+if ! git push origin "HEAD:dev" --force; then
+  echo "ship-dev: push to origin/dev failed."
   exit 1
 fi
 
