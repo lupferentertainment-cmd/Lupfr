@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import {
   getCookieConsentAccepted,
   LUPFR_CONSENT_EVENT,
@@ -45,5 +46,11 @@ export function DeferredAnalytics() {
     return schedule()
   }, [consent])
 
-  return consent && idle ? <Analytics /> : null
+  if (!consent || !idle) return null
+  return (
+    <>
+      <Analytics />
+      <SpeedInsights />
+    </>
+  )
 }
