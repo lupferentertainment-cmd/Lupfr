@@ -10,7 +10,7 @@ export function EventBreadcrumb({ event }: { event: EventItem }) {
 
   return (
     <nav aria-label="Event breadcrumb">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs sm:text-sm mb-4">
+      <ol className="flex items-center gap-x-2 text-xs sm:text-sm">
         <li>
           <Link
             href="/#events"

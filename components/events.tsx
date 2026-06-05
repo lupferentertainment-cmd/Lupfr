@@ -127,7 +127,7 @@ function EventCard({
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <motion.span
             suppressHydrationWarning
-            className={`absolute top-5 left-5 sm:top-6 sm:left-6 ${tag.pillClass}`}
+            className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ delay: index * 0.12 + 0.2 }}
