@@ -17,5 +17,8 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Vercel build parity (same as vercel.json buildCommand)
+      - name: Install Chromium for browser crawl
+        run: bunx playwright install --with-deps chromium
+
+      - name: Canonical full gate
         run: bun run test

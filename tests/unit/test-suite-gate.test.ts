@@ -10,12 +10,16 @@ type PackageJson = {
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const packageJsonPath = path.join(rootDir, "package.json")
 const ciScriptPath = path.join(rootDir, "scripts", "ci.sh")
+const shipDevPath = path.join(rootDir, "scripts", "ship-dev.sh")
 const verifyRoutesPath = path.join(rootDir, "scripts", "verify-routes.sh")
+const vercelConfigPath = path.join(rootDir, "vercel.json")
 const vitestConfigPath = path.join(rootDir, "vitest.config.ts")
 
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as PackageJson
 const ciScript = fs.readFileSync(ciScriptPath, "utf8")
+const shipDevScript = fs.readFileSync(shipDevPath, "utf8")
 const verifyRoutesScript = fs.readFileSync(verifyRoutesPath, "utf8")
+const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, "utf8")) as { buildCommand: string }
 const vitestConfig = fs.readFileSync(vitestConfigPath, "utf8")
 
 describe("canonical package workflow gate", () => {
@@ -33,6 +37,14 @@ describe("canonical package workflow gate", () => {
 
     it("keeps CI delegated to the same test command", () => {
         expect(packageJson.scripts.ci).toBe("bun run test")
+    })
+
+    it("keeps staging shipment gated by the full suite", () => {
+        expect(shipDevScript).toContain("bun run test")
+    })
+
+    it("keeps Vercel preview builds production-build only", () => {
+        expect(vercelConfig.buildCommand).toBe("bun run _build")
     })
 
     it("runs all Vitest tests through coverage", () => {

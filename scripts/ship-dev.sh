@@ -2,8 +2,9 @@
 set -euo pipefail
 
 # ship:dev — push the current commit to the `dev` branch so Vercel builds the
-# staging Preview deployment. Safe by design: fast-forward push only (never
-# --force), requires a clean working tree, and reconciles with origin/dev first.
+# staging Preview deployment. Safe by design: runs the full local gate first,
+# fast-forward pushes only (never --force), requires a clean working tree, and
+# reconciles with origin/dev first.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -20,6 +21,9 @@ fi
 
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 echo "ship-dev: shipping '${current_branch}' (HEAD $(git rev-parse --short HEAD)) to origin/dev"
+
+echo "ship-dev: running canonical full gate before staging"
+bun run test
 
 echo "ship-dev: fetching origin"
 git fetch origin

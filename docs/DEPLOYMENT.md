@@ -16,13 +16,13 @@ How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel aut
 **Daily flow:**
 
 1. `git checkout dev` and do your work there (commit normally).
-2. `bun run ship:dev` — pushes your branch to `dev`; Vercel builds the staging Preview. Find the URL in the Vercel project **Deployments** tab (the `dev` branch entry).
+2. `bun run ship:dev` — runs the full gate, then pushes your branch to `dev`; Vercel builds the staging Preview. Find the URL in the Vercel project **Deployments** tab (the `dev` branch entry).
 3. Open that Preview URL and check the change (forms, signups, the page you edited).
 4. When it looks right: `bun run promote:prod` — fast-forwards `main` to `dev` and Vercel deploys production. The script prints the exact commits and asks you to type `yes` first. It refuses to run if `main` and `dev` have diverged, and never force-pushes, so production history is safe.
 
 **Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Internal maintainers can run `bun run _vercel:env:check` when auditing Vercel secrets.
 
-**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. The public build gate is **`bun run test`**; internal `_build` plumbing runs data generation, strict TypeScript validation, cleanup, and `bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun**. Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js.
+**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. Vercel runs **`bun run _build`** for the production Next.js build; the public full gate is **`bun run test`** and is enforced before staging by `bun run ship:dev`, by pre-commit, and by GitHub Actions. Internal `_build` plumbing runs data generation, strict TypeScript validation, cleanup, and `bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun**. Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js.
 
 **Local dev:** If `next dev` returns **500** with `ENOENT` on `.next/dev/routes-manifest.json` (or other missing files under `.next/dev`), restart `bun run dev`. Startup runs `scripts/prepare-dev-cache.mjs`, which removes only the incomplete `.next/dev` cache so Next can rebuild it. `bun run test` and `bun run smoke` use isolated `.next-ci/<run>` output and refuse to start the production build while dev is active, so they no longer delete or race the dev server cache.
 
@@ -55,7 +55,7 @@ If missing, add each variable interactively:
 **Preview-first flow (Git).**
 
 1. Commit normally; the pre-commit hook runs `bun run test`.
-2. `bun run ship:dev` pushes the current clean commit to `origin/dev`; Vercel builds the staging Preview.
+2. `bun run ship:dev` runs `bun run test`, then pushes the current clean commit to `origin/dev`; Vercel builds the staging Preview.
 3. Validate signup flow on the Preview URL.
 4. `bun run promote:prod` fast-forwards `origin/main` to the validated `origin/dev` commit after typed confirmation; Vercel deploys production.
 
@@ -65,7 +65,7 @@ If preview or production returns `Google Sheets webhook rejected the request.`, 
 
 **Build.** `generate-data` reads `data/*.yml` and writes `lib/data/generated/*.json`; then Next.js build runs. Ensure all required YAML files exist in `data/` (events, artists, services, partners) so generated JSON is present.
 
-**CI (GitHub Actions).** On every push and pull request, `.github/workflows/ci.yml` runs `bun run test` (same as the Vercel project **Build Command**). The suite runs public raster check, lint, Vitest with coverage thresholds, **`bunx --bun next build`**, client-bundle scan, internal route smoke and external-link QA, and a Playwright Chromium crawl for console/runtime errors. Failing the GitHub job does not block Vercel by itself; the Vercel build still runs the identical script, so both surfaces catch the same issues.
+**CI (GitHub Actions).** On every push and pull request, `.github/workflows/ci.yml` installs Chromium with Playwright and runs `bun run test`. The suite runs public raster check, lint, Vitest with coverage thresholds, **`bunx --bun next build`**, client-bundle scan, internal route smoke and external-link QA, and a Playwright Chromium crawl for console/runtime errors. Vercel deployments run the production build after `ship:dev` has already passed the full gate locally and GitHub Actions repeats it in CI.
 
 **Troubleshooting (from README).** If deploy does not trigger: check Git integration and repo access in Vercel; ensure commit author email matches linked Git account; for teams, author must be in Vercel team. Redeploy from dashboard (Deployments → Redeploy) or use a Deploy Hook.
 

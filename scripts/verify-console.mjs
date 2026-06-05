@@ -14,6 +14,7 @@ const PORT = Number(process.env.VERIFY_CONSOLE_PORT ?? 4399)
 const BASE = `http://127.0.0.1:${PORT}`
 const READY_TIMEOUT_MS = 60000
 const NAV_TIMEOUT_MS = 30000
+const PAGE_SETTLE_MS = 750
 const FAIL_CONSOLE_TYPES = new Set(["error"])
 
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -92,7 +93,8 @@ async function _enqueue_links(page, seen, queue) {
 async function _visit(context, route, sink, seen, queue) {
     const page = await context.newPage()
     _attach(page, route, sink)
-    await page.goto(`${BASE}${route}`, { waitUntil: "networkidle", timeout: NAV_TIMEOUT_MS })
+    await page.goto(`${BASE}${route}`, { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT_MS })
+    await page.waitForTimeout(PAGE_SETTLE_MS)
     await _enqueue_links(page, seen, queue)
     await page.close()
     console.log(`verify-console: OK  ${route}`)

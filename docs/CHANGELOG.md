@@ -19,6 +19,8 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Hardened the Playwright browser crawl against long-lived media/analytics requests by waiting for DOM readiness plus a short settle window instead of blocking on `networkidle`.
+- Moved Vercel Preview/Production builds back to the production build command (`bun run _build`) and made `bun run ship:dev` run the canonical full gate before pushing `dev`; GitHub Actions now installs Playwright Chromium before `bun run test` so the browser crawl works in CI.
 - Bounded dynamic external-link QA by collapsing repeated gallery social-share endpoints to one live health check per share endpoint after route crawling, keeping `bun run test` comprehensive without hundreds of duplicate network checks.
 - Tightened the desktop About section grid so the Will Lupfer portrait and value cards sit closer together.
 - Kept the fallback pages-manifest Webpack plugin out of `next dev` so dev builds no longer crash with duplicate `pages-manifest.json` asset emissions.
