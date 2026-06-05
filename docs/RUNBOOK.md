@@ -12,6 +12,10 @@ Run `bun run dev` for the Next.js development server. Startup runs `scripts/prep
 
 Edit source content in `data/*.yml`, place optimized public assets under `public/`, then run `bun run generate-data`. Public raster assets should be WebP unless they are favicon/logo exceptions documented in `scripts/optimize-public-raster.mjs`.
 
+## Documentation discipline
+
+Update the relevant canonical spec in `docs/` before committing any behavior, deployment, testing, content, or public-surface change. Use `docs/RUNBOOK.md` for operator workflow changes, `docs/DEPLOYMENT.md` for Vercel/staging/production changes, `docs/TESTING.md` for verification pipeline changes, `docs/API.md` for public routes/env/schema changes, `docs/ARCHITECTURE.md` for app structure changes, and `docs/CHANGELOG.md` for every user-visible or workflow change under `[Unreleased]`.
+
 ## Verification
 
 Use `bun run ci` as the full local verification gate. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. Use `bun run public:images:check` before deployment-focused checks to ensure no non-exempt PNG/JPEG assets remain under `public/`.
