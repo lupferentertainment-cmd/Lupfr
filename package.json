@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "bun@1.3.9",
   "scripts": {
-    "dev": "bun scripts/prepare-dev-cache.mjs && bunx --bun next dev --webpack",
+    "dev": "bun scripts/prepare-dev-cache.mjs && bunx --bun next dev --turbopack",
     "start": "bun run _build && bun run _serve",
     "test": "bash scripts/ci.sh ci",
     "smoke": "bash scripts/ci.sh verify",
