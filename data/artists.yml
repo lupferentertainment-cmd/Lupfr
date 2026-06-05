@@ -1,4 +1,4 @@
-# Featured artists. Images go in public/artists/; reference as /artists/filename.webp (see package.json public:images:*)
+# Featured artists. Images go in public/artists/; reference as /artists/filename.webp. `bun run test` enforces WebP.
 
 # Featured track (optional): embed a Spotify or SoundCloud player on the artist card.
 # Spotify: use any spotify.com/track/... URL.

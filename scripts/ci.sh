@@ -35,18 +35,19 @@ mkdir -p "$CI_TMP_ROOT"
 cp tsconfig.json "$TSCONFIG_SNAPSHOT"
 cp next-env.d.ts "$NEXT_ENV_SNAPSHOT"
 
+bun scripts/optimize-public-raster.mjs check
 bun scripts/clean-next-dist.mjs
-bun run lint
+bun run _lint
 if [[ "$MODE" == "ci" ]]; then
-  bun run coverage
+  bun run _coverage
 fi
-bun run build
+bun run _build
 restore_next_snapshots
-bun run verify:client-bundle
+bun run _verify:client-bundle
 restore_next_snapshots
-bun run verify:routes
+bun run _verify:routes
 restore_next_snapshots
 if [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]]; then
-  bun run verify:console
+  bun run _verify:console
   restore_next_snapshots
 fi

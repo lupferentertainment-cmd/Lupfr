@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 "use strict";
-// Installs scripts/pre-commit → .git/hooks/pre-commit (public raster gate + bun run test:suite).
+// Installs scripts/pre-commit → .git/hooks/pre-commit (bun run test).
 const fs = require("fs");
 const path = require("path");
 

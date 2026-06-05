@@ -1,19 +1,14 @@
 #!/bin/sh
-# Pre-commit: public raster gate, then the canonical full test suite.
+# Pre-commit: canonical full test gate.
 # Install: "bun install" / "bun run prepare" copies this to .git/hooks/pre-commit.
-# Run manually anytime: bun run precommit
+# Run manually anytime: bun run test
 
 set -e
 cd "$(git rev-parse --show-toplevel)"
 
-echo "Pre-commit: public/ raster gate (WebP)..."
-bun run public:images:check || {
-  echo "Add WebP: bun run public:images:optimize  then update data/*.yml + bun run generate-data (see README)."
-  exit 1
-}
-echo "Pre-commit: canonical full test suite (see package.json \"test:suite\")..."
-bun run test:suite || {
-  echo "Pre-commit failed. Fix errors above, or run: bun run test:suite"
+echo "Pre-commit: canonical full test suite (bun run test)..."
+bun run test || {
+  echo "Pre-commit failed. Fix errors above, or run: bun run test"
   exit 1
 }
 

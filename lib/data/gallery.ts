@@ -1,5 +1,5 @@
 /**
- * Homepage gallery — source `data/gallery.yml`, build `bun run generate-data` → `generated/gallery.json`.
+ * Homepage gallery — source `data/gallery.yml`, internal data generator → `generated/gallery.json`.
  * Album display names for configured folders use **event `title` from `data/events.yml`** (matched by
  * `GALLERY_ALBUM_FOLDER_DEFAULT_DATES` → `dateISO`); do not hardcode a separate name map.
  */

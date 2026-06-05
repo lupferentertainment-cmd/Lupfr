@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# After `bun run build` (`bunx --bun next build`), start production server briefly and crawl internal links for route smoke checks.
+# After the production build, start the built server briefly and crawl internal links for route smoke checks.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -9,7 +9,7 @@ MISSING_PATH="/__verify_missing_${RANDOM}_"
 SERVER_TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/lupfr-verify-routes.XXXXXX")"
 SERVER_LOG="${SERVER_TMP_DIR}/server.log"
 
-echo "verify-routes: starting bun run start (next start via Bun) on port ${PORT}"
+echo "verify-routes: starting built Next server on port ${PORT}"
 
 cleanup() {
   if [[ -n "${SERVER_PID:-}" ]] && kill -0 "$SERVER_PID" 2>/dev/null; then
@@ -21,7 +21,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-bun run start -- -p "$PORT" >"$SERVER_LOG" 2>&1 &
+bun run _serve -- -p "$PORT" >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 
 BASE="http://127.0.0.1:${PORT}"

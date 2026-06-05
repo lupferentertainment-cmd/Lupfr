@@ -10,7 +10,7 @@ Run `bun run dev` for the Next.js development server. Startup runs `scripts/prep
 
 ## Content updates
 
-Edit source content in `data/*.yml`, place optimized public assets under `public/`, then run `bun run generate-data`. Public raster assets should be WebP unless they are favicon/logo exceptions documented in `scripts/optimize-public-raster.mjs`.
+Edit source content in `data/*.yml` and place optimized public assets under `public/`. `bun run test` regenerates data and fails if public raster assets are not WebP, unless they are favicon/logo exceptions documented in `scripts/optimize-public-raster.mjs`.
 
 ## Documentation discipline
 
@@ -18,14 +18,14 @@ Update the relevant canonical spec in `docs/` before committing any behavior, de
 
 ## Verification
 
-Use `bun run test:suite` as the single full local verification gate before shipping or promoting. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. `bun run ci`, the pre-commit hook, and Vercel `ci:vercel` all delegate to this same suite. Use `bun run test:smoke` only for faster local smoke checks, and `bun run test:gallery` for focused gallery/content validation while editing gallery data or assets.
+Use `bun run test` as the single full verification gate before shipping or promoting. It builds under an isolated `.next-ci/<run>` directory so it does not delete `.next/dev`, and it refuses to start the production build while `next dev` is active. The pre-commit hook, GitHub Actions, and Vercel all run this same command. Use `bun run smoke` only for faster local smoke checks; focused gallery checks remain inside the full Vitest coverage run.
 
 ## Common failures
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | Dev shows `ENOENT` for `.next/dev/routes-manifest.json` | Dev cache was interrupted or deleted by an older build command | Restart `bun run dev`; startup removes incomplete `.next/dev` automatically |
-| `bun run build`, `bun run ci`, or `bun run verify` refuses to build | A `next dev` process for this repo is active | Stop dev before running production build or full verification |
+| `bun run test`, `bun run smoke`, or `bun run start` refuses to build | A `next dev` process for this repo is active | Stop dev before running production build or full verification |
 | Build hangs at `Creating an optimized production build ...` | Another dev/build process is active or remote font optimization is waiting on network | Stop competing Next/Bun processes, remove `.next`, and keep fonts in `app/globals.css` rather than `next/font/google` |
 | Browser console shows stale chunk or incomplete chunked encoding errors | Dev server was interrupted or `.next/` contains stale output | Stop dev, remove stale `.next`, then restart `bun run dev` |
 | Browser console requests `/layout.css` | Legacy browser/cache/client requested an old stylesheet URL | Keep `public/layout.css` present as a no-op stylesheet; route smoke verifies it returns `text/css` |

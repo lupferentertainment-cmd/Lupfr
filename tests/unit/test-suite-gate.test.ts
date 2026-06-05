@@ -18,13 +18,25 @@ const ciScript = fs.readFileSync(ciScriptPath, "utf8")
 const verifyRoutesScript = fs.readFileSync(verifyRoutesPath, "utf8")
 const vitestConfig = fs.readFileSync(vitestConfigPath, "utf8")
 
-describe("canonical test:suite gate", () => {
-    it("delegates package test:suite to CI mode", () => {
-        expect(packageJson.scripts["test:suite"]).toBe("bash scripts/ci.sh ci")
+describe("canonical package workflow gate", () => {
+    it("keeps package test as the full CI gate", () => {
+        expect(packageJson.scripts.test).toBe("bash scripts/ci.sh ci")
+    })
+
+    it("keeps package smoke as the fast gate", () => {
+        expect(packageJson.scripts.smoke).toBe("bash scripts/ci.sh verify")
+    })
+
+    it("keeps the production server command build-first", () => {
+        expect(packageJson.scripts.start).toBe("bun run _build && bun run _serve")
+    })
+
+    it("keeps CI delegated to the same test command", () => {
+        expect(packageJson.scripts.ci).toBe("bun run test")
     })
 
     it("runs all Vitest tests through coverage", () => {
-        expect(ciScript).toContain("bun run coverage")
+        expect(ciScript).toContain("bun run _coverage")
     })
 
     it("keeps Vitest pointed at every test file", () => {
@@ -32,15 +44,11 @@ describe("canonical test:suite gate", () => {
     })
 
     it("keeps the dynamic route and link QA inside the suite", () => {
-        expect(ciScript).toContain("bun run verify:routes")
+        expect(ciScript).toContain("bun run _verify:routes")
     })
 
     it("keeps browser runtime crawling inside the full suite", () => {
-        expect(ciScript).toContain("bun run verify:console")
-    })
-
-    it("keeps gallery journey coverage in the focused gallery script", () => {
-        expect(packageJson.scripts["test:gallery"]).toContain("tests/behavior/gallery-home-journey.test.ts")
+        expect(ciScript).toContain("bun run _verify:console")
     })
 
     it("keeps external-link extraction inside route verification", () => {

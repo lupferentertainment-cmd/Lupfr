@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "bun install",
-  "buildCommand": "bun run ci:vercel",
+  "buildCommand": "bun run test",
   "bunVersion": "1.x"
 }

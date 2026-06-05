@@ -8,7 +8,7 @@ echo "vercel-preview: validating required Vercel environment variables"
 bash scripts/vercel-env-check.sh
 
 echo "vercel-preview: running local CI"
-bun run ci
+bun run test
 
 echo "vercel-preview: deploying preview"
 vercel deploy

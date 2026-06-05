@@ -29,7 +29,7 @@ fi
 echo "vercel-prod: deploying tagged release '${tag_name}'"
 
 bash scripts/vercel-env-check.sh
-bun run ci
+bun run test
 vercel deploy --prod
 
 echo "vercel-prod: complete for tag '${tag_name}'"

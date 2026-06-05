@@ -1,7 +1,7 @@
 /**
  * Converts JPEG sources in public/gallery/ to optimized WebP files named by slug.
- * Expects lib/data/generated/gallery.json from `bun run generate-data`.
- * Run: bun run generate-data && bun run build:gallery
+ * Expects lib/data/generated/gallery.json from the internal data generator.
+ * Run: bun run _generate-data && bun scripts/build-gallery-webp.mjs
  */
 import fs from "node:fs/promises"
 import path from "node:path"

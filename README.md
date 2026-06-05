@@ -22,36 +22,32 @@ Contact form submissions and newsletter signups are sent via [Resend](https://re
 Site content (events, gallery, artists, services, corporate partners) lives in **`data/`** as YAML files. Images live in **`public/`** (e.g. `public/artists/`, `public/events/` for event card heroes, `public/gallery/` for the home photo carousel, `public/corporate_partners/`). To add or edit content without touching code:
 
 1. **Add or replace images** in the right `public/` subfolder. Event list metadata lives in `data/events.yml` with `image: /events/...` (single hero per event). The home **Gallery** section uses `data/gallery.yml` with paths like `/gallery/...`; those assets are not required to match the events list 1:1. Upcoming vs past is computed from `dateISO`, not from folders.
-2. **Edit the matching YAML** in `data/` (e.g. `data/artists.yml`, `data/events.yml`, `data/services.yml`, `data/partners.yml`). Use paths from the site root, e.g. `image: "/artists/yourfile.webp"` (no `public/` in the path). If you drop in JPEG/PNG, run `bun run public:images:optimize`, then fix any path renames in YAML and `bun run generate-data`.
-3. **Rebuild**: `bun run build` runs `generate-data` first, which turns YAML into JSON under `lib/data/generated/` so the app can use the new content.
+2. **Edit the matching YAML** in `data/` (e.g. `data/artists.yml`, `data/events.yml`, `data/services.yml`, `data/partners.yml`). Use paths from the site root, e.g. `image: "/artists/yourfile.webp"` (no `public/` in the path). If you drop in JPEG/PNG, run `bun run _images:optimize`, then fix any path renames in YAML.
+3. **Verify**: `bun run test` regenerates data, checks image formats, builds, and runs the full safety gate before the change ships.
 
 **Media formats.** **Photos** for the site (events, artists, gallery, partners, hero stills) are **WebP** in `public/` (favicons under `public/favicon/` and the brand mark under `public/logos/` stay PNG as needed). **Video** uses **MP4** (e.g. hero backgrounds). **M4A/AAC** is for audio files, not images—do not use it for photos.
 
 See comments at the top of each `data/*.yml` file for field descriptions. Non-technical editors can add images and update YAML; no component code changes are required.
 
-## Build & Lint
+## Commands
 
-- `bun run dev` – development server
-- `bun run start` – run production server
-- `bun run lint` – run ESLint
-- `bun run typecheck` – strict TypeScript validation with `tsc --noEmit`
-- `bun run build` – generate data, run strict TypeScript validation, then production Next build
-- `bun run test:suite` – one canonical full gate: lint, coverage, typecheck/build, client-bundle scan, route/external-link QA, and browser console/runtime crawl; this is what local CI, pre-commit, and Vercel use
-- `bun run test:smoke` – faster local smoke gate (same as `bun run verify`)
-- `bun run test:gallery` – focused gallery/content tests for gallery asset/data changes
-- `bun run precommit` – public image check, then `test:suite`; this sequence also runs automatically before each commit after `bun install` (git hook from `scripts/pre-commit`)
+- `bun run dev` – one local development server.
+- `bun run start` – one local production server path; builds first, then runs `next start`.
+- `bun run test` – one full gate: public image check, lint, coverage, typecheck/build, client-bundle scan, route/external-link QA, and browser console/runtime crawl. Local CI, pre-commit, GitHub Actions, and Vercel use this.
+- `bun run smoke` – one faster local smoke gate: public image check, lint, typecheck/build, client-bundle scan, and route/external-link QA; no coverage or browser crawl.
+- `bun run ship:dev` – one staging ship path; pushes the current clean Git commit to `origin/dev` for Vercel Preview.
+- `bun run promote:prod` – one production promotion path; fast-forwards `origin/main` to the validated `origin/dev` commit after typed confirmation.
 
 ## Vercel (production deploys)
 
 The site is deployed on Vercel. Pushes to `main` normally trigger an automatic deployment.
 
-Preview-first + tagged production flow (CLI):
+Preview-first Git flow:
 
-- `bun run vercel:env:check` – confirm required Vercel secrets exist in preview and production.
-- `bun run vercel:preview` – run CI and deploy a preview build.
-- Validate forms/signups on preview.
-- Create and push a release tag (`vX.Y.Z`).
-- Check out that tag and run `bun run vercel:prod:from-tag`.
+1. Commit normally; the pre-commit hook runs `bun run test`.
+2. `bun run ship:dev` to push the current commit to Vercel Preview (`dev`).
+3. Validate forms/signups on the Preview URL.
+4. `bun run promote:prod` to fast-forward production (`main`) from validated `dev`.
 
 **If a push didn’t trigger a deploy:**
 

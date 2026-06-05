@@ -8,7 +8,7 @@
  *   bun scripts/optimize-public-raster.mjs          # convert in place (writes .webp, removes source)
  *   bun scripts/optimize-public-raster.mjs check    # exit 1 if unconverted rasters remain
  *
- * After converting, run: bun run generate-data; update any hardcoded paths in app/components (see script output).
+ * After converting, run: bun run test; update any hardcoded paths in app/components (see script output).
  */
 import fs from "node:fs/promises"
 import path from "node:path"
@@ -137,7 +137,7 @@ async function check() {
   for (const f of files) {
     console.error(`  - /${toRelPosix(f)}`)
   }
-  console.error('Run: bun run public:images:optimize  then bun run generate-data and commit path updates in YAML/app.')
+  console.error('Run: bun run _images:optimize  then bun run test and commit path updates in YAML/app.')
   process.exit(1)
 }
 
@@ -155,7 +155,7 @@ async function main() {
   for (const f of files) {
     await convertOne(f)
   }
-  console.log("optimize-public: done. Next: update data/*.yml + any hardcoded paths, then bun run generate-data")
+  console.log("optimize-public: done. Next: update data/*.yml + any hardcoded paths, then bun run test")
 }
 
 main().catch((e) => {

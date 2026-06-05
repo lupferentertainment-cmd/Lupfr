@@ -20,11 +20,11 @@ How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel aut
 3. Open that Preview URL and check the change (forms, signups, the page you edited).
 4. When it looks right: `bun run promote:prod` — fast-forwards `main` to `dev` and Vercel deploys production. The script prints the exact commits and asks you to type `yes` first. It refuses to run if `main` and `dev` have diverged, and never force-pushes, so production history is safe.
 
-**Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Check with `bun run vercel:env:check` (covers both `preview` and `production`).
+**Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Internal maintainers can run `bun run _vercel:env:check` when auditing Vercel secrets.
 
-**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. The **`build`** script is `bun run generate-data && bun run typecheck && bun scripts/clean-next-dist.mjs && bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun** (not the stock `next` shim that shells out to Node). Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js. Repo scripts (`generate-data`, image checks, `verify:routes` helpers) use **`bun …`** / **`bunx …`** as documented in `package.json`.
+**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. The public build gate is **`bun run test`**; internal `_build` plumbing runs data generation, strict TypeScript validation, cleanup, and `bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun**. Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js.
 
-**Local dev:** If `next dev` returns **500** with `ENOENT` on `.next/dev/routes-manifest.json` (or other missing files under `.next/dev`), restart `bun run dev`. Startup runs `scripts/prepare-dev-cache.mjs`, which removes only the incomplete `.next/dev` cache so Next can rebuild it. `bun run ci` and `bun run verify` use isolated `.next-ci/<run>` output and refuse to start the production build while dev is active, so they no longer delete or race the dev server cache.
+**Local dev:** If `next dev` returns **500** with `ENOENT` on `.next/dev/routes-manifest.json` (or other missing files under `.next/dev`), restart `bun run dev`. Startup runs `scripts/prepare-dev-cache.mjs`, which removes only the incomplete `.next/dev` cache so Next can rebuild it. `bun run test` and `bun run smoke` use isolated `.next-ci/<run>` output and refuse to start the production build while dev is active, so they no longer delete or race the dev server cache.
 
 **Vercel project (dashboard).** [lupfr — Vercel](https://vercel.com/lupferentertainment-5199s-projects/lupfr) (`lupferentertainment-5199s-projects` / `lupfr`).
 
@@ -43,7 +43,7 @@ Set in Vercel: Project → Settings → Environment Variables. No other runtime 
 
 Verify required vars in Vercel with:
 
-1. `bun run vercel:env:check`
+1. `bun run _vercel:env:check`
 
 If missing, add each variable interactively:
 
@@ -52,15 +52,12 @@ If missing, add each variable interactively:
 3. `vercel env add RESEND_API_KEY preview`
 4. `vercel env add RESEND_API_KEY production`
 
-**Preview-first flow (CLI).**
+**Preview-first flow (Git).**
 
-1. `vercel link`
-2. `bun run vercel:preview`
-3. Validate signup flow on preview URL.
-4. Tag release candidate commit: `git tag vX.Y.Z && git push origin vX.Y.Z`
-5. Checkout the tag to deploy exactly tagged source: `git checkout vX.Y.Z`
-6. `bun run vercel:prod:from-tag`
-7. Return to your branch (for example): `git checkout main`
+1. Commit normally; the pre-commit hook runs `bun run test`.
+2. `bun run ship:dev` pushes the current clean commit to `origin/dev`; Vercel builds the staging Preview.
+3. Validate signup flow on the Preview URL.
+4. `bun run promote:prod` fast-forwards `origin/main` to the validated `origin/dev` commit after typed confirmation; Vercel deploys production.
 
 If preview or production returns `Google Sheets webhook rejected the request.`, validate the Google Apps Script deployment access is set to allow unauthenticated web app POST calls ("Anyone") and confirm the current deployment URL is authorized by your script policy. In **development** (`next dev`), a non-OK webhook response can include a `debug` object on the JSON: if `upstreamPreview` shows HTML (for example a Google “Page Not Found” page) while `upstreamStatus` is `401` or `404`, the **`GOOGLE_SHEETS_WEBHOOK_URL` is likely stale or mistyped** — open the script, **Deploy → Manage deployments**, create a new web app version if needed, and paste the new **Web app** URL (must end in `/exec` for the current deployment) into Vercel and `.env.local`.
 
@@ -68,8 +65,8 @@ If preview or production returns `Google Sheets webhook rejected the request.`, 
 
 **Build.** `generate-data` reads `data/*.yml` and writes `lib/data/generated/*.json`; then Next.js build runs. Ensure all required YAML files exist in `data/` (events, artists, services, partners) so generated JSON is present.
 
-**CI (GitHub Actions).** On every push and pull request, `.github/workflows/ci.yml` runs `bun run ci:vercel` (same as the Vercel project **Build Command**): public raster check plus the canonical `bun run test:suite`. The suite runs lint, Vitest with coverage thresholds, **`bunx --bun next build`**, client-bundle scan, `verify:routes` with internal route smoke and external-link QA, and `verify:console` with a Playwright Chromium crawl for console/runtime errors. Failing the GitHub job does not block Vercel by itself; the Vercel build still runs the identical script, so both surfaces catch the same issues.
+**CI (GitHub Actions).** On every push and pull request, `.github/workflows/ci.yml` runs `bun run test` (same as the Vercel project **Build Command**). The suite runs public raster check, lint, Vitest with coverage thresholds, **`bunx --bun next build`**, client-bundle scan, internal route smoke and external-link QA, and a Playwright Chromium crawl for console/runtime errors. Failing the GitHub job does not block Vercel by itself; the Vercel build still runs the identical script, so both surfaces catch the same issues.
 
 **Troubleshooting (from README).** If deploy does not trigger: check Git integration and repo access in Vercel; ensure commit author email matches linked Git account; for teams, author must be in Vercel team. Redeploy from dashboard (Deployments → Redeploy) or use a Deploy Hook.
 
-**Internal documentation (`docs/`).** The canonical specs under `docs/*.md` are **versioned in Git** (e.g. private GitHub) for maintainers, Cursor context, and CI alignment — not end-user help pages. The production site does **not** expose them: there is no `app/docs` route, nothing under `public/docs/`, and **`proxy.ts`** returns **404** for `/docs`, `/_docs`, and several bare `/*.md` paths, with `X-Robots-Tag: noindex, nofollow, noarchive`. **`bun run verify:routes`** asserts **`/docs`**, **`/docs/overview`**, **`/README.md`**, **`/api.md`**, and related checks stay **404** after build (see `scripts/verify-routes.sh`). The build still includes the repo tree in the project, but those paths are not browseable on the public hostname.
+**Internal documentation (`docs/`).** The canonical specs under `docs/*.md` are **versioned in Git** (e.g. private GitHub) for maintainers, Cursor context, and CI alignment — not end-user help pages. The production site does **not** expose them: there is no `app/docs` route, nothing under `public/docs/`, and **`proxy.ts`** returns **404** for `/docs`, `/_docs`, and several bare `/*.md` paths, with `X-Robots-Tag: noindex, nofollow, noarchive`. `bun run test` asserts **`/docs`**, **`/docs/overview`**, **`/README.md`**, **`/api.md`**, and related checks stay **404** after build (see `scripts/verify-routes.sh`). The build still includes the repo tree in the project, but those paths are not browseable on the public hostname.

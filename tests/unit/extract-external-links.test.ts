@@ -28,56 +28,56 @@ let fixturePath = ""
 let output: readonly string[] = []
 
 function runExtractor(htmlFile: string): string[] {
-  const stdout = execFileSync("bun", [scriptPath, htmlFile], { encoding: "utf8" })
-  return stdout.split("\n").filter((line) => line.length > 0)
+    const stdout = execFileSync("bun", [scriptPath, htmlFile], { encoding: "utf8" })
+    return stdout.split("\n").filter((line) => line.length > 0)
 }
 
 beforeAll(() => {
-  fixturePath = path.join(os.tmpdir(), `lupfr-external-links-${process.pid}.html`)
-  fs.writeFileSync(fixturePath, FIXTURE_HTML, "utf8")
-  output = runExtractor(fixturePath)
+    fixturePath = path.join(os.tmpdir(), `lupfr-external-links-${process.pid}.html`)
+    fs.writeFileSync(fixturePath, FIXTURE_HTML, "utf8")
+    output = runExtractor(fixturePath)
 })
 
 afterAll(() => {
-  if (fixturePath && fs.existsSync(fixturePath)) {
-    fs.rmSync(fixturePath)
-  }
+    if (fixturePath && fs.existsSync(fixturePath)) {
+        fs.rmSync(fixturePath)
+    }
 })
 
 describe("extract-external-links", () => {
-  it("emits external anchor destinations", () => {
-    expect(output).toContain("https://www.instagram.com/lupfr_/")
-  })
+    it("emits external anchor destinations", () => {
+        expect(output).toContain("https://www.instagram.com/lupfr_/")
+    })
 
-  it("strips URL fragments before emitting", () => {
-    expect(output).toContain("https://www.tiktok.com/@lupfer_entertainment")
-  })
+    it("strips URL fragments before emitting", () => {
+        expect(output).toContain("https://www.tiktok.com/@lupfer_entertainment")
+    })
 
-  it("deduplicates repeated external links", () => {
-    expect(output.filter((url) => url === "https://www.instagram.com/lupfr_/")).toHaveLength(1)
-  })
+    it("deduplicates repeated external links", () => {
+        expect(output.filter((url) => url === "https://www.instagram.com/lupfr_/")).toHaveLength(1)
+    })
 
-  it("collapses repeated social share endpoints", () => {
-    expect(output.filter((url) => url === "https://twitter.com/intent/tweet")).toHaveLength(1)
-  })
+    it("collapses repeated social share endpoints", () => {
+        expect(output.filter((url) => url === "https://twitter.com/intent/tweet")).toHaveLength(1)
+    })
 
-  it("excludes internal relative routes", () => {
-    expect(output.some((url) => url.includes("/gallery"))).toBe(false)
-  })
+    it("excludes internal relative routes", () => {
+        expect(output.some((url) => url.includes("/gallery"))).toBe(false)
+    })
 
-  it("excludes mailto links", () => {
-    expect(output.some((url) => url.startsWith("mailto:"))).toBe(false)
-  })
+    it("excludes mailto links", () => {
+        expect(output.some((url) => url.startsWith("mailto:"))).toBe(false)
+    })
 
-  it("excludes tel links", () => {
-    expect(output.some((url) => url.startsWith("tel:"))).toBe(false)
-  })
+    it("excludes tel links", () => {
+        expect(output.some((url) => url.startsWith("tel:"))).toBe(false)
+    })
 
-  it("excludes localhost destinations", () => {
-    expect(output.some((url) => url.includes("localhost"))).toBe(false)
-  })
+    it("excludes localhost destinations", () => {
+        expect(output.some((url) => url.includes("localhost"))).toBe(false)
+    })
 
-  it("excludes non-anchor link elements", () => {
-    expect(output.some((url) => url === "https://lupfr.com/")).toBe(false)
-  })
+    it("excludes non-anchor link elements", () => {
+        expect(output.some((url) => url === "https://lupfr.com/")).toBe(false)
+    })
 })

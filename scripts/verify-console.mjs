@@ -1,5 +1,5 @@
 /**
- * Browser smoke check: start `next start`, crawl every internal route in a real
+ * Browser smoke check: start the built server, crawl every internal route in a real
  * headless Chromium, and FAIL on any console.error, uncaught page/runtime error
  * (incl. React hydration #418/#423), or same-origin HTTP >= 400 response.
  *
@@ -19,7 +19,7 @@ const FAIL_CONSOLE_TYPES = new Set(["error"])
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 function _spawn_server() {
-    return spawn("bun", ["run", "start", "--", "-p", String(PORT)], {
+    return spawn("bun", ["run", "_serve", "--", "-p", String(PORT)], {
         stdio: ["ignore", "ignore", "inherit"],
         env: { ...process.env },
     })
