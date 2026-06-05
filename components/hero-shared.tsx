@@ -45,7 +45,7 @@ export function HeroFallbackPoster({ posterSrc = HERO_POSTER }: { posterSrc?: st
   )
 }
 
-/** LUPFR: same-size letters with gold shine (periodic or static). */
+/** LUPFR: same-size letters with a static gold shine (no animated background-position, so it never repaints/flickers over the hero video). */
 export const HeroLupfrText = memo(function HeroLupfrText({
   prefersReducedMotion,
 }: {
@@ -62,8 +62,6 @@ export const HeroLupfrText = memo(function HeroLupfrText({
   )
 })
 
-const MOBILE_ENTERTAINMENT_POSITION = "50% 50%"
-
 /** Mobile: no scroll-linked MotionValues — static Entertainment gradient. */
 export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
   prefersReducedMotion,
@@ -77,7 +75,6 @@ export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
       <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
       <span
         className="block hero-title-entertainment font-medium hero-entertainment-text normal-case tracking-normal"
-        style={{ backgroundPosition: MOBILE_ENTERTAINMENT_POSITION }}
       >
         Entertainment
       </span>

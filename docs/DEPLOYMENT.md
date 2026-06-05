@@ -2,9 +2,29 @@
 
 **Repository `docs/` vs production site.** The Markdown specs under `docs/` are versioned in **Git** for maintainers; they are **not** exposed as public pages. Vercel only ships the Next.js app: there is no `app/docs` or `public/docs` route. Any request to `/docs` or other blocked doc-like paths is answered with **404** by `proxy.ts` (and blocked in `public/robots.txt`). Keep the GitHub repo private if spec content must not be public outside the team.
 
-**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. The **`build`** script is `bun run generate-data && bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun** (not the stock `next` shim that shells out to Node). Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js. Repo scripts (`generate-data`, image checks, `verify:routes` helpers) use **`bun …`** / **`bunx …`** as documented in `package.json`.
+## Two environments (staging `dev` → production `main`)
 
-**Local dev:** If `next dev` returns **500** with `ENOENT` on `.next/dev/routes-manifest.json` (or other missing files under `.next/dev`), stop the dev server, run `rm -rf .next`, and start dev again. That usually means the cache was mixed or incomplete (for example after switching branches or running a production build while dev artifacts were stale).
+Lean, two-environment model so updates are validated on a staging URL before they reach **lupfr.com**. No third environment, no extra services.
+
+| Branch | Vercel environment | URL | When it deploys |
+| --- | --- | --- | --- |
+| `dev` | **Preview (staging)** | stable Vercel Preview URL | every push to `dev` |
+| `main` | **Production** | lupfr.com | only when `dev` is promoted to `main` |
+
+How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel automatically builds a **Preview deployment** for every other branch, so the `dev` branch is your staging environment for free — there is nothing to crash on production while testing.
+
+**Daily flow:**
+
+1. `git checkout dev` and do your work there (commit normally).
+2. `bun run ship:dev` — pushes your branch to `dev`; Vercel builds the staging Preview. Find the URL in the Vercel project **Deployments** tab (the `dev` branch entry).
+3. Open that Preview URL and check the change (forms, signups, the page you edited).
+4. When it looks right: `bun run promote:prod` — fast-forwards `main` to `dev` and Vercel deploys production. The script prints the exact commits and asks you to type `yes` first. It refuses to run if `main` and `dev` have diverged, and never force-pushes, so production history is safe.
+
+**Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Check with `bun run vercel:env:check` (covers both `preview` and `production`).
+
+**Platform.** Vercel. Pushes to `main` trigger automatic deployment. Build command uses Bun: install and `package.json` scripts run under Bun. The **`build`** script is `bun run generate-data && bun run typecheck && bun scripts/clean-next-dist.mjs && bunx --bun next build --webpack` so the **Next.js CLI** runs on **Bun** (not the stock `next` shim that shells out to Node). Webpack production build avoids Turbopack-only client-reference manifest gaps on dynamic App Router routes in current Next.js. Repo scripts (`generate-data`, image checks, `verify:routes` helpers) use **`bun …`** / **`bunx …`** as documented in `package.json`.
+
+**Local dev:** If `next dev` returns **500** with `ENOENT` on `.next/dev/routes-manifest.json` (or other missing files under `.next/dev`), restart `bun run dev`. Startup runs `scripts/prepare-dev-cache.mjs`, which removes only the incomplete `.next/dev` cache so Next can rebuild it. `bun run ci` and `bun run verify` use isolated `.next-ci/<run>` output and refuse to start the production build while dev is active, so they no longer delete or race the dev server cache.
 
 **Vercel project (dashboard).** [lupfr — Vercel](https://vercel.com/lupferentertainment-5199s-projects/lupfr) (`lupferentertainment-5199s-projects` / `lupfr`).
 

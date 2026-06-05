@@ -3,7 +3,8 @@ import { readdir, readFile } from "node:fs/promises"
 import { join, relative } from "node:path"
 
 const rootDir = process.cwd()
-const chunkDir = join(rootDir, ".next", "static", "chunks")
+const distDir = process.env.NEXT_DIST_DIR ?? ".next"
+const chunkDir = join(rootDir, distDir, "static", "chunks")
 const checks = [
   {
     label: "bare shinePosition client reference",
@@ -46,6 +47,6 @@ async function runClientBundleCheck() {
 }
 
 runClientBundleCheck().catch((error) => {
-  console.error(`client-bundle: failed to scan .next client chunks: ${error.message}`)
+  console.error(`client-bundle: failed to scan ${distDir} client chunks: ${error.message}`)
   process.exit(1)
 })

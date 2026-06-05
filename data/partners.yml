@@ -37,3 +37,8 @@
   image: /corporate_partners/empress_events.webp
   logoTreatment: natural
   imageClassName: scale-[0.9]
+
+- name: Soundcheck
+  image: /corporate_partners/soundcheck.webp
+  logoTreatment: natural
+  imageClassName: scale-[1.18]

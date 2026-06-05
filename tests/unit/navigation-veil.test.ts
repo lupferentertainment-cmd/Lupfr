@@ -25,4 +25,10 @@ describe("navigation header gradient veil", () => {
     expect(css).not.toContain("backdrop-filter: blur")
     expect(css).toContain('[data-lupfr-nav-state="settled"]')
   })
+
+  it("delays mobile hash scrolling until the menu releases scroll lock", () => {
+    expect(navigation).toContain("waitForMenuClose")
+    expect(navigation).toContain("window.setTimeout(() => pushHashAndScroll(href), 90)")
+    expect(navigation).toContain("onHomeHashClick(e, href, true)")
+  })
 })

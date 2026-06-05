@@ -7,7 +7,7 @@ export type PartnerLogoTreatment = "outline" | "solid" | "natural"
 
 export interface PartnerItem {
   name: string
-  url: string
+  url?: string
   image: string
   ariaLabel?: string
   /** Mono silhouette + theme (default), outline/solid, or natural (no filter) — see globals.css `.partner-logo*`. */
@@ -23,11 +23,14 @@ function normalizeImage(path: string): string {
 const PARTNER_LAYOUT =
   "block max-h-full max-w-full min-h-0 min-w-0 h-auto w-auto shrink-0 object-contain object-center"
 
+const LOGO_TREATMENTS: Record<PartnerLogoTreatment, string> = {
+  outline: "partner-logo partner-logo--outline",
+  solid: "partner-logo partner-logo--solid",
+  natural: "partner-logo partner-logo--natural",
+}
+
 function partnerLogoClasses(treatment: PartnerLogoTreatment | undefined): string {
-  if (treatment === "outline") return "partner-logo partner-logo--outline"
-  if (treatment === "solid") return "partner-logo partner-logo--solid"
-  if (treatment === "natural") return "partner-logo partner-logo--natural"
-  return "partner-logo"
+  return treatment ? LOGO_TREATMENTS[treatment] : "partner-logo"
 }
 
 export const PARTNERS: PartnerItem[] = (partnersJson as PartnerItem[]).map((p) => ({

@@ -20,7 +20,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("IntersectionObserver")
         expect(homePage).toContain("window.location.hash")
         expect(homePage).toContain("aria-hidden=\"true\"")
-        expect(homePage).toContain("DEFERRED_SECTION_ROOT_MARGIN_MOBILE")
+        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).toContain('id="events"')
         expect(homePage).toContain("id=\"services\"")
         expect(homePage).toContain("id=\"artists\"")
@@ -30,9 +30,9 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[860px] sm:min-h-[980px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[740px] sm:min-h-[820px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[620px] sm:min-h-[700px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[720px] sm:min-h-[980px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]"')
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
@@ -44,6 +44,18 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("<About />")
         expect(homePage).toContain("<Contact />")
         expect(homePage).toContain("<Footer />")
+    })
+
+    it("keeps immediately visible reviews out of dynamic chunk preload warnings", () => {
+        expect(homePage).toContain('import { Reviews } from "@/components/reviews"')
+    })
+
+    it("checks deferred named exports before handing them to Next dynamic", () => {
+        expect(homePage).toContain("resolveDynamicComponent")
+    })
+
+    it("does not pass unchecked named exports to Next dynamic", () => {
+        expect(homePage).not.toContain(".then((m) => m.")
     })
 
     it("keeps the mobile hero and event section from eager-loading desktop-weight work", () => {

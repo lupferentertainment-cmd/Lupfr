@@ -37,6 +37,7 @@ describe("events list ordering", () => {
       "third-thursdays-operator-sf-eria",
       "boiler-room-marina-lupfr-baum",
       "fifa-world-cup-watch-party-eria-marina",
+      "rhythm-n-friends",
       "marina-music-002-fromclay-thatfranco",
     ])
   })
@@ -46,6 +47,7 @@ describe("events list ordering", () => {
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
       "marina-music-002-fromclay-thatfranco",
+      "rhythm-n-friends",
       "fifa-world-cup-watch-party-eria-marina",
       "boiler-room-marina-lupfr-baum",
       "third-thursdays-operator-sf-eria",
@@ -133,9 +135,9 @@ describe("event routes and lookup", () => {
     const fifa = getEventBySlug("fifa-world-cup-watch-party-eria-marina")
     const marina = getEventBySlug("marina-music-002-fromclay-thatfranco")
 
-    expect({ fifaLink: fifa?.ticketLink, marinaStatus: marina?.ticketStatus }).toEqual({
+    expect({ fifaLink: fifa?.ticketLink, marinaLink: marina?.ticketLink }).toEqual({
       fifaLink: "https://partiful.com/e/qzqeUgwc3iMmBrt6A0MC",
-      marinaStatus: "tbd",
+      marinaLink: "https://www.eventbrite.com/e/fromclay-thatfranco-tickets-1990995712773?aff=oddtdtcreator",
     })
   })
 })

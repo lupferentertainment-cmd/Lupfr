@@ -7,6 +7,12 @@ __v0_jsx-dev-runtime.ts
 node_modules/
 *.tsbuildinfo
 .next/
+
+# Bun-only: foreign lockfiles corrupt the React/Next module tree (see scripts/only-bun.mjs)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
 .next-ci/
 .next-preview-*/
 coverage/

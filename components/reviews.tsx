@@ -212,9 +212,9 @@ function StatTile({
           "transition-[box-shadow,border-color,background-color] duration-200 ease-out",
           "group-hover:border-accent/25 group-hover:bg-card/80 dark:group-hover:bg-card/55",
           "group-hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.2)] dark:group-hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.45)]",
+          "stat-tile-surface",
           tiltOn ? "will-change-transform" : "",
         ].join(" ")}
-        style={{ transform: "translateZ(0)" }}
       >
         <p className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight tabular-nums leading-none">
           {stat.type === "decimal" ? (

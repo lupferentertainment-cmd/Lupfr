@@ -74,6 +74,8 @@ export type GalleryHomeAlbumFolder = (typeof GALLERY_HOME_ALBUM_FOLDERS)[number]
 export const GALLERY_ALBUM_FOLDER_DEFAULT_DATES: Readonly<Record<string, string>> = {
   boiler_boat: "2026-04-04",
   boiler_boat_003: "2026-04-04",
+  shamrock_house: "2025-03-14",
+  third_thursdays_operator_sf: "2026-05-21",
   where_is_west: "2026-04-18",
   where_is_west_004: "2026-04-18",
 }

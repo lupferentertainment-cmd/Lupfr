@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import { Space_Grotesk, Inter, Playfair_Display } from 'next/font/google'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { EscapeBack } from '@/components/escape-back'
@@ -9,25 +8,6 @@ import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: '--font-body',
-  display: 'swap',
-});
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  variable: '--font-serif',
-  weight: ['600', '700'],
-  display: 'swap',
-});
 
 const siteName = 'LUPFR Entertainment'
 const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
@@ -156,11 +136,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preload" as="image" href="/hero/hero-poster-dark.webp" media="(prefers-color-scheme: dark)" />
-        <link rel="preload" as="image" href="/hero/hero-poster-light.webp" media="(prefers-color-scheme: light)" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${spaceGrotesk.variable} ${inter.variable} ${playfairDisplay.variable} font-sans antialiased bg-background text-foreground`}>
+      <body className="font-sans antialiased bg-background text-foreground">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

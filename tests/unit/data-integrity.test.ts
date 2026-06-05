@@ -11,6 +11,7 @@ import {
   EVENTS,
   getUpcomingEvents,
 } from "@/lib/events"
+import { PARTNERS } from "@/lib/data/partners"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -76,5 +77,10 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
         `missing event hero: ${e.title} → ${e.image}`,
       ).toBe(true)
     }
+  })
+
+  it("partner logo image paths exist under public/", () => {
+    const missing = PARTNERS.filter((partner) => !publicFileExists(partner.image))
+    expect(missing.map((partner) => partner.name)).toEqual([])
   })
 })

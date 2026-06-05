@@ -5,41 +5,54 @@ import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
+import { Reviews } from "@/components/reviews"
 import { ScrollProgress } from "@/components/scroll-progress"
+import { resolveDynamicComponent } from "@/lib/dynamic-component"
 
-const Reviews = dynamic(() =>
-  import("@/components/reviews").then((m) => ({ default: m.Reviews }))
-)
 const Events = dynamic(() =>
-  import("@/components/events").then((m) => ({ default: m.Events }))
+  import("@/components/events").then((m) =>
+    resolveDynamicComponent(m, "Events", "@/components/events")
+  )
 )
 const Services = dynamic(() =>
-  import("@/components/services").then((m) => ({ default: m.Services })),
+  import("@/components/services").then((m) =>
+    resolveDynamicComponent(m, "Services", "@/components/services")
+  ),
   { ssr: false }
 )
 const Artists = dynamic(() =>
-  import("@/components/artists").then((m) => ({ default: m.Artists })),
+  import("@/components/artists").then((m) =>
+    resolveDynamicComponent(m, "Artists", "@/components/artists")
+  ),
   { ssr: false }
 )
 const Gallery = dynamic(() =>
-  import("@/components/gallery").then((m) => ({ default: m.Gallery })),
+  import("@/components/gallery").then((m) =>
+    resolveDynamicComponent(m, "Gallery", "@/components/gallery")
+  ),
   { ssr: false }
 )
 const About = dynamic(() =>
-  import("@/components/about").then((m) => ({ default: m.About })),
+  import("@/components/about").then((m) =>
+    resolveDynamicComponent(m, "About", "@/components/about")
+  ),
   { ssr: false }
 )
 const Contact = dynamic(() =>
-  import("@/components/contact").then((m) => ({ default: m.Contact })),
+  import("@/components/contact").then((m) =>
+    resolveDynamicComponent(m, "Contact", "@/components/contact")
+  ),
   { ssr: false }
 )
 const Footer = dynamic(() =>
-  import("@/components/footer").then((m) => ({ default: m.Footer })),
+  import("@/components/footer").then((m) =>
+    resolveDynamicComponent(m, "Footer", "@/components/footer")
+  ),
   { ssr: false }
 )
 
 const DEFERRED_SECTION_ROOT_MARGIN_DESKTOP = "1400px 0px"
-const DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "80px 0px"
+const DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"
 
 function deferredSectionRootMargin(): string {
   if (window.matchMedia("(max-width: 767px)").matches) {
@@ -118,22 +131,22 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <Reviews />
-      <DeferredHomeSection id="events" estimatedHeightClassName="min-h-[860px] sm:min-h-[980px]">
+      <DeferredHomeSection id="events" estimatedHeightClassName="min-h-[720px] sm:min-h-[980px]">
         <Events />
       </DeferredHomeSection>
-      <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[740px] sm:min-h-[820px]">
+      <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]">
         <Services />
       </DeferredHomeSection>
       <DeferredHomeSection
         id="artists"
-        estimatedHeightClassName="min-h-[1120px] sm:min-h-[860px] lg:min-h-[760px]"
+        estimatedHeightClassName="min-h-[760px] sm:min-h-[860px] lg:min-h-[760px]"
       >
         <Artists />
       </DeferredHomeSection>
-      <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[620px] sm:min-h-[700px]">
+      <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">
         <Gallery />
       </DeferredHomeSection>
-      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[1120px] lg:min-h-[780px]">
+      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
         <About />
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">

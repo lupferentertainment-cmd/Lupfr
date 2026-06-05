@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState } from "react"
+import { type ReactNode, useRef, useState } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getPartners } from "@/lib/data/partners"
@@ -32,20 +32,11 @@ function PartnerLogoChip({
   image: string
   imageClassName?: string
   ariaLabel: string
-  href: string
+  href?: string
 }) {
   const [ready, setReady] = useState(false)
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cn(
-        "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
-        "size-28 sm:size-32 md:size-36 lg:size-40"
-      )}
-      aria-label={ariaLabel}
-    >
+    <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
       <div
         className={cn(
           "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border/75 bg-card p-3 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
@@ -77,6 +68,33 @@ function PartnerLogoChip({
           )}
         />
       </div>
+    </PartnerLogoShell>
+  )
+}
+
+function PartnerLogoShell({
+  href,
+  ariaLabel,
+  children,
+}: {
+  href?: string
+  ariaLabel: string
+  children: ReactNode
+}) {
+  const className = cn(
+    "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
+    "size-28 sm:size-32 md:size-36 lg:size-40"
+  )
+  if (!href) return <div className={className} aria-label={ariaLabel}>{children}</div>
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      aria-label={ariaLabel}
+    >
+      {children}
     </a>
   )
 }

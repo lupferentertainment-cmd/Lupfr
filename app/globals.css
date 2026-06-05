@@ -285,7 +285,6 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    scrollbar-width: none;
     -ms-overflow-style: none;
   }
 
@@ -304,7 +303,6 @@
     scroll-behavior: auto;
     scroll-padding-top: var(--lupfr-fixed-header-scroll-padding);
     overscroll-behavior-y: none;
-    -webkit-overflow-scrolling: touch;
   }
 
   html {
@@ -312,7 +310,6 @@
     min-width: 0;
     width: 100%;
     max-width: 100%;
-    -webkit-text-size-adjust: 100%;
   }
 
   body {
@@ -352,7 +349,6 @@
 
   .scrollbar-hide {
     -ms-overflow-style: none;
-    scrollbar-width: none;
   }
 
   .scrollbar-hide::-webkit-scrollbar {
@@ -848,10 +844,15 @@
       var(--entertainment-line-start) 0%,
       var(--entertainment-line-mid) 46%,
       var(--entertainment-line-end) 100%);
+  background-position: 50% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   filter: var(--filter-hero-gold);
+}
+
+.stat-tile-surface {
+  transform: translateZ(0);
 }
 
 /* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */

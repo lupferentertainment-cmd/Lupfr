@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, type MouseEvent } from "react"
 import Link from "next/link"
 import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { usePathname } from "next/navigation"
@@ -24,6 +24,24 @@ const navLinks = [
 ] as const
 
 const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
+
+function isPlainLeftClick(e: MouseEvent<HTMLAnchorElement>): boolean {
+  return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey
+}
+
+function scrollHashIntoView(hash: string): void {
+  const el = document.getElementById(hash.slice(1))
+  if (el) el.scrollIntoView({ block: "start" })
+}
+
+function pushHashAndScroll(hash: string): void {
+  const before = window.location.href
+  window.history.pushState(window.history.state, "", hash)
+  window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL: before, newURL: window.location.href }))
+  requestAnimationFrame(() => requestAnimationFrame(() => scrollHashIntoView(hash)))
+  window.setTimeout(() => scrollHashIntoView(hash), 120)
+  window.setTimeout(() => scrollHashIntoView(hash), 360)
+}
 
 /**
  * Returns which home-page section the spy line (below the header) is in.
@@ -88,6 +106,18 @@ export function Navigation() {
   const scheduleTone = isScrolled ? "on-surface" : "on-dark"
 
   const closeMenu = useCallback(() => setIsOpen(false), [])
+
+  const onHomeHashClick = useCallback((e: MouseEvent<HTMLAnchorElement>, href: string, waitForMenuClose: boolean) => {
+    if (!isHome || !href.startsWith("#") || !isPlainLeftClick(e)) return
+    e.preventDefault()
+    closeMenu()
+    setActiveSection(href.slice(1))
+    if (waitForMenuClose) {
+      window.setTimeout(() => pushHashAndScroll(href), 90)
+      return
+    }
+    pushHashAndScroll(href)
+  }, [closeMenu, isHome])
 
   useEffect(() => {
     if (!isOpen) return
@@ -158,7 +188,10 @@ export function Navigation() {
           </div>
 
           <div className="hidden min-h-[2.5rem] min-w-0 items-center justify-center self-center px-0.5 sm:px-1 lg:flex">
-            <ul className="m-0 flex min-w-0 max-w-full list-none flex-wrap items-center justify-center gap-x-3 gap-y-1 p-0 sm:gap-x-4 md:gap-x-5 lg:gap-x-5 xl:gap-x-6 2xl:gap-x-8">
+            <div
+              role="list"
+              className="m-0 flex min-w-0 max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 p-0 sm:gap-x-4 md:gap-x-5 lg:gap-x-5 xl:gap-x-6 2xl:gap-x-8"
+            >
             {navLinks.map((link) => {
               const isActive = isNavLinkActive(link.href)
               const href = linkHref(link.href)
@@ -174,13 +207,13 @@ export function Navigation() {
                     }`}
                 />
               )
-              const useNext = isHome
-              const inner = useNext ? (
+              const inner = (
                 <MotionLink
                   href={href}
                   prefetch
                   className={linkClass}
                   aria-current={isActive ? "true" : undefined}
+                  onClick={(e) => onHomeHashClick(e, href, false)}
                   initial={false}
                   whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
@@ -188,25 +221,14 @@ export function Navigation() {
                   {link.name}
                   {underline}
                 </MotionLink>
-              ) : (
-                <motion.a
-                  href={href}
-                  className={linkClass}
-                  initial={false}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {link.name}
-                  {underline}
-                </motion.a>
               )
               return (
-                <li key={link.name} className="shrink-0">
+                <div key={link.name} role="listitem" className="shrink-0">
                   {inner}
-                </li>
+                </div>
               )
             })}
-            </ul>
+            </div>
           </div>
 
           <div className="hidden min-h-[2.5rem] w-full min-w-[19rem] items-center justify-end justify-self-stretch gap-x-2.5 self-center pl-2 [contain:layout] sm:pl-3 lg:flex lg:gap-x-3 xl:gap-x-3.5">
@@ -230,18 +252,30 @@ export function Navigation() {
 
           <div className="ml-auto flex shrink-0 items-center gap-3 [contain:layout] lg:hidden">
             <ThemeToggle withSound className="shrink-0" />
-            <button
-              type="button"
-              onClick={() => setIsOpen((o) => !o)}
-              className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${isOpen || isScrolled
-                  ? "text-foreground"
-                  : "text-foreground dark:text-white"
-                }`}
-              aria-label={isOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isOpen}
-            >
-              {isOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
-            </button>
+            {isOpen ? (
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-foreground"
+                aria-label="Close menu"
+                aria-expanded="true"
+              >
+                <X size={24} aria-hidden />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${isScrolled
+                    ? "text-foreground"
+                    : "text-foreground dark:text-white"
+                  }`}
+                aria-label="Open menu"
+                aria-expanded="false"
+              >
+                <Menu size={24} aria-hidden />
+              </button>
+            )}
           </div>
         </nav>
       </header>
@@ -275,29 +309,21 @@ export function Navigation() {
                 const href = linkHref(link.href)
                 const mobileClass = `font-serif text-2xl sm:text-3xl font-bold tracking-tight transition-colors py-1 ${isActive ? "text-accent" : "text-foreground hover:text-accent"
                   }`
-                const useNext = isHome
-                return useNext ? (
+                return (
                   <MotionLink
                     key={link.name}
                     href={href}
                     prefetch
-                    onClick={closeMenu}
+                    onClick={(e) => {
+                      onHomeHashClick(e, href, true)
+                      if (!e.defaultPrevented) closeMenu()
+                    }}
                     className={mobileClass}
                     aria-current={isActive ? "true" : undefined}
                     initial={false}
                   >
                     {link.name}
                   </MotionLink>
-                ) : (
-                  <motion.a
-                    key={link.name}
-                    href={href}
-                    onClick={closeMenu}
-                    className={mobileClass}
-                    initial={false}
-                  >
-                    {link.name}
-                  </motion.a>
                 )
               })}
               <MotionScheduleCallCta
