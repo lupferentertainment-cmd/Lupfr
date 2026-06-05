@@ -135,6 +135,11 @@ export function GalleryPhotoGrid({
             className="mb-4 font-sans text-lg font-semibold tracking-tight text-foreground tabular-nums sm:text-xl"
           >
             {g.heading}
+            {g.items[0]?.albumBreadcrumb ? (
+              <span className="ml-2 font-sans text-base font-normal text-muted-foreground tabular-nums sm:text-lg">
+                — {g.items[0].albumBreadcrumb}
+              </span>
+            ) : null}
           </h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {g.items.map((p) => renderTile(p))}
