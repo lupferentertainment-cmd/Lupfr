@@ -19,6 +19,7 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Bounded dynamic external-link QA by collapsing repeated gallery social-share endpoints to one live health check per share endpoint after route crawling, keeping `bun run test:suite` comprehensive without hundreds of duplicate network checks.
 - Tightened the desktop About section grid so the Will Lupfer portrait and value cards sit closer together.
 - Kept the fallback pages-manifest Webpack plugin out of `next dev` so dev builds no longer crash with duplicate `pages-manifest.json` asset emissions.
 - Isolated `bun run ci` / `bun run verify` build output under `.next-ci/`, made client-bundle verification follow `NEXT_DIST_DIR`, and added dev-cache preflight cleanup so `.next/dev/routes-manifest.json` ENOENT loops self-heal instead of recurring.

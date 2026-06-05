@@ -15,6 +15,11 @@ if (!htmlPath) {
 }
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "0.0.0.0", "local"])
+const SHARE_LINK_ENDPOINTS = new Set([
+  "twitter.com/intent/tweet",
+  "www.facebook.com/sharer/sharer.php",
+  "www.linkedin.com/sharing/share-offsite/",
+])
 const anchorPattern = /<a\b[^>]*?\shref\s*=\s*(["'])(.*?)\1/gi
 
 const html = fs.readFileSync(htmlPath, "utf8")
@@ -34,6 +39,9 @@ for (const match of html.matchAll(anchorPattern)) {
   if (LOCAL_HOSTS.has(resolved.hostname)) continue
 
   resolved.hash = ""
+  if (SHARE_LINK_ENDPOINTS.has(`${resolved.hostname}${resolved.pathname}`)) {
+    resolved.search = ""
+  }
   links.add(resolved.toString())
 }
 

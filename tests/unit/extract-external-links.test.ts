@@ -15,6 +15,8 @@ const FIXTURE_HTML = `<!doctype html>
     <a href="https://www.instagram.com/lupfr_/">Instagram</a>
     <a href="https://www.tiktok.com/@lupfer_entertainment#follow">TikTok with fragment</a>
     <a href="https://www.instagram.com/lupfr_/">Instagram duplicate</a>
+    <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Flupfr.com%2Fgallery%2Fp%2F10&text=One">Share one</a>
+    <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Flupfr.com%2Fgallery%2Fp%2F11&text=Two">Share two</a>
     <a href="mailto:hello@example.com">Email</a>
     <a href="tel:+15555550100">Phone</a>
     <a href="http://localhost:3000/local">Local host</a>
@@ -53,6 +55,10 @@ describe("extract-external-links", () => {
 
   it("deduplicates repeated external links", () => {
     expect(output.filter((url) => url === "https://www.instagram.com/lupfr_/")).toHaveLength(1)
+  })
+
+  it("collapses repeated social share endpoints", () => {
+    expect(output.filter((url) => url === "https://twitter.com/intent/tweet")).toHaveLength(1)
   })
 
   it("excludes internal relative routes", () => {
