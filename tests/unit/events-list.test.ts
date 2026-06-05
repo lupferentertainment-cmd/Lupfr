@@ -4,6 +4,7 @@ import {
   eventDetailPath,
   eventHeroAbsoluteUrl,
   eventShareTitle,
+  getEventBreadcrumbLabel,
   getEventBySlug,
   getEventTag,
   getPastEvents,
@@ -141,6 +142,50 @@ describe("event routes and lookup", () => {
       fifaLink: "https://partiful.com/e/qzqeUgwc3iMmBrt6A0MC",
       marinaLink: "https://www.eventbrite.com/e/fromclay-thatfranco-tickets-1990995712773?aff=oddtdtcreator",
     })
+  })
+})
+
+describe("getEventBreadcrumbLabel", () => {
+  it("returns null for past dateISO", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2025-01-01" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBeNull()
+  })
+
+  it("returns Upcoming for null dateISO", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: null }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("Upcoming")
+  })
+
+  it("returns Today's Event when dateISO matches today in event TZ", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2026-06-05" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("Today's Event")
+  })
+
+  it("returns Tomorrow's Event when event is 1 day away", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2026-06-06" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("Tomorrow's Event")
+  })
+
+  it("returns In X days for an event 4 days away", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2026-06-09" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("In 4 days")
+  })
+
+  it("returns In 8 days for an event 8 days away", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2026-06-13" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("In 8 days")
+  })
+
+  it("returns In X days for an event more than 14 days away", () => {
+    expect(
+      getEventBreadcrumbLabel(eventFixture({ dateISO: "2026-07-15" }), la("2026-06-05T12:00:00-07:00"))
+    ).toBe("In 40 days")
   })
 })
 

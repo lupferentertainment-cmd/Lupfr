@@ -10,6 +10,15 @@ import {
   eventShareTitle,
   getEventBySlug,
 } from "@/lib/events"
+import {
+  fetchPartifulMeta,
+  resolveEventDescription,
+  resolveEventImage,
+  resolveEventTicket,
+  type PartifulMeta,
+  type ResolvedTicket,
+} from "@/lib/partiful"
+import { EventBreadcrumb } from "@/components/event-breadcrumb"
 import { EventDetailHeroImage } from "@/components/event-detail-hero-image"
 import { EventTagBadge } from "@/components/event-tag-badge"
 import { GalleryShareRow } from "@/components/gallery-share-row"
@@ -21,19 +30,18 @@ import { SITE_URL } from "@/lib/site"
 const EVENT_POSTER_WIDTH = 1200
 const EVENT_POSTER_HEIGHT = 1800
 
-function EventTicketCta({ event }: { event: EventItem }) {
-  const label = event.ticketLabel?.trim() || "Tickets"
-  if (event.ticketStatus === "tbd") return <EventTicketTbd label={label} />
-  if (!event.ticketLink) return null
+function EventTicketCta({ ticket, fallbackLabel }: { ticket: ResolvedTicket | "tbd" | null; fallbackLabel?: string }) {
+  if (ticket === "tbd") return <EventTicketTbd label={fallbackLabel || "Tickets"} />
+  if (!ticket) return null
   return (
     <a
-      href={event.ticketLink}
+      href={ticket.link}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
     >
       <Ticket size={18} />
-      {label}
+      {ticket.label}
     </a>
   )
 }
@@ -62,6 +70,15 @@ export const revalidate = 3600
 
 type EventPageParams = { params: Promise<{ slug: string }> }
 
+async function tryFetchPartifulMeta(event: EventItem): Promise<PartifulMeta | null> {
+  if (!event.partifulLink) return null
+  try {
+    return await fetchPartifulMeta(event.partifulLink)
+  } catch {
+    return null
+  }
+}
+
 export async function generateMetadata({ params }: EventPageParams): Promise<Metadata> {
   const { slug } = await params
   const event = getEventBySlug(slug)
@@ -71,12 +88,16 @@ export async function generateMetadata({ params }: EventPageParams): Promise<Met
       title: "Events",
     }
   }
+  const meta = await tryFetchPartifulMeta(event)
   const pageTitle = `LUPFR | ${event.title}`
   const description =
-    event.description?.trim() ||
+    resolveEventDescription(event, meta)?.trim() ||
     [event.date, event.time, event.location].filter(Boolean).join(" · ")
   const url = `${SITE_URL}${eventDetailPath(slug)}`
-  const imageUrl = eventHeroAbsoluteUrl(event, SITE_URL)
+  const resolvedImage = resolveEventImage(event, meta)
+  const imageUrl = resolvedImage.startsWith("http")
+    ? resolvedImage
+    : eventHeroAbsoluteUrl(event, SITE_URL)
   return {
     metadataBase: new URL(SITE_URL),
     title: pageTitle,
@@ -110,6 +131,11 @@ export default async function EventPage({ params }: EventPageParams) {
   const event = getEventBySlug(slug)
   if (!event) notFound()
 
+  const meta = await tryFetchPartifulMeta(event)
+  const resolvedImage = resolveEventImage(event, meta)
+  const resolvedDescription = resolveEventDescription(event, meta)
+  const ticket = resolveEventTicket(event)
+
   const shareUrl = `${SITE_URL}${eventDetailPath(event.slug)}`
   const shareTitle = eventShareTitle(event)
 
@@ -118,27 +144,33 @@ export default async function EventPage({ params }: EventPageParams) {
       <Navigation />
       <div className="pt-32 sm:pt-36 md:pt-40 pb-20 px-4 sm:px-6">
         <div className="container mx-auto max-w-4xl">
-          <Link
-            href="/#events"
-            prefetch
-            className="inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors mb-8 relative z-10"
-            aria-label="Back to events list"
-          >
-            <ArrowLeft size={18} aria-hidden />
-            <span className="text-sm tracking-normal">Back to events</span>
-          </Link>
+          <div className="flex items-center gap-4 mb-8 relative z-10">
+            <Link
+              href="/#events"
+              prefetch
+              className="inline-flex items-center gap-2 py-3 pr-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors shrink-0"
+              aria-label="Back to events list"
+            >
+              <ArrowLeft size={18} aria-hidden />
+            </Link>
+            <EventBreadcrumb event={event} />
+          </div>
 
           <div className="rounded-2xl overflow-hidden bg-card border border-border mb-10 shadow-xl">
             <div className="relative">
-              <EventDetailHeroImage
-                key={event.slug}
-                src={event.image}
-                alt={event.title}
-                width={EVENT_POSTER_WIDTH}
-                height={EVENT_POSTER_HEIGHT}
-                sizes="(max-width: 768px) 100vw, 896px"
-                unoptimized={event.image.startsWith("http")}
-              />
+              {resolvedImage ? (
+                <EventDetailHeroImage
+                  key={event.slug}
+                  src={resolvedImage}
+                  alt={event.title}
+                  width={EVENT_POSTER_WIDTH}
+                  height={EVENT_POSTER_HEIGHT}
+                  sizes="(max-width: 768px) 100vw, 896px"
+                  unoptimized={resolvedImage.startsWith("http")}
+                />
+              ) : (
+                <div className="aspect-[2/3] w-full bg-gradient-to-b from-muted to-card" />
+              )}
               <EventTagBadge
                 event={event}
                 className="absolute top-4 left-4 z-10 px-4 py-1.5 text-base sm:text-lg font-semibold tracking-tight rounded-full shadow-md"
@@ -167,13 +199,13 @@ export default async function EventPage({ params }: EventPageParams) {
                 </div>
               </div>
 
-              {event.description ? (
+              {resolvedDescription ? (
                 <p className="text-muted-foreground leading-relaxed mb-8">
-                  {event.description}
+                  {resolvedDescription}
                 </p>
               ) : null}
 
-              <EventTicketCta event={event} />
+              <EventTicketCta ticket={ticket} fallbackLabel={event.ticketLabel?.trim()} />
 
               {event.contentLinks && event.contentLinks.length > 0 ? (
                 <div className="mt-10 pt-8 border-t border-border">

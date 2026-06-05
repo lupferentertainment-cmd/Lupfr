@@ -10,6 +10,14 @@
 - **Docs URL guard:** `proxy.ts` (Next.js 16; Node runtime) blocks docs-like HTTP paths (`/docs`, `/_docs`, subpaths, and several bare `/*.md` names) with **404** and `X-Robots-Tag: noindex, nofollow, noarchive`. Internal specs remain in repo `docs/*.md` (Git only, not `public/` or `app/docs`). `bun run test` re-checks key URLs after production build so this cannot silently break. **Unmatched routes** use **`experimental.globalNotFound`** plus a self-contained `app/global-not-found.tsx` document so crawlers and the verify script get a real **404** status without loading the normal App Router client bundle.
 - **Email:** Resend client in `lib/resend.ts`; templates in `lib/email-templates`. Requires `RESEND_API_KEY` in env. Contact uses fixed `CONTACT_FORM_TO_EMAIL` (`will@lupfr.com`); newsletter internal copy uses `RESEND_TO_EMAIL` (optional env override).
 
+**Event authoring modes.** Every row in `data/events.yml` follows one of two modes, determined by which fields are present:
+
+- **Local mode** (default): all content is stored in the YAML row. `image` points to a file under `public/events/` (e.g. `image: /events/my_event.webp`); `ticketLink` is a direct Eventbrite/external URL; `description`, `title`, `subtitle`, `time`, `location`, `date`, and optional `contentLinks` are all authored in YAML. The build pipeline compiles this to `lib/data/generated/events.json` at build time — no runtime fetches. This is the stable, offline-capable path and must always work without network access.
+
+- **Partiful mode** (dynamic): a single `partifulLink` field (e.g. `partifulLink: https://partiful.com/e/<id>`) makes Partiful the source of truth. The event poster image is served from Partiful's CDN (resolved at runtime), the ticket/RSVP button points to the Partiful URL, and the event description is fetched from Partiful. The YAML row still carries `id`, `slug`, `title`, `dateISO`, `date`, `time`, and `location` as fallback anchors (used for sorting, SEO metadata, and SSR skeleton). When `partifulLink` is present, `image`, `ticketLink`, `ticketLabel`, and `description` in YAML are ignored at render time; the Partiful-fetched values win. This allows adding an event to the carousel with a single URL — no local asset management needed.
+
+  Both fields can coexist: if `image` is also set on a Partiful-mode row, it is used as the static fallback image in the carousel card (which renders at build time); the Partiful-fetched image then takes over on the detail page. A row with neither `image` nor `partifulLink` shows a gradient placeholder in the card and no hero on the detail page — valid but visually sparse.
+
 **Invariants.**
 
 - Content is edited via YAML + images only; component code stays stable for content updates.

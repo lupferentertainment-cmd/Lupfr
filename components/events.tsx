@@ -92,7 +92,7 @@ function EventCard({
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
               "motion-safe:transition-opacity motion-safe:duration-300",
               "motion-reduce:transition-none",
-              imageReady ? "opacity-0" : "opacity-100"
+              event.image ? (imageReady ? "opacity-0" : "opacity-100") : "opacity-0"
             )}
             aria-hidden
           />
@@ -101,24 +101,28 @@ function EventCard({
             animate={{ scale: enableTilt && isHovered ? 1.08 : 1 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Image
-              src={event.image}
-              alt={event.title}
-              width={EVENT_IMAGE_WIDTH}
-              height={EVENT_IMAGE_HEIGHT}
-              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
-              priority={prioritizeImage}
-              loading={prioritizeImage ? "eager" : "lazy"}
-              fetchPriority={prioritizeImage ? "high" : undefined}
-              unoptimized={event.image.startsWith("http")}
-              onLoad={() => setImageReady(true)}
-              className={cn(
-                "w-full h-full object-cover object-top",
-                "motion-safe:transition-opacity motion-safe:duration-300",
-                "motion-reduce:transition-none",
-                imageReady ? "opacity-100" : "opacity-0"
-              )}
-            />
+            {event.image ? (
+              <Image
+                src={event.image}
+                alt={event.title}
+                width={EVENT_IMAGE_WIDTH}
+                height={EVENT_IMAGE_HEIGHT}
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
+                priority={prioritizeImage}
+                loading={prioritizeImage ? "eager" : "lazy"}
+                fetchPriority={prioritizeImage ? "high" : undefined}
+                unoptimized={event.image.startsWith("http")}
+                onLoad={() => setImageReady(true)}
+                className={cn(
+                  "w-full h-full object-cover object-top",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  imageReady ? "opacity-100" : "opacity-0"
+                )}
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card via-muted/50 to-card" />
+            )}
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <motion.span

@@ -29,10 +29,13 @@ export interface EventItem {
   dateISO: string | null
   time: string
   location: string
-  image: string
+  /** Local WebP path under public/events/. Optional when partifulLink is set. */
+  image?: string
   ticketLink?: string
   ticketLabel?: string
   ticketStatus?: "tbd"
+  /** Partiful event URL. When present, image/description/ticket are fetched dynamically from Partiful at render time. */
+  partifulLink?: string
   description?: string
   contentLinks?: EventContentLink[]
 }
@@ -44,7 +47,11 @@ export interface EventContentLink {
 
 const EVENTS_DATA: EventItem[] = (eventsJson as EventItem[]).map((e) => ({
   ...e,
-  image: String(e.image).startsWith("/") ? e.image : `/${e.image}`,
+  image: e.image
+    ? String(e.image).startsWith("/")
+      ? e.image
+      : `/${e.image}`
+    : undefined,
 }))
 
 export const EVENTS: EventItem[] = EVENTS_DATA
@@ -63,7 +70,8 @@ export function eventDetailPath(slug: string): string {
  * `siteOrigin` should be the deployed origin (e.g. `SITE_URL`); relative YAML paths become absolute.
  */
 export function eventHeroAbsoluteUrl(event: EventItem, siteOrigin: string): string {
-  const image = String(event.image).trim()
+  const image = (event.image ?? "").trim()
+  if (!image) return siteOrigin.replace(/\/$/, "")
   if (image.startsWith("http://") || image.startsWith("https://")) return image
   const path = image.startsWith("/") ? image : `/${image}`
   const origin = siteOrigin.replace(/\/$/, "")
@@ -136,6 +144,22 @@ const EVENT_BADGE_PILL_TODAY =
 const EVENT_BADGE_TEXT_TODAY = `text-accent ${EVENT_BADGE_LABEL_BASE}`
 
 export type EventBadgeKind = "tbd" | "upcoming" | "today" | "past"
+
+/**
+ * Human-friendly relative time label for the event breadcrumb.
+ * e.g. "Today's Event", "Tomorrow's Event", "This Weekend", "This Week", "Next Week", "Upcoming Event", "Past Event"
+ */
+export function getEventBreadcrumbLabel(event: EventItem, now: Date = new Date()): string | null {
+  if (event.dateISO === null) return "Upcoming"
+  const today = todayDateISOInEventTZ(now)
+  if (event.dateISO < today) return null
+  if (event.dateISO === today) return "Today's Event"
+  const diffDays = Math.round(
+    (new Date(`${event.dateISO}T00:00:00`).getTime() - new Date(`${today}T00:00:00`).getTime()) / 86_400_000
+  )
+  if (diffDays === 1) return "Tomorrow's Event"
+  return `In ${diffDays} days`
+}
 
 export function getEventTag(
   event: EventItem,
