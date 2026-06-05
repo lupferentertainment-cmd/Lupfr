@@ -7,7 +7,7 @@ import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { ArrowUp } from "lucide-react"
 import { toast } from "sonner"
-import { MotionScheduleCallCta } from "@/components/schedule-call-cta"
+import { MotionScheduleCallCta } from "@/components/schedule-call-cta-motion"
 import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
 import {

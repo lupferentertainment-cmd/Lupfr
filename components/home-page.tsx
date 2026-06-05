@@ -52,7 +52,7 @@ const Footer = dynamic(() =>
 )
 
 const DEFERRED_SECTION_ROOT_MARGIN_DESKTOP = "1400px 0px"
-const DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"
+const DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "160px 0px"
 
 function deferredSectionRootMargin(): string {
   if (window.matchMedia("(max-width: 767px)").matches) {

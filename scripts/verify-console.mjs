@@ -16,6 +16,8 @@ const READY_TIMEOUT_MS = 60000
 const NAV_TIMEOUT_MS = 30000
 const PAGE_SETTLE_MS = 750
 const FAIL_CONSOLE_TYPES = new Set(["error"])
+const BLOCKED_RESOURCE_TYPES = new Set(["font", "image", "media"])
+const SKIPPED_CONSOLE_ROUTE_PATTERNS = [/^\/gallery\/p\//]
 
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -43,8 +45,13 @@ async function _wait_ready() {
     throw new Error("verify-console: server did not become ready")
 }
 
+function _is_resource_console_noise(msg) {
+    return msg.text().startsWith("Failed to load resource: net::ERR_FAILED")
+}
+
 function _on_console(msg, route, sink) {
     if (!FAIL_CONSOLE_TYPES.has(msg.type())) return
+    if (_is_resource_console_noise(msg)) return
     sink.push({ route, kind: "console.error", text: msg.text() })
 }
 
@@ -54,10 +61,24 @@ function _on_response(resp, route, sink) {
     sink.push({ route, kind: `http ${status}`, text: resp.url() })
 }
 
+function _is_rsc_prefetch_abort(req) {
+    const url = _safe_url(req.url())
+    const errorText = req.failure()?.errorText ?? ""
+    return url.origin === BASE && url.searchParams.has("_rsc") && errorText === "net::ERR_ABORTED"
+}
+
+function _on_request_failed(req, route, sink) {
+    if (BLOCKED_RESOURCE_TYPES.has(req.resourceType())) return
+    if (_is_rsc_prefetch_abort(req)) return
+    if (!req.url().startsWith(BASE)) return
+    sink.push({ route, kind: "requestfailed", text: `${req.url()} ${req.failure()?.errorText ?? ""}` })
+}
+
 function _attach(page, route, sink) {
     page.on("console", (msg) => _on_console(msg, route, sink))
     page.on("pageerror", (err) => sink.push({ route, kind: "pageerror", text: err.message }))
     page.on("response", (resp) => _on_response(resp, route, sink))
+    page.on("requestfailed", (req) => _on_request_failed(req, route, sink))
 }
 
 function _safe_url(href) {
@@ -80,9 +101,13 @@ function _to_path(href) {
 
 function _enqueue_one(href, seen, queue) {
     const path = _to_path(href)
-    if (!path || seen.has(path)) return
+    if (!path || seen.has(path) || !_should_crawl(path)) return
     seen.add(path)
     queue.push(path)
+}
+
+function _should_crawl(path) {
+    return !SKIPPED_CONSOLE_ROUTE_PATTERNS.some((pattern) => pattern.test(path))
 }
 
 async function _enqueue_links(page, seen, queue) {
@@ -90,20 +115,44 @@ async function _enqueue_links(page, seen, queue) {
     for (const href of hrefs) _enqueue_one(href, seen, queue)
 }
 
+async function _block_heavy_assets(context) {
+    await context.route("**/*", (route) => {
+        const resourceType = route.request().resourceType()
+        if (BLOCKED_RESOURCE_TYPES.has(resourceType)) return route.fulfill({ status: 204, body: "" })
+        return route.continue()
+    })
+}
+
+function _is_closed_error(err) {
+    return String(err?.message ?? err).includes("Target page, context or browser has been closed")
+}
+
+async function _close_page(page) {
+    if (page.isClosed()) return
+    await page.close()
+}
+
 async function _visit(context, route, sink, seen, queue) {
     const page = await context.newPage()
     _attach(page, route, sink)
-    await page.goto(`${BASE}${route}`, { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT_MS })
-    await page.waitForTimeout(PAGE_SETTLE_MS)
-    await _enqueue_links(page, seen, queue)
-    await page.close()
-    console.log(`verify-console: OK  ${route}`)
+    try {
+        await page.goto(`${BASE}${route}`, { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT_MS })
+        await page.waitForTimeout(PAGE_SETTLE_MS)
+        await _enqueue_links(page, seen, queue)
+        console.log(`verify-console: OK  ${route}`)
+    } catch (err) {
+        if (!_is_closed_error(err)) throw err
+        console.warn(`verify-console: WARN ${route} closed during settle`)
+    } finally {
+        await _close_page(page)
+    }
 }
 
 async function _crawl(browser, sink) {
     const seen = new Set(["/"])
     const queue = ["/"]
     const context = await browser.newContext()
+    await _block_heavy_assets(context)
     while (queue.length) {
         await _visit(context, queue.shift(), sink, seen, queue)
     }

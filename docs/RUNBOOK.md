@@ -29,6 +29,7 @@ Use `bun run test` as the single full verification gate before shipping or promo
 | Build hangs at `Creating an optimized production build ...` | Another dev/build process is active or remote font optimization is waiting on network | Stop competing Next/Bun processes, remove `.next`, and keep fonts in `app/globals.css` rather than `next/font/google` |
 | Browser console shows stale chunk or incomplete chunked encoding errors | Dev server was interrupted or `.next/` contains stale output | Stop dev, remove stale `.next`, then restart `bun run dev` |
 | Browser console requests `/layout.css` | Legacy browser/cache/client requested an old stylesheet URL | Keep `public/layout.css` present as a no-op stylesheet; route smoke verifies it returns `text/css` |
+| Lighthouse SEO says `x-robots-tag: noindex` on a `*.vercel.app` preview | Vercel Deployment Protection answered the request with `401` before the app ran | Audit `https://lupfr.com` after promotion, or use a Vercel Shareable Link / `x-vercel-protection-bypass` automation secret for staging checks |
 | Public image check fails | New PNG/JPEG copied under `public/` | Convert the asset to WebP and update YAML paths |
 | Contact or newsletter APIs return configuration errors | Missing Resend environment variables | Configure `RESEND_API_KEY` and required deployment secrets |
 | Phone list API returns webhook configuration errors | Missing Google Sheets webhook URL | Configure `GOOGLE_SHEETS_WEBHOOK_URL` and optional secret variables |

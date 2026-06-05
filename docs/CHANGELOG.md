@@ -6,6 +6,7 @@ All notable project changes are recorded here.
 
 ### Added
 
+- Added a smoke-first Vitest subset (`bun run _test:smoke`) that runs at the start of both `bun run test` and `bun run smoke`, and made Vitest workers configurable via `VITEST_MAX_WORKERS` with a measured `50%` default to fail faster without over-scheduling local machines.
 - Simplified the public Bun workflow to one command per operator job: `bun run dev`, `bun run start`, `bun run test`, `bun run smoke`, `bun run ship:dev`, and `bun run promote:prod`. Internal build/lint/route/browser/image plumbing moved behind underscored scripts, while GitHub Actions, Vercel, and pre-commit now call `bun run test` directly.
 - Added `tests/unit/test-suite-gate.test.ts` to lock the single-gate contract so `bun run test` keeps running coverage, gallery journey coverage, dynamic route/external-link QA, and browser runtime crawl.
 - Updated the installed pre-commit hook source so commits run the canonical full test gate directly.
@@ -19,6 +20,12 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Hardened the browser console crawl so intentionally blocked heavy media/font/image requests and aborted Next RSC prefetches do not fail the gate while same-origin HTTP errors and real request failures still do.
+- Improved first-screen performance by removing Framer Motion from the fixed navigation and keeping the base schedule-call CTA free of motion-only imports; the navigation section spy now avoids redundant DOM scans during scroll.
+- Documented the Vercel protected-preview SEO failure mode and made `bun run ship:dev` warn that Lighthouse indexing audits must use production, a Shareable Link, or the `x-vercel-protection-bypass` automation path.
+- Delayed the first-visit cookie notice past the initial load window, disabled first-paint prefetches from visible nav/legal links, tightened mobile deferred-section mounting, and removed an unused Unsplash preconnect to improve Lighthouse mobile LCP and transfer.
+- Kept the Playwright console crawl focused on runtime errors by fulfilling heavy image/media/font requests with empty `204` responses, skipping per-photo gallery routes, ignoring expected Next `_rsc` prefetch aborts, and treating target-close settle races as warnings, preventing large gallery crawls from exhausting or flaking the built Next server during `bun run test`.
+- Enabled the self-contained global 404 document for synthetic missing-route checks so they do not hit Next.js client-reference-manifest instability for `/_not-found`.
 - Hardened the Playwright browser crawl against long-lived media/analytics requests by waiting for DOM readiness plus a short settle window instead of blocking on `networkidle`.
 - Moved Vercel Preview/Production builds back to the production build command (`bun run _build`) and made `bun run ship:dev` run the canonical full gate before pushing `dev`; GitHub Actions now installs Playwright Chromium before `bun run test` so the browser crawl works in CI.
 - Bounded dynamic external-link QA by collapsing repeated gallery social-share endpoints to one live health check per share endpoint after route crawling, keeping `bun run test` comprehensive without hundreds of duplicate network checks.

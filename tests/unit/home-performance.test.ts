@@ -7,12 +7,14 @@ const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", ".
 const homePagePath = path.join(rootDir, "components", "home-page.tsx")
 const artistsPath = path.join(rootDir, "components", "artists.tsx")
 const heroMobilePath = path.join(rootDir, "components", "hero-mobile-static.tsx")
+const scheduleCallCtaPath = path.join(rootDir, "components", "schedule-call-cta.tsx")
 const eventsPath = path.join(rootDir, "components", "events.tsx")
 
 describe("home page mobile transfer guardrails", () => {
     const homePage = fs.readFileSync(homePagePath, "utf8")
     const artists = fs.readFileSync(artistsPath, "utf8")
     const heroMobile = fs.readFileSync(heroMobilePath, "utf8")
+    const scheduleCallCta = fs.readFileSync(scheduleCallCtaPath, "utf8")
     const events = fs.readFileSync(eventsPath, "utf8")
 
     it("defers lower home sections behind hash-preserving placeholders", () => {
@@ -20,7 +22,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("IntersectionObserver")
         expect(homePage).toContain("window.location.hash")
         expect(homePage).toContain("aria-hidden=\"true\"")
-        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
+        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "160px 0px"')
         expect(homePage).toContain('id="events"')
         expect(homePage).toContain("id=\"services\"")
         expect(homePage).toContain("id=\"artists\"")
@@ -65,6 +67,10 @@ describe("home page mobile transfer guardrails", () => {
         expect(events).toContain("prefetchDetails={isMobile === false}")
         expect(events).toContain("prioritizeFirstImage={isMobile === false}")
         expect(events).toContain("priority={prioritizeImage}")
+    })
+
+    it("keeps the base schedule CTA free of Framer Motion", () => {
+        expect(scheduleCallCta).not.toContain("framer-motion")
     })
 
     it("lazy-loads third-party music iframes without extra opt-in buttons", () => {

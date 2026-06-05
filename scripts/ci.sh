@@ -14,6 +14,7 @@ export NEXT_DIST_DIR=".next-ci/${RUN_ID}"
 export VITEST_COVERAGE_DIR="${CI_TMP_ROOT}/coverage"
 export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$((4310 + RANDOM % 20000))}"
 export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$((24310 + RANDOM % 20000))}"
+export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
 
 restore_next_snapshots() {
@@ -35,19 +36,35 @@ mkdir -p "$CI_TMP_ROOT"
 cp tsconfig.json "$TSCONFIG_SNAPSHOT"
 cp next-env.d.ts "$NEXT_ENV_SNAPSHOT"
 
-bun scripts/optimize-public-raster.mjs check
-bun scripts/clean-next-dist.mjs
-bun run _lint
-if [[ "$MODE" == "ci" ]]; then
-  bun run _coverage
-fi
-bun run _build
-restore_next_snapshots
-bun run _verify:client-bundle
-restore_next_snapshots
-bun run _verify:routes
-restore_next_snapshots
-if [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]]; then
+run_static_quality() {
+  bun run _lint
+  if [[ "$MODE" == "ci" ]]; then
+    bun run _coverage
+  fi
+}
+
+run_build_checks() {
+  bun run _build
+  restore_next_snapshots
+  bun run _verify:client-bundle
+  restore_next_snapshots
+}
+
+run_route_checks() {
+  bun run _verify:routes
+  restore_next_snapshots
+}
+
+run_browser_checks() {
+  [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]] || return
   bun run _verify:console
   restore_next_snapshots
-fi
+}
+
+bun scripts/optimize-public-raster.mjs check
+bun scripts/clean-next-dist.mjs
+bun run _test:smoke
+run_static_quality
+run_build_checks
+run_route_checks
+run_browser_checks

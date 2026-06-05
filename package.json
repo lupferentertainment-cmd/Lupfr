@@ -1,6 +1,6 @@
 {
   "name": "lupfr",
-  "version": "1.6.1",
+  "version": "1.7.1",
   "private": true,
   "packageManager": "bun@1.3.9",
   "scripts": {
@@ -17,6 +17,7 @@
     "_serve": "bunx --bun next start",
     "_lint": "bunx eslint .",
     "_typecheck": "bunx tsc --noEmit",
+    "_test:smoke": "bunx vitest run --reporter=dot tests/unit/test-suite-gate.test.ts tests/unit/site.test.ts tests/unit/links.test.ts tests/unit/data-integrity.test.ts",
     "_coverage": "bunx vitest run --coverage --reporter=dot",
     "_verify:routes": "bash scripts/verify-routes.sh",
     "_verify:console": "bun scripts/verify-console.mjs",

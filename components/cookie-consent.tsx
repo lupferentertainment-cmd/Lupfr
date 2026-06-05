@@ -10,6 +10,8 @@ import {
 import { PRIVACY_AND_COOKIES_BANNER_COPY } from "@/lib/legal-copy"
 import { cn } from "@/lib/utils"
 
+const COOKIE_NOTICE_DELAY_MS = 4500
+
 /**
  * First-visit notice for cookies / local storage. Vercel Analytics and
  * contact-list preference cookies are enabled only after Accept.
@@ -19,7 +21,10 @@ export function CookieConsent() {
 
     useEffect(() => {
         if (getCookieConsentAccepted()) return
-        const timeoutId = window.setTimeout(() => setVisible(true), 0)
+        const timeoutId = window.setTimeout(
+            () => setVisible(true),
+            COOKIE_NOTICE_DELAY_MS
+        )
         return () => window.clearTimeout(timeoutId)
     }, [])
 
@@ -55,6 +60,7 @@ export function CookieConsent() {
                     <p className="text-[0.7rem] text-muted-foreground/90 sm:text-xs">
                         <Link
                             href="/privacy"
+                            prefetch={false}
                             className="text-foreground underline underline-offset-2 hover:text-gold-accent"
                         >
                             Privacy
@@ -62,6 +68,7 @@ export function CookieConsent() {
                         {" · "}
                         <Link
                             href="/terms"
+                            prefetch={false}
                             className="text-foreground underline underline-offset-2 hover:text-gold-accent"
                         >
                             Terms

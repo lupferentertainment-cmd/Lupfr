@@ -2,7 +2,6 @@
 
 import { forwardRef, type ComponentPropsWithRef } from "react"
 import { CalendarDays } from "lucide-react"
-import { motion } from "framer-motion"
 
 import { LINKS } from "@/lib/links"
 import { cn } from "@/lib/utils"
@@ -52,4 +51,3 @@ export const ScheduleCallCta = forwardRef<HTMLAnchorElement, ScheduleCallCtaProp
   )
 })
 
-export const MotionScheduleCallCta = motion.create(ScheduleCallCta)

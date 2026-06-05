@@ -12,6 +12,7 @@ const packageJsonPath = path.join(rootDir, "package.json")
 const ciScriptPath = path.join(rootDir, "scripts", "ci.sh")
 const shipDevPath = path.join(rootDir, "scripts", "ship-dev.sh")
 const verifyRoutesPath = path.join(rootDir, "scripts", "verify-routes.sh")
+const verifyConsolePath = path.join(rootDir, "scripts", "verify-console.mjs")
 const vercelConfigPath = path.join(rootDir, "vercel.json")
 const vitestConfigPath = path.join(rootDir, "vitest.config.ts")
 
@@ -19,6 +20,7 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as Pack
 const ciScript = fs.readFileSync(ciScriptPath, "utf8")
 const shipDevScript = fs.readFileSync(shipDevPath, "utf8")
 const verifyRoutesScript = fs.readFileSync(verifyRoutesPath, "utf8")
+const verifyConsoleScript = fs.readFileSync(verifyConsolePath, "utf8")
 const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, "utf8")) as { buildCommand: string }
 const vitestConfig = fs.readFileSync(vitestConfigPath, "utf8")
 
@@ -39,8 +41,16 @@ describe("canonical package workflow gate", () => {
         expect(packageJson.scripts.ci).toBe("bun run test")
     })
 
+    it("keeps smoke tests as an explicit fast-fail subset", () => {
+        expect(packageJson.scripts["_test:smoke"]).toContain("tests/unit/test-suite-gate.test.ts")
+    })
+
     it("keeps staging shipment gated by the full suite", () => {
         expect(shipDevScript).toContain("bun run test")
+    })
+
+    it("warns that protected previews are not public SEO audit targets", () => {
+        expect(shipDevScript).toContain("SEO/Lighthouse audits on protected previews")
     })
 
     it("keeps Vercel preview builds production-build only", () => {
@@ -51,8 +61,24 @@ describe("canonical package workflow gate", () => {
         expect(ciScript).toContain("bun run _coverage")
     })
 
+    it("runs the smoke subset before the full coverage pass", () => {
+        expect(ciScript).toContain("bun run _test:smoke\nrun_static_quality")
+    })
+
+    it("runs lint before the full coverage pass", () => {
+        expect(ciScript).toContain("bun run _lint\n  if [[ \"$MODE\" == \"ci\" ]]")
+    })
+
+    it("keeps Vitest workers configurable from the CI shell", () => {
+        expect(ciScript).toContain('VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"')
+    })
+
     it("keeps Vitest pointed at every test file", () => {
         expect(vitestConfig).toContain('include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"]')
+    })
+
+    it("keeps Vitest worker count environment-driven", () => {
+        expect(vitestConfig).toContain("process.env.VITEST_MAX_WORKERS")
     })
 
     it("keeps the dynamic route and link QA inside the suite", () => {
@@ -69,5 +95,8 @@ describe("canonical package workflow gate", () => {
 
     it("keeps external-link health checks inside route verification", () => {
         expect(verifyRoutesScript).toContain("verify_external_links")
+    })
+    it("keeps blocked heavy assets from failing browser console crawl", () => {
+        expect(verifyConsoleScript).toContain("_is_resource_console_noise")
     })
 })

@@ -94,6 +94,7 @@ const nextConfig = {
   outputFileTracingRoot: path.resolve(__dirname),
   experimental: {
     cpus: 1,
+    globalNotFound: true,
     inlineCss: true,
     imgOptTimeoutInSeconds: 30,
     optimizePackageImports: [

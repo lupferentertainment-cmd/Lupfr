@@ -33,8 +33,8 @@ See comments at the top of each `data/*.yml` file for field descriptions. Non-te
 
 - `bun run dev` – one local development server.
 - `bun run start` – one local production server path; builds first, then runs `next start`.
-- `bun run test` – one full gate: public image check, lint, coverage, typecheck/build, client-bundle scan, route/external-link QA, and browser console/runtime crawl. Local CI, pre-commit, GitHub Actions, and `ship:dev` use this before staging.
-- `bun run smoke` – one faster local smoke gate: public image check, lint, typecheck/build, client-bundle scan, and route/external-link QA; no coverage or browser crawl.
+- `bun run test` – one full gate: public image check, smoke-first Vitest subset, lint, full coverage with configurable Vitest workers, typecheck/build, client-bundle scan, route/external-link QA, and browser console/runtime crawl. Local CI, pre-commit, GitHub Actions, and `ship:dev` use this before staging.
+- `bun run smoke` – one faster local smoke gate: public image check, smoke-first Vitest subset, lint, typecheck/build, client-bundle scan, and route/external-link QA; no coverage or browser crawl.
 - `bun run ship:dev` – one staging ship path; runs `bun run test`, then pushes the current clean Git commit to `origin/dev` for Vercel Preview.
 - `bun run promote:prod` – one production promotion path; fast-forwards `origin/main` to the validated `origin/dev` commit after typed confirmation.
 

@@ -4,15 +4,13 @@ import { useState, useEffect, useCallback, useRef, type MouseEvent } from "react
 import Link from "next/link"
 import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { usePathname } from "next/navigation"
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { MotionScheduleCallCta, ScheduleCallCta } from "@/components/schedule-call-cta"
+import { ScheduleCallCta } from "@/components/schedule-call-cta"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
-const MotionLink = motion.create(Link)
-
 const HEADER_SCROLL_THRESHOLD_PX = 50
 const SECTION_SPY_OFFSET_PX = 120
+const SECTION_SPY_MIN_DELTA_PX = 96
 
 const navLinks = [
   { name: "Events", href: "#events" },
@@ -73,11 +71,13 @@ function pickActiveSectionId(): string {
 export function Navigation() {
   const pathname = usePathname()
   const isHome = pathname === "/"
-  const prefersReducedMotion = useReducedMotion()
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState<string>(SECTION_IDS[0])
   const tickingRef = useRef(false)
+  const isScrolledRef = useRef(false)
+  const activeSectionRef = useRef<string>(SECTION_IDS[0])
+  const lastSpyYRef = useRef(Number.NEGATIVE_INFINITY)
 
   /**
    * Hash links: on subpages, `/#section` so the home page scrolls to that section.
@@ -111,7 +111,8 @@ export function Navigation() {
     if (!isHome || !href.startsWith("#") || !isPlainLeftClick(e)) return
     e.preventDefault()
     closeMenu()
-    setActiveSection(href.slice(1))
+    activeSectionRef.current = href.slice(1)
+    setActiveSection(activeSectionRef.current)
     if (waitForMenuClose) {
       window.setTimeout(() => pushHashAndScroll(href), 90)
       return
@@ -144,9 +145,20 @@ export function Navigation() {
       tickingRef.current = true
       requestAnimationFrame(() => {
         tickingRef.current = false
-        setIsScrolled(window.scrollY > HEADER_SCROLL_THRESHOLD_PX)
+        const scrollY = window.scrollY
+        const nextScrolled = scrollY > HEADER_SCROLL_THRESHOLD_PX
+        if (nextScrolled !== isScrolledRef.current) {
+          isScrolledRef.current = nextScrolled
+          setIsScrolled(nextScrolled)
+        }
         if (isHome) {
-          setActiveSection(pickActiveSectionId())
+          if (Math.abs(scrollY - lastSpyYRef.current) < SECTION_SPY_MIN_DELTA_PX) return
+          lastSpyYRef.current = scrollY
+          const nextActiveSection = pickActiveSectionId()
+          if (nextActiveSection !== activeSectionRef.current) {
+            activeSectionRef.current = nextActiveSection
+            setActiveSection(nextActiveSection)
+          }
         }
       })
     }
@@ -169,12 +181,10 @@ export function Navigation() {
         >
           {/* Col 1: logo top-left. Center links use a separate auto column (grid) so they stay viewport-centered, not nudged by justify-end. */}
           <div className="flex min-h-[2.5rem] min-w-0 shrink-0 items-center justify-start self-center lg:min-w-0">
-            <MotionLink
+            <Link
               href={isHome ? "#" : "/"}
-              prefetch={!isHome}
-              className="flex min-w-0 max-w-[min(100%,14rem)] shrink-0 items-center gap-2 text-2xl font-bold tracking-tighter sm:max-w-[min(100%,16rem)] lg:max-w-none"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              prefetch={false}
+              className="flex min-w-0 max-w-[min(100%,14rem)] shrink-0 items-center gap-2 text-2xl font-bold tracking-tighter transition-transform duration-150 ease-out hover:scale-[1.03] active:scale-[0.98] sm:max-w-[min(100%,16rem)] lg:max-w-none"
               aria-label="LUPFR home"
             >
               <LupfrLogoImage
@@ -184,7 +194,7 @@ export function Navigation() {
                 className="h-12 sm:h-16 md:h-16 lg:h-20 xl:h-24 w-auto object-contain"
                 priority
               />
-            </MotionLink>
+            </Link>
           </div>
 
           <div className="hidden min-h-[2.5rem] min-w-0 items-center justify-center self-center px-0.5 sm:px-1 lg:flex">
@@ -192,42 +202,39 @@ export function Navigation() {
               role="list"
               className="m-0 flex min-w-0 max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 p-0 sm:gap-x-4 md:gap-x-5 lg:gap-x-5 xl:gap-x-6 2xl:gap-x-8"
             >
-            {navLinks.map((link) => {
-              const isActive = isNavLinkActive(link.href)
-              const href = linkHref(link.href)
-              const linkClass = `inline-flex shrink-0 items-center text-sm font-medium leading-tight tracking-normal transition-colors duration-200 ease-snap relative group py-1 whitespace-nowrap ${isActive
+              {navLinks.map((link) => {
+                const isActive = isNavLinkActive(link.href)
+                const href = linkHref(link.href)
+                const linkClass = `inline-flex shrink-0 items-center text-sm font-medium leading-tight tracking-normal transition-colors duration-200 ease-snap relative group py-1 whitespace-nowrap ${isActive
                   ? "text-accent"
                   : isScrolled
                     ? "text-foreground/90 hover:text-foreground"
                     : "text-foreground/90 hover:text-foreground dark:text-white dark:hover:text-white/95"
-                }`
-              const underline = (
-                <span
-                  className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-snap ${isActive ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                />
-              )
-              const inner = (
-                <MotionLink
-                  href={href}
-                  prefetch
-                  className={linkClass}
-                  aria-current={isActive ? "true" : undefined}
-                  onClick={(e) => onHomeHashClick(e, href, false)}
-                  initial={false}
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {link.name}
-                  {underline}
-                </MotionLink>
-              )
-              return (
-                <div key={link.name} role="listitem" className="shrink-0">
-                  {inner}
-                </div>
-              )
-            })}
+                  }`
+                const underline = (
+                  <span
+                    className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-snap ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                  />
+                )
+                const inner = (
+                  <Link
+                    href={href}
+                    prefetch={false}
+                    className={linkClass}
+                    aria-current={isActive ? "true" : undefined}
+                    onClick={(e) => onHomeHashClick(e, href, false)}
+                        >
+                    {link.name}
+                    {underline}
+                  </Link>
+                )
+                return (
+                  <div key={link.name} role="listitem" className="shrink-0">
+                    {inner}
+                  </div>
+                )
+              })}
             </div>
           </div>
 
@@ -238,16 +245,13 @@ export function Navigation() {
               size="sm"
               className="shrink-0 hidden lg:inline-flex"
             />
-            <MotionLink
+            <Link
               href={bookHref}
-              prefetch
-              className="flex h-9 min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap px-4 !text-sm font-medium leading-tight tracking-normal transition-colors btn-metallic-gold rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 500, damping: 28 }}
+              prefetch={false}
+              className="flex h-9 min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap px-4 !text-sm font-medium leading-tight tracking-normal transition-[color,background-color,transform] duration-150 ease-out btn-metallic-gold rounded-full hover:scale-[1.03] active:scale-[0.98]"
             >
               {bookLabel}
-            </MotionLink>
+            </Link>
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-3 [contain:layout] lg:hidden">
@@ -267,8 +271,8 @@ export function Navigation() {
                 type="button"
                 onClick={() => setIsOpen(true)}
                 className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${isScrolled
-                    ? "text-foreground"
-                    : "text-foreground dark:text-white"
+                  ? "text-foreground"
+                  : "text-foreground dark:text-white"
                   }`}
                 aria-label="Open menu"
                 aria-expanded="false"
@@ -280,28 +284,17 @@ export function Navigation() {
         </nav>
       </header>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
+      {isOpen && (
+          <div
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: prefersReducedMotion ? 0.01 : 0.2 }}
-            className="fixed inset-0 z-[55] lg:hidden bg-background overscroll-contain touch-pan-y"
+            className="fixed inset-0 z-[55] lg:hidden bg-background overscroll-contain touch-pan-y motion-safe:animate-[fade-up_180ms_ease-out_both]"
             onClick={(e) => {
               if (e.target === e.currentTarget) closeMenu()
             }}
           >
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: prefersReducedMotion ? 0.01 : 0.2,
-                delay: prefersReducedMotion ? 0 : 0.05,
-              }}
+            <nav
               className="flex flex-col items-center justify-start min-h-[100dvh] pt-[max(5.5rem,env(safe-area-inset-top,0px)+4rem)] pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] px-4 overflow-y-auto gap-6 sm:gap-8"
             >
               {navLinks.map((link) => {
@@ -310,42 +303,38 @@ export function Navigation() {
                 const mobileClass = `font-serif text-2xl sm:text-3xl font-bold tracking-tight transition-colors py-1 ${isActive ? "text-accent" : "text-foreground hover:text-accent"
                   }`
                 return (
-                  <MotionLink
+                  <Link
                     key={link.name}
                     href={href}
-                    prefetch
+                    prefetch={false}
                     onClick={(e) => {
                       onHomeHashClick(e, href, true)
                       if (!e.defaultPrevented) closeMenu()
                     }}
                     className={mobileClass}
                     aria-current={isActive ? "true" : undefined}
-                    initial={false}
-                  >
+                    >
                     {link.name}
-                  </MotionLink>
+                  </Link>
                 )
               })}
-              <MotionScheduleCallCta
+              <ScheduleCallCta
                 tone="on-surface"
                 size="md"
                 onClick={closeMenu}
-                initial={false}
                 className="w-full max-w-[min(100%,22rem)] justify-center"
               />
-              <MotionLink
+              <Link
                 href={bookHref}
-                prefetch
+                prefetch={false}
                 onClick={closeMenu}
-                initial={false}
                 className="mt-1 px-8 py-4 btn-metallic-gold font-bold tracking-normal rounded-full inline-block text-center max-w-[min(100%,22rem)]"
               >
                 {bookLabel}
-              </MotionLink>
-            </motion.nav>
-          </motion.div>
+              </Link>
+            </nav>
+          </div>
         )}
-      </AnimatePresence>
     </>
   )
 }

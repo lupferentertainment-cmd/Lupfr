@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowDown, Play } from "lucide-react"
 
 import { GoldShineText } from "@/components/gold-shine-text"
-import { MotionScheduleCallCta } from "@/components/schedule-call-cta"
+import { MotionScheduleCallCta } from "@/components/schedule-call-cta-motion"
 import {
   FADE_DURATION_S,
   HeroFallbackPoster,

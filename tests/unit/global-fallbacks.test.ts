@@ -6,8 +6,10 @@ import { describe, expect, it } from "vitest"
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const globalErrorPath = path.join(rootDir, "app", "global-error.tsx")
 const globalNotFoundPath = path.join(rootDir, "app", "global-not-found.tsx")
+const nextConfigPath = path.join(rootDir, "next.config.mjs")
 const globalError = fs.readFileSync(globalErrorPath, "utf8")
 const globalNotFound = fs.readFileSync(globalNotFoundPath, "utf8")
+const nextConfig = fs.readFileSync(nextConfigPath, "utf8")
 
 describe("global document fallbacks", () => {
   it("keeps global 404 as a complete document", () => {
@@ -24,5 +26,9 @@ describe("global document fallbacks", () => {
 
   it("keeps global error off next link", () => {
     expect(globalError).not.toContain("next/link")
+  })
+
+  it("keeps global not-found enabled", () => {
+    expect(nextConfig).toContain("globalNotFound: true")
   })
 })

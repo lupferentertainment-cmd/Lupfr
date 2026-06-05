@@ -38,3 +38,4 @@ fi
 
 echo "ship-dev: pushed. Vercel is now building the staging Preview for branch 'dev'."
 echo "ship-dev: find the Preview URL in Vercel → project 'lupfr' → Deployments (the 'dev' entry)."
+echo "ship-dev: SEO/Lighthouse audits on protected previews need a Vercel share link or automation bypass; run public indexing checks on https://lupfr.com after promotion."
