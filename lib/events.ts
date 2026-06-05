@@ -190,8 +190,12 @@ export function getEventTag(
       textClass: EVENT_BADGE_TEXT_TODAY,
     }
   }
+  const diffDays = Math.round(
+    (new Date(`${event.dateISO}T00:00:00`).getTime() - new Date(`${today}T00:00:00`).getTime()) / 86_400_000
+  )
+  const label = diffDays === 1 ? "Tomorrow" : `In ${diffDays} days`
   return {
-    label: "Upcoming Event",
+    label,
     kind: "upcoming",
     pillClass: EVENT_BADGE_PILL_GOLD,
     textClass: EVENT_BADGE_TEXT_GOLD_METALLIC,

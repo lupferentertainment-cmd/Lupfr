@@ -217,12 +217,21 @@ describe("event timezone and badges", () => {
     expect(tag.label).toBe("Today's Event")
   })
 
-  it("getEventTag: upcoming when event is after today in event TZ", () => {
+  it("getEventTag: upcoming shows Tomorrow when 1 day away", () => {
+    const tag = getEventTag(
+      eventFixture({ dateISO: "2026-04-02" }),
+      la("2026-04-01T20:00:00-07:00")
+    )
+    expect(tag.kind).toBe("upcoming")
+    expect(tag.label).toBe("Tomorrow")
+  })
+
+  it("getEventTag: upcoming shows In X days when multiple days away", () => {
     const tag = getEventTag(
       eventFixture({ dateISO: "2026-05-21" }),
       la("2026-04-01T20:00:00-07:00")
     )
     expect(tag.kind).toBe("upcoming")
-    expect(tag.label).toBe("Upcoming Event")
+    expect(tag.label).toBe("In 50 days")
   })
 })
