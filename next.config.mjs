@@ -88,6 +88,9 @@ function addPagesManifestGuard(config, isServer, dev) {
  */
 const nextConfig = {
   ...(distDir ? { distDir } : {}),
+  turbopack: {
+    root: __dirname,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
