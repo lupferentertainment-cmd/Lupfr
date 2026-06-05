@@ -4,6 +4,46 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Added
+
+- Added `bun run verify:console` (`scripts/verify-console.mjs`): a headless **Chromium** (Playwright) smoke check that starts the production server (`next start`), crawls every internal route reachable from `/`, and **fails the run on any browser `console.error`, uncaught page/runtime error (including React hydration #418/#423), or same-origin HTTP `>= 400` response** — the class of Next.js client errors the `curl`-based `verify:routes` cannot see. Wired into `bun run ci` after `verify:routes`; skipped on the Vercel build (`ci:vercel` sets `LUPFR_SKIP_BROWSER_CHECK=1`) because a browser binary does not belong in a build container — the gate runs in local/CI before the staging push. Opt out locally with `LUPFR_SKIP_BROWSER_CHECK=1`.
+- Swapped the Where's West featured-artist photo for a higher-resolution asset (`public/artists/wheres_west.webp`, 300x300 -> 609x621) and updated the pinned image-hash guard in `tests/unit/artists-list.test.ts`.
+- Added dynamic external-link QA to `bun run verify:routes`: while crawling internal routes, the production server crawl now collects every external `<a href>` (Instagram, TikTok, YouTube, Partiful, Google Calendar CTA) via `scripts/extract-external-links.mjs` and health-checks each with a browser UA and a tolerant policy (bot-block `401/403/405/429` = alive; only DNS/connection failure, `404/410`, or `5xx` fail; timeout = `WARN`). Runs in `verify`, `ci`, and on Vercel (`ci:vercel`); opt out of just the outbound checks with `VERIFY_ROUTES_SKIP_EXTERNAL=1`. Added `tests/unit/extract-external-links.test.ts` covering the extractor contract.
+
+- Added `bun run ship:dev` and `bun run promote:prod` scripts (`scripts/ship-dev.sh`, `scripts/promote-prod.sh`) implementing the documented branch-based staging flow: `ship:dev` fast-forward pushes the current commit to `dev` for a Vercel staging Preview, and `promote:prod` fast-forwards `main` to the validated `dev` commit (refuses on divergence, prints the promoted commits, requires a typed `yes`, never force-pushes). Resolves the drift where `docs/DEPLOYMENT.md` referenced these scripts before they existed.
+- Added Soundcheck to Corporate Partners with an optimized WebP sponsor logo asset and non-linked partner rendering support.
+
+### Fixed
+
+- Tightened the desktop About section grid so the Will Lupfer portrait and value cards sit closer together.
+- Kept the fallback pages-manifest Webpack plugin out of `next dev` so dev builds no longer crash with duplicate `pages-manifest.json` asset emissions.
+- Isolated `bun run ci` / `bun run verify` build output under `.next-ci/`, made client-bundle verification follow `NEXT_DIST_DIR`, and added dev-cache preflight cleanup so `.next/dev/routes-manifest.json` ENOENT loops self-heal instead of recurring.
+- Renamed the June 19 Rhythm event slug/title/description from the birthday-bash wording to `Rhythm n Friends` in source event data.
+- Guarded homepage dynamic imports with a named-export resolver so missing deferred section exports fail with a clear error before React lazy can render `undefined`.
+- Removed duplicate hero poster preloads, made the immediately visible Reviews section a normal import, and added route coverage for favicon folder fallbacks plus the legacy `/layout.css` stylesheet request to eliminate browser-console preload/404 noise.
+- Removed build-time Google font fetching so production builds do not hang on remote font sockets.
+- Hardened Next.js verification by making `build` run strict `typecheck` before `next build`, constraining build workers to avoid `.next` races, disabling the unstable experimental global-not-found build path, and cleaning up navigation/CSS diagnostics that surfaced as app-side warnings.
+- Made `app/global-not-found.tsx` a self-contained static 404 document and kept global fallbacks off `next/link` so unmatched/error routes do not pull App Router client internals into document-level bundles.
+
+## [1.0.8] - 2026-06-04
+
+### Added
+
+- Added Rhythm n Friends event details, ticket link, and optimized poster asset.
+- Added Shamrock & House and Third Thursday's gallery albums with optimized WebP images.
+
+### Changed
+
+- Updated the fromclay + thatfranco event date format, ticket link, and poster asset.
+- Hardened header tab links so same-page mobile hash navigation and subpage-to-home section links work reliably.
+- Reduced mobile-only deferred section placeholder gaps so scrolling from Corporate Partners into Gallery feels continuous.
+
+## [1.0.7] - 2026-06-01
+
+### Changed
+
+- Stabilized the hero `LUPFR` wordmark by replacing the animated clipped-text shine with a static metallic gradient and lighter shadowing to avoid video-overlay repaint flicker.
+
 ## [1.0.6] - 2026-06-01
 
 ### Changed

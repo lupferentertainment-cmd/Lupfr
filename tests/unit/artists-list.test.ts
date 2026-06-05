@@ -1,5 +1,23 @@
 import { describe, expect, it } from "vitest"
+import { createHash } from "node:crypto"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 import { getArtists } from "@/lib/data/artists"
+
+const WHERES_WEST_IMAGE_PATH = "/artists/wheres_west.webp"
+const WHERES_WEST_IMAGE_HASH = "9327811a59ceb6304d3df33451d086193267417fcc80a0cf4077933898033233"
+
+function getArtistImagePath(name: string): string {
+  const artist = getArtists().find((item) => item.name === name)
+  if (!artist) throw new Error(`Missing artist: ${name}`)
+  return artist.image
+}
+
+function getPublicImageHash(imagePath: string): string {
+  const publicPath = join(process.cwd(), "public", imagePath)
+  const image = readFileSync(publicPath)
+  return createHash("sha256").update(image).digest("hex")
+}
 
 describe("featured artist data", () => {
   it("keeps the requested front artist order", () => {
@@ -19,6 +37,14 @@ describe("featured artist data", () => {
     const names = getArtists().map((artist) => artist.name)
     expect(names).not.toContain("Tommy Guala")
     expect(names).not.toContain("Mike Stern")
+  })
+
+  it("keeps Where's West pointed at the requested beach profile image", () => {
+    expect(getArtistImagePath("Where's West?")).toBe(WHERES_WEST_IMAGE_PATH)
+  })
+
+  it("keeps the Where's West artist image bytes unchanged", () => {
+    expect(getPublicImageHash(WHERES_WEST_IMAGE_PATH)).toBe(WHERES_WEST_IMAGE_HASH)
   })
 
   it("loads fromclay social links and featured track", () => {

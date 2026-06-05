@@ -51,9 +51,11 @@ export const HeroLupfrText = memo(function HeroLupfrText({
 }: {
   prefersReducedMotion: boolean | null
 }) {
+  const shineClass = prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-stable"
+
   return (
     <span
-      className={`inline-block overflow-visible hero-gold-shine-scroll gpu-accelerate ${prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-periodic"}`}
+      className={`inline-block overflow-visible hero-gold-shine-scroll ${shineClass}`}
     >
       LUPFR
     </span>

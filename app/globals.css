@@ -973,29 +973,17 @@
   background-position: 0% 50%;
 }
 
-/* Periodic shine: gradient passes across hero LUPFR text */
-@keyframes hero-shine-pass {
-  0% {
-    background-position: 120% 50%;
-  }
-
-  50% {
-    background-position: -20% 50%;
-  }
-
-  100% {
-    background-position: 120% 50%;
-  }
-}
-
-/* Hero gold text – scroll-driven or periodic shine (logo-matched metallic gold) */
+/* Hero gold text – stable metallic shine (logo-matched gold, no repaint-heavy animation) */
 @layer components {
   .hero-gold-shine-scroll {
     @apply bg-clip-text text-transparent;
     -webkit-background-clip: text;
     background-image: var(--gradient-hero-gold);
     background-size: 220% 100%;
-    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow)) drop-shadow(0 4px 16px oklch(0.24 0.07 78 / 0.62)) drop-shadow(0 0 0 1px var(--gold-filter-edge)) var(--filter-hero-gold);
+    background-position: 50% 50%;
+    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow));
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .lupfr-hero .heading-metallic-gold {
@@ -1008,11 +996,9 @@
     background-position: 50% 50%;
   }
 
-  /* Passing periodic shine on LUPFR – only when motion is allowed; CSS-only so no React re-renders */
-  @media (prefers-reduced-motion: no-preference) {
-    .hero-gold-shine-periodic {
-      animation: hero-shine-pass 4.5s ease-in-out infinite;
-    }
+  /* Stable default: keep the shine look without animating `background-position` over video. */
+  .hero-gold-shine-stable {
+    background-position: 50% 50%;
   }
 }
 

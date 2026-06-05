@@ -76,9 +76,10 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
   it("keeps hero LUPFR metallic shine (CSS + keyframes)", () => {
     expect(css).toContain("var(--gradient-hero-gold)")
     expect(css).toContain("background: var(--gradient-heading-gold);")
-    expect(css).toContain("drop-shadow(0 4px 16px oklch(0.24 0.07 78 / 0.62))")
+    expect(css).toContain("filter: drop-shadow(0 1px 2px var(--gold-filter-shadow));")
     expect(css).toContain(".lupfr-hero .heading-metallic-gold")
-    expect(css).toContain("@keyframes hero-shine-pass")
-    expect(css).toContain("hero-gold-shine-periodic")
+    expect(css).toContain("hero-gold-shine-stable")
+    expect(css).not.toContain("@keyframes hero-shine-pass")
+    expect(css).not.toContain("hero-gold-shine-periodic")
   })
 })
