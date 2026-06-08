@@ -48,7 +48,7 @@ function wrapLayout(content: string, title: string): string {
           </tr>
           <tr>
             <td style="padding-top:40px; border-top:1px solid ${BRAND.border}; font-size:12px; color:${BRAND.muted};">
-              San Francisco · Music events &amp; talent
+              SF &amp; LA · Music events &amp; talent
             </td>
           </tr>
         </table>

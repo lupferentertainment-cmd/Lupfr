@@ -283,7 +283,7 @@ export function Services() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ ...SPRING_SNAPPY, delay: 0.22 }}
           >
-            From intimate bar takeovers to large-scale productions, we bring the music culture to life across San Francisco.
+            From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA.
           </motion.p>
         </motion.div>
 

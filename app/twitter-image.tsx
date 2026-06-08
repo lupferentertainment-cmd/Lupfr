@@ -3,8 +3,8 @@ import { OgBrandPreview, readLogoDataUri } from '@/lib/og-brand-preview'
 
 export const runtime = 'nodejs'
 
-const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
-const tagline = 'Boat parties, rooftop events, warehouse sessions — Bay Area & beyond.'
+const defaultTitle = 'LUPFR Entertainment | SF & LA Music Events & Talent Curation'
+const tagline = 'Boat parties, rooftop events, warehouse sessions — SF, LA & beyond.'
 
 export const alt = defaultTitle
 export const size = { width: 1200, height: 630 }

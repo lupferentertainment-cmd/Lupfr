@@ -10,8 +10,8 @@ import { SITE_URL } from '@/lib/site'
 import './globals.css'
 
 const siteName = 'LUPFR Entertainment'
-const defaultTitle = 'LUPFR Entertainment | SF Music Events & Talent Curation'
-const defaultDescription = "San Francisco's premier music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable experiences in the Bay and beyond."
+const defaultTitle = 'LUPFR Entertainment | SF & LA Music Events & Talent Curation'
+const defaultDescription = "California's premier music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable experiences across SF and LA."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lupfr.com"),
@@ -27,12 +27,15 @@ export const metadata: Metadata = {
     'Lupfer Entertainment',
     'music',
     'san francisco events',
+    'los angeles events',
+    'california events',
     'boat parties',
     'dj booking',
     'nightlife',
     'event production',
     'LUPFR Entertainment',
     'SF nightlife',
+    'LA nightlife',
     'Bay Area events',
     'warehouse parties',
     'rooftop parties',

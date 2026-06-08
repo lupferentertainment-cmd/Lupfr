@@ -265,7 +265,7 @@ export function Contact() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Based in</p>
-                    <p className="text-foreground">San Francisco, CA</p>
+                    <p className="text-foreground">SF & LA, California</p>
                   </div>
                 </div>
 

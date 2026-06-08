@@ -271,7 +271,7 @@ export function About() {
             </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
-                <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> redefines the music experience. We blend non-traditional venues with specially curated artists to create a one of a kind music experience. LUPFR was founded in 2025 with a simple idea: San Francisco deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
+                <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> redefines the music experience. We blend non-traditional venues with specially curated artists to create a one of a kind music experience. LUPFR was founded in 2025 with a simple idea: California deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
               </p>
               <p>
                 Today, we produce unique events in both San Francisco and Los Angeles; ranging from yacht parties, boiler room style nights, corporate events, warehouse events, and anything in between that creates a one of a kind music experience.
