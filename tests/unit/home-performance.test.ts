@@ -83,3 +83,33 @@ describe("home page mobile transfer guardrails", () => {
         expect(artists).toContain("src={featuredTrackEmbedUrl}")
     })
 })
+
+describe("mobile artists black-screen regression", () => {
+    const artists = fs.readFileSync(
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "components", "artists.tsx"),
+        "utf8"
+    )
+
+    it("does not wrap the artists section in ScrollReveal (whileInView opacity:0 never fires on fast scroll)", () => {
+        expect(artists).not.toContain("ScrollReveal")
+    })
+
+    it("defaults isMobile to true before hydration so cards never start invisible on mobile", () => {
+        expect(artists).toContain("useIsMobile() ?? true")
+    })
+
+    it("keeps useInView lookahead margin at least 600px so section mounts before it enters the viewport", () => {
+        // margin must be "0px 0px 600px 0px" or larger — the string literal is the source of truth
+        expect(artists).toMatch(/margin:\s*["']0px 0px [6-9]\d{2,}px 0px["']/)
+    })
+
+    it("skips bio backdrop-blur overlay on mobile to avoid compositor stalls that can show a black frame", () => {
+        expect(artists).toContain("!isMobile &&")
+        expect(artists).not.toMatch(/isMobile[\s\S]{0,20}backdrop-blur/)
+    })
+
+    it("skips 3D card tilt transforms on mobile to eliminate unused compositor layers", () => {
+        expect(artists).toContain("isMobile ? undefined : { rotateX, rotateY")
+        expect(artists).toContain("if (isMobile || !cardRef.current) return")
+    })
+})
