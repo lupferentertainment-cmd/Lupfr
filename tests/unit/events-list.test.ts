@@ -38,7 +38,6 @@ describe("events list ordering", () => {
       "third-thursdays-operator-sf-eria",
       "boiler-party-marina-lupfr-baum",
       "fifa-world-cup-watch-party-eria-marina",
-      "rhythm-n-friends",
       "gas-money-eria-marina",
       "marina-music-002-fromclay-thatfranco",
     ])
@@ -50,7 +49,6 @@ describe("events list ordering", () => {
     expect(slugs).toEqual([
       "marina-music-002-fromclay-thatfranco",
       "gas-money-eria-marina",
-      "rhythm-n-friends",
       "fifa-world-cup-watch-party-eria-marina",
       "boiler-party-marina-lupfr-baum",
       "third-thursdays-operator-sf-eria",

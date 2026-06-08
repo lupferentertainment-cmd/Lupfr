@@ -102,20 +102,6 @@
     "description": "LUPFR hosts a free-entry FIFA World Cup watch party at ERIA MARINA with doors at 11 AM, kickoff at noon, full bar access, and a live DJ postgame."
   },
   {
-    "id": 11,
-    "slug": "rhythm-n-friends",
-    "title": "Rhythm n Friends",
-    "subtitle": "feat. Rhythm N Sound & Guests",
-    "date": "June 19th, 2026",
-    "dateISO": "2026-06-19",
-    "time": "10 PM - 2 AM",
-    "location": "ERIA MARINA, 2300 Chestnut St, Marina District",
-    "image": "/events/rhythm_n_friends.webp",
-    "ticketLink": "https://www.eventbrite.com/e/rhythm-bday-bash-tickets-1990995858208?aff=oddtdtcreator",
-    "ticketLabel": "Tickets",
-    "description": "Rhythm n Friends brings Rhythm N Sound and guests to ERIA MARINA in the Marina District."
-  },
-  {
     "id": 12,
     "slug": "gas-money-eria-marina",
     "title": "GAS MONEY",
