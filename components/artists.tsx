@@ -5,9 +5,9 @@ import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
-import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import {
   Carousel,
@@ -50,6 +50,7 @@ const ArtistCard = memo(function ArtistCard({
   index,
   isInView,
   isHovered,
+  isMobile,
   onHover,
   onLeave,
 }: {
@@ -57,6 +58,7 @@ const ArtistCard = memo(function ArtistCard({
   index: number
   isInView: boolean
   isHovered: boolean
+  isMobile: boolean
   onHover: () => void
   onLeave: () => void
 }) {
@@ -69,7 +71,7 @@ const ArtistCard = memo(function ArtistCard({
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!cardRef.current) return
+    if (isMobile || !cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
@@ -78,8 +80,10 @@ const ArtistCard = memo(function ArtistCard({
   }
 
   const handleMouseLeave = () => {
-    x.set(0)
-    y.set(0)
+    if (!isMobile) {
+      x.set(0)
+      y.set(0)
+    }
     onLeave()
   }
 
@@ -101,10 +105,10 @@ const ArtistCard = memo(function ArtistCard({
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative rounded-2xl bg-card overflow-hidden"
-      onMouseEnter={onHover}
+      onMouseEnter={isMobile ? undefined : onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      style={isMobile ? undefined : { rotateX, rotateY, transformPerspective: 800 }}
     >
       {/* Card: image, then full blur overlay, then name+player on top of blur so no gap + player clickable */}
       <div className="relative w-full rounded-2xl overflow-hidden">
@@ -163,22 +167,24 @@ const ArtistCard = memo(function ArtistCard({
               {artist.genre}
             </motion.span>
           </motion.div>
-          {/* Bio overlay — only over image, revealed on hover */}
-          <motion.div
-            className="absolute inset-0 rounded-t-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
-            initial={false}
-            animate={{ opacity: isHovered ? 1 : 0 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <motion.p
-              className="p-5 md:p-6 text-sm text-muted-foreground leading-relaxed tracking-wide font-[450] antialiased line-clamp-3"
+          {/* Bio overlay — desktop hover only; not rendered on mobile to avoid compositing cost */}
+          {!isMobile && (
+            <motion.div
+              className="absolute inset-0 rounded-t-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
               initial={false}
-              animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 12 }}
+              animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
-              {artist.bio}
-            </motion.p>
-          </motion.div>
+              <motion.p
+                className="p-5 md:p-6 text-sm text-muted-foreground leading-relaxed tracking-wide font-[450] antialiased line-clamp-3"
+                initial={false}
+                animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 12 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {artist.bio}
+              </motion.p>
+            </motion.div>
+          )}
         </div>
 
         {/* Name, links (above Listen), player — always visible */}
@@ -286,11 +292,13 @@ const ArtistCard = memo(function ArtistCard({
 function ArtistCarousel({
   isInView,
   hoveredId,
+  isMobile,
   onHover,
   onLeave,
 }: {
   isInView: boolean
   hoveredId: number | null
+  isMobile: boolean
   onHover: (id: number) => void
   onLeave: () => void
 }) {
@@ -307,6 +315,7 @@ function ArtistCarousel({
                   index={slideIndex * ARTISTS_PER_SLIDE + i}
                   isInView={isInView}
                   isHovered={hoveredId === artist.id}
+                  isMobile={isMobile}
                   onHover={() => onHover(artist.id)}
                   onLeave={onLeave}
                 />
@@ -326,6 +335,7 @@ export function Artists() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const isMobile = useIsMobile() ?? true
 
   /* The featured artists section is a grid of artist cards. */
   return (
@@ -335,7 +345,7 @@ export function Artists() {
       className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
-      <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto relative z-10">
+      <div className="container mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 36 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -371,6 +381,7 @@ export function Artists() {
         <ArtistCarousel
           isInView={isInView}
           hoveredId={hoveredId}
+          isMobile={isMobile}
           onHover={setHoveredId}
           onLeave={() => setHoveredId(null)}
         />
@@ -399,7 +410,7 @@ export function Artists() {
             Submit Your Mix
           </motion.button>
         </motion.div>
-      </ScrollReveal>
+      </div>
     </section>
   )
 }

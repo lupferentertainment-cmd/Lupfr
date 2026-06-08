@@ -22,7 +22,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("IntersectionObserver")
         expect(homePage).toContain("window.location.hash")
         expect(homePage).toContain("aria-hidden=\"true\"")
-        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "160px 0px"')
+        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).toContain('id="events"')
         expect(homePage).toContain("id=\"services\"")
         expect(homePage).toContain("id=\"artists\"")
