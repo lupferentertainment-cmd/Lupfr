@@ -167,12 +167,7 @@ export function HomePage() {
       <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]">
         <Services />
       </DeferredHomeSection>
-      <DeferredHomeSection
-        id="artists"
-        estimatedHeightClassName="min-h-[760px] sm:min-h-[860px] lg:min-h-[760px]"
-      >
-        <Artists />
-      </DeferredHomeSection>
+      <Artists />
       <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">
         <Gallery />
       </DeferredHomeSection>

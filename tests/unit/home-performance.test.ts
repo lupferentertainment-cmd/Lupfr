@@ -25,7 +25,6 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).toContain('id="events"')
         expect(homePage).toContain("id=\"services\"")
-        expect(homePage).toContain("id=\"artists\"")
         expect(homePage).toContain("id=\"gallery\"")
         expect(homePage).toContain("id=\"about\"")
         expect(homePage).toContain("id=\"contact\"")
@@ -46,6 +45,11 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("<About />")
         expect(homePage).toContain("<Contact />")
         expect(homePage).toContain("<Footer />")
+    })
+
+    it("mounts the artists section eagerly to avoid blank placeholders on fast laptop navigation", () => {
+        expect(homePage).toContain("<Artists />")
+        expect(homePage).not.toContain('<DeferredHomeSection\n        id="artists"')
     })
 
     it("keeps immediately visible reviews out of dynamic chunk preload warnings", () => {

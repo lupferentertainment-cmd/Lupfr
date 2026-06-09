@@ -25,6 +25,7 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Mounted the Featured Artists section eagerly on the home page (instead of deferring it) so laptop/desktop navigation cannot land on a blank placeholder before artist cards render.
 - Simplified Featured Artists rendering for low-compute devices by forcing the lightweight mobile-style card view when compute/network constraints are detected, preventing heavy desktop effects from blocking artist visibility.
 - Documented the local-development terminal rule in `docs/RUNBOOK.md`: run `bun run dev` in a foreground terminal only (no detached/background process), and clear any existing port-3000 listener before restart.
 - Made Featured Artists use a static mobile grid with plain image cards and no mobile carousel/player embeds, fixed hash scrolling after the lazy mobile section mounts, and removed Operator SF from the featured artist lineup.
