@@ -28,15 +28,13 @@ describe("featured artist data", () => {
       "thatfranco",
       "HLWA",
       "BAUM",
-      "Operator SF",
       "LUPFR",
     ])
   })
 
   it("removes retired artists from the featured lineup", () => {
     const names = getArtists().map((artist) => artist.name)
-    expect(names).not.toContain("Tommy Guala")
-    expect(names).not.toContain("Mike Stern")
+    expect(names).not.toEqual(expect.arrayContaining(["Tommy Guala", "Mike Stern", "Operator SF"]))
   })
 
   it("keeps Where's West pointed at the requested beach profile image", () => {

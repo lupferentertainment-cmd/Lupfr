@@ -83,18 +83,6 @@
     }
   },
   {
-    "id": 5,
-    "name": "Operator SF",
-    "genre": "Deep House",
-    "image": "/artists/operator_sf.webp",
-    "bio": "SF house crew behind feel-good deep house sessions across the city—from Savoy Tivoli to Baker Beach. High-energy, dance-first vibes.",
-    "instagram": "https://www.instagram.com/operator.sf/",
-    "featuredTrack": {
-      "url": "https://soundcloud.com/user-750865056-779745583/rec012",
-      "platform": "soundcloud"
-    }
-  },
-  {
     "id": 6,
     "name": "LUPFR",
     "genre": "Progressive House",

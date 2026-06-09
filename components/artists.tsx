@@ -29,6 +29,12 @@ function getArtistSlides(items: ArtistItem[]): ArtistItem[][] {
 const artists = getArtists()
 const artistSlides = getArtistSlides(artists)
 
+type ArtistLink = {
+  href: string
+  label: string
+  icon: "external" | "instagram" | "music" | "youtube"
+}
+
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
   const m = trackUrl.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/)
@@ -44,6 +50,116 @@ function soundcloudEmbedUrl(trackUrl: string): string {
 
 const FALLBACK_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%236b7280'/%3E%3Cstop offset='100%25' style='stop-color:%234b5563'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='system-ui' font-size='48'%3EDJ%3C/text%3E%3C/svg%3E"
+
+function getArtistLinks(artist: ArtistItem): ArtistLink[] {
+  const links: ArtistLink[] = []
+  if (artist.spotify) links.push({ href: artist.spotify, label: "Spotify", icon: "external" })
+  if (artist.appleMusic) links.push({ href: artist.appleMusic, label: "Apple Music", icon: "music" })
+  if (artist.instagram) links.push({ href: artist.instagram, label: "Instagram", icon: "instagram" })
+  if (artist.youtube) links.push({ href: artist.youtube, label: "YouTube", icon: "youtube" })
+  if (artist.soundcloud) links.push({ href: artist.soundcloud, label: "SoundCloud", icon: "external" })
+  return links
+}
+
+function ArtistLinkIcon({ icon }: { icon: ArtistLink["icon"] }) {
+  const icons = {
+    external: <ExternalLink size={16} />,
+    instagram: <Instagram size={16} />,
+    music: <Music size={16} />,
+    youtube: <Youtube size={16} />,
+  }
+  return icons[icon]
+}
+
+function MobileArtistImage({ artist, index }: { artist: ArtistItem; index: number }) {
+  return (
+    <div className="relative aspect-square w-full bg-muted">
+      <Image
+        src={artist.image}
+        alt={`${artist.name}, ${artist.genre}`}
+        width={ARTIST_IMAGE_SIZE}
+        height={ARTIST_IMAGE_SIZE}
+        sizes="(max-width: 767px) 92vw, 33vw"
+        loading={index < 2 ? "eager" : "lazy"}
+        className="h-full w-full object-cover"
+      />
+      <span className="absolute left-3 top-3 rounded-full bg-background/90 px-3 py-1 text-xs font-semibold text-foreground">
+        {artist.genre}
+      </span>
+    </div>
+  )
+}
+
+function MobileArtistLinks({ artist }: { artist: ArtistItem }) {
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-2">
+      {getArtistLinks(artist).map((link) => (
+        <a
+          key={`${artist.id}-${link.label}`}
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${artist.name} ${link.label}`}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground"
+        >
+          <ArtistLinkIcon icon={link.icon} />
+        </a>
+      ))}
+    </div>
+  )
+}
+
+function MobileArtistBody({ artist }: { artist: ArtistItem }) {
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-bold tracking-tight text-foreground">{artist.name}</h3>
+      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{artist.bio}</p>
+      <MobileArtistLinks artist={artist} />
+    </div>
+  )
+}
+
+function MobileArtistCard({ artist, index }: { artist: ArtistItem; index: number }) {
+  return (
+    <article className="overflow-hidden rounded-xl border border-border/70 bg-card">
+      <MobileArtistImage artist={artist} index={index} />
+      <MobileArtistBody artist={artist} />
+    </article>
+  )
+}
+
+function MobileArtistsHeader() {
+  return (
+    <>
+      <p id="artists-section-title" className="mb-4 text-sm tracking-tight text-gold-accent">
+        The Sound · Featured Artists
+      </p>
+      <h2 className="text-4xl font-black leading-none tracking-normal text-foreground">
+        Featured
+        <br />
+        <span className="text-muted-foreground">Artists</span>
+      </h2>
+      <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+        We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
+      </p>
+    </>
+  )
+}
+
+function MobileArtistsSection() {
+  return (
+    <section id="artists" className="bg-card/50 px-4 pt-5 pb-14" aria-labelledby="artists-section-title">
+      <div className="container mx-auto">
+        <MobileArtistsHeader />
+        <div className="mt-8 grid grid-cols-1 gap-4">
+          {artists.map((artist, index) => (
+            <MobileArtistCard key={artist.id} artist={artist} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 const ArtistCard = memo(function ArtistCard({
   artist,
@@ -336,6 +452,8 @@ export function Artists() {
   const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const isMobile = useIsMobile() ?? true
+
+  if (isMobile) return <MobileArtistsSection />
 
   /* The featured artists section is a grid of artist cards. */
   return (

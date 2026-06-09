@@ -58,12 +58,31 @@ const Footer = dynamic(() =>
 
 const DEFERRED_SECTION_ROOT_MARGIN_DESKTOP = "1400px 0px"
 const DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"
+const HASH_REALIGN_DELAYS_MS = [0, 150, 500, 1200, 2200]
 
 function deferredSectionRootMargin(): string {
   if (window.matchMedia("(max-width: 767px)").matches) {
     return DEFERRED_SECTION_ROOT_MARGIN_MOBILE
   }
   return DEFERRED_SECTION_ROOT_MARGIN_DESKTOP
+}
+
+function scrollCurrentHashTargetIntoView(): void {
+  const id = window.location.hash.slice(1)
+  if (!id) return
+  window.requestAnimationFrame(() => {
+    document.getElementById(id)?.scrollIntoView({ block: "start" })
+  })
+}
+
+function scheduleHashTargetRealignment(): number[] {
+  return HASH_REALIGN_DELAYS_MS.map((delay) =>
+    window.setTimeout(scrollCurrentHashTargetIntoView, delay)
+  )
+}
+
+function clearHashTargetRealignment(timeoutIds: number[]): void {
+  timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId))
 }
 
 function DeferredHomeSection({
@@ -116,6 +135,12 @@ function DeferredHomeSection({
       window.removeEventListener("hashchange", onHashChange)
     }
   }, [id])
+
+  useEffect(() => {
+    if (!shouldMount) return
+    const timeoutIds = scheduleHashTargetRealignment()
+    return () => clearHashTargetRealignment(timeoutIds)
+  }, [shouldMount])
 
   if (shouldMount) return <>{children}</>
 
