@@ -7,6 +7,7 @@ import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
+import { isLikelyLowComputeDevice } from "@/lib/device-profile"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import {
@@ -159,6 +160,33 @@ function MobileArtistsSection() {
       </div>
     </section>
   )
+}
+
+type ConnectionInfo = {
+  saveData?: boolean
+  effectiveType?: string
+}
+
+type NavigatorComputeSignals = Navigator & {
+  deviceMemory?: number
+  connection?: ConnectionInfo
+}
+
+function getIsLowComputeNavigator(nav: NavigatorComputeSignals): boolean {
+  return isLikelyLowComputeDevice({
+    hardwareConcurrency: nav.hardwareConcurrency,
+    deviceMemory: nav.deviceMemory,
+    saveData: nav.connection?.saveData,
+    effectiveType: nav.connection?.effectiveType,
+  })
+}
+
+function useIsLowComputeDevice(): boolean {
+  const [isLowCompute] = useState(() => {
+    if (typeof navigator === "undefined") return false
+    return getIsLowComputeNavigator(navigator as NavigatorComputeSignals)
+  })
+  return isLowCompute
 }
 
 const ArtistCard = memo(function ArtistCard({
@@ -452,8 +480,10 @@ export function Artists() {
   const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const isMobile = useIsMobile() ?? true
+  const isLowCompute = useIsLowComputeDevice()
+  const isSimpleView = isMobile || isLowCompute
 
-  if (isMobile) return <MobileArtistsSection />
+  if (isSimpleView) return <MobileArtistsSection />
 
   /* The featured artists section is a grid of artist cards. */
   return (

@@ -8,6 +8,8 @@ Use Bun, matching `package.json` `packageManager`. From the repo root, run `bun 
 
 Run `bun run dev` for the Next.js development server. Startup runs `scripts/prepare-dev-cache.mjs`, which removes an incomplete `.next/dev` cache when `routes-manifest.json` is missing so Next can rebuild it cleanly.
 
+For daily development, run the dev server in a foreground terminal session only (never with `&`, `nohup`, or detached process tools). If port `3000` is occupied, stop the existing listener first, then start `bun run dev` again so `http://localhost:3000` is owned by one active foreground session.
+
 ## Content updates
 
 Edit source content in `data/*.yml` and place optimized public assets under `public/`. `bun run test` regenerates data and fails if public raster assets are not WebP, unless they are favicon/logo exceptions documented in `scripts/optimize-public-raster.mjs`.

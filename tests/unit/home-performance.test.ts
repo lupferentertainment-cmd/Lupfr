@@ -98,6 +98,10 @@ describe("mobile artists black-screen regression", () => {
         expect(artists).toContain("useIsMobile() ?? true")
     })
 
+    it("falls back to simplified artist cards on low-compute devices", () => {
+        expect(artists).toContain("if (isSimpleView) return <MobileArtistsSection />")
+    })
+
     it("keeps useInView lookahead margin at least 600px so section mounts before it enters the viewport", () => {
         // margin must be "0px 0px 600px 0px" or larger — the string literal is the source of truth
         expect(artists).toMatch(/margin:\s*["']0px 0px [6-9]\d{2,}px 0px["']/)
