@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
+import { Artists } from "@/components/artists"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { Reviews } from "@/components/reviews"
@@ -19,17 +20,6 @@ const Services = dynamic(() =>
     resolveDynamicComponent(m, "Services", "@/components/services")
   ),
   { ssr: false }
-)
-const Artists = dynamic(() =>
-  import("@/components/artists").then((m) =>
-    resolveDynamicComponent(m, "Artists", "@/components/artists")
-  ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="min-h-[760px] sm:min-h-[860px] lg:min-h-[760px]" aria-hidden />
-    ),
-  }
 )
 const Gallery = dynamic(() =>
   import("@/components/gallery").then((m) =>
