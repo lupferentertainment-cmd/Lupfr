@@ -117,3 +117,29 @@ describe("mobile artists black-screen regression", () => {
         expect(artists).toContain("if (isMobile || !cardRef.current) return")
     })
 })
+
+describe("mobile artist carousel (one-artist-per-slide)", () => {
+    const artists = fs.readFileSync(
+        path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "components", "artists.tsx"),
+        "utf8"
+    )
+
+    it("defines a per-artist mobile slide array so each swipe shows exactly one artist", () => {
+        expect(artists).toContain("mobileArtistSlides")
+        expect(artists).toContain("artists.map((a) => [a])")
+    })
+
+    it("keeps desktop slides at 6 artists per slide", () => {
+        expect(artists).toContain("ARTISTS_PER_DESKTOP_SLIDE = 6")
+        expect(artists).toContain("desktopArtistSlides")
+    })
+
+    it("switches the carousel between mobile and desktop slide arrays based on isMobile", () => {
+        expect(artists).toContain("isMobile ? mobileArtistSlides : desktopArtistSlides")
+    })
+
+    it("renders a single ArtistCard (no grid) per slide on mobile to reduce compositor layers", () => {
+        expect(artists).toContain("isMobile ? (")
+        expect(artists).toContain("slide[0]")
+    })
+})

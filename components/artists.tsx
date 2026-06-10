@@ -19,15 +19,18 @@ import {
 } from "@/components/ui/carousel"
 
 const ARTIST_IMAGE_SIZE = 400
-const ARTISTS_PER_SLIDE = 6
+const ARTISTS_PER_DESKTOP_SLIDE = 6
 
-function getArtistSlides(items: ArtistItem[]): ArtistItem[][] {
-  const count = Math.ceil(items.length / ARTISTS_PER_SLIDE)
-  return Array.from({ length: count }, (_, i) => items.slice(i * ARTISTS_PER_SLIDE, (i + 1) * ARTISTS_PER_SLIDE))
+function getDesktopArtistSlides(items: ArtistItem[]): ArtistItem[][] {
+  const count = Math.ceil(items.length / ARTISTS_PER_DESKTOP_SLIDE)
+  return Array.from({ length: count }, (_, i) =>
+    items.slice(i * ARTISTS_PER_DESKTOP_SLIDE, (i + 1) * ARTISTS_PER_DESKTOP_SLIDE)
+  )
 }
 
 const artists = getArtists()
-const artistSlides = getArtistSlides(artists)
+const desktopArtistSlides = getDesktopArtistSlides(artists)
+const mobileArtistSlides = artists.map((a) => [a])
 
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
@@ -302,30 +305,44 @@ function ArtistCarousel({
   onHover: (id: number) => void
   onLeave: () => void
 }) {
+  const slides = isMobile ? mobileArtistSlides : desktopArtistSlides
+
   return (
     <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
       <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
-        {artistSlides.map((slide, slideIndex) => (
+        {slides.map((slide, slideIndex) => (
           <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {slide.map((artist, i) => (
-                <ArtistCard
-                  key={artist.id}
-                  artist={artist}
-                  index={slideIndex * ARTISTS_PER_SLIDE + i}
-                  isInView={isInView}
-                  isHovered={hoveredId === artist.id}
-                  isMobile={isMobile}
-                  onHover={() => onHover(artist.id)}
-                  onLeave={onLeave}
-                />
-              ))}
-            </div>
+            {isMobile ? (
+              <ArtistCard
+                artist={slide[0]}
+                index={0}
+                isInView={isInView}
+                isHovered={hoveredId === slide[0].id}
+                isMobile={isMobile}
+                onHover={() => onHover(slide[0].id)}
+                onLeave={onLeave}
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {slide.map((artist, i) => (
+                  <ArtistCard
+                    key={artist.id}
+                    artist={artist}
+                    index={slideIndex * ARTISTS_PER_DESKTOP_SLIDE + i}
+                    isInView={isInView}
+                    isHovered={hoveredId === artist.id}
+                    isMobile={isMobile}
+                    onHover={() => onHover(artist.id)}
+                    onLeave={onLeave}
+                  />
+                ))}
+              </div>
+            )}
           </CarouselItem>
         ))}
       </CarouselContent>
-      {artistSlides.length > 1 ? <CarouselPrevious className="left-1 top-[45%] sm:-left-4 lg:-left-10" /> : null}
-      {artistSlides.length > 1 ? <CarouselNext className="right-1 top-[45%] sm:-right-4 lg:-right-10" /> : null}
+      {slides.length > 1 ? <CarouselPrevious className="left-1 top-[45%] sm:-left-4 lg:-left-10" /> : null}
+      {slides.length > 1 ? <CarouselNext className="right-1 top-[45%] sm:-right-4 lg:-right-10" /> : null}
       <CarouselDots />
     </Carousel>
   )
