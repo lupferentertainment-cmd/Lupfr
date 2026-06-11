@@ -23,3 +23,6 @@ coverage/
 
 # Original oversized source video (replaced by compressed hero-bg.mp4)
 public/vecteezy_people-dancing-with-mixed-music-suitable-for-all-speeds-in_26462763.mp4
+
+# Agent planning scratch (tmp/plan.md etc.)
+tmp/

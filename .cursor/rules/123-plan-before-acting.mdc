@@ -1,0 +1,15 @@
+---
+description: LUPFR — plan-first gate: read owning docs, then write tmp/plan.md BEFORE any non-trivial edit.
+alwaysApply: true
+---
+
+# Plan before acting (all agents)
+
+Mandatory order: **read docs → write plan → implement → verify** (never start with edits).
+
+1. **Docs first:** pick the owning `docs/*.md` via `.cursor/rules/lupfr-code-to-docs-map.mdc` and read it before touching code (see always-on `lupfr-context-engineering.mdc`).
+2. **Plan:** for any non-trivial change, write **`tmp/plan.md`** before the first edit — one screen max, sections `## Will NOT Change`, `## Drift Risks`, `## Verification Plan`. Trivial one-liners: <=3 plan bullets in chat instead.
+3. **No scope creep:** do not exceed the written plan; update the plan first.
+4. **Verify:** `bun run ci` green before claiming done.
+
+Same contract for non-Cursor agents lives in repo-root **`AGENTS.md`** / **`CLAUDE.md`**.
