@@ -1,17 +1,17 @@
 [
   {
-    "id": 7,
-    "image": "/gallery/boiler_boat_003/boiler_boat_003_01.webp",
-    "title": "Boiler Boat 003",
-    "caption": "Night kicks off — early crowd finding their footing on the water.",
-    "alt": "Guests arriving at the LUPFR Boiler Boat 003 event on the SF Bay."
-  },
-  {
     "id": 8,
     "image": "/gallery/boiler_boat_003/boiler_boat_003_02.webp",
     "title": "Boiler Boat 003",
     "caption": "Open deck, city lights, bass at full send.",
-    "alt": "Open-air deck scene at the LUPFR Boiler Boat 003 event."
+    "alt": "DJ at the decks on the LUPFR Boiler Boat 003 event, SF Bay and city skyline behind."
+  },
+  {
+    "id": 15,
+    "image": "/gallery/boiler_boat_003/boiler_boat_003_09.webp",
+    "title": "Boiler Boat 003",
+    "caption": "Full boat, full send — the whole deck moving as one on the bay.",
+    "alt": "Crowd at peak energy at the LUPFR Boiler Boat 003 event."
   },
   {
     "id": 9,
@@ -56,11 +56,11 @@
     "alt": "Night-time view from the deck of LUPFR Boiler Boat 003."
   },
   {
-    "id": 15,
-    "image": "/gallery/boiler_boat_003/boiler_boat_003_09.webp",
+    "id": 7,
+    "image": "/gallery/boiler_boat_003/boiler_boat_003_01.webp",
     "title": "Boiler Boat 003",
-    "caption": "The set peaked and the crowd went with it.",
-    "alt": "Crowd at peak energy at the LUPFR Boiler Boat 003 event."
+    "caption": "Friends, cameras, and the night in full swing.",
+    "alt": "Group of guests posing for the camera at the LUPFR Boiler Boat 003 event."
   },
   {
     "id": 16,

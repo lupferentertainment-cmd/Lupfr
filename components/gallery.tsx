@@ -34,12 +34,18 @@ const CAROUSEL_OPTS = {
 const AUTOPLAY_DESKTOP_MS = 5200
 const AUTOPLAY_MOBILE_MS = 7800
 
-/** Shortest distance on a loop so we only decode images for the active slide ±1 neighbors (saves bandwidth vs mounting 15 full-size photos at once). */
+const LOAD_AHEAD_COUNT = 2
+const LOAD_BEHIND_COUNT = 1
+
+/**
+ * Directional preload window on the loop: autoplay always advances forward, so decode the next
+ * LOAD_AHEAD_COUNT slides before the carousel reaches them (swap is instant, never a shimmer) and keep
+ * LOAD_BEHIND_COUNT behind for back-swipes — instead of mounting every full-size photo at once.
+ */
 function isSlideInLoadRing(i: number, selected: number, len: number): boolean {
   if (len <= 5) return true
-  const d = Math.abs(i - selected)
-  const circular = Math.min(d, len - d)
-  return circular <= 1
+  const forward = (i - selected + len) % len
+  return forward <= LOAD_AHEAD_COUNT || forward >= len - LOAD_BEHIND_COUNT
 }
 
 function onGallerySlideLinkClick(e: MouseEvent<HTMLAnchorElement>): void {
@@ -79,10 +85,13 @@ function GallerySlideHitLink({
 function HomeGallerySlideDecodingImage({
   photo,
   isLcpCandidate,
+  eagerDecode,
   photoHref,
 }: {
   photo: GalleryPhoto
   isLcpCandidate: boolean
+  /** Force the fetch even while the slide is translated offscreen (album jump targets) — `loading="lazy"` would defer it until the carousel scrolls near. */
+  eagerDecode: boolean
   photoHref: string
 }) {
   const [ready, setReady] = useState(false)
@@ -100,7 +109,7 @@ function HomeGallerySlideDecodingImage({
             "transition-opacity duration-300 ease-out motion-reduce:transition-none",
             ready ? "opacity-100" : "opacity-0"
           )}
-          loading={isLcpCandidate ? "eager" : "lazy"}
+          loading={isLcpCandidate || eagerDecode ? "eager" : "lazy"}
           priority={isLcpCandidate}
           fetchPriority={isLcpCandidate ? "high" : "low"}
           decoding="async"
@@ -116,11 +125,13 @@ function HomeGalleryCarouselSlide({
   photo,
   loadImage,
   isLcpCandidate,
+  eagerDecode,
   photoHref,
 }: {
   photo: GalleryPhoto
   loadImage: boolean
   isLcpCandidate: boolean
+  eagerDecode: boolean
   photoHref: string
 }) {
   const slideDateLabel = galleryPhotoDateLabel(photo.dateISO)
@@ -131,6 +142,7 @@ function HomeGalleryCarouselSlide({
         <HomeGallerySlideDecodingImage
           photo={photo}
           isLcpCandidate={isLcpCandidate}
+          eagerDecode={eagerDecode}
           photoHref={photoHref}
         />
       ) : (
@@ -199,6 +211,12 @@ export function Gallery() {
       firstIndex: v.firstIndex,
     }))
   }, [])
+
+  /** First slide of each album stays decoded so the jump bar never lands on a shimmer. */
+  const albumJumpIndexes = useMemo(
+    () => new Set(eventGroups.map((g) => g.firstIndex)),
+    [eventGroups]
+  )
 
   const activeGroupIndex = useMemo(() => {
     let active = 0
@@ -296,7 +314,8 @@ export function Gallery() {
           <Carousel opts={CAROUSEL_OPTS} className="w-full" setApi={setApi}>
             <CarouselContent className="-ml-0" viewportClassName="rounded-gallery-squircle overflow-hidden">
               {GALLERY_CAROUSEL_PHOTOS.map((photo, i) => {
-                const loadImage = isSlideInLoadRing(i, selectedIndex, len)
+                const isJumpTarget = albumJumpIndexes.has(i)
+                const loadImage = isSlideInLoadRing(i, selectedIndex, len) || isJumpTarget
                 /** Do not gate `priority` / `loading` on `inViewNow` — it can differ SSR vs first client paint and cause hydration mismatches on `<Image>`. */
                 const isLcpCandidate = i === 0 && selectedIndex === 0 && loadImage
                 const photoHref = galleryPhotoHref(photo.id, "home")
@@ -310,6 +329,7 @@ export function Gallery() {
                       photo={photo}
                       loadImage={loadImage}
                       isLcpCandidate={isLcpCandidate}
+                      eagerDecode={isJumpTarget}
                       photoHref={photoHref}
                     />
                   </CarouselItem>

@@ -27,6 +27,9 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Reordered the Boiler Boat 003 gallery album so it leads with the full-deck crowd shot (`boiler_boat_003_09.webp`) instead of the posed group photo (`_01`, moved near the end with an accurate caption/alt); affects the home `#gallery` carousel lead slide and `/gallery` album order (`data/gallery.yml`).
+- Made the home gallery carousel preload window directional (`components/gallery.tsx`): the carousel now decodes the **next 2** slides ahead of the deterministic forward autoplay (plus 1 behind for back-swipes) instead of a symmetric ±1 ring, so every rotation swap shows an already-decoded image with no shimmer while still never mounting all full-size photos at once.
+- Kept the first slide of every album decoded with an eager fetch (`eagerDecode` on the album jump-bar targets) so clicking a jump-bar chip lands on an already-loaded photo instead of a skeleton shimmer.
 - Removed lazy client-only loading for the home Featured Artists section and switched to a direct import so artists render deterministically on dev/laptop without waiting on a deferred chunk placeholder.
 - Mounted the Featured Artists section eagerly on the home page (instead of deferring it) so laptop/desktop navigation cannot land on a blank placeholder before artist cards render.
 - Simplified Featured Artists rendering for low-compute devices by forcing the lightweight mobile-style card view when compute/network constraints are detected, preventing heavy desktop effects from blocking artist visibility.
