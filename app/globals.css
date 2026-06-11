@@ -102,8 +102,8 @@
   --partner-logo-opacity-outline: 0.93;
   --partner-logo-opacity-solid: 0.88;
   --partner-logo-opacity-natural: 0.94;
-  /* Split h2 second line — re-resolves `muted-foreground` per element (light/dark) */
-  --lupfr-heading-subline-fg: oklch(0.31 0.02 262);
+  /* Split h2 second line — near-black ink in light mode; `.dark` overrides to theme white */
+  --lupfr-heading-subline-fg: oklch(0.21 0.018 263);
   /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
   --entertainment-line-start: oklch(0.985 0.018 95);
   --entertainment-line-mid: oklch(0.84 0.14 84);
@@ -175,6 +175,8 @@
   --partner-logo-opacity-outline: 0.96;
   --partner-logo-opacity-solid: 0.9;
   --partner-logo-opacity-natural: 0.97;
+  /* Split h2 second line — theme white in dark mode (light mode value in :root) */
+  --lupfr-heading-subline-fg: var(--foreground);
 }
 
 /*

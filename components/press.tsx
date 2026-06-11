@@ -226,10 +226,10 @@ export function Press() {
   /* Editorial / news coverage about LUPFR, carousel of clickable article cards. */
   return (
     <section
-      id="press"
+      id="news"
       ref={ref}
       className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden"
-      aria-labelledby="press-section-title"
+      aria-labelledby="news-section-title"
     >
       <div className="container mx-auto relative z-10">
         <motion.div
@@ -239,29 +239,17 @@ export function Press() {
           className="mb-10 sm:mb-12 md:mb-14"
         >
           <motion.p
-            id="press-section-title"
+            id="news-section-title"
             className="text-gold-accent tracking-tight text-sm mb-4"
             initial={{ opacity: 0, x: -20 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.1 }}
           >
-            The Story · Editorials &amp; News
+            The Story · Editorials &amp; Press
           </motion.p>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <h2 className="lupfr-heading-split-leading">
-              <GoldShineText scrollTargetRef={ref}>In the</GoldShineText>
-              <br />
-              <span className="lupfr-heading-subline">Press</span>
-            </h2>
-            <motion.p
-              className="text-muted-foreground max-w-md leading-relaxed"
-              initial={{ opacity: 0, x: 20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.3 }}
-            >
-              What the press is saying about LUPFR — from yacht parties on the Bay to the live music series shaping San Francisco nightlife.
-            </motion.p>
-          </div>
+          <h2 className="lupfr-heading-split-leading">
+            <GoldShineText scrollTargetRef={ref}>News</GoldShineText>
+          </h2>
         </motion.div>
 
         <PressCarousel isInView={isInView} isMobile={isMobile} />

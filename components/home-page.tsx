@@ -164,7 +164,7 @@ export function HomePage() {
         <Services />
       </DeferredHomeSection>
       <Artists />
-      <DeferredHomeSection id="press" estimatedHeightClassName="min-h-[560px] sm:min-h-[640px]">
+      <DeferredHomeSection id="news" estimatedHeightClassName="min-h-[560px] sm:min-h-[640px]">
         <Press />
       </DeferredHomeSection>
       <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">

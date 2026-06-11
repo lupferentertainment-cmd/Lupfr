@@ -46,7 +46,7 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold) 82%, var(--gold-dark)) 27%,")
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-specular) 70%, var(--gold-bright)) 42%,")
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-shadow) 96%, black) 100%);")
-    expect(rootBlock).toContain("  --lupfr-heading-subline-fg: oklch(0.31 0.02 262);")
+    expect(rootBlock).toContain("  --lupfr-heading-subline-fg: oklch(0.21 0.018 263);")
     expect(rootBlock).toContain("  --entertainment-line-start: oklch(0.985 0.018 95);")
     expect(rootBlock).toContain("  --entertainment-line-mid: oklch(0.84 0.14 84);")
     expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.58 0.17 70);")
@@ -71,6 +71,11 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(darkBlock).toContain("      var(--gold-shadow) 0%,")
     expect(darkBlock).toContain("      var(--gold-specular) 42%,")
     expect(darkBlock).not.toContain("  --gold: oklch(0.62 0.12 59);")
+  })
+
+  it("heading subline second line is theme foreground (white) in dark mode", () => {
+    const darkMatch = css.match(/\.dark\s*\{[\s\S]*?\n\}\n\n\/\*\n \* Corporate partner/)
+    expect(darkMatch![0]).toContain("  --lupfr-heading-subline-fg: var(--foreground);")
   })
 
   it("keeps hero LUPFR metallic shine (CSS + keyframes)", () => {
