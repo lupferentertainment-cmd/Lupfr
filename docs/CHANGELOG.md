@@ -10,6 +10,8 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- Fixed three blog post `coverImage` paths in `data/blog.yml` (and regenerated `lib/data/generated/blog.json`) that pointed at non-existent files — now `boiler_party_marina.webp`, `boiler_boat.webp`, and `third_thursdays_operator_sf.webp`, all verified present under `public/events/`. New `tests/unit/data-integrity.test.ts` cases assert every blog cover image and partner dark-mode logo exists on disk, and new unit suites cover the blog list (`tests/unit/blog-list.test.ts`), partner normalization (`tests/unit/partners-list.test.ts`), and the blog-host proxy rewrite (`tests/unit/proxy-blog-host.test.ts`). Documented in `docs/TESTING.md`.
+
 - Removed three dead external links that were failing `verify:routes`: the Where's West past event's `ticketLink`/`ticketLabel` (organizer deleted the eriaevents.co product page, HTTP 404) and the `url` on the Venn Social and Brixton Bar SF partner chips (both domains no longer resolve). The event detail page simply omits the gold ticket CTA. The two partner chips were then **re-linked to the brands' live domains** (verified HTTP 200): Venn Social → `https://vennsocial.co`, Brixton Bar SF → `https://thebrixtonsf.com`.
 
 - Fixed the desktop nav bar's light/dark **theme switch overlapping the section links** (e.g. sitting on "Contact") at laptop widths: the header grid's right track floor changed from a fixed `19rem` to `max-content` (`components/navigation.tsx`), so the toggle + Schedule a call + Book an Event cluster always gets its real width and can no longer spill left over the link row (which grew when the Blog link was added). Documented in `docs/DESIGN.md` (Navigation).

@@ -14,6 +14,7 @@ import {
 import { PARTNERS } from "@/lib/data/partners"
 import { PRESS } from "@/lib/data/press"
 import { CAREERS } from "@/lib/data/careers"
+import { getBlogPosts } from "@/lib/data/blog"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -111,5 +112,17 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
         ) || job.highlights.length === 0
     )
     expect(incomplete.map((job) => job.title)).toEqual([])
+  })
+
+  it("blog cover image paths exist under public/", () => {
+    const missing = getBlogPosts().filter((post) => !publicFileExists(post.coverImage))
+    expect(missing.map((post) => post.slug)).toEqual([])
+  })
+
+  it("partner dark-mode logo image paths exist under public/ when set", () => {
+    const missing = PARTNERS.filter(
+      (partner) => partner.imageDark && !publicFileExists(partner.imageDark)
+    )
+    expect(missing.map((partner) => partner.name)).toEqual([])
   })
 })

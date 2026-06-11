@@ -5,7 +5,7 @@
   author: Will Lupfer
   publishedAt: "2026-06-07"
   readMinutes: 6
-  coverImage: "/events/boiler-party-marina.webp"
+  coverImage: "/events/boiler_party_marina.webp"
   tags:
     - Journey
     - Operations
@@ -23,7 +23,7 @@
   author: Will Lupfer
   publishedAt: "2026-05-18"
   readMinutes: 5
-  coverImage: "/events/boiler_boat_003.webp"
+  coverImage: "/events/boiler_boat.webp"
   tags:
     - Creative
     - Production
@@ -41,7 +41,7 @@
   author: Will Lupfer
   publishedAt: "2026-04-26"
   readMinutes: 4
-  coverImage: "/events/third-thursdays-operator-sf.webp"
+  coverImage: "/events/third_thursdays_operator_sf.webp"
   tags:
     - Learnings
     - Systems

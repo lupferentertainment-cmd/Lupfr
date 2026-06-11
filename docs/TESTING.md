@@ -45,6 +45,9 @@
 - `tests/integration/contact-route.test.ts` – contact API validation, invalid JSON / missing fields, Resend misconfiguration and send failures (including non-`Error` throws), mail success path, and 429 protection.
 - `tests/integration/newsletter-route.test.ts` – newsletter API validation, invalid JSON / empty email, dual-send success and per-send failures, non-`Error` send failures, and 429 protection.
 - `tests/unit/email-templates.test.ts` – contact email HTML includes optional company/budget rows.
+- `tests/unit/blog-list.test.ts` – `getBlogPosts` sort order (newest-first), `getBlogPostBySlug` lookup, `coverImage` path normalization, `publishedAt` YYYY-MM-DD format, `readMinutes` > 0, non-empty `body` arrays, `tags` as string arrays.
+- `tests/unit/partners-list.test.ts` – `PARTNERS` / `getPartners` normalization: image paths start with `/`, `imageDark` normalized when present, `ariaLabel` defaults to `name`, `imageClassName` includes treatment class (`outline`, `solid`, `natural`) and layout utilities.
+- `tests/unit/proxy-blog-host.test.ts` – blog subdomain rewrite in `proxy.ts`: `blog.lupfr.com` and `blog.localhost` rewrite `/` → `/blog` and `/<path>` → `/blog/<path>`; case-insensitive + port-stripped host comparison; non-blog hosts and null host pass through; `/_next/*`, `/api/*`, `/blog*`, and static discovery assets skip rewrite.
 - `tests/unit/test-suite-gate.test.ts` – package/script wiring contract for the single LLM-safe gate: `bun run test` delegates to CI mode, `bun run smoke` delegates to verify mode, CI mode runs the smoke subset before coverage, Vitest uses configurable workers, route dynamic-link QA and browser runtime crawl stay in the suite, and `bun run start` remains the one build-first local production server command.
 
 **Commands.**
