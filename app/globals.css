@@ -20,12 +20,12 @@
   --secondary-foreground: oklch(0.16 0.018 265);
   --muted: oklch(0.952 0.006 96);
   --muted-foreground: oklch(0.34 0.02 262);
-  /* Metallic gold - light mode: bright polished gold with dark enough cuts to read on white. */
+  /* Metallic gold - light mode: deepened polished gold (toned-down brightness) with dark cuts to read on white. */
   --gold-shadow: oklch(0.36 0.085 74);
-  --gold-dark: oklch(0.5 0.13 77);
-  --gold: oklch(0.64 0.17 82);
-  --gold-bright: oklch(0.84 0.13 88);
-  --gold-specular: oklch(0.985 0.026 96);
+  --gold-dark: oklch(0.47 0.12 76);
+  --gold: oklch(0.58 0.15 80);
+  --gold-bright: oklch(0.76 0.12 86);
+  --gold-specular: oklch(0.93 0.05 94);
   --gold-filter-shadow: oklch(0.2 0.06 74 / 0.52);
   --gold-filter-edge: oklch(0.48 0.12 80 / 0.34);
   --btn-gold-text: oklch(1 0 0);
@@ -85,10 +85,10 @@
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 2px 8px oklch(0.22 0.06 76 / 0.42)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
   /* Light mode buttons: luxury gold CTA with readable white text and polished depth. */
   --btn-gold-shadow: oklch(0.38 0.1 75);
-  --btn-gold-dark: oklch(0.51 0.14 78);
-  --btn-gold: oklch(0.62 0.17 82);
-  --btn-gold-bright: oklch(0.82 0.13 88);
-  --btn-gold-specular: oklch(0.985 0.026 96);
+  --btn-gold-dark: oklch(0.48 0.13 77);
+  --btn-gold: oklch(0.57 0.15 80);
+  --btn-gold-bright: oklch(0.74 0.12 86);
+  --btn-gold-specular: oklch(0.93 0.05 94);
   --btn-gold-filter-shadow: oklch(0.2 0.06 74 / 0.62);
   --btn-gold-filter-edge: oklch(0.48 0.12 80 / 0.36);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */

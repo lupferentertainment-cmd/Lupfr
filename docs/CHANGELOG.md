@@ -12,6 +12,11 @@ All notable project changes are recorded here.
 
 - Added scroll-triggered **per-word text reveal** animations (`components/text-reveal.tsx`, `TextReveal`): section lead paragraphs in Services, Featured Artists, Contact, and the About story now rise + fade in word by word as they scroll into view (Framer Motion `whileInView`, once, opacity/transform only). Screen readers get the full sentence via `aria-label`; `prefers-reduced-motion` renders static text. Documented in `docs/DESIGN.md` (Scroll-driven motion).
 
+### Changed
+
+- **Toned down light-mode gold** by owner request: `:root` `--gold` family stepped from `oklch(0.64 0.17 82)` to `oklch(0.58 0.15 80)` (with matching `--gold-dark` / `--gold-bright` / `--gold-specular` and `--btn-gold*` reductions) so headings, metrics, and gold CTAs read as deeper polished metal on white instead of bright glare. Dark-mode white gold untouched. Lock test `tests/unit/globals-gold-theme.test.ts` and `docs/DESIGN.md` baseline updated in the same commit.
+- **On-photo gallery text is now white in both themes**: home carousel slides, album-grid slides, and `/gallery` grid hover captions switched from theme tokens (`from-background`/`from-card` scrims, `text-foreground`) to a dark black-based scrim with white title/date/caption text, and `GalleryEventBreadcrumb` gained an `onMedia` tone — so light mode no longer washes photos white or renders dark text over them (e.g. “Boiler Boat” titles). On-surface breadcrumbs (lightbox, photo page) keep theme tokens.
+
 ### Fixed
 
 - Fixed three blog post `coverImage` paths in `data/blog.yml` (and regenerated `lib/data/generated/blog.json`) that pointed at non-existent files — now `boiler_party_marina.webp`, `boiler_boat.webp`, and `third_thursdays_operator_sf.webp`, all verified present under `public/events/`. New `tests/unit/data-integrity.test.ts` cases assert every blog cover image and partner dark-mode logo exists on disk, and new unit suites cover the blog list (`tests/unit/blog-list.test.ts`), partner normalization (`tests/unit/partners-list.test.ts`), and the blog-host proxy rewrite (`tests/unit/proxy-blog-host.test.ts`). Documented in `docs/TESTING.md`.

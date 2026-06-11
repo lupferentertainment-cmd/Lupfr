@@ -151,25 +151,26 @@ function HomeGalleryCarouselSlide({
           <GallerySlideHitLink photo={photo} photoHref={photoHref} />
         </>
       )}
-      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-background/95 via-background/35 to-transparent pointer-events-none max-md:via-background/20" />
+      {/* On-photo scrim/text stay dark/white in both themes — light mode must not wash photos white. */}
+      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none max-md:via-black/20" />
       <figcaption className="absolute bottom-0 left-0 right-0 z-[2] p-3 sm:p-5 md:p-8 lg:p-10 pointer-events-none space-y-1 md:space-y-2">
         <div className="hidden md:contents">
-          <GalleryEventBreadcrumb folderSegments={photo.albumPathSegments} className="mb-1" />
+          <GalleryEventBreadcrumb folderSegments={photo.albumPathSegments} className="mb-1" onMedia />
           {slideDateLabel ? (
-            <p className="text-xs font-medium tabular-nums text-muted-foreground sm:text-sm">
+            <p className="text-xs font-medium tabular-nums text-white/70 sm:text-sm">
               {slideDateLabel}
             </p>
           ) : null}
         </div>
-        <h3 className="font-serif text-base font-bold tracking-tight text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] sm:text-lg md:text-2xl lg:text-3xl md:drop-shadow-none">
+        <h3 className="font-serif text-base font-bold tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] sm:text-lg md:text-2xl lg:text-3xl">
           {photo.title}
         </h3>
         {photo.caption ? (
-          <p className="hidden md:block text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
+          <p className="hidden md:block text-sm sm:text-base text-white/75 max-w-3xl leading-relaxed">
             {photo.caption}
           </p>
         ) : null}
-        <p className="mt-3 hidden md:block text-sm text-muted-foreground">
+        <p className="mt-3 hidden md:block text-sm text-white/60">
           Click or tap the photo to open the full page — back returns to this section.
         </p>
       </figcaption>

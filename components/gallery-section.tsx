@@ -73,7 +73,8 @@ function GallerySlide({
             imageReady ? "opacity-100" : "opacity-0"
           )}
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/95 via-card/25 to-transparent max-md:via-card/15" />
+        {/* On-photo scrim/text stay dark/white in both themes — light mode must not wash photos white. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent max-md:via-black/15" />
         <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 p-3 sm:p-5 md:p-8 lg:p-10">
           <motion.div
             initial={false}
@@ -85,15 +86,15 @@ function GallerySlide({
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mb-2 hidden md:block">
-              <GalleryEventBreadcrumb folderSegments={item.albumPathSegments} />
+              <GalleryEventBreadcrumb folderSegments={item.albumPathSegments} onMedia />
             </div>
             {slideDate ? (
-              <p className="mb-2 hidden text-xs font-medium tabular-nums text-muted-foreground sm:text-sm md:block">{slideDate}</p>
+              <p className="mb-2 hidden text-xs font-medium tabular-nums text-white/70 sm:text-sm md:block">{slideDate}</p>
             ) : null}
             <p className="text-gold-accent mb-1 hidden text-xs font-semibold tracking-tight sm:text-sm md:block">
               {item.caption}
             </p>
-            <p className="font-serif text-base font-bold tracking-tight text-foreground drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-lg md:text-2xl lg:text-4xl md:drop-shadow-none">
+            <p className="font-serif text-base font-bold tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-lg md:text-2xl lg:text-4xl">
               {item.title}
             </p>
           </motion.div>

@@ -97,9 +97,9 @@ export function GalleryPhotoGrid({
         )}
       >
         <GridTileImage photo={p} eager={eager} fetchPriority={eager ? "high" : "low"} />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card/90 via-card/15 to-transparent opacity-0 transition-opacity duration-300 ease-snap group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent opacity-0 transition-opacity duration-300 ease-snap group-hover:opacity-100" />
         <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-3 sm:opacity-0 sm:group-hover:opacity-100">
-          <p className="line-clamp-2 text-sm font-medium text-foreground drop-shadow md:line-clamp-1">
+          <p className="line-clamp-2 text-sm font-medium text-white drop-shadow md:line-clamp-1">
             {p.caption || p.title}
           </p>
         </div>
