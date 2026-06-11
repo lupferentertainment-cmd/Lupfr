@@ -2,7 +2,21 @@
 
 import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
-import { Mail, MapPin, Phone, ArrowRight } from "lucide-react"
+import {
+  Mail,
+  MapPin,
+  Phone,
+  ArrowRight,
+  CalendarHeart,
+  Briefcase,
+  Mic2,
+  Disc3,
+  Handshake,
+  PartyPopper,
+  Megaphone,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react"
 import { toast } from "sonner"
 import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
@@ -15,6 +29,13 @@ import {
 } from "@/lib/phone-list-preferences"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const socialLinks = [
   { name: "Instagram", href: LINKS.instagram },
@@ -22,16 +43,18 @@ const socialLinks = [
   { name: "YouTube", href: LINKS.youtube },
 ]
 
-const inquiryTypes = [
-  "Book an Event",
-  "Corporate Event",
-  "Talent Booking",
-  "Submit Your Mix",
-  "Venue Partnership",
-  "Private Event",
-  "Sponsorship",
-  "Other",
+const inquiryOptions: { label: string; icon: LucideIcon }[] = [
+  { label: "Book an Event", icon: CalendarHeart },
+  { label: "Corporate Event", icon: Briefcase },
+  { label: "Talent Booking", icon: Mic2 },
+  { label: "Submit Your Mix", icon: Disc3 },
+  { label: "Venue Partnership", icon: Handshake },
+  { label: "Private Event", icon: PartyPopper },
+  { label: "Sponsorship", icon: Megaphone },
+  { label: "Other", icon: Sparkles },
 ]
+
+const inquiryTypes = inquiryOptions.map((option) => option.label)
 
 // Phone stored as char codes so it's not plain text in source or initial HTML; decoded and rendered client-side only.
 const PHONE_CHAR_CODES = [53, 48, 51, 45, 52, 48, 55, 45, 54, 49, 48, 57]
@@ -315,25 +338,33 @@ export function Contact() {
                   <label className="mb-3 block text-sm font-medium tracking-tight text-gold-accent">
                     What can we help with?
                   </label>
-                  <div className="flex flex-wrap gap-2">
-                    {inquiryTypes.map((type) => (
-                      <motion.button
-                        key={type}
-                        type="button"
-                        onClick={() => setSelectedType(type)}
-                        className={`min-h-[44px] rounded-2xl border px-3 py-2.5 text-xs transition-[border-color,background-color,color] sm:min-h-0 sm:px-4 sm:text-sm ${selectedType === type
-                            ? "border-accent bg-accent/10 text-accent"
-                            : "border-border bg-card/50 text-muted-foreground hover:border-accent/50 hover:text-foreground"
-                          }`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        animate={{ scale: selectedType === type ? 1.02 : 1 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                      >
-                        {type}
-                      </motion.button>
-                    ))}
-                  </div>
+                  <Select
+                    value={selectedType ?? ""}
+                    onValueChange={(value) => setSelectedType(value)}
+                  >
+                    <SelectTrigger
+                      aria-label="What can we help with?"
+                      className="w-full min-h-[52px] data-[size=default]:h-auto rounded-xl border-border bg-secondary px-4 py-3 text-sm text-foreground shadow-none transition-colors hover:border-accent/50 focus-visible:border-accent focus-visible:ring-0 data-[state=open]:border-accent data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-gold-accent [&>svg]:transition-transform [&>svg]:duration-300 data-[state=open]:[&>svg]:rotate-180"
+                    >
+                      <SelectValue placeholder="Choose an inquiry type" />
+                    </SelectTrigger>
+                    <SelectContent
+                      position="popper"
+                      sideOffset={8}
+                      className="rounded-2xl border-border/80 bg-card/95 p-1.5 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
+                    >
+                      {inquiryOptions.map(({ label, icon: Icon }) => (
+                        <SelectItem
+                          key={label}
+                          value={label}
+                          className="rounded-xl py-3 pl-3 text-sm text-muted-foreground transition-colors focus:bg-gold-accent/10 focus:text-foreground data-[state=checked]:text-gold-accent [&_svg:not([class*='text-'])]:text-gold-accent/80"
+                        >
+                          <Icon className="size-4" aria-hidden />
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
