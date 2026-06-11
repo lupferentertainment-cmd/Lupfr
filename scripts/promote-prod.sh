@@ -3,8 +3,10 @@ set -euo pipefail
 
 # promote:prod — fast-forward `main` to the validated `dev` commit so Vercel
 # deploys production (lupfr.com). Refuses to run if main and dev have diverged,
-# prints the exact commits being promoted, requires a typed "yes", and never
-# force-pushes — production history is append-only.
+# requires local HEAD to be the exact origin/dev commit, re-runs the canonical
+# full gate (`bun run test`) against that commit, prints the exact commits
+# being promoted, requires a typed "yes", and never force-pushes — production
+# history is append-only.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -35,6 +37,18 @@ if [[ -z "$(git rev-list "$commit_range")" ]]; then
   echo "promote-prod: nothing to promote — origin/main already matches origin/dev."
   exit 0
 fi
+
+# Guard: the gate below runs against the local worktree, so local HEAD must be
+# the exact origin/dev commit being promoted — otherwise tests would validate
+# different code than what ships.
+if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/dev)" ]]; then
+  echo "promote-prod: refused — local HEAD is not the origin/dev commit being promoted."
+  echo "  check out the staged commit first:  git checkout dev && git reset --hard origin/dev"
+  exit 1
+fi
+
+echo "promote-prod: running canonical full gate against origin/dev ($(git rev-parse --short origin/dev)) before production"
+bun run test
 
 echo "promote-prod: the following commits will be promoted from dev to production (main):"
 echo "------------------------------------------------------------------------------------"

@@ -18,9 +18,9 @@ How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel aut
 1. Do your work on any local branch (including local `main`). Commit normally — the pre-commit hook runs `bun run test`.
 2. `bun run ship:dev` — runs the full gate, then **force-pushes HEAD to `origin/dev`**; Vercel builds the staging Preview. `dev` is staging-only and is always overwritten with whatever is ready; divergence from `origin/dev` is not an error. Find the Preview URL in the Vercel project **Deployments** tab (the `dev` branch entry).
 3. Open that Preview URL and review the change.
-4. When it looks right: `bun run promote:prod` — fast-forwards `origin/main` to the validated `origin/dev` commit; Vercel deploys production. The script prints the exact commits and asks you to type `yes`. It never force-pushes `main`, so production history is safe.
+4. When it looks right: `bun run promote:prod` — requires local HEAD to be the exact `origin/dev` commit, **re-runs the canonical full gate (`bun run test`)** against it, then fast-forwards `origin/main` to that validated commit; Vercel deploys production. The script prints the exact commits and asks you to type `yes`. It never force-pushes `main`, so production history is safe.
 
-**Rule:** nothing goes to `origin/main` (production) without first passing through `origin/dev` (staging Preview) and a human review step. `ship:dev` may be run as many times as needed; `promote:prod` is the gate.
+**Rule:** nothing goes to `origin/main` (production) without first passing through `origin/dev` (staging Preview), a human review step, and a green `bun run test` run on the exact promoted commit. Both deploy paths run the identical full gate: `ship:dev` before staging, `promote:prod` before production. `ship:dev` may be run as many times as needed; `promote:prod` is the gate.
 
 **Preview environment variables.** Make sure the required secrets exist for the **Preview** scope as well as Production (see Environment below), otherwise the `dev` preview's API routes return 500. Internal maintainers can run `bun run _vercel:env:check` when auditing Vercel secrets.
 
@@ -61,7 +61,7 @@ If missing, add each variable interactively:
 1. Commit normally; the pre-commit hook runs `bun run test`.
 2. `bun run ship:dev` runs `bun run test`, then **force-pushes HEAD to `origin/dev`**; Vercel builds the staging Preview. `dev` is always overwritten — no reconciliation needed.
 3. Validate the change on the Preview URL.
-4. `bun run promote:prod` fast-forwards `origin/main` to the validated commit after typed confirmation; Vercel deploys production. Never force-pushes `main`.
+4. `bun run promote:prod` requires local HEAD == `origin/dev`, re-runs `bun run test` against that commit, then fast-forwards `origin/main` to it after typed confirmation; Vercel deploys production. Never force-pushes `main`.
 
 If preview or production returns `Google Sheets webhook rejected the request.`, validate the Google Apps Script deployment access is set to allow unauthenticated web app POST calls ("Anyone") and confirm the current deployment URL is authorized by your script policy. In **development** (`next dev`), a non-OK webhook response can include a `debug` object on the JSON: if `upstreamPreview` shows HTML (for example a Google “Page Not Found” page) while `upstreamStatus` is `401` or `404`, the **`GOOGLE_SHEETS_WEBHOOK_URL` is likely stale or mistyped** — open the script, **Deploy → Manage deployments**, create a new web app version if needed, and paste the new **Web app** URL (must end in `/exec` for the current deployment) into Vercel and `.env.local`.
 

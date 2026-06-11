@@ -6,6 +6,10 @@ All notable project changes are recorded here.
 
 ### Added
 
+- Gated **production promotion on the canonical full test suite**: `bun run promote:prod` now refuses to run unless local HEAD is the exact `origin/dev` commit being promoted, then re-runs `bun run test` against it before the typed confirmation and fast-forward push. Both deploy environments (staging Preview via `ship:dev`, production via `promote:prod`) now run the identical gate — including dynamic route/link QA, the asset crawl, and the browser console crawl — before any push. Contract-tested in `tests/unit/test-suite-gate.test.ts`; documented in `docs/DEPLOYMENT.md` and `docs/TESTING.md`.
+
+- Added the **dynamic asset-crawl integration suite** (`tests/integration/asset-crawl.test.ts`, `bun run _verify:assets`): boots the built production server, asserts every known route (static + blog slugs + event slugs) returns 200, and crawls each page's `<img>`/`<source>`/`<link>`/`<a>` asset references for 404s. Wired into `ci.sh` (`run_asset_checks`) so it runs inside `bun run test`. Also added the **look-and-feel CSS contract suite** (`tests/unit/look-and-feel.test.ts`) guarding typography, the gold visual system, and hero/partner/navigation/footer/animation contracts. Documented in `docs/TESTING.md`.
+
 - Added scroll-triggered **per-word text reveal** animations (`components/text-reveal.tsx`, `TextReveal`): section lead paragraphs in Services, Featured Artists, Contact, and the About story now rise + fade in word by word as they scroll into view (Framer Motion `whileInView`, once, opacity/transform only). Screen readers get the full sentence via `aria-label`; `prefers-reduced-motion` renders static text. Documented in `docs/DESIGN.md` (Scroll-driven motion).
 
 ### Fixed

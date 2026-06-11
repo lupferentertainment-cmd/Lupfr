@@ -13,6 +13,7 @@ NEXT_ENV_SNAPSHOT="${CI_TMP_ROOT}/next-env.d.ts"
 export NEXT_DIST_DIR=".next-ci/${RUN_ID}"
 export VITEST_COVERAGE_DIR="${CI_TMP_ROOT}/coverage"
 export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$((4310 + RANDOM % 20000))}"
+export VERIFY_ASSETS_PORT="${VERIFY_ASSETS_PORT:-$((14310 + RANDOM % 5000))}"
 export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$((24310 + RANDOM % 20000))}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
@@ -55,6 +56,12 @@ run_route_checks() {
   restore_next_snapshots
 }
 
+run_asset_checks() {
+  [[ "$MODE" == "ci" ]] || return
+  bunx vitest run tests/integration/asset-crawl.test.ts
+  restore_next_snapshots
+}
+
 run_browser_checks() {
   [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]] || return
   bun run _verify:console
@@ -67,4 +74,5 @@ bun run _test:smoke
 run_static_quality
 run_build_checks
 run_route_checks
+run_asset_checks
 run_browser_checks

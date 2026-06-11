@@ -20,6 +20,7 @@
     "_test:smoke": "bunx vitest run --reporter=dot tests/unit/test-suite-gate.test.ts tests/unit/site.test.ts tests/unit/links.test.ts tests/unit/data-integrity.test.ts",
     "_coverage": "bunx vitest run --coverage --reporter=dot",
     "_verify:routes": "bash scripts/verify-routes.sh",
+    "_verify:assets": "bunx vitest run tests/integration/asset-crawl.test.ts",
     "_verify:console": "bun scripts/verify-console.mjs",
     "_verify:client-bundle": "bun scripts/verify-client-bundle.mjs",
     "_images:optimize": "bun scripts/optimize-public-raster.mjs",
