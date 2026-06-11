@@ -13,6 +13,7 @@ import {
 } from "@/lib/events"
 import { PARTNERS } from "@/lib/data/partners"
 import { PRESS } from "@/lib/data/press"
+import { CAREERS } from "@/lib/data/careers"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -93,5 +94,22 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
   it("press article links are https URLs", () => {
     const invalid = PRESS.filter((item) => !/^https:\/\//.test(item.url))
     expect(invalid.map((item) => item.title)).toEqual([])
+  })
+
+  it("career postings link to LinkedIn job pages over https", () => {
+    const invalid = CAREERS.filter(
+      (job) => !/^https:\/\/www\.linkedin\.com\/jobs\/view\/\d+\/?$/.test(job.linkedinUrl)
+    )
+    expect(invalid.map((job) => job.title)).toEqual([])
+  })
+
+  it("career postings have complete card content", () => {
+    const incomplete = CAREERS.filter(
+      (job) =>
+        [job.title, job.location, job.type, job.workMode, job.summary].some(
+          (field) => typeof field !== "string" || field.trim().length === 0
+        ) || job.highlights.length === 0
+    )
+    expect(incomplete.map((job) => job.title)).toEqual([])
   })
 })

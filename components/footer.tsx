@@ -26,12 +26,14 @@ const footerLinks = {
     { name: "Events", href: "#events" },
     { name: "Gallery", href: "/gallery" },
     { name: "Services", href: "#services" },
+    { name: "Careers", href: "/careers" },
     { name: "Contact", href: "#contact" },
   ],
   social: [
     { name: "Instagram", href: LINKS.instagram },
     { name: "TikTok", href: LINKS.tiktok },
     { name: "YouTube", href: LINKS.youtube },
+    { name: "LinkedIn", href: LINKS.linkedin },
   ],
   legal: [
     { name: "Privacy & cookies", href: "/privacy" },
@@ -47,7 +49,7 @@ export function Footer() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const companyHref = (href: string) => {
-    if (href === "/gallery") return "/gallery"
+    if (href.startsWith("/")) return href
     return isHome ? href : `/${href}`
   }
 

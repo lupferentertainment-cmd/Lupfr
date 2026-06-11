@@ -10,7 +10,7 @@ const ROOT = path.join(__dirname, "..")
 const DATA_DIR = path.join(ROOT, "data")
 const OUT_DIR = path.join(ROOT, "lib", "data", "generated")
 
-const files = ["events", "artists", "services", "partners", "gallery", "press"]
+const files = ["events", "artists", "services", "partners", "gallery", "press", "careers"]
 
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true })
