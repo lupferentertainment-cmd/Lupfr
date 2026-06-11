@@ -21,6 +21,12 @@ const Services = dynamic(() =>
   ),
   { ssr: false }
 )
+const Press = dynamic(() =>
+  import("@/components/press").then((m) =>
+    resolveDynamicComponent(m, "Press", "@/components/press")
+  ),
+  { ssr: false }
+)
 const Gallery = dynamic(() =>
   import("@/components/gallery").then((m) =>
     resolveDynamicComponent(m, "Gallery", "@/components/gallery")
@@ -158,6 +164,9 @@ export function HomePage() {
         <Services />
       </DeferredHomeSection>
       <Artists />
+      <DeferredHomeSection id="press" estimatedHeightClassName="min-h-[560px] sm:min-h-[640px]">
+        <Press />
+      </DeferredHomeSection>
       <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">
         <Gallery />
       </DeferredHomeSection>

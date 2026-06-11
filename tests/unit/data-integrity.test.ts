@@ -12,6 +12,7 @@ import {
   getUpcomingEvents,
 } from "@/lib/events"
 import { PARTNERS } from "@/lib/data/partners"
+import { PRESS } from "@/lib/data/press"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -82,5 +83,15 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
   it("partner logo image paths exist under public/", () => {
     const missing = PARTNERS.filter((partner) => !publicFileExists(partner.image))
     expect(missing.map((partner) => partner.name)).toEqual([])
+  })
+
+  it("press card image paths exist under public/", () => {
+    const missing = PRESS.filter((item) => !publicFileExists(item.image))
+    expect(missing.map((item) => item.title)).toEqual([])
+  })
+
+  it("press article links are https URLs", () => {
+    const invalid = PRESS.filter((item) => !/^https:\/\//.test(item.url))
+    expect(invalid.map((item) => item.title)).toEqual([])
   })
 })

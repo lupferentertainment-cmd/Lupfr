@@ -16,6 +16,7 @@ const navLinks = [
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
+  { name: "Press", href: "#press" },
   { name: "Gallery", href: "#gallery" },
   { name: "About", href: "#about" },
   { name: "Contact", href: "#contact" },
