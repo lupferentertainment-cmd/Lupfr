@@ -129,7 +129,7 @@ export function Footer() {
             </p>
             <motion.a
               href="mailto:will@lupfr.com"
-              className="text-accent hover:underline text-sm mb-3 inline-block"
+              className="text-accent hover:underline text-sm mb-3 block w-fit"
               whileHover={{ y: -2 }}
             >
               will@lupfr.com
