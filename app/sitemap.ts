@@ -4,6 +4,7 @@ import { join, relative } from 'node:path'
 
 import { EVENTS } from '@/lib/events'
 import { GALLERY_PHOTOS } from '@/lib/data/gallery'
+import { getBlogPosts } from '@/lib/data/blog'
 
 const siteUrl = 'https://lupfr.com'
 
@@ -54,8 +55,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = await collectStaticAppRoutes(appRoot, appRoot)
   const eventRoutes = EVENTS.map((event) => `/events/${event.slug}`)
   const galleryPhotoRoutes = GALLERY_PHOTOS.map((p) => `/gallery/p/${p.id}`)
+  const blogRoutes = getBlogPosts().map((post) => `/blog/${post.slug}`)
 
-  const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...galleryPhotoRoutes])].sort((a, b) =>
+  const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...galleryPhotoRoutes, ...blogRoutes])].sort((a, b) =>
     a.localeCompare(b)
   )
 

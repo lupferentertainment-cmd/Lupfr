@@ -14,6 +14,17 @@ For daily development, run the dev server in a foreground terminal session only 
 
 Edit source content in `data/*.yml` and place optimized public assets under `public/`. `bun run test` regenerates data and fails if public raster assets are not WebP, unless they are favicon/logo exceptions documented in `scripts/optimize-public-raster.mjs`.
 
+## Gallery media via Google Drive (no-code, no-deploy)
+
+The `/gallery` page renders live "Event albums" straight from the **public** Google Drive folder `LUPFR GALLERY/website/` (see `lib/drive-gallery.ts`). A non-technical operator updates the website gallery entirely from Drive:
+
+1. Open `LUPFR GALLERY/website/` in Google Drive.
+2. Drop photos (`.jpg/.jpeg/.png/.webp/.gif/.heic/.avif`) and/or videos (`.mp4/.mov/.webm/.m4v`) into the matching event subfolder (e.g. `boiler_boat_003/`, `third_thursdays/`). A nested subfolder one level down (e.g. `PHOTOS/`) also works; other file types are ignored.
+3. To add a whole new event album, create a new subfolder under `website/` — it renders automatically with a humanized title. For the heading to use the official event title, an engineer later adds one row to `DRIVE_FOLDER_TO_ALBUM_FOLDER` in `lib/drive-gallery.ts` (cosmetic only).
+4. Wait up to **1 hour** (ISR revalidation) and refresh `https://lupfr.com/gallery`. No commit, build, or deploy is needed.
+
+**Invariants:** the `website/` folder (and everything inside) must stay shared as **"Anyone with the link — Viewer"**; removing public access hides the section (the site logs the failure and falls back to the committed grid — it never breaks the page). Deleting or renaming files/folders in Drive is also inherited within the hour.
+
 ## Documentation discipline
 
 Update the relevant canonical spec in `docs/` before committing any behavior, deployment, testing, content, or public-surface change. Use `docs/RUNBOOK.md` for operator workflow changes, `docs/DEPLOYMENT.md` for Vercel/staging/production changes, `docs/TESTING.md` for verification pipeline changes, `docs/API.md` for public routes/env/schema changes, `docs/ARCHITECTURE.md` for app structure changes, and `docs/CHANGELOG.md` for every user-visible or workflow change under `[Unreleased]`.

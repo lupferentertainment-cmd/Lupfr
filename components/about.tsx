@@ -221,7 +221,7 @@ export function About() {
   return (
     <section id="about" ref={ref} className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
-        <div ref={containerRef} className="container mx-auto relative z-10">
+        <div ref={containerRef} className="container mx-auto max-w-7xl relative z-10">
           <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-8 xl:gap-10 items-center">
           {/* Left - Content */}
           <motion.div

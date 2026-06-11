@@ -11,6 +11,16 @@ export interface ResolvedTicket {
   label: string
 }
 
+const PARTIFUL_FETCH_TIMEOUT_MS = 1200
+
+function fetchWithTimeout(url: string): Promise<Response> {
+  return fetch(url, {
+    headers: { "User-Agent": "Mozilla/5.0 (compatible; LUPFR/1.0; +https://lupfr.com)" },
+    next: { revalidate: 3600 },
+    signal: AbortSignal.timeout(PARTIFUL_FETCH_TIMEOUT_MS),
+  })
+}
+
 function parseOgTag(html: string, property: string): string {
   const rePropFirst = new RegExp(
     `<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']*?)["']`,
@@ -24,10 +34,7 @@ function parseOgTag(html: string, property: string): string {
 }
 
 export async function fetchPartifulMeta(partifulLink: string): Promise<PartifulMeta> {
-  const res = await fetch(partifulLink, {
-    headers: { "User-Agent": "Mozilla/5.0 (compatible; LUPFR/1.0; +https://lupfr.com)" },
-    next: { revalidate: 3600 },
-  })
+  const res = await fetchWithTimeout(partifulLink)
   if (!res.ok) {
     throw new Error(`Partiful fetch failed: ${res.status} ${res.statusText} — ${partifulLink}`)
   }

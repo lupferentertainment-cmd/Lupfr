@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import { ArrowDown, Play } from "lucide-react"
 
 import { ScheduleCallCta } from "@/components/schedule-call-cta"
@@ -13,6 +12,7 @@ import {
   HERO_PHRASES,
   HERO_POSTER_DARK,
   HERO_POSTER_LIGHT,
+  useHeroTheme,
 } from "@/components/hero-shared"
 
 type HeroMobileStaticSectionProps = {
@@ -27,8 +27,8 @@ export function HeroMobileStaticSection({
   phraseIndex,
   reducePhraseMotion,
 }: HeroMobileStaticSectionProps) {
-  const { resolvedTheme } = useTheme()
-  const activePosterSrc = resolvedTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
+  const heroTheme = useHeroTheme()
+  const activePosterSrc = heroTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
 
   return (
     <>

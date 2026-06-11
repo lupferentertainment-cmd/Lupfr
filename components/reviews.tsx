@@ -208,10 +208,10 @@ function StatTile({
     >
       <div
         className={[
-          "relative w-full rounded-2xl border border-border/70 bg-card/50 dark:bg-card/40 px-4 py-5 sm:px-5 sm:py-6 text-center shadow-sm",
+          "relative w-full rounded-2xl border border-border/60 dark:border-border/70 bg-card/85 dark:bg-card/40 px-4 py-5 sm:px-5 sm:py-6 text-center shadow-sm",
           "transition-[box-shadow,border-color,background-color] duration-200 ease-out",
-          "group-hover:border-accent/25 group-hover:bg-card/80 dark:group-hover:bg-card/55",
-          "group-hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.2)] dark:group-hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.45)]",
+          "group-hover:border-accent/30 group-hover:bg-card dark:group-hover:bg-card/55",
+          "group-hover:shadow-[0_12px_34px_-12px_rgba(0,0,0,0.16)] dark:group-hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.45)]",
           "stat-tile-surface",
           tiltOn ? "will-change-transform" : "",
         ].join(" ")}
@@ -305,11 +305,11 @@ export function Reviews() {
   return (
     <section
       ref={sectionRef}
-      className="relative pt-8 sm:pt-10 pb-5 sm:pb-6 bg-muted/30 border-y border-border/50"
+      className="relative pt-8 sm:pt-10 pb-5 sm:pb-6 bg-background/96 dark:bg-muted/30 border-y border-border/40 dark:border-border/50"
       aria-label="Reviews"
     >
       <motion.div style={{ opacity: sectionOpacity }}>
-      <div ref={statsRef} className="container mx-auto px-4 mb-6 sm:mb-8">
+      <div ref={statsRef} className="container mx-auto max-w-7xl px-4 mb-6 sm:mb-8">
         <div className="min-h-[168px] sm:min-h-[188px] md:min-h-[200px] flex items-center justify-center">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -338,8 +338,8 @@ export function Reviews() {
               onClick={() => setStatsSlideIndex(i)}
               className={`h-1.5 rounded-full transition-all duration-200 ease-snap ${
                 i === statsSlideIndex
-                  ? "w-6 bg-foreground/80"
-                  : "w-1.5 bg-foreground/30 hover:bg-foreground/50"
+                  ? "w-6 bg-accent/75 dark:bg-foreground/80"
+                  : "w-1.5 bg-foreground/25 hover:bg-foreground/45"
               }`}
               aria-label={`Show metrics set ${i + 1} of ${STATS_SLIDES.length}`}
             />

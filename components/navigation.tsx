@@ -17,12 +17,13 @@ const navLinks = [
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
   { name: "News", href: "#news" },
+  { name: "Blog", href: "/blog" },
   { name: "Gallery", href: "#gallery" },
   { name: "About", href: "#about" },
   { name: "Contact", href: "#contact" },
 ] as const
 
-const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
+const SECTION_IDS = navLinks.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1))
 
 function isPlainLeftClick(e: MouseEvent<HTMLAnchorElement>): boolean {
   return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey
@@ -100,6 +101,7 @@ export function Navigation() {
       }
       return isHome && activeSection === id
     }
+    if (href === "/blog") return pathname === "/blog" || pathname.startsWith("/blog/")
     return false
   }
   const bookHref = CONTACT_PAGE_PATH
@@ -177,7 +179,7 @@ export function Navigation() {
         className="lupfr-site-header fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap"
       >
         <nav
-          className="container relative z-10 mx-auto flex w-full min-w-0 max-w-full items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(19rem,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
+          className="container relative z-10 mx-auto flex w-full min-w-0 max-w-7xl items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(19rem,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
           aria-label="Primary"
         >
           {/* Col 1: logo top-left. Center links use a separate auto column (grid) so they stay viewport-centered, not nudged by justify-end. */}

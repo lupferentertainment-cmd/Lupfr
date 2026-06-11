@@ -1,0 +1,53 @@
+- id: 1
+  slug: the-first-90-days-building-lupfr
+  title: The first 90 days building LUPFR
+  excerpt: What actually happened in the first three months, what almost broke, and what started to click.
+  author: Will Lupfer
+  publishedAt: "2026-06-07"
+  readMinutes: 6
+  coverImage: "/events/boiler-party-marina.webp"
+  tags:
+    - Journey
+    - Operations
+    - Events
+  body:
+    - We launched with energy, but the first 90 days were less glamorous than they looked online. Most days were logistics, timing, and making sure the right people heard about the right event.
+    - We learned quickly that consistency beats hype. Weekly execution, clear communication, and better pre-event checklists made a bigger difference than any single campaign.
+    - The turning point was deciding to systematize everything we repeated. Once we documented our workflows, we made fewer mistakes and moved faster without burning out.
+    - This blog is part of that same idea. We want to share the real process, not just the highlight reel.
+
+- id: 2
+  slug: why-we-design-events-like-story-arcs
+  title: Why we design events like story arcs
+  excerpt: Great nights feel effortless, but they are intentionally sequenced from open to close.
+  author: Will Lupfer
+  publishedAt: "2026-05-18"
+  readMinutes: 5
+  coverImage: "/events/boiler_boat_003.webp"
+  tags:
+    - Creative
+    - Production
+    - Community
+  body:
+    - We treat every event like a narrative. The first hour is welcome and orientation, the middle is momentum, and the final stretch is memory-making.
+    - That sequence influences artist selection, lighting progression, pacing of announcements, and even where photographers focus their time.
+    - When a night has a clear arc, people stay longer, connect more naturally, and leave wanting the next date.
+    - Good production is invisible when it works. Our goal is to make the flow feel natural while being very deliberate behind the scenes.
+
+- id: 3
+  slug: what-we-changed-after-three-packed-weekends
+  title: What we changed after three packed weekends
+  excerpt: Small operational changes that reduced friction for guests, artists, and partners.
+  author: Will Lupfer
+  publishedAt: "2026-04-26"
+  readMinutes: 4
+  coverImage: "/events/third-thursdays-operator-sf.webp"
+  tags:
+    - Learnings
+    - Systems
+    - Team
+  body:
+    - After three full weekends, we ran a deep debrief. We looked at guest arrival flow, set transitions, communication touchpoints, and post-event follow-up.
+    - Two changes had immediate impact. First, we tightened handoffs between production and artist teams. Second, we simplified guest communication so instructions were clearer and shorter.
+    - We also started tracking a small set of metrics each week so decisions are based on patterns, not just intuition.
+    - The result is a smoother guest experience and a calmer team on event day.

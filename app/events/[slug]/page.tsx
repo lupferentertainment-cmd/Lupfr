@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket, ExternalLink } from "lucide-react"
 import {
   EVENTS,
@@ -70,10 +71,14 @@ export const revalidate = 3600
 
 type EventPageParams = { params: Promise<{ slug: string }> }
 
+const fetchPartifulMetaCached = cache(async (partifulLink: string): Promise<PartifulMeta> =>
+  fetchPartifulMeta(partifulLink)
+)
+
 async function tryFetchPartifulMeta(event: EventItem): Promise<PartifulMeta | null> {
   if (!event.partifulLink) return null
   try {
-    return await fetchPartifulMeta(event.partifulLink)
+    return await fetchPartifulMetaCached(event.partifulLink)
   } catch {
     return null
   }

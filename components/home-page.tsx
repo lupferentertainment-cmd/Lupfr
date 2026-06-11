@@ -3,24 +3,14 @@
 import dynamic from "next/dynamic"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 
+import { Events } from "@/components/events"
 import { Artists } from "@/components/artists"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { Reviews } from "@/components/reviews"
+import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
-
-const Events = dynamic(() =>
-  import("@/components/events").then((m) =>
-    resolveDynamicComponent(m, "Events", "@/components/events")
-  )
-)
-const Services = dynamic(() =>
-  import("@/components/services").then((m) =>
-    resolveDynamicComponent(m, "Services", "@/components/services")
-  ),
-  { ssr: false }
-)
 const Press = dynamic(() =>
   import("@/components/press").then((m) =>
     resolveDynamicComponent(m, "Press", "@/components/press")
@@ -157,12 +147,8 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <Reviews />
-      <DeferredHomeSection id="events" estimatedHeightClassName="min-h-[720px] sm:min-h-[980px]">
-        <Events />
-      </DeferredHomeSection>
-      <DeferredHomeSection id="services" estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]">
-        <Services />
-      </DeferredHomeSection>
+      <Events />
+      <Services />
       <Artists />
       <DeferredHomeSection id="news" estimatedHeightClassName="min-h-[560px] sm:min-h-[640px]">
         <Press />

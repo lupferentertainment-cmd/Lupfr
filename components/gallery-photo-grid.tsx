@@ -32,23 +32,25 @@ function GridTileImage({
         )}
         aria-hidden
       />
-      <Image
-        src={photo.src}
-        alt={photo.alt}
-        fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        className={cn(
-          "z-[1] rounded-gallery-squircle object-cover object-center transform-gpu",
-          "motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-safe:ease-snap motion-safe:group-hover:scale-[1.04]",
-          "motion-reduce:transition-none motion-reduce:group-hover:scale-100",
-          ready ? "opacity-100" : "opacity-0"
-        )}
-        loading={eager ? "eager" : "lazy"}
-        priority={eager}
-        fetchPriority={fetchPriority}
-        decoding="async"
-        onLoad={() => setReady(true)}
-      />
+      <div className="gallery-scroll-zoom absolute inset-0 z-[1] transform-gpu">
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className={cn(
+            "rounded-gallery-squircle object-cover object-center transform-gpu",
+            "motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-safe:ease-snap motion-safe:group-hover:scale-[1.04]",
+            "motion-reduce:transition-none motion-reduce:group-hover:scale-100",
+            ready ? "opacity-100" : "opacity-0"
+          )}
+          loading={eager ? "eager" : "lazy"}
+          priority={eager}
+          fetchPriority={fetchPriority}
+          decoding="async"
+          onLoad={() => setReady(true)}
+        />
+      </div>
     </>
   )
 }
@@ -86,7 +88,7 @@ export function GalleryPhotoGrid({
         prefetch
         scroll
         className={cn(
-          "group relative isolate aspect-square w-full cursor-zoom-in overflow-hidden rounded-gallery-squircle",
+          "group gallery-scroll-frame relative isolate aspect-square w-full cursor-zoom-in overflow-hidden rounded-gallery-squircle",
           "bg-muted text-left ring-1 ring-inset ring-border/55",
           "shadow-md shadow-black/[0.07] dark:shadow-black/35",
           "transition-[box-shadow,transform] duration-500 ease-snap [content-visibility:auto] motion-reduce:duration-200",

@@ -9,6 +9,8 @@ export interface PartnerItem {
   name: string
   url?: string
   image: string
+  /** Dark-mode variant. Resolved at runtime via useTheme; falls back to `image` if absent. */
+  imageDark?: string
   ariaLabel?: string
   /** Mono silhouette + theme (default), outline/solid, or natural (no filter) — see globals.css `.partner-logo*`. */
   logoTreatment?: PartnerLogoTreatment
@@ -36,6 +38,7 @@ function partnerLogoClasses(treatment: PartnerLogoTreatment | undefined): string
 export const PARTNERS: PartnerItem[] = (partnersJson as PartnerItem[]).map((p) => ({
   ...p,
   image: normalizeImage(p.image),
+  imageDark: p.imageDark ? normalizeImage(p.imageDark) : undefined,
   ariaLabel: p.ariaLabel ?? p.name,
   imageClassName: [partnerLogoClasses(p.logoTreatment), PARTNER_LAYOUT, p.imageClassName]
     .filter(Boolean)

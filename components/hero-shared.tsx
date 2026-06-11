@@ -1,7 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { memo, useState } from "react"
+import { useTheme } from "next-themes"
+import { memo, useEffect, useState } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -20,6 +21,19 @@ export const FADE_DURATION_S = 0.6
 export const HERO_POSTER_DARK = "/hero/hero-poster-dark.webp"
 export const HERO_POSTER_LIGHT = "/hero/hero-poster-light.webp"
 export const HERO_POSTER = HERO_POSTER_DARK
+
+/**
+ * Theme for hero media src selection. SSR cannot know the stored theme, so the
+ * server (and first client render) always resolve "dark" via the hydration
+ * snapshot — avoids the next/image src hydration mismatch — then swaps to the
+ * client's resolved theme after hydration.
+ */
+export function useHeroTheme(): "light" | "dark" {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+  return mounted && resolvedTheme === "light" ? "light" : "dark"
+}
 
 /** Remounts whenever `fallbackToImage` toggles on so poster decode state stays correct. */
 export function HeroFallbackPoster({ posterSrc = HERO_POSTER }: { posterSrc?: string }) {

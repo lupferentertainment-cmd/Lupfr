@@ -1,6 +1,7 @@
 # Corporate partners. Images go in public/corporate_partners/; reference as /corporate_partners/filename.webp
 # WebP with alpha: default = mono silhouette (dark in light theme, light in dark theme).
 # logoTreatment: outline = thin strokes; solid = softer mono; natural = no filter (full-color).
+# imageDark: optional dark-mode variant (e.g. soundcheck_dark.webp); falls back to image if absent.
 
 - name: Umbrella
   url: https://umbrellalive.com
@@ -39,6 +40,7 @@
   imageClassName: scale-[0.9]
 
 - name: Soundcheck
-  image: /corporate_partners/soundcheck.webp
+  image: /corporate_partners/soundcheck_light.webp
+  imageDark: /corporate_partners/soundcheck_dark.webp
   logoTreatment: natural
   imageClassName: scale-[1.18]

@@ -3,10 +3,18 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { DriveGalleryAlbums } from "@/components/drive-gallery-albums"
 import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
 import { Navigation } from "@/components/navigation"
 import { GALLERY_PHOTOS } from "@/lib/data/gallery"
+import { fetchDriveGalleryAlbums } from "@/lib/drive-gallery"
 import { SITE_URL } from "@/lib/site"
+
+/**
+ * ISR: re-render so Drive-folder edits (lib/drive-gallery.ts) reach the page without a deploy.
+ * Next segment config must be a literal; keep equal to DRIVE_GALLERY_REVALIDATE_SECONDS.
+ */
+export const revalidate = 3600
 
 const title = "Photo gallery"
 const description = "LUPFR photo gallery."
@@ -19,8 +27,9 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/gallery` },
 }
 
-export default function GalleryIndexPage() {
+export default async function GalleryIndexPage() {
   const list = [...GALLERY_PHOTOS]
+  const driveAlbums = await fetchDriveGalleryAlbums()
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
@@ -39,6 +48,7 @@ export default function GalleryIndexPage() {
         </header>
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 pb-20 sm:pb-28">
           <GalleryPhotoGrid photos={list} className="mt-8" />
+          <DriveGalleryAlbums albums={driveAlbums} />
         </div>
       </div>
       <Footer />

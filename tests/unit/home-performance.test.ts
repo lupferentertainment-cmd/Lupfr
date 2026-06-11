@@ -23,23 +23,33 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("window.location.hash")
         expect(homePage).toContain("aria-hidden=\"true\"")
         expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
-        expect(homePage).toContain('id="events"')
-        expect(homePage).toContain("id=\"services\"")
+        expect(homePage).not.toContain('<DeferredHomeSection id="services"')
+        expect(homePage).toContain("id=\"news\"")
         expect(homePage).toContain("id=\"gallery\"")
         expect(homePage).toContain("id=\"about\"")
         expect(homePage).toContain("id=\"contact\"")
     })
 
+    it("mounts the events section eagerly so #events navigation is instant", () => {
+        expect(homePage).toContain('import { Events } from "@/components/events"')
+        expect(homePage).toContain("<Events />")
+        expect(homePage).not.toContain('<DeferredHomeSection id="events"')
+    })
+
+    it("mounts the services section eagerly so fast scrolling from events never lands on a blank deferred placeholder", () => {
+        expect(homePage).toContain('import { Services } from "@/components/services"')
+        expect(homePage).toContain("<Services />")
+        expect(homePage).not.toContain('<DeferredHomeSection id="services"')
+    })
+
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[720px] sm:min-h-[980px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
+        expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
         expect(homePage).toContain('estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]"')
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
-    it("keeps heavyweight lower sections out of the initial server/client payload", () => {
+    it("keeps the remaining heavyweight lower sections out of the initial server/client payload", () => {
         expect(homePage).toContain("{ ssr: false }")
-        expect(homePage).toContain("<Services />")
         expect(homePage).toContain("<Artists />")
         expect(homePage).toContain("<Gallery />")
         expect(homePage).toContain("<About />")

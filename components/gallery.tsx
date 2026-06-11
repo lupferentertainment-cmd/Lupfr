@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { motion, useInView, useReducedMotion } from "framer-motion"
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react"
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react"
 
 import { GalleryEventBreadcrumb } from "@/components/gallery-breadcrumb"
 import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
@@ -193,7 +193,6 @@ export function Gallery() {
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [snapCount, setSnapCount] = useState(() => GALLERY_CAROUSEL_PHOTOS.length)
-  const [isPaused, setIsPaused] = useState(false)
 
   const eventGroups = useMemo(() => {
     const firstByFolder = new Map<string, { albumBreadcrumb: string; firstIndex: number }>()
@@ -246,20 +245,18 @@ export function Gallery() {
   }, [api])
 
   const autoplayMs = useMemo(() => {
-    if (!api || !inViewNow || prefersReducedMotion === true || isPaused || snapCount < 2) return 0
+    if (!api || prefersReducedMotion === true || snapCount < 2) return 0
     return isMobile === false ? AUTOPLAY_DESKTOP_MS : AUTOPLAY_MOBILE_MS
-  }, [api, inViewNow, prefersReducedMotion, isPaused, snapCount, isMobile])
+  }, [api, prefersReducedMotion, snapCount, isMobile])
 
+  /** `selectedIndex` dep restarts the countdown on every slide change, so manual nav never double-jumps. */
   useEffect(() => {
     if (!api || autoplayMs <= 0) return
     const id = globalThis.setInterval(() => {
       api.scrollNext()
     }, autoplayMs)
     return () => globalThis.clearInterval(id)
-  }, [api, autoplayMs])
-
-  const pause = useCallback(() => setIsPaused(true), [])
-  const resume = useCallback(() => setIsPaused(false), [])
+  }, [api, autoplayMs, selectedIndex])
 
   if (len === 0) return null
 
@@ -302,13 +299,6 @@ export function Gallery() {
           initial={{ opacity: 0, y: 24 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
           transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          onPointerEnter={pause}
-          onPointerLeave={resume}
-          onFocus={pause}
-          onBlur={(e) => {
-            const next = e.relatedTarget
-            if (!next || !e.currentTarget.contains(next as Node)) resume()
-          }}
           className="relative"
         >
           <Carousel opts={CAROUSEL_OPTS} className="w-full" setApi={setApi}>

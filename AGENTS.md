@@ -13,6 +13,7 @@ Before touching anything, read the doc(s) owning the area you change:
 | Pages, layout, metadata, visual UX, privacy/terms, cookie bar | `docs/DESIGN.md`, `docs/ARCHITECTURE.md` |
 | `app/api/*` routes, validation, rate limits | `docs/API.md`, `docs/REQUIREMENTS.md` |
 | `data/`, generated JSON, gallery/events | `docs/ARCHITECTURE.md`, `docs/TESTING.md` |
+| Drive-backed gallery (`lib/drive-gallery.ts`, `/gallery` live albums) | `docs/ARCHITECTURE.md`, `docs/RUNBOOK.md` |
 | Env, Vercel, deploy scripts | `docs/DEPLOYMENT.md` |
 | `proxy.ts`, security headers, blocked paths | `docs/ARCHITECTURE.md`, `docs/DEPLOYMENT.md`, `docs/OVERVIEW.md`, `docs/TESTING.md` |
 | Product intent, stack summary | `docs/OVERVIEW.md` |

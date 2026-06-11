@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useTheme } from "next-themes"
 import { memo, useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowDown, Play } from "lucide-react"
@@ -16,6 +15,7 @@ import {
   HERO_PHRASES,
   HERO_POSTER_DARK,
   HERO_POSTER_LIGHT,
+  useHeroTheme,
 } from "@/components/hero-shared"
 import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
@@ -97,12 +97,12 @@ function HeroDesktopParallaxSection({
   phraseIndex,
   reducePhraseMotion,
 }: HeroDesktopParallaxSectionProps) {
-  const { resolvedTheme } = useTheme()
+  const heroTheme = useHeroTheme()
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [fallbackToImage, setFallbackToImage] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
-  const activeVideoSrc = resolvedTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
-  const activePosterSrc = resolvedTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
+  const activeVideoSrc = heroTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
+  const activePosterSrc = heroTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
   const hasHeroVideo = activeVideoSrc.length > 0
 
   useEffect(() => {

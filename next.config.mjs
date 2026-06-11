@@ -141,6 +141,12 @@ const nextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      // Drive-backed gallery albums (lib/drive-gallery.ts): Google CDN for public Drive files.
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/d/**",
+      },
     ],
   },
   devIndicators: false,

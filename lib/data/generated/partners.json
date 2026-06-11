@@ -42,7 +42,8 @@
   },
   {
     "name": "Soundcheck",
-    "image": "/corporate_partners/soundcheck.webp",
+    "image": "/corporate_partners/soundcheck_light.webp",
+    "imageDark": "/corporate_partners/soundcheck_dark.webp",
     "logoTreatment": "natural",
     "imageClassName": "scale-[1.18]"
   }

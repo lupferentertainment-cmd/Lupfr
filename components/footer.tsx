@@ -24,6 +24,7 @@ const footerLinks = {
   company: [
     { name: "About", href: "#about" },
     { name: "Events", href: "#events" },
+    { name: "Blog", href: "/blog" },
     { name: "Gallery", href: "/gallery" },
     { name: "Services", href: "#services" },
     { name: "Careers", href: "/careers" },
@@ -113,7 +114,7 @@ export function Footer() {
 
   return (
     <footer ref={ref} className="relative pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8 px-4 sm:px-6 bg-background border-t border-border">
-      <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="container mx-auto">
+      <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="container mx-auto max-w-7xl">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 sm:gap-12 mb-12 sm:mb-16">
           {/* Brand */}

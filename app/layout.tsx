@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { EscapeBack } from '@/components/escape-back'
+import { LiquidMetalCanvas } from '@/components/liquid-metal-canvas'
 import { PrefetchHomeRoute } from '@/components/prefetch-home-route'
 import { PhoneListPopup } from '@/components/phone-list-popup'
 import { Toaster } from '@/components/ui/sonner'
@@ -144,12 +145,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <PrefetchHomeRoute />
-          <EscapeBack />
-          {children}
-          <CookieConsent />
-          <PhoneListPopup />
-          <Toaster />
+          <LiquidMetalCanvas />
+          <div className="lupfr-site-content">
+            <PrefetchHomeRoute />
+            <EscapeBack />
+            {children}
+            <CookieConsent />
+            <PhoneListPopup />
+            <Toaster />
+          </div>
         </ThemeProvider>
         <DeferredAnalytics />
       </body>

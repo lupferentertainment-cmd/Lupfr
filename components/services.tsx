@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { type ReactNode, useRef, useState } from "react"
+import { useTheme } from "next-themes"
+import { type ReactNode, useEffect, useRef, useState } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getPartners } from "@/lib/data/partners"
@@ -24,17 +25,25 @@ const partners = getPartners()
 function PartnerLogoChip({
   name,
   image,
+  imageDark,
   imageClassName,
   ariaLabel,
   href,
 }: {
   name: string
   image: string
+  imageDark?: string
   imageClassName?: string
   ariaLabel: string
   href?: string
 }) {
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
   const [ready, setReady] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+
+  const activeSrc = mounted && resolvedTheme === "dark" && imageDark ? imageDark : image
+
   return (
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
       <div
@@ -53,7 +62,8 @@ function PartnerLogoChip({
           aria-hidden
         />
         <Image
-          src={image}
+          key={activeSrc}
+          src={activeSrc}
           alt={name}
           width={512}
           height={512}
@@ -254,7 +264,7 @@ export function Services() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto relative z-10">
+      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-7xl relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -312,8 +322,8 @@ export function Services() {
           </h2>
           <div
             className={cn(
-              "mx-auto grid max-w-5xl grid-cols-2 place-items-center gap-x-8 gap-y-10",
-              "sm:grid-cols-4 sm:gap-x-6 sm:gap-y-8 md:gap-x-8 lg:gap-x-10"
+              "mx-auto flex max-w-5xl flex-wrap justify-center gap-x-8 gap-y-10",
+              "sm:gap-x-6 sm:gap-y-8 md:gap-x-8 lg:gap-x-10"
             )}
           >
             {partners.map((p) => (
@@ -321,6 +331,7 @@ export function Services() {
                 key={p.name}
                 name={p.name}
                 image={p.image}
+                imageDark={p.imageDark}
                 imageClassName={p.imageClassName}
                 ariaLabel={p.ariaLabel ?? p.name}
                 href={p.url}

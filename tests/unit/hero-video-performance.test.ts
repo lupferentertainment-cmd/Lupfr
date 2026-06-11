@@ -12,7 +12,7 @@ describe("hero video performance guardrails", () => {
     const nextConfig = fs.readFileSync(nextConfigPath, "utf8")
 
     it("uses real event video media with a poster fallback", () => {
-        expect(heroDesktop).toContain("useTheme")
+        expect(heroDesktop).toContain("useHeroTheme")
         expect(heroDesktop).toContain("activeVideoSrc")
         expect(heroDesktop).toContain("<HeroFallbackPoster posterSrc={activePosterSrc} />")
         expect(heroDesktop).toContain("activePosterSrc")
