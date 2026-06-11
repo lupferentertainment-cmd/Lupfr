@@ -332,89 +332,6 @@
     z-index: 10;
   }
 
-  .lupfr-animated-gradient-bg {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    overflow: hidden;
-    opacity: 0.54;
-  }
-
-  .lupfr-animated-gradient-layer {
-    position: absolute;
-    inset: -24%;
-    background-size: 180% 180%;
-    filter: blur(48px);
-    transform: translateZ(0);
-    will-change: background-position, transform, opacity;
-  }
-
-  .lupfr-animated-gradient-layer--base {
-    background-image:
-      radial-gradient(65% 62% at 18% 28%, oklch(0.9 0.1 86 / 0.44) 0%, transparent 74%),
-      radial-gradient(64% 66% at 82% 22%, oklch(0.74 0.17 80 / 0.4) 0%, transparent 74%),
-      radial-gradient(68% 64% at 48% 84%, oklch(0.64 0.15 75 / 0.34) 0%, transparent 76%);
-    animation: lupfr-gradient-float-a 24s ease-in-out infinite alternate;
-  }
-
-  .lupfr-animated-gradient-layer--glow {
-    background-image:
-      radial-gradient(58% 52% at 20% 78%, oklch(0.95 0.06 96 / 0.4) 0%, transparent 72%),
-      radial-gradient(58% 54% at 74% 64%, oklch(0.84 0.11 88 / 0.34) 0%, transparent 74%),
-      radial-gradient(52% 50% at 54% 12%, oklch(0.74 0.14 81 / 0.24) 0%, transparent 70%);
-    animation: lupfr-gradient-float-b 30s ease-in-out infinite alternate;
-    mix-blend-mode: screen;
-    opacity: 0.82;
-  }
-
-  .lupfr-animated-gradient-layer--sheen {
-    background-image:
-      linear-gradient(120deg,
-        transparent 16%,
-        oklch(0.96 0.05 95 / 0.24) 44%,
-        transparent 62%),
-      linear-gradient(302deg,
-        transparent 28%,
-        oklch(0.82 0.09 86 / 0.17) 52%,
-        transparent 72%);
-    animation: lupfr-gradient-sheen 34s linear infinite;
-    mix-blend-mode: soft-light;
-    opacity: 0.75;
-  }
-
-  .dark .lupfr-animated-gradient-bg {
-    opacity: 0.62;
-  }
-
-  .dark .lupfr-animated-gradient-layer--base {
-    background-image:
-      radial-gradient(62% 58% at 22% 30%, oklch(0.5 0.09 77 / 0.42) 0%, transparent 76%),
-      radial-gradient(60% 64% at 78% 22%, oklch(0.62 0.09 80 / 0.42) 0%, transparent 76%),
-      radial-gradient(64% 60% at 48% 80%, oklch(0.42 0.07 74 / 0.34) 0%, transparent 78%);
-  }
-
-  .dark .lupfr-animated-gradient-layer--glow {
-    mix-blend-mode: plus-lighter;
-    opacity: 0.86;
-  }
-
-  @media (max-width: 767px) {
-    .lupfr-animated-gradient-bg {
-      opacity: 0.2;
-    }
-
-    .lupfr-animated-gradient-layer {
-      filter: blur(34px);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .lupfr-animated-gradient-bg {
-      display: none;
-    }
-  }
-
   html:not(.dark) body {
     background:
       radial-gradient(ellipse 92% 62% at 50% -20%,
@@ -428,46 +345,6 @@
   }
 }
 
-@keyframes lupfr-gradient-float-a {
-  0% {
-    transform: translate3d(-4%, -2%, 0) scale(1.05);
-    background-position: 0% 0%, 100% 0%, 40% 100%;
-  }
-
-  100% {
-    transform: translate3d(5%, 4%, 0) scale(1.12);
-    background-position: 18% 22%, 80% 16%, 54% 82%;
-  }
-}
-
-@keyframes lupfr-gradient-float-b {
-  0% {
-    transform: translate3d(2%, 4%, 0) scale(1.06);
-    background-position: 10% 78%, 76% 62%, 52% 14%;
-  }
-
-  100% {
-    transform: translate3d(-5%, -6%, 0) scale(1.14);
-    background-position: 24% 62%, 62% 72%, 60% 28%;
-  }
-}
-
-@keyframes lupfr-gradient-sheen {
-  0% {
-    transform: translate3d(-8%, -3%, 0) scale(1.04) rotate(0deg);
-    background-position: 0% 0%, 100% 100%;
-  }
-
-  50% {
-    transform: translate3d(6%, 5%, 0) scale(1.08) rotate(2deg);
-    background-position: 54% 46%, 44% 56%;
-  }
-
-  100% {
-    transform: translate3d(-6%, -4%, 0) scale(1.06) rotate(0deg);
-    background-position: 100% 100%, 0% 0%;
-  }
-}
 
 /* Hide scrollbar but keep functionality */
 @layer utilities {

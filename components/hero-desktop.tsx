@@ -268,13 +268,13 @@ function HeroDesktopParallaxSection({
                 initial={
                   reducePhraseMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, y: 10, filter: "blur(4px)" }
+                    : { opacity: 0, y: 10 }
                 }
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={
                   reducePhraseMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, y: -8, filter: "blur(3px)" }
+                    : { opacity: 0, y: -8 }
                 }
                 transition={{ duration: FADE_DURATION_S, ease: [0.22, 1, 0.36, 1] }}
               >
