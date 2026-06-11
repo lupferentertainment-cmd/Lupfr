@@ -5,6 +5,7 @@ import { motion, useInView, useMotionValue, useTransform, useSpring } from "fram
 import { useTheme } from "next-themes"
 import { type ReactNode, useEffect, useRef, useState } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { TextReveal } from "@/components/text-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getPartners } from "@/lib/data/partners"
 import { getServices, type ServiceItem } from "@/lib/data/services"
@@ -287,14 +288,11 @@ export function Services() {
           >
             <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
           </motion.h2>
-          <motion.p
+          <TextReveal
+            text="From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA."
             className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 12 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ ...SPRING_SNAPPY, delay: 0.22 }}
-          >
-            From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA.
-          </motion.p>
+            delay={0.2}
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

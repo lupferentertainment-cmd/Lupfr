@@ -6,6 +6,7 @@ import { motion, useInView, useMotionValue, useTransform, useSpring } from "fram
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { TextReveal } from "@/components/text-reveal"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -384,14 +385,11 @@ export function Artists() {
               <br />
               <span className="lupfr-heading-subline">Artists</span>
             </h2>
-            <motion.p
+            <TextReveal
+              text="We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences."
               className="text-muted-foreground max-w-md leading-relaxed"
-              initial={{ opacity: 0, x: 20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: 0.3 }}
-            >
-              We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
-            </motion.p>
+              delay={0.25}
+            />
           </div>
         </motion.div>
 

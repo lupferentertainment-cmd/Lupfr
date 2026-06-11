@@ -15,14 +15,14 @@
   imageClassName: scale-[0.88]
 
 - name: Venn Social
-  url: https://vennsocial.com
+  url: https://vennsocial.co
   image: /corporate_partners/venn_social.webp
   # Mono filters collapse this asset to a flat disc; keep full color.
   logoTreatment: natural
   imageClassName: scale-[0.92]
 
 - name: Brixton Bar SF
-  url: https://brixtonbarsf.com
+  url: https://thebrixtonsf.com
   image: /corporate_partners/brixton.webp
   logoTreatment: outline
   imageClassName: scale-[0.9]

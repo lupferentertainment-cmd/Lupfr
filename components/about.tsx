@@ -7,6 +7,7 @@ import { Sparkles, Users, Zap } from "lucide-react"
 
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { TextReveal } from "@/components/text-reveal"
 import { cn } from "@/lib/utils"
 
 function CountUpOrdinal({ end, isInView }: { end: number; isInView: boolean }) {
@@ -273,12 +274,14 @@ export function About() {
               <p>
                 <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> redefines the music experience. We blend non-traditional venues with specially curated artists to create a one of a kind music experience. LUPFR was founded in 2025 with a simple idea: California deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
               </p>
-              <p>
-                Today, we produce unique events in both San Francisco and Los Angeles; ranging from yacht parties, boiler room style nights, corporate events, warehouse events, and anything in between that creates a one of a kind music experience.
-              </p>
-              <p>
-                Whether you&apos;re a venue looking to elevate your programming, a brand seeking a high caliber artist for a launch party, or simply someone who wants to dance to great music with a great crowd - we&apos;re here to make it happen.
-              </p>
+              <TextReveal
+                text="Today, we produce unique events in both San Francisco and Los Angeles; ranging from yacht parties, boiler room style nights, corporate events, warehouse events, and anything in between that creates a one of a kind music experience."
+                stagger={0.012}
+              />
+              <TextReveal
+                text="Whether you're a venue looking to elevate your programming, a brand seeking a high caliber artist for a launch party, or simply someone who wants to dance to great music with a great crowd - we're here to make it happen."
+                stagger={0.012}
+              />
             </div>
 
           </motion.div>

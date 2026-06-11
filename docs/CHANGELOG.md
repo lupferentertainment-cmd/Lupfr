@@ -6,6 +6,16 @@ All notable project changes are recorded here.
 
 ### Added
 
+- Added scroll-triggered **per-word text reveal** animations (`components/text-reveal.tsx`, `TextReveal`): section lead paragraphs in Services, Featured Artists, Contact, and the About story now rise + fade in word by word as they scroll into view (Framer Motion `whileInView`, once, opacity/transform only). Screen readers get the full sentence via `aria-label`; `prefers-reduced-motion` renders static text. Documented in `docs/DESIGN.md` (Scroll-driven motion).
+
+### Fixed
+
+- Removed three dead external links that were failing `verify:routes`: the Where's West past event's `ticketLink`/`ticketLabel` (organizer deleted the eriaevents.co product page, HTTP 404) and the `url` on the Venn Social and Brixton Bar SF partner chips (both domains no longer resolve). The event detail page simply omits the gold ticket CTA. The two partner chips were then **re-linked to the brands' live domains** (verified HTTP 200): Venn Social → `https://vennsocial.co`, Brixton Bar SF → `https://thebrixtonsf.com`.
+
+- Fixed the desktop nav bar's light/dark **theme switch overlapping the section links** (e.g. sitting on "Contact") at laptop widths: the header grid's right track floor changed from a fixed `19rem` to `max-content` (`components/navigation.tsx`), so the toggle + Schedule a call + Book an Event cluster always gets its real width and can no longer spill left over the link row (which grew when the Blog link was added). Documented in `docs/DESIGN.md` (Navigation).
+
+### Added
+
 - Added a complete **Blog** feature: `data/blog.yml` + generated JSON pipeline support, `lib/data/blog.ts`, `/blog` index and `/blog/[slug]` article pages with metadata, three authored starter posts from the last 2-3 months in Will's voice, nav/footer blog links, and sitemap inclusion for each article route.
 - Added host-based blog routing in `proxy.ts`: `blog.localhost` and `blog.lupfr.com` now rewrite to `/blog` routes so `http://blog.localhost:3001/` serves the blog directly while preserving `_next`, API, and SEO asset paths.
 

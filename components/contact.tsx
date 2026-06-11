@@ -29,6 +29,7 @@ import {
 } from "@/lib/phone-list-preferences"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { TextReveal } from "@/components/text-reveal"
 import {
   Select,
   SelectContent,
@@ -246,9 +247,10 @@ export function Contact() {
             <br />
             <span className="lupfr-heading-subline">Something</span>
           </h2>
-          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Tell us what you&apos;re building and we&apos;ll shape the right sound, talent, and production plan around it.
-          </p>
+          <TextReveal
+            text="Tell us what you're building and we'll shape the right sound, talent, and production plan around it."
+            className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
+          />
         </motion.div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-12">
