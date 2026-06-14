@@ -125,7 +125,7 @@ export function Footer() {
             transition={{ duration: 0.5, ease }}
           >
             <Link href={isHome ? "#" : "/"} className="inline-block mb-6" aria-label="LUPFR home">
-              <LupfrLogoImage width={200} height={66} sizes="140px" className="h-14 w-auto object-contain" />
+              <LupfrLogoImage width={400} height={132} sizes="280px" className="h-28 w-auto object-contain" />
             </Link>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-6">
               California&apos;s premier music event production company. Creating unforgettable experiences across SF, LA, and beyond.

@@ -75,7 +75,7 @@ function EventCard({
       initial={isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: isFirstCard ? 1 : 0, y: isFirstCard ? 0 : 40 }}
       transition={{ duration: 0.45, delay: isFirstCard ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl"
+      className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -85,8 +85,8 @@ function EventCard({
           : { rotateX: 0, rotateY: 0 }
       }
     >
-      <EventDetailLink slug={event.slug}>
-        <div className="h-[220px] sm:h-[280px] md:h-[340px] lg:h-[400px] overflow-hidden relative bg-muted">
+      <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
+        <div className="h-[220px] sm:h-[280px] md:h-[340px] lg:h-[400px] overflow-hidden relative bg-muted shrink-0">
           <div
             className={cn(
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
@@ -255,7 +255,7 @@ function EventsCarousel({
           {events.map((event, i) => (
             <CarouselItem
               key={event.id}
-              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(580px,55vw)] lg:basis-[min(640px,48%)]"
+              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(580px,55vw)] lg:basis-[min(640px,48%)] h-full"
             >
               <EventCard
                 event={event}
