@@ -108,7 +108,7 @@ function openContactMailto(payload: {
 
 export function Contact() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
   const [selectedType, setSelectedType] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactListName, setContactListName] = useState("")
@@ -260,7 +260,7 @@ export function Contact() {
             transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-6 lg:col-span-4 lg:sticky lg:top-24 lg:self-start"
           >
-            <div className="rounded-3xl border border-border/80 bg-card/70 p-6 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
+            <div className="rounded-3xl border border-border/80 bg-card/70 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
               <h3 className="mb-4 text-2xl font-bold">Ready to elevate your event?</h3>
               <p className="leading-relaxed text-muted-foreground">
                 Whether you&apos;re planning a corporate event, looking for DJ talent, or want to partner on a production, we&apos;d love to hear from you.
@@ -270,7 +270,7 @@ export function Contact() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-border/80 bg-card/60 p-6 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
+            <div className="rounded-3xl border border-border/80 bg-card/60 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
               <div className="space-y-5">
                 <div className="flex items-center gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
@@ -334,7 +334,7 @@ export function Contact() {
             transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-6 lg:col-span-8"
           >
-            <div className="rounded-3xl border border-border/80 bg-card/70 p-5 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
+            <div className="rounded-3xl border border-border/80 bg-card/70 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="mb-3 block text-sm font-medium tracking-tight text-gold-accent">
@@ -353,7 +353,7 @@ export function Contact() {
                     <SelectContent
                       position="popper"
                       sideOffset={8}
-                      className="rounded-2xl border-border/80 bg-card/95 p-1.5 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
+                      className="rounded-2xl border-border/80 bg-card/95 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
                     >
                       {inquiryOptions.map(({ label, icon: Icon }) => (
                         <SelectItem
@@ -446,7 +446,7 @@ export function Contact() {
               </form>
             </div>
 
-            <div className="rounded-3xl border border-border/80 bg-card/60 p-5 shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7">
+            <div className="rounded-3xl border border-border/80 bg-card/60 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7">
               <p className="mb-2 text-xs tracking-tight text-gold-accent">Join the contact list</p>
               <h3 className="mb-1 font-serif text-2xl font-bold tracking-tight">Stay in the loop</h3>
               <p className="mb-5 text-sm text-muted-foreground">Get priority updates for events, bookings, and announcements.</p>

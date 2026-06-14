@@ -210,6 +210,11 @@ export function About() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
   const [portraitReady, setPortraitReady] = useState(false)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
+  const [hasRevealed, setHasRevealed] = useState(false)
+  useEffect(() => {
+    if (!isInView) return
+    setHasRevealed(true)
+  }, [isInView])
   const containerRef = useRef(null)
 
   const { scrollYProgress } = useScroll({
@@ -227,7 +232,7 @@ export function About() {
           {/* Left - Content */}
           <motion.div
             initial={{ opacity: 0, x: -32 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            animate={hasRevealed ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-gold-accent tracking-tight text-sm mb-4">The story</p>

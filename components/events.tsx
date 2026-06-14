@@ -86,7 +86,7 @@ function EventCard({
       }
     >
       <EventDetailLink slug={event.slug}>
-        <div className="aspect-[16/10] overflow-hidden relative bg-muted">
+        <div className="h-[220px] sm:h-[280px] md:h-[340px] lg:h-[400px] overflow-hidden relative bg-muted">
           <div
             className={cn(
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
@@ -114,7 +114,7 @@ function EventCard({
                 unoptimized={event.image.startsWith("http")}
                 onLoad={() => setImageReady(true)}
                 className={cn(
-                  "w-full h-full object-cover object-top",
+                  "w-full h-full object-cover object-center",
                   "motion-safe:transition-opacity motion-safe:duration-300",
                   "motion-reduce:transition-none",
                   imageReady ? "opacity-100" : "opacity-0"

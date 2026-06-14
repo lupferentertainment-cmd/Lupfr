@@ -212,7 +212,7 @@ export function Navigation() {
                   ? "text-accent"
                   : isScrolled
                     ? "text-foreground/90 hover:text-foreground"
-                    : "text-foreground/90 hover:text-foreground dark:text-white dark:hover:text-white/95"
+                    : "text-white/90 hover:text-white"
                   }`
                 const underline = (
                   <span
@@ -275,7 +275,7 @@ export function Navigation() {
                 onClick={() => setIsOpen(true)}
                 className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${isScrolled
                   ? "text-foreground"
-                  : "text-foreground dark:text-white"
+                  : "text-white"
                   }`}
                 aria-label="Open menu"
                 aria-expanded="false"

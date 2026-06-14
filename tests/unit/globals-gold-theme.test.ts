@@ -18,21 +18,21 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(fs.existsSync(globalsPath), globalsPath).toBe(true)
   })
 
-  it("keeps :root (light) as clean white + black ink with bronzed luxe gold for headings/buttons", () => {
+  it("keeps :root (light) as modern cool off-white + black ink with bronzed luxe gold for headings/buttons", () => {
     const rootClose = css.indexOf("\n}\n\n.dark {")
     expect(rootClose).toBeGreaterThan(0)
     const rootBlock = css.slice(0, rootClose)
-    // Clean white surfaces, pure black ink (white text is the gold-CTA exception only)
-    expect(rootBlock).toContain("  --background: oklch(1 0 0);")
+    // Cool off-white background; pure white cards elevate above it; pure black ink
+    expect(rootBlock).toContain("  --background: oklch(0.974 0.005 255);")
     expect(rootBlock).toContain("  --foreground: oklch(0 0 0);")
     expect(rootBlock).toContain("  --card: oklch(1 0 0);")
     expect(rootBlock).toContain("  --card-foreground: oklch(0 0 0);")
     expect(rootBlock).toContain("  --popover: oklch(1 0 0);")
-    expect(rootBlock).toContain("  --secondary: oklch(1 0 0);")
-    expect(rootBlock).toContain("  --muted: oklch(0.97 0 0);")
-    expect(rootBlock).toContain("  --muted-foreground: oklch(0.4 0 0);")
-    // No borders in light mode — transparent
-    expect(rootBlock).toContain("  --border: oklch(1 0 0 / 0);")
+    expect(rootBlock).toContain("  --secondary: oklch(0.992 0.003 255);")
+    expect(rootBlock).toContain("  --muted: oklch(0.942 0.006 255);")
+    expect(rootBlock).toContain("  --muted-foreground: oklch(0.42 0.006 255);")
+    // Subtle visible borders for modern structure
+    expect(rootBlock).toContain("  --border: oklch(0.878 0.004 255);")
     // Bronzed luxe gold (less bright/glary, keeps shine)
     expect(rootBlock).toContain("  --gold: oklch(0.55 0.13 76);")
     expect(rootBlock).toContain("  --gold-shadow: oklch(0.34 0.08 72);")
@@ -53,10 +53,11 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(rootBlock).toContain("  --entertainment-line-start: oklch(0.82 0.05 84);")
     expect(rootBlock).toContain("  --entertainment-line-mid: oklch(0.62 0.12 78);")
     expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.5 0.13 70);")
-    // Body is flat clean white in light mode — no gold wash, no off-white gradient
+    // Body uses the cool off-white background token — no gold wash, no warm-cream gradient
     expect(css).toContain("html:not(.dark) body")
     expect(css).toContain("  html:not(.dark) body {\n    background: var(--background);")
     expect(rootBlock).not.toContain("  --background: oklch(0.996 0.001 95);")
+    expect(rootBlock).not.toContain("  --background: oklch(1 0 0);")
     expect(rootBlock).not.toContain("  --gold: oklch(0.69 0.14 82);")
     expect(rootBlock).not.toContain("  --gold: oklch(0.64 0.17 82);")
     expect(rootBlock).not.toContain("  --gold: oklch(0.58 0.15 80);")

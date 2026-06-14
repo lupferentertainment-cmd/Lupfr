@@ -7,9 +7,9 @@
 /* Lupfer Entertainment - Metallic Gold & Black Theme */
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
-  /* Light base - pristine white luxury surface with crisp charcoal contrast. */
-  /* Light mode: clean pure white surfaces, pure black ink. White text is the only exception (gold CTAs / dark primary). */
-  --background: oklch(1 0 0);
+  /* Light base - modern cool off-white surface, pure black ink, bronzed gold accents. */
+  /* Light mode: barely-tinted cool off-white background; pure white cards elevate above it; subtle visible borders for structure. */
+  --background: oklch(0.974 0.005 255);
   --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0 0 0);
@@ -17,11 +17,11 @@
   --popover-foreground: oklch(0 0 0);
   --primary: oklch(0 0 0);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(1 0 0);
+  --secondary: oklch(0.992 0.003 255);
   --secondary-foreground: oklch(0 0 0);
-  /* Neutral (no warm cream) faint gray for functional fills only — page stays clear white */
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.4 0 0);
+  /* Cool off-white muted for section fills — distinct from background without warmth */
+  --muted: oklch(0.942 0.006 255);
+  --muted-foreground: oklch(0.42 0.006 255);
   /* Metallic gold - light mode: bronzed luxe gold (less bright/glary, keeps shine), hue aligned to dark white-gold. */
   --gold-shadow: oklch(0.34 0.08 72);
   --gold-dark: oklch(0.45 0.11 74);
@@ -35,9 +35,9 @@
   --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  /* No borders in light mode — transparent so nothing draws lines (focus --ring kept for a11y). */
-  --border: oklch(1 0 0 / 0);
-  --input: oklch(0.96 0 0);
+  /* Subtle visible borders — modern structural depth without harsh lines. */
+  --border: oklch(0.878 0.004 255);
+  --input: oklch(0.966 0.005 255);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -50,13 +50,13 @@
   --transition-fast: 120ms;
   --transition-snap: 200ms;
   --transition-smooth: 280ms;
-  --sidebar: oklch(1 0 0);
+  --sidebar: oklch(0.982 0.004 255);
   --sidebar-foreground: oklch(0 0 0);
   --sidebar-primary: var(--gold);
   --sidebar-primary-foreground: oklch(0 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.942 0.006 255);
   --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(1 0 0 / 0);
+  --sidebar-border: oklch(0.878 0.004 255);
   --sidebar-ring: var(--gold);
   --gradient-hero-gold: linear-gradient(90deg,
       color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 0%,
@@ -235,8 +235,9 @@
 /* Circular partner tiles: card surface tracks theme so mono marks stay legible */
 .partner-logo-chip {
   box-shadow:
-    0 1px 2px oklch(0.2 0.02 280 / 0.06),
-    inset 0 1px 0 oklch(1 0 0 / 0.35);
+    0 1px 3px oklch(0.2 0.02 280 / 0.08),
+    0 4px 12px oklch(0.2 0.02 280 / 0.07),
+    inset 0 1px 0 oklch(1 0 0 / 0.6);
 }
 
 .dark .partner-logo-chip {
@@ -335,7 +336,7 @@
     z-index: 10;
   }
 
-  /* Light mode: flat clean white — no gold wash, no off-white gradient. */
+  /* Light mode: cool off-white surface — no gold wash, no warm-cream gradient. */
   html:not(.dark) body {
     background: var(--background);
     background-attachment: scroll;
@@ -472,17 +473,24 @@
   }
 
   .lupfr-hero-media-wash {
+    /* No gradient over the video — only a thin top veil for nav legibility and a soft bottom blend into the page */
     background: linear-gradient(180deg,
-        color-mix(in oklch, var(--background) 14%, transparent) 0%,
-        color-mix(in oklch, var(--background) 28%, transparent) 56%,
-        color-mix(in oklch, var(--background) 78%, transparent) 100%);
+        color-mix(in oklch, var(--background) 22%, transparent) 0%,
+        color-mix(in oklch, var(--background) 8%, transparent) 16%,
+        transparent 28%,
+        transparent 76%,
+        color-mix(in oklch, var(--background) 50%, transparent) 90%,
+        color-mix(in oklch, var(--background) 84%, transparent) 100%);
   }
 
   .dark .lupfr-hero-media-wash {
     background: linear-gradient(180deg,
-        color-mix(in oklch, var(--background) 18%, transparent) 0%,
-        color-mix(in oklch, var(--background) 34%, transparent) 56%,
-        color-mix(in oklch, var(--background) 84%, transparent) 100%);
+        color-mix(in oklch, var(--background) 26%, transparent) 0%,
+        color-mix(in oklch, var(--background) 10%, transparent) 18%,
+        transparent 30%,
+        transparent 74%,
+        color-mix(in oklch, var(--background) 56%, transparent) 90%,
+        color-mix(in oklch, var(--background) 88%, transparent) 100%);
   }
 
   .lupfr-site-header[data-lupfr-nav-state="settled"]::before {
@@ -850,14 +858,22 @@
   transform: translateZ(0);
 }
 
-/* Light mode: flat white tile, soft elevation only — no border, no gold gradient. */
+/* Light mode: pure white card elevated on cool background; subtle border + layered shadow for modern depth. */
 html:not(.dark) .stat-tile-surface {
   background: var(--card);
-  box-shadow: 0 12px 28px oklch(0.2 0.02 260 / 0.07);
+  border: 1px solid oklch(0.878 0.004 255 / 0.9);
+  box-shadow:
+    0 1px 3px oklch(0.3 0.01 255 / 0.06),
+    0 6px 16px oklch(0.3 0.01 255 / 0.07),
+    0 16px 32px oklch(0.3 0.01 255 / 0.05);
 }
 
 html:not(.dark) .stat-tile-surface:hover {
-  box-shadow: 0 16px 36px oklch(0.2 0.02 260 / 0.1);
+  border-color: oklch(0.855 0.008 255);
+  box-shadow:
+    0 1px 3px oklch(0.3 0.01 255 / 0.08),
+    0 8px 22px oklch(0.3 0.01 255 / 0.1),
+    0 20px 42px oklch(0.3 0.01 255 / 0.07);
 }
 
 /* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */

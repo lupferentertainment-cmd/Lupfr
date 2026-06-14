@@ -305,7 +305,7 @@ export function Reviews() {
   return (
     <section
       ref={sectionRef}
-      className="relative pt-8 sm:pt-10 pb-5 sm:pb-6 bg-background/96 dark:bg-muted/30 border-y border-border/40 dark:border-border/50"
+      className="relative pt-8 sm:pt-10 pb-5 sm:pb-6 bg-muted/40 dark:bg-muted/30 border-y border-border/50"
       aria-label="Reviews"
     >
       <motion.div style={{ opacity: sectionOpacity }}>

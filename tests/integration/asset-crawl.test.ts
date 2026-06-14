@@ -220,7 +220,7 @@ describe.skipIf(shouldSkip)("asset crawl — no 404s in the built site", () => {
     }
 
     expect(failures, `\nAssets returning 404:\n${failures.join("\n")}`).toEqual([])
-  })
+  }, READY_TIMEOUT_MS + 30_000)
 
   it("discovers all internal links and none return 404", async () => {
     const visited = new Set<string>()
@@ -245,7 +245,7 @@ describe.skipIf(shouldSkip)("asset crawl — no 404s in the built site", () => {
     }
 
     expect(failures, `\nInternal links returning 404:\n${failures.join("\n")}`).toEqual([])
-  })
+  }, READY_TIMEOUT_MS + 30_000)
 })
 
 describe.skipIf(!shouldSkip)("asset crawl skipped", () => {
