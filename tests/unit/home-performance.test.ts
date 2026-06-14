@@ -24,7 +24,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("aria-hidden=\"true\"")
         expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
-        expect(homePage).toContain("id=\"news\"")
+        expect(homePage).not.toContain('<DeferredHomeSection id="news"')
         expect(homePage).toContain("id=\"gallery\"")
         expect(homePage).toContain("id=\"about\"")
         expect(homePage).toContain("id=\"contact\"")
@@ -112,9 +112,9 @@ describe("mobile artists black-screen regression", () => {
         expect(artists).toContain("useIsMobile() ?? true")
     })
 
-    it("keeps useInView lookahead margin at least 600px so section mounts before it enters the viewport", () => {
-        // margin must be "0px 0px 600px 0px" or larger — the string literal is the source of truth
-        expect(artists).toMatch(/margin:\s*["']0px 0px [6-9]\d{2,}px 0px["']/)
+    it("does not start cards at opacity-0 so mobile never shows a blank frame on scroll", () => {
+        // scroll-triggered entrance animations removed; cards are always visible (no initial opacity:0)
+        expect(artists).not.toMatch(/initial=\{\{[^}]*opacity:\s*0/)
     })
 
     it("skips bio backdrop-blur overlay on mobile to avoid compositor stalls that can show a black frame", () => {

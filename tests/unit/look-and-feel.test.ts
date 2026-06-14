@@ -223,8 +223,8 @@ describe("home page section structure", () => {
     expect(artistsComponent).toContain('id="artists"')
   })
 
-  it("defers news, gallery, about, contact behind intersection observer", () => {
-    expect(homePage).toContain('id="news"')
+  it("defers gallery, about, contact behind intersection observer; news is eager like artists", () => {
+    expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     expect(homePage).toContain('id="gallery"')
     expect(homePage).toContain('id="about"')
     expect(homePage).toContain('id="contact"')

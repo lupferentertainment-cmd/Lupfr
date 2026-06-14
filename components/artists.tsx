@@ -2,11 +2,10 @@
 
 import { memo } from "react"
 import Image from "next/image"
-import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { motion, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
-import { TextReveal } from "@/components/text-reveal"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -51,16 +50,12 @@ const FALLBACK_IMAGE =
 
 const ArtistCard = memo(function ArtistCard({
   artist,
-  index,
-  isInView,
   isHovered,
   isMobile,
   onHover,
   onLeave,
 }: {
   artist: ArtistItem
-  index: number
-  isInView: boolean
   isHovered: boolean
   isMobile: boolean
   onHover: () => void
@@ -105,9 +100,6 @@ const ArtistCard = memo(function ArtistCard({
   return (
     <motion.article
       ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative rounded-2xl bg-card overflow-hidden"
       onMouseEnter={isMobile ? undefined : onHover}
       onMouseMove={handleMouseMove}
@@ -162,14 +154,9 @@ const ArtistCard = memo(function ArtistCard({
               />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
-            <motion.span
-              className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: index * 0.12 + 0.2 }}
-            >
+            <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm">
               {artist.genre}
-            </motion.span>
+            </span>
           </motion.div>
           {/* Bio overlay — desktop hover only; not rendered on mobile to avoid compositing cost */}
           {!isMobile && (
@@ -294,13 +281,11 @@ const ArtistCard = memo(function ArtistCard({
 })
 
 function ArtistCarousel({
-  isInView,
   hoveredId,
   isMobile,
   onHover,
   onLeave,
 }: {
-  isInView: boolean
   hoveredId: number | null
   isMobile: boolean
   onHover: (id: number) => void
@@ -311,13 +296,11 @@ function ArtistCarousel({
   return (
     <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
       <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
-        {slides.map((slide, slideIndex) => (
+        {slides.map((slide) => (
           <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full">
             {isMobile ? (
               <ArtistCard
                 artist={slide[0]}
-                index={0}
-                isInView={isInView}
                 isHovered={hoveredId === slide[0].id}
                 isMobile={isMobile}
                 onHover={() => onHover(slide[0].id)}
@@ -325,12 +308,10 @@ function ArtistCarousel({
               />
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {slide.map((artist, i) => (
+                {slide.map((artist) => (
                   <ArtistCard
                     key={artist.id}
                     artist={artist}
-                    index={slideIndex * ARTISTS_PER_DESKTOP_SLIDE + i}
-                    isInView={isInView}
                     isHovered={hoveredId === artist.id}
                     isMobile={isMobile}
                     onHover={() => onHover(artist.id)}
@@ -351,7 +332,6 @@ function ArtistCarousel({
 
 export function Artists() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const isMobile = useIsMobile() ?? true
 
@@ -364,37 +344,26 @@ export function Artists() {
       aria-labelledby="artists-section-title"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 36 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-10 sm:mb-12 md:mb-14"
-        >
-          <motion.p
+        <div className="mb-10 sm:mb-12 md:mb-14">
+          <p
             id="artists-section-title"
             className="text-gold-accent tracking-tight text-sm mb-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.1 }}
           >
             The Sound · Featured Artists
-          </motion.p>
+          </p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <h2 className="lupfr-heading-split-leading">
               <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>
               <br />
               <span className="lupfr-heading-subline">Artists</span>
             </h2>
-            <TextReveal
-              text="We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences."
-              className="text-muted-foreground max-w-md leading-relaxed"
-              delay={0.25}
-            />
+            <p className="text-muted-foreground max-w-md leading-relaxed">
+              We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
+            </p>
           </div>
-        </motion.div>
+        </div>
 
         <ArtistCarousel
-          isInView={isInView}
           hoveredId={hoveredId}
           isMobile={isMobile}
           onHover={setHoveredId}
@@ -402,12 +371,7 @@ export function Artists() {
         />
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12 text-center"
-        >
+        <div className="mt-12 text-center">
           <p className="text-muted-foreground mb-6">
             Are you a DJ or producer? We&apos;re always looking for fresh talent.
           </p>
@@ -424,7 +388,7 @@ export function Artists() {
           >
             Submit Your Mix
           </motion.button>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

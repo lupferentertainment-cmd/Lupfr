@@ -2,7 +2,7 @@
 
 import { memo, useRef, useState } from "react"
 import Image from "next/image"
-import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { motion, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { ArrowUpRight, Newspaper } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getPress, type PressItem } from "@/lib/data/press"
@@ -48,13 +48,9 @@ const FALLBACK_IMAGE =
 
 const PressCard = memo(function PressCard({
   item,
-  index,
-  isInView,
   isMobile,
 }: {
   item: PressItem
-  index: number
-  isInView: boolean
   isMobile: boolean
 }) {
   const cardRef = useRef<HTMLElement>(null)
@@ -84,9 +80,6 @@ const PressCard = memo(function PressCard({
   return (
     <motion.article
       ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative h-full rounded-2xl bg-card overflow-hidden"
       onMouseEnter={isMobile ? undefined : () => setIsHovered(true)}
       onMouseMove={handleMouseMove}
@@ -144,14 +137,9 @@ const PressCard = memo(function PressCard({
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
-          <motion.span
-            className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: index * 0.12 + 0.2 }}
-          >
+          <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm">
             {item.category}
-          </motion.span>
+          </span>
         </motion.div>
 
         <div className="flex flex-1 flex-col p-4 md:p-5 rounded-b-2xl bg-card">
@@ -180,16 +168,16 @@ const PressCard = memo(function PressCard({
   )
 })
 
-function PressCarousel({ isInView, isMobile }: { isInView: boolean; isMobile: boolean }) {
+function PressCarousel({ isMobile }: { isMobile: boolean }) {
   const slides = isMobile ? mobilePressSlides : desktopPressSlides
 
   return (
     <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
       <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
-        {slides.map((slide, slideIndex) => (
+        {slides.map((slide) => (
           <CarouselItem key={slide.map((item) => item.id).join("-")} className="pl-4 md:pl-6 basis-full">
             {isMobile ? (
-              <PressCard item={slide[0]} index={0} isInView={isInView} isMobile={isMobile} />
+              <PressCard item={slide[0]} isMobile={isMobile} />
             ) : (
               <div
                 className={cn(
@@ -197,12 +185,10 @@ function PressCarousel({ isInView, isMobile }: { isInView: boolean; isMobile: bo
                   press.length > 1 ? "md:grid-cols-2" : "md:grid-cols-1 max-w-3xl mx-auto"
                 )}
               >
-                {slide.map((item, i) => (
+                {slide.map((item) => (
                   <PressCard
                     key={item.id}
                     item={item}
-                    index={slideIndex * PRESS_PER_DESKTOP_SLIDE + i}
-                    isInView={isInView}
                     isMobile={isMobile}
                   />
                 ))}
@@ -220,7 +206,6 @@ function PressCarousel({ isInView, isMobile }: { isInView: boolean; isMobile: bo
 
 export function Press() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 600px 0px" })
   const isMobile = useIsMobile() ?? true
 
   /* Editorial / news coverage about LUPFR, carousel of clickable article cards. */
@@ -232,27 +217,19 @@ export function Press() {
       aria-labelledby="news-section-title"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 36 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-10 sm:mb-12 md:mb-14"
-        >
-          <motion.p
+        <div className="mb-10 sm:mb-12 md:mb-14">
+          <p
             id="news-section-title"
             className="text-gold-accent tracking-tight text-sm mb-4"
-            initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.1 }}
           >
             The Story · Editorials &amp; Press
-          </motion.p>
+          </p>
           <h2 className="lupfr-heading-split-leading">
             <GoldShineText scrollTargetRef={ref}>News</GoldShineText>
           </h2>
-        </motion.div>
+        </div>
 
-        <PressCarousel isInView={isInView} isMobile={isMobile} />
+        <PressCarousel isMobile={isMobile} />
       </div>
     </section>
   )

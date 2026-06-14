@@ -8,33 +8,36 @@
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
   /* Light base - pristine white luxury surface with crisp charcoal contrast. */
+  /* Light mode: clean pure white surfaces, pure black ink. White text is the only exception (gold CTAs / dark primary). */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.11 0.016 265);
+  --foreground: oklch(0 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.11 0.016 265);
+  --card-foreground: oklch(0 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.11 0.016 265);
-  --primary: oklch(0.145 0.018 265);
+  --popover-foreground: oklch(0 0 0);
+  --primary: oklch(0 0 0);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.972 0.004 98);
-  --secondary-foreground: oklch(0.16 0.018 265);
-  --muted: oklch(0.952 0.006 96);
-  --muted-foreground: oklch(0.34 0.02 262);
-  /* Metallic gold - light mode: deepened polished gold (toned-down brightness) with dark cuts to read on white. */
-  --gold-shadow: oklch(0.36 0.085 74);
-  --gold-dark: oklch(0.47 0.12 76);
-  --gold: oklch(0.58 0.15 80);
-  --gold-bright: oklch(0.76 0.12 86);
-  --gold-specular: oklch(0.93 0.05 94);
+  --secondary: oklch(1 0 0);
+  --secondary-foreground: oklch(0 0 0);
+  /* Neutral (no warm cream) faint gray for functional fills only — page stays clear white */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  /* Metallic gold - light mode: bronzed luxe gold (less bright/glary, keeps shine), hue aligned to dark white-gold. */
+  --gold-shadow: oklch(0.34 0.08 72);
+  --gold-dark: oklch(0.45 0.11 74);
+  --gold: oklch(0.55 0.13 76);
+  --gold-bright: oklch(0.7 0.105 80);
+  --gold-specular: oklch(0.85 0.05 86);
   --gold-filter-shadow: oklch(0.2 0.06 74 / 0.52);
   --gold-filter-edge: oklch(0.48 0.12 80 / 0.34);
   --btn-gold-text: oklch(1 0 0);
   --accent: var(--gold);
-  --accent-foreground: oklch(0.12 0.02 280);
+  --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.875 0.014 95);
-  --input: oklch(0.956 0.006 98);
+  /* No borders in light mode — transparent so nothing draws lines (focus --ring kept for a11y). */
+  --border: oklch(1 0 0 / 0);
+  --input: oklch(0.96 0 0);
   --ring: var(--gold);
   --chart-1: var(--gold);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -47,13 +50,13 @@
   --transition-fast: 120ms;
   --transition-snap: 200ms;
   --transition-smooth: 280ms;
-  --sidebar: oklch(0.982 0.002 98);
-  --sidebar-foreground: oklch(0.11 0.016 265);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0 0 0);
   --sidebar-primary: var(--gold);
-  --sidebar-primary-foreground: oklch(0.12 0.02 265);
-  --sidebar-accent: oklch(0.952 0.006 96);
-  --sidebar-accent-foreground: oklch(0.11 0.016 265);
-  --sidebar-border: oklch(0.875 0.014 95);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(1 0 0 / 0);
   --sidebar-ring: var(--gold);
   --gradient-hero-gold: linear-gradient(90deg,
       color-mix(in oklch, var(--gold-dark) 82%, var(--gold-shadow)) 0%,
@@ -84,11 +87,11 @@
       var(--gold-shadow) 100%);
   --filter-hero-gold: drop-shadow(0 1px 1px var(--gold-filter-shadow)) drop-shadow(0 2px 8px oklch(0.22 0.06 76 / 0.42)) drop-shadow(0 0 0 1px var(--gold-filter-edge));
   /* Light mode buttons: luxury gold CTA with readable white text and polished depth. */
-  --btn-gold-shadow: oklch(0.38 0.1 75);
-  --btn-gold-dark: oklch(0.48 0.13 77);
-  --btn-gold: oklch(0.57 0.15 80);
-  --btn-gold-bright: oklch(0.74 0.12 86);
-  --btn-gold-specular: oklch(0.93 0.05 94);
+  --btn-gold-shadow: oklch(0.36 0.09 73);
+  --btn-gold-dark: oklch(0.46 0.12 75);
+  --btn-gold: oklch(0.56 0.13 77);
+  --btn-gold-bright: oklch(0.7 0.105 80);
+  --btn-gold-specular: oklch(0.85 0.05 86);
   --btn-gold-filter-shadow: oklch(0.2 0.06 74 / 0.62);
   --btn-gold-filter-edge: oklch(0.48 0.12 80 / 0.36);
   /* Rounded pill CTAs: stay one line; type scales down as the viewport narrows */
@@ -102,12 +105,12 @@
   --partner-logo-opacity-outline: 0.93;
   --partner-logo-opacity-solid: 0.88;
   --partner-logo-opacity-natural: 0.94;
-  /* Split h2 second line — near-black ink in light mode; `.dark` overrides to theme white */
-  --lupfr-heading-subline-fg: oklch(0.21 0.018 263);
-  /* “Entertainment” line gradient (optional class); peach → warm gold (see `.hero-entertainment-gradient`) */
-  --entertainment-line-start: oklch(0.985 0.018 95);
-  --entertainment-line-mid: oklch(0.84 0.14 84);
-  --entertainment-line-end: oklch(0.58 0.17 70);
+  /* Split h2 second line — pure black ink in light mode; `.dark` overrides to theme white */
+  --lupfr-heading-subline-fg: oklch(0 0 0);
+  /* “Entertainment” line gradient (optional class); bronzed gold (less bright) → deep gold (see `.hero-entertainment-gradient`) */
+  --entertainment-line-start: oklch(0.82 0.05 84);
+  --entertainment-line-mid: oklch(0.62 0.12 78);
+  --entertainment-line-end: oklch(0.5 0.13 70);
 }
 
 .dark {
@@ -332,15 +335,9 @@
     z-index: 10;
   }
 
+  /* Light mode: flat clean white — no gold wash, no off-white gradient. */
   html:not(.dark) body {
-    background:
-      radial-gradient(ellipse 92% 62% at 50% -20%,
-        color-mix(in oklch, var(--gold-specular) 42%, transparent) 0%,
-        transparent 58%),
-      linear-gradient(180deg,
-        oklch(1 0 0) 0%,
-        oklch(0.999 0.001 96) 42%,
-        color-mix(in oklch, var(--background) 96%, var(--secondary)) 100%);
+    background: var(--background);
     background-attachment: scroll;
   }
 }
@@ -447,13 +444,9 @@
     height: calc(100% + 3.25rem);
     pointer-events: none;
     background:
-      radial-gradient(ellipse 74% 140% at 50% -18%,
-        color-mix(in oklch, var(--gold) 3%, transparent) 0%,
-        color-mix(in oklch, var(--gold) 1%, transparent) 38%,
-        transparent 72%),
       linear-gradient(180deg,
-        color-mix(in oklch, var(--background) 68%, transparent) 0%,
-        color-mix(in oklch, var(--background) 36%, transparent) 46%,
+        color-mix(in oklch, var(--background) 70%, transparent) 0%,
+        color-mix(in oklch, var(--background) 38%, transparent) 46%,
         color-mix(in oklch, var(--background) 14%, transparent) 72%,
         transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 62%, transparent 100%);
@@ -495,9 +488,6 @@
   .lupfr-site-header[data-lupfr-nav-state="settled"]::before {
     height: calc(100% + 2rem);
     background:
-      radial-gradient(ellipse 68% 130% at 50% -20%,
-        color-mix(in oklch, var(--gold) 4%, transparent) 0%,
-        transparent 62%),
       linear-gradient(180deg,
         color-mix(in oklch, var(--background) 92%, transparent) 0%,
         color-mix(in oklch, var(--background) 76%, transparent) 44%,
@@ -860,22 +850,14 @@
   transform: translateZ(0);
 }
 
+/* Light mode: flat white tile, soft elevation only — no border, no gold gradient. */
 html:not(.dark) .stat-tile-surface {
-  background:
-    linear-gradient(180deg,
-      color-mix(in oklch, var(--card) 98%, var(--gold-specular)) 0%,
-      color-mix(in oklch, var(--card) 100%, var(--secondary)) 100%);
-  border-color: color-mix(in oklch, var(--border) 86%, white);
-  box-shadow:
-    0 12px 28px oklch(0.2 0.02 260 / 0.07),
-    inset 0 1px 0 oklch(1 0 0 / 0.88);
+  background: var(--card);
+  box-shadow: 0 12px 28px oklch(0.2 0.02 260 / 0.07);
 }
 
 html:not(.dark) .stat-tile-surface:hover {
-  border-color: color-mix(in oklch, var(--gold) 26%, var(--border));
-  box-shadow:
-    0 16px 36px oklch(0.2 0.02 260 / 0.1),
-    inset 0 1px 0 oklch(1 0 0 / 0.95);
+  box-shadow: 0 16px 36px oklch(0.2 0.02 260 / 0.1);
 }
 
 /* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */

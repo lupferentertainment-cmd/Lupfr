@@ -5,18 +5,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react"
 
 import { Events } from "@/components/events"
 import { Artists } from "@/components/artists"
+import { Press } from "@/components/press"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { Reviews } from "@/components/reviews"
 import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
-const Press = dynamic(() =>
-  import("@/components/press").then((m) =>
-    resolveDynamicComponent(m, "Press", "@/components/press")
-  ),
-  { ssr: false }
-)
 const Gallery = dynamic(() =>
   import("@/components/gallery").then((m) =>
     resolveDynamicComponent(m, "Gallery", "@/components/gallery")
@@ -150,9 +145,7 @@ export function HomePage() {
       <Events />
       <Services />
       <Artists />
-      <DeferredHomeSection id="news" estimatedHeightClassName="min-h-[560px] sm:min-h-[640px]">
-        <Press />
-      </DeferredHomeSection>
+      <Press />
       <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">
         <Gallery />
       </DeferredHomeSection>
