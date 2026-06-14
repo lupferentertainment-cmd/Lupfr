@@ -170,7 +170,7 @@ export function PhoneListPopup() {
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
-                                    placeholder="(415) 555-0100"
+                                    placeholder="Your phone number"
                                 />
                             </div>
 

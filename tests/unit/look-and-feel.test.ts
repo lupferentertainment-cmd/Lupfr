@@ -21,7 +21,19 @@ const heroMobile = fs.readFileSync(path.join(rootDir, "components", "hero-mobile
 const eventsComponent = fs.readFileSync(path.join(rootDir, "components", "events.tsx"), "utf8")
 const servicesComponent = fs.readFileSync(path.join(rootDir, "components", "services.tsx"), "utf8")
 const artistsComponent = fs.readFileSync(path.join(rootDir, "components", "artists.tsx"), "utf8")
+const contact = fs.readFileSync(path.join(rootDir, "components", "contact.tsx"), "utf8")
+const phoneListPopup = fs.readFileSync(path.join(rootDir, "components", "phone-list-popup.tsx"), "utf8")
 const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "utf8")
+
+function getContactPhoneCodes() {
+  const match = contact.match(/const PHONE_CHAR_CODES = \[([^\]]+)\]/)
+  if (!match) throw new Error("PHONE_CHAR_CODES missing")
+  return match[1].split(",").map((value) => Number(value.trim()))
+}
+
+function getContactPhoneText() {
+  return String.fromCharCode(...getContactPhoneCodes())
+}
 
 // ── typography ────────────────────────────────────────────────────────────────
 
@@ -254,6 +266,22 @@ describe("footer structure", () => {
 
   it("contains navigation links back to key sections", () => {
     expect(footer).toContain("href")
+  })
+})
+
+// ── contact structure ────────────────────────────────────────────────────────
+
+describe("contact structure", () => {
+  it("decodes the current public call number", () => {
+    expect(getContactPhoneText()).toBe("(323) 366-9246")
+  })
+
+  it("uses neutral visitor phone placeholders", () => {
+    expect(contact).toContain('placeholder="Your phone number"')
+  })
+
+  it("uses neutral popup phone placeholders", () => {
+    expect(phoneListPopup).toContain('placeholder="Your phone number"')
   })
 })
 

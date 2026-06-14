@@ -58,7 +58,7 @@ const inquiryOptions: { label: string; icon: LucideIcon }[] = [
 const inquiryTypes = inquiryOptions.map((option) => option.label)
 
 // Phone stored as char codes so it's not plain text in source or initial HTML; decoded and rendered client-side only.
-const PHONE_CHAR_CODES = [53, 48, 51, 45, 52, 48, 55, 45, 54, 49, 48, 57]
+const PHONE_CHAR_CODES = [40, 51, 50, 51, 41, 32, 51, 54, 54, 45, 57, 50, 52, 54]
 
 function ProtectedPhone() {
   const [decoded, setDecoded] = useState<string | null>(null)
@@ -68,7 +68,7 @@ function ProtectedPhone() {
     }, 0)
     return () => window.clearTimeout(timeoutId)
   }, [])
-  if (!decoded) return <span className="inline-block min-w-[10ch]" aria-hidden />
+  if (!decoded) return <span className="inline-block min-w-[14ch]" aria-hidden />
   return (
     <span
       className="select-none inline-flex items-center gap-0.5 text-foreground"
@@ -483,7 +483,7 @@ export function Contact() {
                       value={contactListPhone}
                       onChange={(e) => setContactListPhone(e.target.value)}
                       className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                      placeholder="(415) 555-0100"
+                      placeholder="Your phone number"
                     />
                   </div>
                 </div>
