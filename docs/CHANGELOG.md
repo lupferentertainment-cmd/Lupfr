@@ -16,6 +16,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- Reworked all blog posts into long-form LUPFR event-operator essays focused on event growth, candidate-set thinking, guest flow, partner proof, artist-room fit, recap systems, and creative/business process; blog article bodies now support markdown-style headings, bullets, pull quotes, and source-note cards with thinner animated prose typography.
+
 - Updated the public **Call us** phone number on the contact card to **(323) 366-9246** and replaced numeric visitor phone placeholders with neutral copy so stale-looking example numbers no longer appear on the site. Locked with a source-level visual contract in `tests/unit/look-and-feel.test.ts` and documented in `docs/DESIGN.md`.
 
 - **Light-mode visual cleanup (owner request 2026-06-11).** Light theme now reads as clean pure white with pure-black ink instead of off-white/cream: surfaces forced to `oklch(1 0 0)` (neutral faint-gray `--muted: oklch(0.97 0 0)` for functional fills only), foreground/headings/sublines to pure black `oklch(0 0 0)` (white text kept only on gold CTAs / dark primary), borders made transparent (`--border: oklch(1 0 0 / 0)`), and the ambient gold background washes removed — flat white body, header veil with no gold radial, flat white stat tiles with no border/gold gradient. Light gold retuned to a deeper **bronzed luxe** family (`--gold: oklch(0.55 0.13 76)`, softened specular `oklch(0.85 0.05 86)`, `--btn-gold*` + Entertainment-line stops stepped down to match) — less bright/glary, still has shine, hue coherent with the dark white-gold. Dark mode untouched. Updated `app/globals.css`, `tests/unit/globals-gold-theme.test.ts`, `docs/DESIGN.md`, and `docs/TESTING.md` in the same change.

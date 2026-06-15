@@ -858,6 +858,102 @@
   transform: translateZ(0);
 }
 
+.blog-article-prose {
+  color: color-mix(in oklch, var(--foreground) 88%, var(--muted-foreground));
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.98rem, 0.94rem + 0.18vw, 1.08rem);
+  font-weight: 300;
+  line-height: 1.95;
+  letter-spacing: -0.012em;
+}
+
+.blog-article-block {
+  animation: fade-up 520ms var(--ease-snap) both;
+}
+
+.blog-delay-0 { animation-delay: 0ms; }
+.blog-delay-1 { animation-delay: 55ms; }
+.blog-delay-2 { animation-delay: 110ms; }
+.blog-delay-3 { animation-delay: 165ms; }
+.blog-delay-4 { animation-delay: 220ms; }
+.blog-delay-5 { animation-delay: 275ms; }
+.blog-delay-6 { animation-delay: 330ms; }
+.blog-delay-7 { animation-delay: 385ms; }
+.blog-delay-8 { animation-delay: 440ms; }
+.blog-delay-9 { animation-delay: 495ms; }
+.blog-delay-10 { animation-delay: 550ms; }
+.blog-delay-11 { animation-delay: 605ms; }
+.blog-delay-12 { animation-delay: 660ms; }
+.blog-delay-13 { animation-delay: 715ms; }
+.blog-delay-14 { animation-delay: 770ms; }
+
+.blog-article-heading {
+  margin-top: 2.7rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-serif), ui-serif, serif;
+  font-size: clamp(1.9rem, 1.5rem + 1.75vw, 3.35rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.blog-article-subheading {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  color: var(--gold);
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.blog-article-paragraph {
+  margin-top: 1.1rem;
+}
+
+.blog-article-bullet {
+  position: relative;
+  margin-top: 0.55rem;
+  padding-left: 1.65rem;
+}
+
+.blog-article-bullet::before {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  top: 0.88em;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: var(--gradient-heading-gold);
+  box-shadow: 0 0 18px color-mix(in oklch, var(--gold) 30%, transparent);
+}
+
+.blog-article-quote {
+  margin: 2rem 0;
+  border-left: 2px solid var(--gold);
+  padding: 0.4rem 0 0.4rem 1.25rem;
+  color: color-mix(in oklch, var(--foreground) 94%, var(--gold));
+  font-family: var(--font-serif), ui-serif, serif;
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 2.15rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
+}
+
+.blog-article-source {
+  margin-top: 2.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--gold) 28%, var(--border));
+  background: color-mix(in oklch, var(--gold) 6%, var(--card));
+  padding: 1rem 1.15rem;
+  color: color-mix(in oklch, var(--muted-foreground) 82%, var(--foreground));
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
 /* Light mode: pure white card elevated on cool background; subtle border + layered shadow for modern depth. */
 html:not(.dark) .stat-tile-surface {
   background: var(--card);

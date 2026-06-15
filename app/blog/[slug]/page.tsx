@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import type { ReactElement } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -10,9 +11,13 @@ import { SITE_URL } from "@/lib/site"
 
 const BLOG_IMAGE_WIDTH = 1400
 const BLOG_IMAGE_HEIGHT = 900
+const BLOG_BLOCK_DELAY_CAP = 14
 
 type BlogPageParams = { params: Promise<{ slug: string }> }
 type BlogPost = NonNullable<ReturnType<typeof getBlogPostBySlug>>
+type BlogBlockKind = "heading" | "subheading" | "quote" | "bullet" | "source" | "paragraph"
+type BlogBlock = { kind: BlogBlockKind; text: string }
+type BlogBlockRenderer = (block: BlogBlock, index: number) => ReactElement
 
 export function generateStaticParams() {
   return getBlogPosts().map((post) => ({ slug: post.slug }))
@@ -59,11 +64,47 @@ function ArticleCover({ post }: { post: BlogPost }) {
   )
 }
 
+function trimMarker(text: string, marker: string): string {
+  return text.slice(marker.length).trim()
+}
+
+function parseBlogBlock(text: string): BlogBlock {
+  const trimmed = text.trim()
+  if (trimmed.startsWith("### ")) return { kind: "subheading", text: trimMarker(trimmed, "### ") }
+  if (trimmed.startsWith("## ")) return { kind: "heading", text: trimMarker(trimmed, "## ") }
+  if (trimmed.startsWith("> ")) return { kind: "quote", text: trimMarker(trimmed, "> ") }
+  if (trimmed.startsWith("- ")) return { kind: "bullet", text: trimMarker(trimmed, "- ") }
+  if (trimmed.startsWith("**Source note:**")) return { kind: "source", text: trimMarker(trimmed, "**Source note:**") }
+  return { kind: "paragraph", text: trimmed }
+}
+
+function delayClassName(index: number): string {
+  return `blog-delay-${Math.min(index, BLOG_BLOCK_DELAY_CAP)}`
+}
+
+function blockClassName(index: number, extra: string): string {
+  return `blog-article-block ${delayClassName(index)} ${extra}`
+}
+
+const BLOG_BLOCK_RENDERERS: Record<BlogBlockKind, BlogBlockRenderer> = {
+  heading: (block, index) => <h2 key={index} className={blockClassName(index, "blog-article-heading")}>{block.text}</h2>,
+  subheading: (block, index) => <h3 key={index} className={blockClassName(index, "blog-article-subheading")}>{block.text}</h3>,
+  quote: (block, index) => <blockquote key={index} className={blockClassName(index, "blog-article-quote")}>{block.text}</blockquote>,
+  bullet: (block, index) => <p key={index} className={blockClassName(index, "blog-article-bullet")}>{block.text}</p>,
+  source: (block, index) => <p key={index} className={blockClassName(index, "blog-article-source")}>Source note: {block.text}</p>,
+  paragraph: (block, index) => <p key={index} className={blockClassName(index, "blog-article-paragraph")}>{block.text}</p>,
+}
+
+function renderBlogBlock(text: string, index: number): ReactElement {
+  const block = parseBlogBlock(text)
+  return BLOG_BLOCK_RENDERERS[block.kind](block, index)
+}
+
 function ArticleBody({ post }: { post: BlogPost }) {
   return (
-    <div className="rounded-[2rem] border border-border/70 bg-card/60 p-6 shadow-2xl shadow-black/15 sm:p-9">
-      <div className="space-y-5 text-[1.04rem] leading-8 text-foreground/95">
-        {post.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+    <div className="rounded-[2rem] border border-border/70 bg-card/70 p-6 shadow-2xl shadow-black/15 sm:p-9 lg:p-11">
+      <div className="blog-article-prose">
+        {post.body.map(renderBlogBlock)}
       </div>
     </div>
   )

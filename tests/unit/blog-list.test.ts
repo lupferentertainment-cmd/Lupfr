@@ -59,6 +59,18 @@ describe("getBlogPosts", () => {
     }
   })
 
+  it("every post uses markdown-style section headings", () => {
+    expect(getBlogPosts().every((post) => post.body.some((line) => line.startsWith("## ")))).toBe(true)
+  })
+
+  it("every post includes a source note", () => {
+    expect(getBlogPosts().every((post) => post.body.some((line) => line.startsWith("**Source note:**")))).toBe(true)
+  })
+
+  it("every post is long-form enough for the editorial blog", () => {
+    expect(getBlogPosts().every((post) => post.body.length >= 8)).toBe(true)
+  })
+
   it("publishedAt matches YYYY-MM-DD format", () => {
     const re = /^\d{4}-\d{2}-\d{2}$/
     for (const post of getBlogPosts()) {
