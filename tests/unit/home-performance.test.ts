@@ -36,6 +36,10 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).not.toContain('<DeferredHomeSection id="events"')
     })
 
+    it("only realigns deferred hash targets when the mounted section still owns the current hash", () => {
+        expect(homePage).toContain("if (window.location.hash !== `#${id}`) return")
+    })
+
     it("mounts the services section eagerly so fast scrolling from events never lands on a blank deferred placeholder", () => {
         expect(homePage).toContain('import { Services } from "@/components/services"')
         expect(homePage).toContain("<Services />")

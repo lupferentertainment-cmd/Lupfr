@@ -48,17 +48,16 @@ function deferredSectionRootMargin(): string {
   return DEFERRED_SECTION_ROOT_MARGIN_DESKTOP
 }
 
-function scrollCurrentHashTargetIntoView(): void {
-  const id = window.location.hash.slice(1)
-  if (!id) return
+function scrollHashTargetIntoView(id: string): void {
+  if (window.location.hash !== `#${id}`) return
   window.requestAnimationFrame(() => {
     document.getElementById(id)?.scrollIntoView({ block: "start" })
   })
 }
 
-function scheduleHashTargetRealignment(): number[] {
+function scheduleHashTargetRealignment(id: string): number[] {
   return HASH_REALIGN_DELAYS_MS.map((delay) =>
-    window.setTimeout(scrollCurrentHashTargetIntoView, delay)
+    window.setTimeout(() => scrollHashTargetIntoView(id), delay)
   )
 }
 
@@ -119,9 +118,9 @@ function DeferredHomeSection({
 
   useEffect(() => {
     if (!shouldMount) return
-    const timeoutIds = scheduleHashTargetRealignment()
+    const timeoutIds = scheduleHashTargetRealignment(id)
     return () => clearHashTargetRealignment(timeoutIds)
-  }, [shouldMount])
+  }, [id, shouldMount])
 
   if (shouldMount) return <>{children}</>
 
