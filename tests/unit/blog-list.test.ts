@@ -1,6 +1,26 @@
 import { describe, expect, it } from "vitest"
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/data/blog"
 
+const SPECIFIC_BLOG_TERMS: Record<string, string[]> = {
+  "week-of-june-15-lupfr-operating-notes": ["FIFA", "GAS MONEY", "ERIA"],
+  "yacht-edition-photo-language": ["Boiler Boat", "Pier 40"],
+  "turning-gallery-moments-into-memory": ["Where's West"],
+  "guest-flow-before-doors-open": ["GAS MONEY", "ERIA"],
+  "partner-proof-without-killing-the-room": ["Third Thursday", "Operator SF"],
+  "why-the-flyer-still-matters": ["BOILER PARTY", "MARINA"],
+  "artist-room-fit-not-just-lineup-size": ["Where's West"],
+  "building-the-next-event-from-the-last-one": ["Shamrock & House"],
+  "the-first-90-days-building-lupfr": ["BOILER PARTY", "first 90 days"],
+  "why-we-design-events-like-story-arcs": ["Boiler Boat"],
+  "what-we-changed-after-three-packed-weekends": ["packed weekends"],
+}
+
+const OPINION_MARKERS = ["My opinion:", "I refuse", "My stance:", "My take:"]
+
+function postText(slug: string) {
+  return getBlogPostBySlug(slug)?.body.join("\n") ?? ""
+}
+
 describe("getBlogPosts", () => {
   it("returns a non-empty array", () => {
     expect(getBlogPosts().length).toBeGreaterThan(0)
@@ -69,6 +89,18 @@ describe("getBlogPosts", () => {
 
   it("every post is long-form enough for the editorial blog", () => {
     expect(getBlogPosts().every((post) => post.body.length >= 24)).toBe(true)
+  })
+
+  it("every post names its specific event or situation", () => {
+    expect(Object.entries(SPECIFIC_BLOG_TERMS).every(([slug, terms]) => terms.some((term) => postText(slug).includes(term)))).toBe(true)
+  })
+
+  it("every post uses first-person operator voice", () => {
+    expect(getBlogPosts().every((post) => /\bI\b|\bwe\b|\bmy\b|\bour\b/i.test(post.body.join("\n")))).toBe(true)
+  })
+
+  it("every post states an opinionated thesis", () => {
+    expect(getBlogPosts().every((post) => OPINION_MARKERS.some((marker) => post.body.join("\n").includes(marker)))).toBe(true)
   })
 
   it("publishedAt matches YYYY-MM-DD format", () => {

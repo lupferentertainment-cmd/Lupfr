@@ -16,6 +16,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- Rewrote every blog article as a specific first-person LUPFR operator story tied to named events/situations (ERIA week, Boiler Boat, Where's West?, GAS MONEY, Third Thursday's, BOILER PARTY, Shamrock & House, and packed-weekend debriefs) and added unit guardrails requiring named situations, first-person voice, and opinionated thesis markers.
+
 - Expanded every blog article into a denser long-read version with additional LUPFR event-growth, operations, candidate-set, recap, and partner-proof detail; tightened the article title/prose typography for smaller, more readable long-form blog pages.
 
 - Reworked all blog posts into long-form LUPFR event-operator essays focused on event growth, candidate-set thinking, guest flow, partner proof, artist-room fit, recap systems, and creative/business process; blog article bodies now support markdown-style headings, bullets, pull quotes, and source-note cards with thinner animated prose typography.
