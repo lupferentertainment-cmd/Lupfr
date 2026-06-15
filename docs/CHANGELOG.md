@@ -16,6 +16,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- Expanded every blog article into a denser long-read version with additional LUPFR event-growth, operations, candidate-set, recap, and partner-proof detail; tightened the article title/prose typography for smaller, more readable long-form blog pages.
+
 - Reworked all blog posts into long-form LUPFR event-operator essays focused on event growth, candidate-set thinking, guest flow, partner proof, artist-room fit, recap systems, and creative/business process; blog article bodies now support markdown-style headings, bullets, pull quotes, and source-note cards with thinner animated prose typography.
 
 - Updated the public **Call us** phone number on the contact card to **(323) 366-9246** and replaced numeric visitor phone placeholders with neutral copy so stale-looking example numbers no longer appear on the site. Locked with a source-level visual contract in `tests/unit/look-and-feel.test.ts` and documented in `docs/DESIGN.md`.

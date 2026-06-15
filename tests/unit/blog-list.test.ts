@@ -68,7 +68,7 @@ describe("getBlogPosts", () => {
   })
 
   it("every post is long-form enough for the editorial blog", () => {
-    expect(getBlogPosts().every((post) => post.body.length >= 8)).toBe(true)
+    expect(getBlogPosts().every((post) => post.body.length >= 24)).toBe(true)
   })
 
   it("publishedAt matches YYYY-MM-DD format", () => {

@@ -129,12 +129,12 @@ export default async function BlogPostPage({ params }: BlogPageParams) {
         <article className="container mx-auto grid max-w-5xl gap-9 px-4 pb-20 sm:px-6 sm:pb-28">
           <header>
             <ArticleMeta post={post} />
-            <h1 className="mt-5 font-serif text-5xl font-bold leading-none tracking-tight text-foreground sm:text-6xl md:text-7xl">{post.title}</h1>
+            <h1 className="mt-5 font-serif text-4xl font-bold leading-none tracking-tight text-foreground sm:text-5xl md:text-6xl">{post.title}</h1>
             <Link href="/blog" prefetch className="mt-6 inline-flex w-fit items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <ArrowLeft size={16} aria-hidden />
               Back to blog
             </Link>
-            <p className="mt-6 max-w-3xl text-xl leading-8 text-muted-foreground">{post.excerpt}</p>
+            <p className="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{post.excerpt}</p>
           </header>
           <ArticleCover post={post} />
           <ArticleBody post={post} />

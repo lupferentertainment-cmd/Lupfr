@@ -861,9 +861,9 @@
 .blog-article-prose {
   color: color-mix(in oklch, var(--foreground) 88%, var(--muted-foreground));
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-  font-size: clamp(0.98rem, 0.94rem + 0.18vw, 1.08rem);
+  font-size: clamp(0.9rem, 0.86rem + 0.15vw, 1rem);
   font-weight: 300;
-  line-height: 1.95;
+  line-height: 1.9;
   letter-spacing: -0.012em;
 }
 
@@ -891,7 +891,7 @@
   margin-top: 2.7rem;
   margin-bottom: 0.9rem;
   font-family: var(--font-serif), ui-serif, serif;
-  font-size: clamp(1.9rem, 1.5rem + 1.75vw, 3.35rem);
+  font-size: clamp(1.65rem, 1.35rem + 1.35vw, 2.85rem);
   font-weight: 700;
   letter-spacing: -0.055em;
   line-height: 1.02;
@@ -935,7 +935,7 @@
   padding: 0.4rem 0 0.4rem 1.25rem;
   color: color-mix(in oklch, var(--foreground) 94%, var(--gold));
   font-family: var(--font-serif), ui-serif, serif;
-  font-size: clamp(1.35rem, 1.1rem + 1vw, 2.15rem);
+  font-size: clamp(1.15rem, 1rem + 0.8vw, 1.85rem);
   font-style: italic;
   font-weight: 500;
   letter-spacing: -0.035em;
