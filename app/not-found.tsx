@@ -3,7 +3,7 @@
 export default function NotFound() {
   return (
     <main className="relative min-h-screen overflow-x-clip flex flex-col items-center justify-center px-4 py-24 sm:py-32 text-center">
-      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Keep 404 free of next/link client references. */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Keep 404 free of framework client link references. */}
       <a href="/" className="mb-10 block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-2xl">
         <img
           src="/logos/will_logo.png"
@@ -20,7 +20,7 @@ export default function NotFound() {
       <p className="text-muted-foreground max-w-md mb-10 leading-relaxed">
         This URL isn&apos;t on our site. Head back home or open Events from the menu.
       </p>
-      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Keep 404 free of next/link client references. */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Keep 404 free of framework client link references. */}
       <a
         href="/"
         className="inline-flex items-center justify-center px-8 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full"

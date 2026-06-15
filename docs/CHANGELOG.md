@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Added
 
+- Added the June 8-15, 2026 blog run in `data/blog.yml`, featured the newest post on `/blog`, and refreshed blog article pages with large image-backed layouts and title-first back navigation.
+- Disabled Next's experimental global 404 manifest path after production `next start` returned 500 for synthetic missing routes; unmatched URLs now rely on the self-contained `app/not-found.tsx` route while keeping the same public 404 behavior.
 - Gated **production promotion on the canonical full test suite**: `bun run promote:prod` now refuses to run unless local HEAD is the exact `origin/dev` commit being promoted, then re-runs `bun run test` against it before the typed confirmation and fast-forward push. Both deploy environments (staging Preview via `ship:dev`, production via `promote:prod`) now run the identical gate — including dynamic route/link QA, the asset crawl, and the browser console crawl — before any push. Contract-tested in `tests/unit/test-suite-gate.test.ts`; documented in `docs/DEPLOYMENT.md` and `docs/TESTING.md`.
 
 - Added the **dynamic asset-crawl integration suite** (`tests/integration/asset-crawl.test.ts`, `bun run _verify:assets`): boots the built production server, asserts every known route (static + blog slugs + event slugs) returns 200, and crawls each page's `<img>`/`<source>`/`<link>`/`<a>` asset references for 404s. Wired into `ci.sh` (`run_asset_checks`) so it runs inside `bun run test`. Also added the **look-and-feel CSS contract suite** (`tests/unit/look-and-feel.test.ts`) guarding typography, the gold visual system, and hero/partner/navigation/footer/animation contracts. Documented in `docs/TESTING.md`.

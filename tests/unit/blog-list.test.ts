@@ -6,6 +6,22 @@ describe("getBlogPosts", () => {
     expect(getBlogPosts().length).toBeGreaterThan(0)
   })
 
+  it("fills the blog through June 15", () => {
+    expect(getBlogPosts()[0]?.publishedAt).toBe("2026-06-15")
+  })
+
+  it("keeps a substantial blog run", () => {
+    expect(getBlogPosts().length).toBeGreaterThanOrEqual(11)
+  })
+
+  it("includes the filled June blog run", () => {
+    expect(getBlogPosts().length).toBeGreaterThanOrEqual(11)
+  })
+
+  it("fills posts through June 15", () => {
+    expect(getBlogPosts()[0]?.publishedAt).toBe("2026-06-15")
+  })
+
   it("sorts posts newest-first by publishedAt", () => {
     const posts = getBlogPosts()
     for (let i = 0; i < posts.length - 1; i++) {
@@ -34,6 +50,12 @@ describe("getBlogPosts", () => {
     for (const post of getBlogPosts()) {
       expect(Array.isArray(post.body)).toBe(true)
       expect(post.body.length, `${post.slug} has empty body`).toBeGreaterThan(0)
+    }
+  })
+
+  it("every post has body paragraphs", () => {
+    for (const post of getBlogPosts()) {
+      expect(post.body.length, `${post.slug} has no body`).toBeGreaterThan(0)
     }
   })
 
