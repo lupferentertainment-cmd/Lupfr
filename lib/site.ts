@@ -10,6 +10,12 @@ export const BLOG_HOST = "blog.lupfr.com" as const
 export const BLOG_URL = `https://${BLOG_HOST}` as const
 
 /**
+ * Temporary blog kill switch.
+ * Keep blog source/data intact, but make public blog routes undiscoverable and 404.
+ */
+export const BLOG_PUBLIC_ACCESS_ENABLED = false as const
+
+/**
  * Dedicated contact page (same form as the home `#contact` section). “Book an Event” CTAs use this.
  */
 export const CONTACT_PAGE_PATH = "/contact" as const

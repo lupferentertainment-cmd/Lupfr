@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ScheduleCallCta } from "@/components/schedule-call-cta"
-import { CONTACT_PAGE_PATH } from "@/lib/site"
+import { BLOG_PUBLIC_ACCESS_ENABLED, CONTACT_PAGE_PATH } from "@/lib/site"
 const HEADER_SCROLL_THRESHOLD_PX = 50
 const SECTION_SPY_OFFSET_PX = 120
 const SECTION_SPY_MIN_DELTA_PX = 96
 
-const navLinks = [
+const navLinksBase = [
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
@@ -23,6 +23,8 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ] as const
 
+// Blog is preserved in source, but hidden from navigation while public access is disabled.
+const navLinks = navLinksBase.filter((link) => BLOG_PUBLIC_ACCESS_ENABLED || link.href !== "/blog")
 const SECTION_IDS = navLinks.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1))
 
 function isPlainLeftClick(e: MouseEvent<HTMLAnchorElement>): boolean {

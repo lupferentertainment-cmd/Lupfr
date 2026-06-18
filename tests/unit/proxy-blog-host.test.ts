@@ -25,28 +25,35 @@ describe("proxy.ts source contracts", () => {
     expect(proxySource).toContain('"/api"')
   })
 
-  it("skips /blog prefix — already a blog route, no double-prefix", () => {
-    expect(proxySource).toContain('"/blog"')
+  it("has the temporary blog access kill switch wired in", () => {
+    expect(proxySource).toContain("BLOG_PUBLIC_ACCESS_ENABLED")
   })
 
   it("strips port before host comparison (isBlogHost)", () => {
     expect(proxySource).toContain('split(":")')
   })
 
-  it("rewrites root / to /blog, not /blog/", () => {
+  it("still names /blog as a guarded public path", () => {
     expect(proxySource).toContain('"/blog"')
-    expect(proxySource).toContain('`/blog${request.nextUrl.pathname}`')
   })
 })
 
 // ── behavioral tests via proxy() ──────────────────────────────────────────────
 
-const nextMock = vi.hoisted(() => ({
-  NextResponse: {
-    next: vi.fn(() => ({ type: "next" })),
-    rewrite: vi.fn((url: { pathname: string }) => ({ type: "rewrite", pathname: url.pathname })),
-  },
-}))
+const nextMock = vi.hoisted(() => {
+  class MockNextResponse {
+    status: number
+
+    constructor(_body?: string, init?: { status?: number }) {
+      this.status = init?.status ?? 200
+    }
+
+    static next = vi.fn(() => ({ type: "next" }))
+    static rewrite = vi.fn((url: { pathname: string }) => ({ type: "rewrite", pathname: url.pathname }))
+  }
+
+  return { NextResponse: MockNextResponse }
+})
 
 vi.mock("next/server", () => ({
   NextRequest: class {},
@@ -67,44 +74,40 @@ function buildRequest(pathname: string, host: string | null = null) {
   }
 }
 
-describe("proxy() — blog subdomain rewrite", () => {
+describe("proxy() — disabled blog access", () => {
   beforeEach(() => {
     nextMock.NextResponse.next.mockClear()
     nextMock.NextResponse.rewrite.mockClear()
   })
 
-  it("rewrites / to /blog for blog.lupfr.com", async () => {
+  it("returns 404 for blog.lupfr.com root", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/", "blog.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledOnce()
-    const arg = nextMock.NextResponse.rewrite.mock.calls[0][0] as { pathname: string }
-    expect(arg.pathname).toBe("/blog")
+    const res = proxy(buildRequest("/", "blog.lupfr.com") as never)
+    expect(res.status).toBe(404)
   })
 
-  it("rewrites /some-post to /blog/some-post for blog.lupfr.com", async () => {
+  it("returns 404 for blog.lupfr.com paths", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/some-post", "blog.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledOnce()
-    const arg = nextMock.NextResponse.rewrite.mock.calls[0][0] as { pathname: string }
-    expect(arg.pathname).toBe("/blog/some-post")
+    const res = proxy(buildRequest("/some-post", "blog.lupfr.com") as never)
+    expect(res.status).toBe(404)
   })
 
-  it("rewrites for blog.localhost (local dev)", async () => {
+  it("returns 404 for blog.localhost paths", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/about", "blog.localhost") as never)
-    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledOnce()
+    const res = proxy(buildRequest("/about", "blog.localhost") as never)
+    expect(res.status).toBe(404)
   })
 
-  it("strips port from host header before comparison", async () => {
+  it("returns 404 after stripping host ports", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/about", "blog.lupfr.com:443") as never)
-    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledOnce()
+    const res = proxy(buildRequest("/about", "blog.lupfr.com:443") as never)
+    expect(res.status).toBe(404)
   })
 
-  it("is case-insensitive for host header", async () => {
+  it("returns 404 for case-insensitive blog hosts", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/about", "BLOG.LUPFR.COM") as never)
-    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledOnce()
+    const res = proxy(buildRequest("/about", "BLOG.LUPFR.COM") as never)
+    expect(res.status).toBe(404)
   })
 
   it("passes through (next) for non-blog host", async () => {
@@ -132,16 +135,16 @@ describe("proxy() — blog subdomain rewrite", () => {
     expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
   })
 
-  it("skips rewrite for /blog path — already routed correctly", async () => {
+  it("returns 404 for /blog on the primary host", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/blog", "blog.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+    const res = proxy(buildRequest("/blog", "lupfr.com") as never)
+    expect(res.status).toBe(404)
   })
 
-  it("skips rewrite for /blog/slug paths — already routed correctly", async () => {
+  it("returns 404 for /blog/slug on the primary host", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/blog/some-post", "blog.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+    const res = proxy(buildRequest("/blog/some-post", "lupfr.com") as never)
+    expect(res.status).toBe(404)
   })
 
   it("skips rewrite for /favicon.ico on blog host", async () => {

@@ -6,7 +6,8 @@ import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { Navigation } from "@/components/navigation"
 import { getBlogPosts, type BlogPost } from "@/lib/data/blog"
-import { SITE_URL } from "@/lib/site"
+import { BLOG_PUBLIC_ACCESS_ENABLED, SITE_URL } from "@/lib/site"
+import { notFound } from "next/navigation"
 
 const BLOG_IMAGE_WIDTH = 1400
 const BLOG_IMAGE_HEIGHT = 900
@@ -114,6 +115,8 @@ function BlogGrid({ posts }: { posts: BlogPost[] }) {
 }
 
 export default function BlogIndexPage() {
+  // Temporarily disabled by owner request: preserve the blog implementation, but do not serve it publicly.
+  if (!BLOG_PUBLIC_ACCESS_ENABLED) notFound()
   const posts = getBlogPosts()
   return (
     <main className="relative min-h-screen overflow-x-clip">

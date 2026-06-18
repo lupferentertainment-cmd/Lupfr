@@ -254,6 +254,8 @@ check_200 "/llms.txt"
 check_content_type "/llms.txt" "text/plain"
 
 check_404 "${MISSING_PATH}"
+check_404 "/blog"
+check_404 "/blog/disabled-route-check"
 check_404 "/docs"
 check_404 "/docs/overview"
 check_404 "/README.md"

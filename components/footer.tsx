@@ -19,9 +19,9 @@ import {
 } from "@/lib/phone-list-preferences"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
-const footerLinks = {
-  company: [
+const companyLinksBase = [
     { name: "About", href: "#about" },
     { name: "Events", href: "#events" },
     { name: "Blog", href: "/blog" },
@@ -29,7 +29,11 @@ const footerLinks = {
     { name: "Services", href: "#services" },
     { name: "Careers", href: "/careers" },
     { name: "Contact", href: "#contact" },
-  ],
+] as const
+
+const footerLinks = {
+  // Blog remains authored in source, but is hidden while public access is disabled.
+  company: companyLinksBase.filter((link) => BLOG_PUBLIC_ACCESS_ENABLED || link.href !== "/blog"),
   social: [
     { name: "Instagram", href: LINKS.instagram },
     { name: "TikTok", href: LINKS.tiktok },

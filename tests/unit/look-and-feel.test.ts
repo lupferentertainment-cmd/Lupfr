@@ -16,6 +16,7 @@ const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", ".
 const css = fs.readFileSync(path.join(rootDir, "app", "globals.css"), "utf8")
 const homePage = fs.readFileSync(path.join(rootDir, "components", "home-page.tsx"), "utf8")
 const navigation = fs.readFileSync(path.join(rootDir, "components", "navigation.tsx"), "utf8")
+const siteConfig = fs.readFileSync(path.join(rootDir, "lib", "site.ts"), "utf8")
 const heroDesktop = fs.readFileSync(path.join(rootDir, "components", "hero-desktop.tsx"), "utf8")
 const heroMobile = fs.readFileSync(path.join(rootDir, "components", "hero-mobile-static.tsx"), "utf8")
 const eventsComponent = fs.readFileSync(path.join(rootDir, "components", "events.tsx"), "utf8")
@@ -191,8 +192,8 @@ describe("navigation structure", () => {
     }
   })
 
-  it("includes the Blog page link", () => {
-    expect(navigation).toContain('href: "/blog"')
+  it("hides the Blog page link while public access is disabled", () => {
+    expect(siteConfig).toContain("BLOG_PUBLIC_ACCESS_ENABLED = false")
   })
 
   it("uses lupfr-site-header class for the fixed header", () => {

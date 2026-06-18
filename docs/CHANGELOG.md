@@ -16,6 +16,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- Temporarily disabled public blog access without deleting blog source/content: `/blog`, `/blog/*`, and blog-host traffic now return 404, Blog is hidden from navigation/footer/sitemap/route crawls, and `BLOG_PUBLIC_ACCESS_ENABLED` documents the restoration switch.
+
 - Rewrote every blog article as a specific first-person LUPFR operator story tied to named events/situations (ERIA week, Boiler Boat, Where's West?, GAS MONEY, Third Thursday's, BOILER PARTY, Shamrock & House, and packed-weekend debriefs) and added unit guardrails requiring named situations, first-person voice, and opinionated thesis markers.
 
 - Expanded every blog article into a denser long-read version with additional LUPFR event-growth, operations, candidate-set, recap, and partner-proof detail; tightened the article title/prose typography for smaller, more readable long-form blog pages.

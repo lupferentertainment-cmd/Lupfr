@@ -5,6 +5,7 @@ import { join, relative } from 'node:path'
 import { EVENTS } from '@/lib/events'
 import { GALLERY_PHOTOS } from '@/lib/data/gallery'
 import { getBlogPosts } from '@/lib/data/blog'
+import { BLOG_PUBLIC_ACCESS_ENABLED } from '@/lib/site'
 
 const siteUrl = 'https://lupfr.com'
 
@@ -50,12 +51,17 @@ function routeToMetadata(route: string): MetadataRoute.Sitemap[number] {
   }
 }
 
+function isPublicRoute(route: string): boolean {
+  if (BLOG_PUBLIC_ACCESS_ENABLED) return true
+  return route !== '/blog' && !route.startsWith('/blog/')
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appRoot = join(process.cwd(), 'app')
-  const staticRoutes = await collectStaticAppRoutes(appRoot, appRoot)
+  const staticRoutes = (await collectStaticAppRoutes(appRoot, appRoot)).filter(isPublicRoute)
   const eventRoutes = EVENTS.map((event) => `/events/${event.slug}`)
   const galleryPhotoRoutes = GALLERY_PHOTOS.map((p) => `/gallery/p/${p.id}`)
-  const blogRoutes = getBlogPosts().map((post) => `/blog/${post.slug}`)
+  const blogRoutes = BLOG_PUBLIC_ACCESS_ENABLED ? getBlogPosts().map((post) => `/blog/${post.slug}`) : []
 
   const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...galleryPhotoRoutes, ...blogRoutes])].sort((a, b) =>
     a.localeCompare(b)

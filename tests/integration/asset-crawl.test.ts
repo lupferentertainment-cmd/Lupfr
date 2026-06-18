@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { getBlogPosts } from "@/lib/data/blog"
 import { EVENTS } from "@/lib/events"
+import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
 const rootDir = join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 
@@ -134,14 +135,16 @@ async function fetchHtml(path: string): Promise<{ status: number; html: string }
 function buildRoutes(): string[] {
   const routes = new Set<string>([
     "/",
-    "/blog",
     "/careers",
     "/contact",
     "/gallery",
     "/privacy",
     "/terms",
   ])
-  for (const post of getBlogPosts()) routes.add(`/blog/${post.slug}`)
+  if (BLOG_PUBLIC_ACCESS_ENABLED) routes.add("/blog")
+  if (BLOG_PUBLIC_ACCESS_ENABLED) {
+    for (const post of getBlogPosts()) routes.add(`/blog/${post.slug}`)
+  }
   for (const e of EVENTS) routes.add(`/events/${e.slug}`)
   return Array.from(routes).sort()
 }

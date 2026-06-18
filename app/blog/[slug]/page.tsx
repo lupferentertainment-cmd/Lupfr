@@ -7,7 +7,7 @@ import { ArrowLeft, Clock3 } from "lucide-react"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/data/blog"
-import { SITE_URL } from "@/lib/site"
+import { BLOG_PUBLIC_ACCESS_ENABLED, SITE_URL } from "@/lib/site"
 
 const BLOG_IMAGE_WIDTH = 1400
 const BLOG_IMAGE_HEIGHT = 900
@@ -20,10 +20,12 @@ type BlogBlock = { kind: BlogBlockKind; text: string }
 type BlogBlockRenderer = (block: BlogBlock, index: number) => ReactElement
 
 export function generateStaticParams() {
+  if (!BLOG_PUBLIC_ACCESS_ENABLED) return []
   return getBlogPosts().map((post) => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({ params }: BlogPageParams): Promise<Metadata> {
+  if (!BLOG_PUBLIC_ACCESS_ENABLED) return { metadataBase: new URL(SITE_URL), title: "Not Found | LUPFR" }
   const { slug } = await params
   const post = getBlogPostBySlug(slug)
   if (!post) return { metadataBase: new URL(SITE_URL), title: "Blog | LUPFR" }
@@ -119,6 +121,8 @@ function TagRow({ post }: { post: BlogPost }) {
 }
 
 export default async function BlogPostPage({ params }: BlogPageParams) {
+  // Temporarily disabled by owner request: preserve the blog implementation, but do not serve it publicly.
+  if (!BLOG_PUBLIC_ACCESS_ENABLED) notFound()
   const { slug } = await params
   const post = getBlogPostBySlug(slug)
   if (!post) notFound()

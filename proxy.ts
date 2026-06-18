@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
 const BLOCKED_PREFIXES = ["/docs", "/_docs"]
 const BLOG_HOSTS = ["blog.localhost", "blog.lupfr.com"]
@@ -27,6 +28,8 @@ const BLOCKED_ROOT_PATHS = new Set([
   "/testing.md",
 ])
 
+const BLOG_DISABLED_EXACT = new Set(["/blog"])
+
 function shouldBlock(pathname: string): boolean {
   const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
 
@@ -35,6 +38,24 @@ function shouldBlock(pathname: string): boolean {
   }
 
   return BLOCKED_ROOT_PATHS.has(normalized)
+}
+
+function notFoundResponse(): NextResponse {
+  return new NextResponse("Not Found", {
+    status: 404,
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Robots-Tag": "noindex, nofollow, noarchive",
+    },
+  })
+}
+
+function shouldBlockBlogAccess(pathname: string, hostHeader: string | null): boolean {
+  if (BLOG_PUBLIC_ACCESS_ENABLED) return false
+  const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  if (BLOG_DISABLED_EXACT.has(normalized) || normalized.startsWith("/blog/")) return true
+  return isBlogHost(hostHeader) && !shouldSkipBlogRewrite(pathname)
 }
 
 function isBlogHost(hostHeader: string | null): boolean {
@@ -60,20 +81,17 @@ function rewriteBlogHost(request: NextRequest): NextResponse | null {
 }
 
 export function proxy(request: NextRequest) {
+  if (shouldBlockBlogAccess(request.nextUrl.pathname, request.headers.get("host"))) {
+    return notFoundResponse()
+  }
+
   if (!shouldBlock(request.nextUrl.pathname)) {
     const rewritten = rewriteBlogHost(request)
     if (rewritten) return rewritten
     return NextResponse.next()
   }
 
-  return new NextResponse("Not Found", {
-    status: 404,
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-store",
-      "X-Robots-Tag": "noindex, nofollow, noarchive",
-    },
-  })
+  return notFoundResponse()
 }
 
 export const config = {
