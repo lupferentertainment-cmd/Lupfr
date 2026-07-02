@@ -63,9 +63,9 @@ describe("canonical package workflow gate", () => {
         expect(shipDevScript).toContain("SEO/Lighthouse audits on protected previews")
     })
 
-    it("runs the full gate before the Vercel deploy build", () => {
+    it("runs the sandbox-safe gate subset before the Vercel deploy build", () => {
         expect(vercelConfig.buildCommand).toBe(
-            "LUPFR_SKIP_BROWSER_CHECK=1 VERIFY_ROUTES_SKIP_EXTERNAL=1 bun run test && bun run _build"
+            "LUPFR_SKIP_BROWSER_CHECK=1 LUPFR_SKIP_ROUTE_CHECK=1 LUPFR_SKIP_ASSET_CRAWL=1 bun run test && bun run _build"
         )
     })
 

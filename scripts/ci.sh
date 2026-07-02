@@ -52,18 +52,23 @@ run_build_checks() {
 }
 
 run_route_checks() {
+  # Route smoke boots `next start` and crawls it over HTTP. Skippable for build
+  # sandboxes (e.g. Vercel's build step) that cannot host a server; GitHub Actions
+  # runs it in full on every push.
+  [[ "${LUPFR_SKIP_ROUTE_CHECK:-0}" != "1" ]] || return 0
   bun run _verify:routes
   restore_next_snapshots
 }
 
 run_asset_checks() {
-  [[ "$MODE" == "ci" ]] || return
+  # Asset crawl also boots `next start`; same sandbox caveat as run_route_checks.
+  [[ "$MODE" == "ci" && "${LUPFR_SKIP_ASSET_CRAWL:-0}" != "1" ]] || return 0
   bunx vitest run tests/integration/asset-crawl.test.ts
   restore_next_snapshots
 }
 
 run_browser_checks() {
-  [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]] || return
+  [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]] || return 0
   bun run _verify:console
   restore_next_snapshots
 }

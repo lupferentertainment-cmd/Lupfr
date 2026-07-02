@@ -4,6 +4,16 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+## [1.19.1] - 2026-07-02
+
+### Fixed
+
+- **Vercel pre-deploy gate now passes in the build sandbox.** The `1.19.0` gate failed the Vercel build: (1) `scripts/ci.sh` skip guards used `[[ … ]] || return`, which under `set -euo pipefail` returned the failed test's exit code (1) and aborted the run whenever a check was skipped (e.g. the browser crawl) — fixed to `return 0`; (2) the gate also booted `next start` and crawled it over HTTP (route smoke, asset crawl), which a Vercel **build** container cannot host. `vercel.json` `buildCommand` is now `LUPFR_SKIP_BROWSER_CHECK=1 LUPFR_SKIP_ROUTE_CHECK=1 LUPFR_SKIP_ASSET_CRAWL=1 bun run test && bun run _build` — the **sandbox-safe subset** (raster, smoke, lint, coverage, strict typecheck, production build, client-bundle scan) still blocks a deploy on any type error, lint failure, failing/uncovered test, or broken build. The server/browser crawls run in full via `bun run ship:dev`, pre-commit, and GitHub Actions. `docs/TESTING.md` + `docs/DEPLOYMENT.md` updated; `test-suite-gate` pins the new command.
+
+### Added
+
+- **`dev.seaside.lupfr.com` staging host.** Added to the seaside host list in `proxy.ts` (and `SEASIDE_DEV_HOST` in `lib/site.ts`) so a dev-branch Vercel Preview serves the microsite at its own staging subdomain (assign the domain to the `dev` branch in Vercel). Modal inputs also gained `aria-label`s. Proxy-rewrite test added for the dev host.
+
 ## [1.19.0] - 2026-07-02
 
 ### Added
