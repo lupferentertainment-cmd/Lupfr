@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- **Team section restyle (owner request):** team cards now use the new reusable **`GoldCard`** shell (`components/gold-card.tsx`) — the Events-card squircle with gold accent border + gold wash on hover and pointer-only tilt — replacing the bordered/gold-glow card variant. Team portraits re-cropped to clean 1000×800 photos (baked gold frame + caption strip removed from the source artwork). Added the **Team** link to the primary nav (between About and Contact; locked in `tests/unit/look-and-feel.test.ts`).
+
 - **Mobile load-time fix: production build switched from `next build --webpack` back to the default Turbopack build** (`package.json` `_build`). On Next 16.1.6 the webpack fallback ships Next devtools-overlay code in the root client JS: ~362 KB gzip (1.3 MB raw) on every page vs ~129 KB gzip (442 KB raw) with Turbopack — ~233 KB gzip less JavaScript to download/parse per page, the dominant mobile cost. The old Turbopack client-reference manifest gap on dynamic routes no longer reproduces: the full gate (dynamic-route smoke, asset crawl, Playwright console crawl against `next start`) passes on the Turbopack build. `EmptyPagesManifestPlugin` stays in `next.config.mjs` for explicit `--webpack` builds. Documented in `docs/DEPLOYMENT.md` / `docs/ARCHITECTURE.md`. **Verify dynamic routes (`/events/[slug]`, `/gallery/p/[id]`, APIs) on the Vercel Preview before promoting.**
 
 ### Added

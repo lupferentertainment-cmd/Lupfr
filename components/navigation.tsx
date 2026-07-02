@@ -20,6 +20,7 @@ const navLinksBase = [
   { name: "Blog", href: "/blog" },
   { name: "Gallery", href: "#gallery" },
   { name: "About", href: "#about" },
+  { name: "Team", href: "#team" },
   { name: "Contact", href: "#contact" },
 ] as const
 

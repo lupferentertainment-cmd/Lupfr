@@ -186,7 +186,7 @@ describe("partner logo CSS system", () => {
 
 describe("navigation structure", () => {
   it("defines all expected section nav links", () => {
-    const expected = ["#events", "#services", "#artists", "#gallery", "#about", "#contact"]
+    const expected = ["#events", "#services", "#artists", "#gallery", "#about", "#team", "#contact"]
     for (const href of expected) {
       expect(navigation, `nav missing link to ${href}`).toContain(`href: "${href}"`)
     }
