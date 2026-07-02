@@ -232,6 +232,50 @@
   opacity: var(--partner-logo-opacity-natural);
 }
 
+/*
+ * Corporate partners marquee: single-row continuous auto-scroll.
+ * The track renders the partner list twice back-to-back and animates
+ * translateX 0 -> -50%; since both halves are identical width, the loop
+ * point is seamless. Hover/focus pauses the scroll so logos stay clickable.
+ */
+.partner-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+}
+
+.partner-marquee-track {
+  width: max-content;
+  animation: partner-marquee-scroll 50s linear infinite;
+}
+
+.partner-marquee:hover .partner-marquee-track,
+.partner-marquee:focus-within .partner-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes partner-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .partner-marquee-track {
+    animation: none;
+  }
+}
+
 /* Circular partner tiles: card surface tracks theme so mono marks stay legible */
 .partner-logo-chip {
   box-shadow:

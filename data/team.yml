@@ -1,0 +1,27 @@
+# LUPFR team. Images go in public/images/team/; reference as /images/team/filename.webp
+# Each image is a pre-designed 800x800 card with the person's name/title/location baked
+# into the artwork — keep the text block below the image, not overlaid.
+
+- name: Will Lupfer
+  title: CEO & Founder
+  location: Los Angeles & San Francisco
+  image: /images/team/will.webp
+  bio: "Will founded LUPFR to bring intentional, artist-first production to live music and events across San Francisco and Los Angeles. Splitting his time between both markets, he leads sponsorship, brand strategy, and the vision behind LUPFR's flagship franchises — from intimate boiler-room sets to full-scale yacht takeovers. An active DJ with a deep personal passion for curated nightlife, Will built the company from the ground up while balancing it alongside a background in infrastructure finance."
+
+- name: Zac Brosky
+  title: Event Manager
+  location: Los Angeles, CA
+  image: /images/team/zac.webp
+  bio: "A recent graduate of Loyola Marymount University, Zac spent the last few years as the singer and builder of Midfield Avenue, an LA based band that has also hosted events with emerging artists across California. As both a producer and performer, he's seen firsthand how thoughtfully designed environments elevate the experience for artists and fans alike. Zac handles everything from event production and contractor management to artist relations. He is also a key lead in building out the Los Angeles market, with a focus on our sub-brand \"SEA//SIDE\"."
+
+- name: Mateen Malekinejad
+  title: Event Manager
+  location: San Francisco, CA
+  image: /images/team/mateen.webp
+  bio: "Mateen is a rising senior at San Francisco State University where he has built a strong foundation in event coordination and on-the-ground execution. His experience reflects a hands-on familiarity with SF's local venue and nightlife landscape, developed through direct work in event logistics and production. He brings a detail-oriented, execution-first approach to every project he takes on. Mateen is the co-manager of events in SF alongside the founder, Will Lupfer."
+
+- name: Kylie Cortez
+  title: Legal & Events Intern
+  location: Los Angeles, CA
+  image: /images/team/kylie.webp
+  bio: "Kylie, a rising Senior at USC's Gould School of Law, has long been drawn to music's unique ability to curate spaces for connection and exploration, an interest that has shaped her academic and professional path. She brings an interdisciplinary lens to her work, combining an interest in the legal and operational sides of event production with a genuine passion for the creative and community-building power of live experiences. She assists with everything in SF related to events, contracts, or venue operations."

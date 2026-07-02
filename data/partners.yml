@@ -3,6 +3,12 @@
 # logoTreatment: outline = thin strokes; solid = softer mono; natural = no filter (full-color).
 # imageDark: optional dark-mode variant (e.g. soundcheck_dark.webp); falls back to image if absent.
 
+- name: Vybes
+  url: https://www.vybes.co/
+  image: /corporate_partners/vybes.webp
+  # No logoTreatment: asset is already black-on-transparent, default mono silhouette applies.
+  imageClassName: scale-[0.9]
+
 - name: Umbrella
   url: https://umbrellalive.com
   image: /corporate_partners/umbrella.webp
@@ -14,24 +20,33 @@
   image: /corporate_partners/eria.webp
   imageClassName: scale-[0.88]
 
-- name: Venn Social
-  url: https://vennsocial.co
-  image: /corporate_partners/venn_social.webp
-  # Mono filters collapse this asset to a flat disc; keep full color.
-  logoTreatment: natural
-  imageClassName: scale-[0.92]
-
-- name: Brixton Bar SF
-  url: https://thebrixtonsf.com
-  image: /corporate_partners/brixton.webp
-  logoTreatment: outline
-  imageClassName: scale-[0.9]
-
 - name: Nazarian Law
   url: https://nazarianfirm.com
   image: /corporate_partners/nazarian_law.webp
   logoTreatment: natural
   imageClassName: scale-[0.92]
+
+- name: SEA//SIDE
+  url: https://www.instagram.com/seaside.la/
+  image: /corporate_partners/seaside.webp
+  logoTreatment: natural
+  # Square asset with a baked-in black background (white wordmark); the chip is a circle
+  # with internal padding, so scale up well past 1x to go full-bleed and let the corners
+  # crop away outside the circle instead of showing as a black square-in-circle.
+  imageClassName: scale-[1.6]
+
+- name: City Cruises
+  url: https://www.cityexperiences.com/city-cruises/
+  image: /corporate_partners/city_cruises.webp
+  logoTreatment: natural
+
+- name: Mutuals
+  url: https://apps.apple.com/us/app/mutuals-experiences-plans/id6760976464
+  image: /corporate_partners/mutuals.webp
+  logoTreatment: natural
+  # Same full-bleed situation as SEA//SIDE: square app-tile asset, scale past 1x so it
+  # fills the circular chip and the corners crop away.
+  imageClassName: scale-[1.6]
 
 - name: Empress Yachts
   url: https://www.empressevents.com
@@ -40,7 +55,14 @@
   imageClassName: scale-[0.9]
 
 - name: Soundcheck
-  image: /corporate_partners/soundcheck_light.webp
-  imageDark: /corporate_partners/soundcheck_dark.webp
+  image: /corporate_partners/soundcheck.webp
   logoTreatment: natural
-  imageClassName: scale-[1.18]
+  # Square asset with a baked-in cream background; same full-bleed treatment as
+  # SEA//SIDE/Mutuals so it fills the circular chip and the corners crop away.
+  imageClassName: scale-[1.6]
+
+- name: Brixton Bar SF
+  url: https://thebrixtonsf.com
+  image: /corporate_partners/brixton.webp
+  logoTreatment: outline
+  imageClassName: scale-[0.9]

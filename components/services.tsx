@@ -318,23 +318,37 @@ export function Services() {
             <br />
             <span className="lupfr-heading-subline">Partners</span>
           </h2>
-          <div
-            className={cn(
-              "mx-auto flex max-w-5xl flex-wrap justify-center gap-x-8 gap-y-10",
-              "sm:gap-x-6 sm:gap-y-8 md:gap-x-8 lg:gap-x-10"
-            )}
-          >
-            {partners.map((p) => (
-              <PartnerLogoChip
-                key={p.name}
-                name={p.name}
-                image={p.image}
-                imageDark={p.imageDark}
-                imageClassName={p.imageClassName}
-                ariaLabel={p.ariaLabel ?? p.name}
-                href={p.url}
-              />
-            ))}
+          <div className="partner-marquee w-full py-3 sm:py-4">
+            <div
+              className={cn(
+                "partner-marquee-track flex items-center gap-x-8",
+                "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+              )}
+            >
+              {[false, true].map((isDuplicate) => (
+                <div
+                  key={isDuplicate ? "duplicate" : "primary"}
+                  aria-hidden={isDuplicate || undefined}
+                  inert={isDuplicate || undefined}
+                  className={cn(
+                    "flex shrink-0 items-center gap-x-8",
+                    "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+                  )}
+                >
+                  {partners.map((p) => (
+                    <PartnerLogoChip
+                      key={p.name}
+                      name={p.name}
+                      image={p.image}
+                      imageDark={p.imageDark}
+                      imageClassName={p.imageClassName}
+                      ariaLabel={p.ariaLabel ?? p.name}
+                      href={p.url}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </ScrollReveal>

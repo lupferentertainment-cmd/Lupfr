@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { motion, useInView, useScroll, useTransform, animate, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
-import { Sparkles, Users, Zap } from "lucide-react"
+import { MapPin, Sparkles, Users, Zap } from "lucide-react"
 
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
@@ -246,6 +246,10 @@ export function About() {
                 <div className="w-16 h-px bg-accent" />
                 <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR</p>
               </div>
+              <p className="flex items-center gap-2 text-muted-foreground text-sm">
+                <MapPin size={14} className="shrink-0" aria-hidden />
+                87 N Raymond, Pasadena, CA
+              </p>
             </div>
             {/* Portrait: dark = vignette fade into section; light = minimal overlay so the photo stays clear */}
             <div className="relative w-full max-w-sm mb-8 overflow-hidden rounded-2xl ring-1 ring-black/[0.06] dark:ring-0">

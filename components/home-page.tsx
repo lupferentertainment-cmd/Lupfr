@@ -24,6 +24,12 @@ const About = dynamic(() =>
   ),
   { ssr: false }
 )
+const Team = dynamic(() =>
+  import("@/components/team").then((m) =>
+    resolveDynamicComponent(m, "Team", "@/components/team")
+  ),
+  { ssr: false }
+)
 const Contact = dynamic(() =>
   import("@/components/contact").then((m) =>
     resolveDynamicComponent(m, "Contact", "@/components/contact")
@@ -150,6 +156,9 @@ export function HomePage() {
       </DeferredHomeSection>
       <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
         <About />
+      </DeferredHomeSection>
+      <DeferredHomeSection id="team" estimatedHeightClassName="min-h-[1200px] md:min-h-[900px]">
+        <Team />
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         <Contact />
