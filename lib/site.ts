@@ -11,8 +11,12 @@ export const BLOG_URL = `https://${BLOG_HOST}` as const
 
 /**
  * SEA // SIDE microsite host and URL (app/seaside served via proxy host rewrite).
+ * Production is `seaside.lupfr.com`; the `dev` branch Preview is reachable at
+ * `dev.seaside.lupfr.com` (assign that domain to the `dev` branch in Vercel).
+ * `proxy.ts` rewrites all seaside hosts to `/seaside`.
  */
 export const SEASIDE_HOST = "seaside.lupfr.com" as const
+export const SEASIDE_DEV_HOST = "dev.seaside.lupfr.com" as const
 export const SEASIDE_URL = `https://${SEASIDE_HOST}` as const
 
 /**

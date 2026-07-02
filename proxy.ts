@@ -3,7 +3,7 @@ import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
 const BLOCKED_PREFIXES = ["/docs", "/_docs"]
 const BLOG_HOSTS = ["blog.localhost", "blog.lupfr.com"]
-const SEASIDE_HOSTS = ["seaside.localhost", "seaside.lupfr.com"]
+const SEASIDE_HOSTS = ["seaside.localhost", "seaside.lupfr.com", "dev.seaside.lupfr.com"]
 const BLOG_SKIP_PREFIXES = ["/_next", "/api"]
 const BLOG_SKIP_EXACT = new Set([
   "/favicon.ico",

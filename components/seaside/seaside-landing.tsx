@@ -1468,6 +1468,7 @@ function SeasideModal(props: ModalProps) {
                                     value={form.name}
                                     onChange={(event) => onChange("name", event.target.value)}
                                     placeholder="Full name"
+                                    aria-label="Full name"
                                     required
                                     className="ss-input"
                                     style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
@@ -1477,6 +1478,7 @@ function SeasideModal(props: ModalProps) {
                                     onChange={(event) => onChange("email", event.target.value)}
                                     type="email"
                                     placeholder="Email address"
+                                    aria-label="Email address"
                                     required
                                     className="ss-input"
                                     style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
@@ -1485,6 +1487,7 @@ function SeasideModal(props: ModalProps) {
                                     value={form.three}
                                     onChange={(event) => onChange("three", event.target.value)}
                                     placeholder={copy.field3}
+                                    aria-label={copy.field3}
                                     className="ss-input"
                                     style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />
@@ -1492,6 +1495,7 @@ function SeasideModal(props: ModalProps) {
                                     value={form.four}
                                     onChange={(event) => onChange("four", event.target.value)}
                                     placeholder={copy.field4}
+                                    aria-label={copy.field4}
                                     className="ss-input"
                                     style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />

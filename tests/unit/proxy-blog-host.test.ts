@@ -186,6 +186,12 @@ describe("proxy() — seaside host rewrite", () => {
     expect(res.pathname).toBe("/seaside/editions")
   })
 
+  it("rewrites the dev.seaside.lupfr.com staging host root to /seaside", async () => {
+    const { proxy } = await import("@/proxy")
+    const res = proxy(buildRequest("/", "dev.seaside.lupfr.com") as never) as { pathname?: string }
+    expect(res.pathname).toBe("/seaside")
+  })
+
   it("skips rewrite for /_next/* on seaside host", async () => {
     const { proxy } = await import("@/proxy")
     proxy(buildRequest("/_next/static/chunks/main.js", "seaside.lupfr.com") as never)
