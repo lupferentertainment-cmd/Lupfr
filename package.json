@@ -13,7 +13,7 @@
     "prepare": "bun scripts/install-pre-commit.js",
     "ci": "bun run test",
     "_generate-data": "bun scripts/generate-data.js",
-    "_build": "bun run _generate-data && bun run _typecheck && bun scripts/clean-next-dist.mjs && bunx --bun next build --webpack",
+    "_build": "bun run _generate-data && bun run _typecheck && bun scripts/clean-next-dist.mjs && bunx --bun next build",
     "_serve": "bunx --bun next start",
     "_lint": "bunx eslint .",
     "_typecheck": "bunx tsc --noEmit",

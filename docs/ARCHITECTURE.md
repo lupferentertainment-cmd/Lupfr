@@ -1,6 +1,6 @@
 # Architecture
 
-**High-level.** Single Next.js app (App Router). Static/semi-static pages driven by generated JSON; three API routes (`contact`, `newsletter`, `phone-list`). No database; no auth. The public build/verification gate is `bun run test`; internal build plumbing compiles YAML → JSON, then runs `bunx --bun next build --webpack`.
+**High-level.** Single Next.js app (App Router). Static/semi-static pages driven by generated JSON; three API routes (`contact`, `newsletter`, `phone-list`). No database; no auth. The public build/verification gate is `bun run test`; internal build plumbing compiles YAML → JSON, then runs `bunx --bun next build` (default Turbopack; see `docs/DEPLOYMENT.md` for why the old `--webpack` pin was dropped).
 
 **Layers.**
 

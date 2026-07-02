@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Changed
+
+- **Mobile load-time fix: production build switched from `next build --webpack` back to the default Turbopack build** (`package.json` `_build`). On Next 16.1.6 the webpack fallback ships Next devtools-overlay code in the root client JS: ~362 KB gzip (1.3 MB raw) on every page vs ~129 KB gzip (442 KB raw) with Turbopack — ~233 KB gzip less JavaScript to download/parse per page, the dominant mobile cost. The old Turbopack client-reference manifest gap on dynamic routes no longer reproduces: the full gate (dynamic-route smoke, asset crawl, Playwright console crawl against `next start`) passes on the Turbopack build. `EmptyPagesManifestPlugin` stays in `next.config.mjs` for explicit `--webpack` builds. Documented in `docs/DEPLOYMENT.md` / `docs/ARCHITECTURE.md`. **Verify dynamic routes (`/events/[slug]`, `/gallery/p/[id]`, APIs) on the Vercel Preview before promoting.**
+
 ### Added
 
 - **629 website updates (owner request 2026-06-29).** Corporate partners: added Vybes, SEA//SIDE, City Cruises, and Mutuals, replaced the Soundcheck light/dark pair with the new single logo, and reordered to the requested sequence with Venn Social kept in place (`data/partners.yml`); Maison Noir is pending a logo asset. The partner row is now a **single-row auto-scrolling marquee** (`.partner-marquee` in `app/globals.css`; pauses on hover/focus, `prefers-reduced-motion` falls back to a static scrollable row). Added the **Our Team** home section (`data/team.yml` → `lib/data/team.ts` → `components/team.tsx`, mounted as `#team` after About) with Will Lupfer, Zac Brosky, Mateen Malekinejad, and Kylie Cortez, portraits in `public/images/team/`. Added the office address line (87 N Raymond, Pasadena, CA) to the About section. Added the **BOILER PARTY: MARINA** gallery album (`public/gallery/boiler_party_marina/`, 8 photos, `data/gallery.yml` ids 74–81). Documented in `docs/DESIGN.md` and `docs/ARCHITECTURE.md`.
