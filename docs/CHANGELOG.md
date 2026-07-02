@@ -4,6 +4,12 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+## [1.19.2] - 2026-07-02
+
+### Changed
+
+- **Seaside domains wired on Vercel; staging public.** `seaside.lupfr.com` and `dev.seaside.lupfr.com` are attached to the `lupfr` Vercel project, with the dev host pinned to the `dev` git branch (serves the current staging Preview). Vercel Authentication is disabled for the project, so `dev.seaside.lupfr.com` / `dev.lupfr.com` review no longer requires a Vercel login. `docs/DEPLOYMENT.md` records the status.
+
 ## [1.19.1] - 2026-07-02
 
 ### Fixed
