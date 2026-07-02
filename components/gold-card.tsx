@@ -19,6 +19,7 @@ export function GoldCard({
   index = 0,
   isRevealed,
   enableTilt = true,
+  tiltMaxDeg = 6,
   className,
   children,
 }: {
@@ -28,14 +29,16 @@ export function GoldCard({
   isRevealed: boolean
   /** Disable on touch devices (pass `!isMobile`); tilt is pointer-only. */
   enableTilt?: boolean
+  /** Lean strength in degrees (events use 6; pass more for a pronounced lean). */
+  tiltMaxDeg?: number
   className?: string
   children: ReactNode
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), TILT_SPRING)
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), TILT_SPRING)
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [tiltMaxDeg, -tiltMaxDeg]), TILT_SPRING)
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-tiltMaxDeg, tiltMaxDeg]), TILT_SPRING)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!enableTilt || !cardRef.current) return
@@ -60,11 +63,13 @@ export function GoldCard({
       transition={{ duration: 0.45, delay: index * 0.08, ease: CARD_EASE }}
       className={cn(
         "group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border",
-        "hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl",
+        "hover:border-accent/60 transition-[border-color,box-shadow] duration-200 ease-out shadow-xl",
+        "hover:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.45),0_0_28px_rgba(168,130,52,0.28)]",
         className
       )}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileHover={{ scale: 1.02 }}
       style={enableTilt ? { rotateX, rotateY, transformPerspective: 800 } : { rotateX: 0, rotateY: 0 }}
     >
       {children}
@@ -76,6 +81,21 @@ export function GoldCard({
         )}
         aria-hidden
       />
+      {/* Gold glint: diagonal sheen sweeps across the card on hover */}
+      <div
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl"
+        aria-hidden
+      >
+        <div
+          className={cn(
+            "absolute inset-y-[-40%] -left-full w-1/2 rotate-12",
+            "bg-gradient-to-r from-transparent via-accent/20 to-transparent",
+            "opacity-0 group-hover:opacity-100 group-hover:translate-x-[300%]",
+            "motion-safe:transition-[transform,opacity] motion-safe:duration-700 motion-safe:ease-out",
+            "motion-reduce:hidden"
+          )}
+        />
+      </div>
     </motion.article>
   )
 }

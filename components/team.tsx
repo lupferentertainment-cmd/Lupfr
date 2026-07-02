@@ -37,7 +37,7 @@ function TeamCard({
   const [imageReady, setImageReady] = useState(false)
 
   return (
-    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile}>
+    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={10}>
       <motion.button
         type="button"
         onClick={onToggle}
