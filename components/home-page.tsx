@@ -157,7 +157,7 @@ export function HomePage() {
       <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
         <About />
       </DeferredHomeSection>
-      <DeferredHomeSection id="team" estimatedHeightClassName="min-h-[1200px] md:min-h-[900px]">
+      <DeferredHomeSection id="team" estimatedHeightClassName="min-h-[1600px] sm:min-h-[1000px] lg:min-h-[640px]">
         <Team />
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">

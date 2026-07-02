@@ -20,6 +20,13 @@
   image: /corporate_partners/eria.webp
   imageClassName: scale-[0.88]
 
+- name: Venn Social
+  url: https://vennsocial.co
+  image: /corporate_partners/venn_social.webp
+  # Mono filters collapse this asset to a flat disc; keep full color.
+  logoTreatment: natural
+  imageClassName: scale-[0.92]
+
 - name: Nazarian Law
   url: https://nazarianfirm.com
   image: /corporate_partners/nazarian_law.webp
