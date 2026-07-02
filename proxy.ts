@@ -3,6 +3,7 @@ import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
 const BLOCKED_PREFIXES = ["/docs", "/_docs"]
 const BLOG_HOSTS = ["blog.localhost", "blog.lupfr.com"]
+const SEASIDE_HOSTS = ["seaside.localhost", "seaside.lupfr.com"]
 const BLOG_SKIP_PREFIXES = ["/_next", "/api"]
 const BLOG_SKIP_EXACT = new Set([
   "/favicon.ico",
@@ -80,13 +81,35 @@ function rewriteBlogHost(request: NextRequest): NextResponse | null {
   return NextResponse.rewrite(url)
 }
 
+function isSeasideHost(hostHeader: string | null): boolean {
+  if (!hostHeader) return false
+  const host = hostHeader.toLowerCase().split(":")[0]
+  return SEASIDE_HOSTS.includes(host)
+}
+
+function shouldSkipSeasideRewrite(pathname: string): boolean {
+  const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  if (BLOG_SKIP_EXACT.has(normalized)) return true
+  if (normalized === "/seaside" || normalized.startsWith("/seaside/")) return true
+  return BLOG_SKIP_PREFIXES.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`))
+}
+
+function rewriteSeasideHost(request: NextRequest): NextResponse | null {
+  if (!isSeasideHost(request.headers.get("host"))) return null
+  if (shouldSkipSeasideRewrite(request.nextUrl.pathname)) return null
+
+  const url = request.nextUrl.clone()
+  url.pathname = request.nextUrl.pathname === "/" ? "/seaside" : `/seaside${request.nextUrl.pathname}`
+  return NextResponse.rewrite(url)
+}
+
 export function proxy(request: NextRequest) {
   if (shouldBlockBlogAccess(request.nextUrl.pathname, request.headers.get("host"))) {
     return notFoundResponse()
   }
 
   if (!shouldBlock(request.nextUrl.pathname)) {
-    const rewritten = rewriteBlogHost(request)
+    const rewritten = rewriteBlogHost(request) ?? rewriteSeasideHost(request)
     if (rewritten) return rewritten
     return NextResponse.next()
   }

@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "bun install",
-  "buildCommand": "bun run _build",
+  "buildCommand": "LUPFR_SKIP_BROWSER_CHECK=1 VERIFY_ROUTES_SKIP_EXTERNAL=1 bun run test && bun run _build",
   "bunVersion": "1.x"
 }

@@ -159,3 +159,54 @@ describe("proxy() — disabled blog access", () => {
     expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
   })
 })
+
+describe("proxy() — seaside host rewrite", () => {
+  beforeEach(() => {
+    nextMock.NextResponse.next.mockClear()
+    nextMock.NextResponse.rewrite.mockClear()
+  })
+
+  it("defines seaside.lupfr.com as a SEASIDE_HOST", () => {
+    expect(proxySource).toContain("seaside.lupfr.com")
+  })
+
+  it("defines seaside.localhost as a SEASIDE_HOST for local dev", () => {
+    expect(proxySource).toContain("seaside.localhost")
+  })
+
+  it("rewrites seaside.lupfr.com root to /seaside", async () => {
+    const { proxy } = await import("@/proxy")
+    const res = proxy(buildRequest("/", "seaside.lupfr.com") as never) as { pathname?: string }
+    expect(res.pathname).toBe("/seaside")
+  })
+
+  it("rewrites seaside.lupfr.com subpaths under /seaside", async () => {
+    const { proxy } = await import("@/proxy")
+    const res = proxy(buildRequest("/editions", "seaside.localhost:3000") as never) as { pathname?: string }
+    expect(res.pathname).toBe("/seaside/editions")
+  })
+
+  it("skips rewrite for /_next/* on seaside host", async () => {
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/_next/static/chunks/main.js", "seaside.lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+  })
+
+  it("skips rewrite for /api/* on seaside host", async () => {
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/api/phone-list", "seaside.lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+  })
+
+  it("skips rewrite for /seaside asset paths on seaside host", async () => {
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/seaside/hero-golden.webp", "seaside.lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+  })
+
+  it("does not rewrite the primary host to /seaside", async () => {
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/", "lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+  })
+})

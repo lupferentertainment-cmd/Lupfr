@@ -4,6 +4,16 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+## [1.19.0] - 2026-07-02
+
+### Added
+
+- **SEA // SIDE microsite (`seaside.lupfr.com`):** new self-contained route `app/seaside` rendering `components/seaside/seaside-landing.tsx`, a faithful port of the SEASIDE brief design comp (hero, concept, editions carousel with the 001/002 slates, featured-artist roster, partners, team, about-LUPFR, and the request-access / partner modal). Served via a blog-style host rewrite in `proxy.ts` (`seaside.lupfr.com`, `seaside.localhost`); WebP assets under `public/seaside/`; Anton/Inter via `next/font`; the modal posts to the existing `/api/phone-list` with the intent folded into the name field; the LUPFR phone-list popup is suppressed on seaside hosts. `SEASIDE_HOST`/`SEASIDE_URL` added to `lib/site.ts` with unit + proxy-rewrite tests. Domain attach is a one-time dashboard step (docs/DEPLOYMENT.md).
+
+### Changed
+
+- **Vercel pre-deploy gate:** `vercel.json` `buildCommand` now runs the canonical full gate before the deploy build — `LUPFR_SKIP_BROWSER_CHECK=1 VERIFY_ROUTES_SKIP_EXTERNAL=1 bun run test && bun run _build`. A red gate fails the Vercel build itself; browser console crawl (no Chromium in the build image) and external-link QA (flaky egress) stay covered by the unskipped GitHub Actions run.
+
 ## [1.18.0] - 2026-07-02
 
 ### Changed

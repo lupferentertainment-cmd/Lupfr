@@ -25,6 +25,8 @@ export function PhoneListPopup() {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     useEffect(() => {
+        // SEA//SIDE microsite (seaside.* hosts) has its own access flow — no LUPFR popup there.
+        if (window.location.hostname.startsWith("seaside.")) return
         const dismissed = hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
         const submitted = hasPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
         const dismissedByCookie = hasPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)

@@ -10,6 +10,12 @@ export const BLOG_HOST = "blog.lupfr.com" as const
 export const BLOG_URL = `https://${BLOG_HOST}` as const
 
 /**
+ * SEA // SIDE microsite host and URL (app/seaside served via proxy host rewrite).
+ */
+export const SEASIDE_HOST = "seaside.lupfr.com" as const
+export const SEASIDE_URL = `https://${SEASIDE_HOST}` as const
+
+/**
  * Temporary blog kill switch.
  * Keep blog source/data intact, but make public blog routes undiscoverable and 404.
  */
