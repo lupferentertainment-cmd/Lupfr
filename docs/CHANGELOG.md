@@ -4,6 +4,12 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+## [1.19.3] - 2026-07-02
+
+### Changed
+
+- **Staging requires Vercel login again.** Vercel Authentication (Standard Protection) re-enabled on the project: `dev.seaside.lupfr.com` / `dev.lupfr.com` gate behind Vercel SSO; production domains (`lupfr.com`, `seaside.lupfr.com`) remain public. Reverts the 1.19.2 protection-off note in `docs/DEPLOYMENT.md`.
+
 ## [1.19.2] - 2026-07-02
 
 ### Changed
