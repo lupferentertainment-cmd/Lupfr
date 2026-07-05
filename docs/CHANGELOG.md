@@ -4,6 +4,14 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Added
+
+- **SEA // SIDE motion/mobile regression tests (`tests/components/seaside-landing.behavior.test.tsx`):** RTL locks for the hero h1 staying real `SEA // SIDE` text under the word-stagger reveal, the perpetual Ken-Burns zoom + reduced-motion opt-out in the scoped CSS, the three uniform top-anchored `.ss-partner-logo` slots, and the burger-nav `aria` wiring with ≥5 section anchor links. `docs/TESTING.md` inventory updated.
+
+### Changed
+
+- **SEA // SIDE animation polish + logo alignment (`components/seaside/seaside-landing.tsx`):** the hero Ken-Burns zoom is restored to a clearly visible perpetual breathe (`ss-kb` now `scale 1→1.22` over 34s, infinite alternate, `will-change: transform` — was an imperceptible 1.05→1.18); new `AnimatedText` helper gives the hero h1 and every big Anton headline (Concept statement, Editions, Featured Artists, Partners, The Team, About, footer "The water is calling") a per-word blur/rise stagger reveal (words remain real text nodes, so wrapping and screen readers are unaffected; reduced motion collapses to a plain fade); partner/sponsor cards get a uniform 52px `.ss-partner-logo` slot so the LUPFR, Vybes, and Link Studios marks share one baseline (Link Studios uses a bordered "LS" monogram until it has a logo) and all three card headings now share one `clamp(26px,3vw,40px)` size. `docs/DESIGN.md` updated.
+- **SEA // SIDE motion + mobile pass (`components/seaside/seaside-landing.tsx`):** the hand-rolled IntersectionObserver `Reveal` is reimplemented on **framer-motion** (`LazyMotion` + `domAnimation` + `m.*` to keep the client bundle lean), adding staggered list reveals (concept cards, team, partner cards), a hero scroll parallax + staggered entrance with `scaleX` divider draw-ins, `AnimatePresence` crossfades for the editions image and featured-artist profile swaps, animated modal enter/exit, and shared hover/tap CTA micro-interactions — every effect gated on `useReducedMotion`. Mobile fixes: hamburger nav below 768px (inline links/CTA replaced by an animated dropdown with ≥44px tap targets), hero `100svh` + h1/tagline overflow fixes at 320–375px, `scrollMarginTop` 84 for anchor jumps, edition panels collapse to content height under 640px with an `auto-fit` tier grid and ≥44px carousel-dot hit areas, lineup portrait fills the row when wrapped, and the modal gets 16px inputs (no iOS focus zoom), a `100dvh`-capped scrollable dialog, and a 44×44 close button. Copy, colors, fonts, section ids, and the `/api/phone-list` contract are unchanged. `docs/DESIGN.md` + `docs/ARCHITECTURE.md` updated.
 ## [1.19.3] - 2026-07-02
 
 ### Changed

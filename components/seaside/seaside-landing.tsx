@@ -2,6 +2,15 @@
 
 import Image from "next/image"
 import {
+    AnimatePresence,
+    LazyMotion,
+    domAnimation,
+    m,
+    useReducedMotion,
+    useScroll,
+    useTransform,
+} from "framer-motion"
+import {
     type CSSProperties,
     type FormEvent,
     type ReactNode,
@@ -36,22 +45,32 @@ const SEASIDE_STYLES = `
 .ss-root ::-webkit-scrollbar-thumb { background: #22222b; }
 
 @keyframes ss-kb {
-  0% { transform: scale(1.05); }
-  100% { transform: scale(1.18); }
+  0% { transform: scale(1); }
+  100% { transform: scale(1.22); }
 }
-.ss-root .ss-hero-bg { animation: ss-kb 26s ease-in-out infinite alternate; }
+.ss-root .ss-hero-bg { animation: ss-kb 34s ease-in-out infinite alternate; will-change: transform; }
 
-.ss-root .ss-reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1.1s cubic-bezier(.2,.7,.2,1);
+.ss-root .ss-partner-logo { height: 52px; display: flex; align-items: center; margin-bottom: 16px; }
+
+.ss-root .ss-hero { min-height: 100vh; min-height: 100svh; }
+
+.ss-root .ss-nav-link { position: relative; transition: color .3s; }
+.ss-root .ss-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 6px;
+  height: 1px;
+  background: #5B8FCB;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
 }
-.ss-root .ss-reveal.ss-revealed { opacity: 1; transform: none; }
-
-.ss-root .ss-nav-link { transition: color .3s; }
+.ss-root .ss-nav-link:hover::after { transform: scaleX(1); }
 .ss-root .ss-nav-link:hover { color: #F5F5F2; }
 
-.ss-root .ss-nav-cta { transition: all .3s; }
+.ss-root .ss-nav-cta { transition: all .3s; padding: 11px 20px; }
 .ss-root .ss-nav-cta:hover { background: #3A6EA5; border-color: #3A6EA5; }
 
 .ss-root .ss-btn-solid { transition: all .3s; }
@@ -78,9 +97,35 @@ const SEASIDE_STYLES = `
 .ss-root .ss-input { transition: border-color .3s; }
 .ss-root .ss-input:focus { border-color: #3A6EA5; }
 
+.ss-root .ss-nav-links { display: flex; }
+.ss-root .ss-nav-burger { display: none; }
+.ss-root .ss-edition-image,
+.ss-root .ss-edition-spec { min-height: clamp(600px,62vh,680px); }
+.ss-root .ss-lineup-portrait { flex: 0 1 clamp(210px,25vw,280px); min-width: 200px; }
+.ss-root .ss-modal-panel {
+  max-height: calc(100vh - 48px);
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .ss-root .ss-hero-tagline { white-space: nowrap; }
+  .ss-root .ss-nav-menu { display: none; }
+}
+@media (max-width: 767px) {
+  .ss-root .ss-nav-links { display: none; }
+  .ss-root .ss-nav-cta { display: none; }
+  .ss-root .ss-nav-burger { display: inline-flex; }
+  .ss-root .ss-lineup-portrait { flex: 1 1 clamp(210px,25vw,280px); max-width: 340px; }
+}
+@media (max-width: 639px) {
+  .ss-root .ss-edition-image { min-height: clamp(340px,52vh,680px); }
+  .ss-root .ss-edition-spec { min-height: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ss-root .ss-hero-bg { animation: none; }
-  .ss-root .ss-reveal { transition: opacity .4s ease; transform: none; }
+  .ss-root .ss-nav-link::after { transition: none; }
 }
 `
 
@@ -135,7 +180,6 @@ interface TeamMember {
     name: string
     role: string
     bio: string
-    delay: number
 }
 
 interface SeasideFormState {
@@ -256,25 +300,21 @@ const TEAM_MEMBERS: TeamMember[] = [
         name: "Will Lupfer",
         role: "Founder & CEO",
         bio: "Leads sponsorship, brand strategy, and the vision behind LUPFR's flagship franchises — from boiler-room sets to yacht takeovers.",
-        delay: 0,
     },
     {
         name: "Zac Brosky",
         role: "Event Manager, LA",
         bio: "Runs production, contractor management, and artist relations — the key lead building out LA with a focus on SEA // SIDE.",
-        delay: 80,
     },
     {
         name: "Kylie Cortez",
         role: "Legal & Events",
         bio: "USC Gould School of Law. Supports contracts, venue operations, and event legal work.",
-        delay: 160,
     },
     {
         name: "Taylor Ford",
         role: "Event Associate",
         bio: "Bio coming soon.",
-        delay: 240,
     },
 ]
 
@@ -316,48 +356,133 @@ function ArtistPlaceholder({ name }: { name: string }) {
     )
 }
 
+const SS_EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1]
+const SS_VIEWPORT = { once: true, amount: 0.1, margin: "0px 0px -8% 0px" } as const
+
 interface RevealProps {
     children: ReactNode
     delay?: number
     className?: string
     style?: CSSProperties
+    stagger?: boolean
 }
 
-function Reveal({ children, delay = 0, className, style }: RevealProps) {
-    const [visible, setVisible] = useState(false)
-    const ref = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        if (visible) return
-        if (typeof IntersectionObserver === "undefined") {
-            setVisible(true)
-            return
-        }
-        const el = ref.current
-        if (!el) return
-        const io = new IntersectionObserver(
-            (entries) => {
-                for (const entry of entries) {
-                    if (entry.isIntersecting) {
-                        setVisible(true)
-                        io.unobserve(entry.target)
-                    }
-                }
-            },
-            { threshold: 0.1, rootMargin: "0px 0px -8% 0px" }
+function Reveal({ children, delay = 0, className, style, stagger = false }: RevealProps) {
+    const reduced = useReducedMotion()
+    if (stagger) {
+        return (
+            <m.div
+                className={className}
+                style={style}
+                initial="hidden"
+                whileInView="show"
+                viewport={SS_VIEWPORT}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } } }}
+            >
+                {children}
+            </m.div>
         )
-        io.observe(el)
-        return () => io.disconnect()
-    }, [visible])
-
+    }
     return (
-        <div
-            ref={ref}
-            className={`ss-reveal${visible ? " ss-revealed" : ""}${className ? ` ${className}` : ""}`}
-            style={{ transitionDelay: visible ? `${delay}ms` : "0ms", ...style }}
+        <m.div
+            className={className}
+            style={style}
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24 }}
+            whileInView={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            viewport={SS_VIEWPORT}
+            transition={reduced ? { duration: 0.4 } : { duration: 0.9, ease: SS_EASE, delay: delay / 1000 }}
         >
             {children}
-        </div>
+        </m.div>
+    )
+}
+
+interface RevealItemProps {
+    children: ReactNode
+    className?: string
+    style?: CSSProperties
+    hoverLift?: boolean
+}
+
+/** Child of `<Reveal stagger>` — one staggered list item. */
+function RevealItem({ children, className, style, hoverLift = false }: RevealItemProps) {
+    const reduced = useReducedMotion()
+    return (
+        <m.div
+            className={className}
+            style={style}
+            variants={
+                reduced
+                    ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.4 } } }
+                    : { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: SS_EASE } } }
+            }
+            whileHover={hoverLift && !reduced ? { y: -4 } : undefined}
+            transition={hoverLift && !reduced ? { duration: 0.25 } : undefined}
+        >
+            {children}
+        </m.div>
+    )
+}
+
+/** Shared press/hover micro-interaction for CTAs; empty when reduced motion. */
+function usePressable(hoverScale = 1.02, tapScale = 0.98) {
+    const reduced = useReducedMotion()
+    if (reduced) return {}
+    return {
+        whileHover: { scale: hoverScale },
+        whileTap: { scale: tapScale },
+        transition: { type: "tween", duration: 0.15 },
+    } as const
+}
+
+/* Word-stagger headline reveal — each word blurs/rises in sequence.
+ * Words are real text nodes separated by spaces, so wrapping, nowrap
+ * contexts, and screen readers behave exactly like plain text. */
+interface TextSegment {
+    text: string
+    style?: CSSProperties
+}
+
+interface AnimatedTextProps {
+    segments: TextSegment[]
+    /** "mount" animates immediately (hero); "inView" waits for scroll. */
+    mode?: "inView" | "mount"
+    delay?: number
+}
+
+function AnimatedText({ segments, mode = "inView", delay = 0 }: AnimatedTextProps) {
+    const reduced = useReducedMotion()
+    const words = segments.flatMap((segment) =>
+        segment.text
+            .split(" ")
+            .filter(Boolean)
+            .map((word) => ({ word, style: segment.style }))
+    )
+    const container = {
+        hidden: {},
+        show: { transition: { staggerChildren: reduced ? 0 : 0.05, delayChildren: delay / 1000 } },
+    }
+    const wordVariants = reduced
+        ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.4 } } }
+        : {
+              hidden: { opacity: 0, y: "0.45em", filter: "blur(8px)" },
+              show: { opacity: 1, y: "0em", filter: "blur(0px)", transition: { duration: 0.7, ease: SS_EASE } },
+          }
+    return (
+        <m.span
+            initial="hidden"
+            {...(mode === "mount" ? { animate: "show" } : { whileInView: "show", viewport: SS_VIEWPORT })}
+            variants={container}
+        >
+            {words.map((item, index) => (
+                <span key={`${item.word}-${index}`}>
+                    <m.span variants={wordVariants} style={{ display: "inline-block", whiteSpace: "pre", ...item.style }}>
+                        {item.word}
+                    </m.span>
+                    {index < words.length - 1 ? " " : null}
+                </span>
+            ))}
+        </m.span>
     )
 }
 
@@ -365,6 +490,10 @@ function Reveal({ children, delay = 0, className, style }: RevealProps) {
  * Nav
  * ============================================================ */
 function SeasideNav({ onRequestAccess }: { onRequestAccess: () => void }) {
+    const [menuOpen, setMenuOpen] = useState(false)
+    const reduced = useReducedMotion()
+    const pressable = usePressable(1.03, 0.97)
+
     return (
         <nav
             style={{
@@ -387,37 +516,137 @@ function SeasideNav({ onRequestAccess }: { onRequestAccess: () => void }) {
             <a href="#top" style={{ fontWeight: 200, fontSize: 18, letterSpacing: "0.32em", whiteSpace: "nowrap" }}>
                 SEA // SIDE
             </a>
-            <div style={{ display: "flex", alignItems: "center", gap: "clamp(14px,1.9vw,32px)", flexWrap: "wrap", justifyContent: "center" }}>
+            <div className="ss-nav-links" style={{ alignItems: "center", gap: "clamp(14px,1.9vw,32px)", flexWrap: "wrap", justifyContent: "center" }}>
                 {NAV_LINKS.map((link) => (
                     <a
                         key={link.href}
                         href={link.href}
                         className="ss-nav-link"
-                        style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#B9B9B6" }}
+                        style={{ padding: "12px 8px", fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#B9B9B6" }}
                     >
                         {link.label}
                     </a>
                 ))}
             </div>
-            <button
-                type="button"
-                onClick={onRequestAccess}
-                className="ss-nav-cta"
-                style={{
-                    border: "1px solid rgba(245,245,242,0.5)",
-                    background: "transparent",
-                    color: "#F5F5F2",
-                    padding: "11px 20px",
-                    fontSize: 11,
-                    letterSpacing: "0.18em",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                    whiteSpace: "nowrap",
-                }}
-            >
-                Request Access
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <m.button
+                    type="button"
+                    onClick={onRequestAccess}
+                    className="ss-nav-cta"
+                    {...pressable}
+                    style={{
+                        border: "1px solid rgba(245,245,242,0.5)",
+                        background: "transparent",
+                        color: "#F5F5F2",
+                        fontSize: 11,
+                        letterSpacing: "0.18em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        whiteSpace: "nowrap",
+                    }}
+                >
+                    Request Access
+                </m.button>
+                <button
+                    type="button"
+                    onClick={() => setMenuOpen((open) => !open)}
+                    className="ss-nav-burger"
+                    aria-label={menuOpen ? "Close menu" : "Open menu"}
+                    aria-expanded={menuOpen}
+                    aria-controls="ss-nav-menu"
+                    style={{
+                        width: 44,
+                        height: 44,
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 5,
+                        padding: 0,
+                        border: "1px solid rgba(245,245,242,0.3)",
+                        background: "transparent",
+                        color: "#F5F5F2",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        fontSize: 15,
+                    }}
+                >
+                    {menuOpen ? (
+                        "✕"
+                    ) : (
+                        <>
+                            <span style={{ display: "block", width: 18, height: 1, background: "#F5F5F2" }} />
+                            <span style={{ display: "block", width: 18, height: 1, background: "#F5F5F2" }} />
+                            <span style={{ display: "block", width: 18, height: 1, background: "#F5F5F2" }} />
+                        </>
+                    )}
+                </button>
+            </div>
+            <AnimatePresence>
+                {menuOpen ? (
+                    <m.div
+                        key="ss-nav-menu"
+                        id="ss-nav-menu"
+                        className="ss-nav-menu"
+                        initial={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        animate={reduced ? { opacity: 1 } : { opacity: 1, height: "auto" }}
+                        exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+                        transition={{ duration: reduced ? 0.15 : 0.3, ease: SS_EASE }}
+                        style={{
+                            position: "absolute",
+                            top: "100%",
+                            left: 0,
+                            right: 0,
+                            overflow: "hidden",
+                            background: "rgba(11,11,15,0.92)",
+                            backdropFilter: "blur(18px)",
+                            WebkitBackdropFilter: "blur(18px)",
+                            borderBottom: "1px solid rgba(245,245,242,0.08)",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column", padding: "8px clamp(20px,5vw,64px) 20px" }}>
+                            {NAV_LINKS.map((link) => (
+                                <a
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setMenuOpen(false)}
+                                    style={{
+                                        padding: "14px 0",
+                                        fontSize: 11,
+                                        letterSpacing: "0.22em",
+                                        textTransform: "uppercase",
+                                        color: "#B9B9B6",
+                                        borderBottom: "1px solid rgba(245,245,242,0.06)",
+                                    }}
+                                >
+                                    {link.label}
+                                </a>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setMenuOpen(false)
+                                    onRequestAccess()
+                                }}
+                                style={{
+                                    marginTop: 16,
+                                    border: "1px solid rgba(245,245,242,0.5)",
+                                    background: "transparent",
+                                    color: "#F5F5F2",
+                                    padding: "15px 20px",
+                                    fontSize: 11,
+                                    letterSpacing: "0.18em",
+                                    textTransform: "uppercase",
+                                    cursor: "pointer",
+                                    fontFamily: "inherit",
+                                }}
+                            >
+                                Request Access
+                            </button>
+                        </div>
+                    </m.div>
+                ) : null}
+            </AnimatePresence>
         </nav>
     )
 }
@@ -426,12 +655,29 @@ function SeasideNav({ onRequestAccess }: { onRequestAccess: () => void }) {
  * Hero
  * ============================================================ */
 function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
+    const reduced = useReducedMotion()
+    const pressable = usePressable()
+    const ref = useRef<HTMLElement>(null)
+    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] })
+    const parallaxY = useTransform(scrollYProgress, [0, 1], ["0%", "16%"])
+
+    const heroParent = reduced
+        ? { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.4 } } }
+        : { hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 0.55 } } }
+    const heroChild = reduced
+        ? { hidden: {}, show: {} }
+        : { hidden: { opacity: 0, y: 28 }, show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: SS_EASE } } }
+    const heroDivider = reduced
+        ? { hidden: {}, show: {} }
+        : { hidden: { scaleX: 0 }, show: { scaleX: 1, transition: { duration: 0.8, ease: SS_EASE } } }
+
     return (
         <header
             id="top"
+            ref={ref}
+            className="ss-hero"
             style={{
                 position: "relative",
-                minHeight: "100vh",
                 width: "100%",
                 display: "flex",
                 flexDirection: "column",
@@ -440,16 +686,18 @@ function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
             }}
         >
             <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
-                <div
-                    className="ss-hero-bg"
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        backgroundImage: "url('/seaside/glow-silhouette.webp')",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center 42%",
-                    }}
-                />
+                <m.div style={{ position: "absolute", left: 0, right: 0, bottom: 0, top: reduced ? 0 : "-16%", y: reduced ? 0 : parallaxY }}>
+                    <div
+                        className="ss-hero-bg"
+                        style={{
+                            position: "absolute",
+                            inset: 0,
+                            backgroundImage: "url('/seaside/glow-silhouette.webp')",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center 42%",
+                        }}
+                    />
+                </m.div>
             </div>
             <div
                 style={{
@@ -469,6 +717,7 @@ function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
                     alignItems: "center",
                     justifyContent: "space-between",
                     gap: 20,
+                    flexWrap: "wrap",
                     padding: "clamp(84px,12vh,110px) clamp(20px,5vw,64px) 0",
                 }}
             >
@@ -480,28 +729,45 @@ function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
                 </div>
             </div>
 
-            <div style={{ position: "relative", zIndex: 3, padding: "0 clamp(20px,5vw,64px) clamp(48px,7vh,84px)", maxWidth: 1500, width: "100%", margin: "0 auto" }}>
+            <m.div
+                variants={heroParent}
+                initial="hidden"
+                animate="show"
+                style={{ position: "relative", zIndex: 3, padding: "0 clamp(20px,5vw,64px) clamp(48px,7vh,84px)", maxWidth: 1500, width: "100%", margin: "0 auto" }}
+            >
                 <h1
                     style={{
                         margin: 0,
                         fontWeight: 200,
-                        fontSize: "clamp(52px,13.5vw,210px)",
+                        fontSize: "clamp(40px,13.5vw,210px)",
                         lineHeight: 0.9,
                         letterSpacing: "0.1em",
                         whiteSpace: "nowrap",
                     }}
                 >
-                    SEA <span style={{ fontWeight: 300 }}>{"//"}</span> SIDE
+                    <AnimatedText
+                        mode="mount"
+                        delay={200}
+                        segments={[{ text: "SEA" }, { text: "//", style: { fontWeight: 300 } }, { text: "SIDE" }]}
+                    />
                 </h1>
-                <div style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(20px,3vh,34px) 0 clamp(18px,2.6vh,28px)" }} />
-                <p style={{ margin: 0, fontSize: "clamp(12px,1.9vw,22px)", lineHeight: 1.5, color: "#E7E7E2", fontWeight: 300, whiteSpace: "nowrap" }}>
+                <m.div
+                    variants={heroDivider}
+                    style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(20px,3vh,34px) 0 clamp(18px,2.6vh,28px)", transformOrigin: "left" }}
+                />
+                <m.p
+                    variants={heroChild}
+                    className="ss-hero-tagline"
+                    style={{ margin: 0, fontSize: "clamp(12px,1.9vw,22px)", lineHeight: 1.5, color: "#E7E7E2", fontWeight: 300 }}
+                >
                     Private Yachts. Curated Artists. Premier Production. Unseen Vibes.
-                </p>
-                <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: "clamp(26px,4vh,40px)" }}>
-                    <button
+                </m.p>
+                <m.div variants={heroChild} style={{ display: "flex", gap: 14, flexWrap: "wrap", marginTop: "clamp(26px,4vh,40px)" }}>
+                    <m.button
                         type="button"
                         onClick={onRequestAccess}
                         className="ss-btn-solid"
+                        {...pressable}
                         style={{
                             border: "none",
                             background: "#F5F5F2",
@@ -515,10 +781,11 @@ function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
                         }}
                     >
                         Request Access
-                    </button>
-                    <a
+                    </m.button>
+                    <m.a
                         href="#concept"
                         className="ss-btn-outline"
+                        {...pressable}
                         style={{
                             border: "1px solid rgba(245,245,242,0.5)",
                             color: "#F5F5F2",
@@ -530,9 +797,9 @@ function SeasideHero({ onRequestAccess }: { onRequestAccess: () => void }) {
                         }}
                     >
                         EXPLORE EDITIONS
-                    </a>
-                </div>
-            </div>
+                    </m.a>
+                </m.div>
+            </m.div>
         </header>
     )
 }
@@ -547,11 +814,12 @@ const CONCEPT_CARDS = [
 ]
 
 function SeasideConcept() {
+    const reduced = useReducedMotion()
     return (
         <section
             id="concept"
             style={{
-                scrollMarginTop: 70,
+                scrollMarginTop: 84,
                 position: "relative",
                 overflow: "hidden",
                 padding: "clamp(90px,15vh,180px) clamp(20px,5vw,64px)",
@@ -591,7 +859,7 @@ function SeasideConcept() {
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", color: "#3A6EA5", fontWeight: 600 }}>(01)</span>
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", textTransform: "uppercase", color: "#8A8A93" }}>THE CONCEPT</span>
                 </Reveal>
-                <Reveal
+                <div
                     style={{
                         maxWidth: "18ch",
                         fontFamily: "var(--font-anton), sans-serif",
@@ -602,14 +870,26 @@ function SeasideConcept() {
                         textTransform: "uppercase",
                     }}
                 >
-                    <span style={{ color: "#5B8FCB" }}>SEA // SIDE</span> takes the music experience offshore.
-                </Reveal>
-                <div style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(30px,5vh,46px) 0 clamp(24px,4vh,32px)" }} />
+                    <AnimatedText
+                        segments={[
+                            { text: "SEA // SIDE", style: { color: "#5B8FCB" } },
+                            { text: "takes the music experience offshore." },
+                        ]}
+                    />
+                </div>
+                <m.div
+                    initial={reduced ? false : { scaleX: 0 }}
+                    whileInView={reduced ? undefined : { scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.7, ease: SS_EASE, delay: 0.15 }}
+                    style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(30px,5vh,46px) 0 clamp(24px,4vh,32px)", transformOrigin: "left" }}
+                />
                 <p style={{ margin: 0, maxWidth: "40ch", fontSize: "clamp(16px,1.5vw,22px)", lineHeight: 1.6, color: "#FFFFFF", fontWeight: 300 }}>
                     We decided land wasn&apos;t good enough. <br />
                     So we took the music <b>SEA//SIDE</b>.
                 </p>
                 <Reveal
+                    stagger
                     style={{
                         maxWidth: 620,
                         marginTop: "clamp(30px,4.5vh,48px)",
@@ -618,25 +898,23 @@ function SeasideConcept() {
                         gap: 12,
                     }}
                 >
-                    <>
-                        {CONCEPT_CARDS.map((card) => (
-                            <div
-                                key={card.title}
-                                style={{
-                                    border: "1px solid rgba(245,245,242,0.14)",
-                                    background: "rgba(16,16,21,0.6)",
-                                    backdropFilter: "blur(4px)",
-                                    WebkitBackdropFilter: "blur(4px)",
-                                    padding: "18px 20px",
-                                }}
-                            >
-                                <div style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#5B8FCB", marginBottom: 9 }}>
-                                    {card.title}
-                                </div>
-                                <div style={{ fontSize: 13, lineHeight: 1.55, color: "#B9B9B6" }}>{card.body}</div>
+                    {CONCEPT_CARDS.map((card) => (
+                        <RevealItem
+                            key={card.title}
+                            style={{
+                                border: "1px solid rgba(245,245,242,0.14)",
+                                background: "rgba(16,16,21,0.6)",
+                                backdropFilter: "blur(4px)",
+                                WebkitBackdropFilter: "blur(4px)",
+                                padding: "18px 20px",
+                            }}
+                        >
+                            <div style={{ fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#5B8FCB", marginBottom: 9 }}>
+                                {card.title}
                             </div>
-                        ))}
-                    </>
+                            <div style={{ fontSize: 13, lineHeight: 1.55, color: "#B9B9B6" }}>{card.body}</div>
+                        </RevealItem>
+                    ))}
                 </Reveal>
             </div>
         </section>
@@ -739,12 +1017,14 @@ interface EditionsProps {
 
 function SeasideEditions(props: EditionsProps) {
     const { edition, editionIndex, editionCount, activeSpecIndex, activeImage, onPrev, onNext, onSelectSpec, onSelectDot, onRequestAccess } = props
+    const reduced = useReducedMotion()
+    const pressable = usePressable()
     const indexLabel = `${String(editionIndex + 1).padStart(2, "0")} / ${String(editionCount).padStart(2, "0")}`
     const restSpecs = edition.specs.slice(1)
     const isUpcoming = !edition.past
 
     return (
-        <section id="edition" style={{ scrollMarginTop: 70, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0B0B0F" }}>
+        <section id="edition" style={{ scrollMarginTop: 84, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0B0B0F" }}>
             <div style={{ maxWidth: 1500, margin: "0 auto" }}>
                 <Reveal style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap", marginBottom: "clamp(30px,4.5vh,48px)" }}>
                     <div>
@@ -763,7 +1043,7 @@ function SeasideEditions(props: EditionsProps) {
                                 textTransform: "uppercase",
                             }}
                         >
-                            Editions
+                            <AnimatedText segments={[{ text: "Editions" }]} />
                         </h2>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -791,15 +1071,25 @@ function SeasideEditions(props: EditionsProps) {
 
                 <Reveal>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "clamp(24px,3.5vw,52px)", alignItems: "stretch" }}>
-                        <div style={{ position: "relative", minHeight: "clamp(600px,62vh,680px)", overflow: "hidden", border: "1px solid rgba(245,245,242,0.1)" }}>
-                            <Image
-                                key={activeImage}
-                                src={activeImage}
-                                alt={`${edition.headline} — ${edition.num}`}
-                                fill
-                                sizes="(max-width: 900px) 100vw, 50vw"
-                                style={{ objectFit: "cover" }}
-                            />
+                        <div className="ss-edition-image" style={{ position: "relative", overflow: "hidden", border: "1px solid rgba(245,245,242,0.1)" }}>
+                            <AnimatePresence initial={false}>
+                                <m.div
+                                    key={activeImage}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: reduced ? 0.1 : 0.35 }}
+                                    style={{ position: "absolute", inset: 0 }}
+                                >
+                                    <Image
+                                        src={activeImage}
+                                        alt={`${edition.headline} — ${edition.num}`}
+                                        fill
+                                        sizes="(max-width: 900px) 100vw, 50vw"
+                                        style={{ objectFit: "cover" }}
+                                    />
+                                </m.div>
+                            </AnimatePresence>
                             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg,rgba(11,11,15,0.1) 0%,rgba(11,11,15,0.85) 100%)" }} />
                             <div
                                 style={{
@@ -829,7 +1119,7 @@ function SeasideEditions(props: EditionsProps) {
                             </div>
                         </div>
 
-                        <div style={{ display: "flex", flexDirection: "column", minHeight: "clamp(600px,62vh,680px)" }}>
+                        <div className="ss-edition-spec" style={{ display: "flex", flexDirection: "column" }}>
                             <div style={{ fontFamily: "var(--font-anton), sans-serif", fontSize: "clamp(30px,4vw,58px)", textTransform: "uppercase", lineHeight: 0.95, marginBottom: 22 }}>
                                 {edition.num}
                             </div>
@@ -842,7 +1132,7 @@ function SeasideEditions(props: EditionsProps) {
                             </div>
                             {edition.tiers.length > 0 ? (
                                 <>
-                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginTop: 24 }}>
+                                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(96px,1fr))", gap: 10, marginTop: 24 }}>
                                         {edition.tiers.map((tier) => (
                                             <div key={tier.name} style={{ border: "1px solid rgba(245,245,242,0.12)", background: "#16161D", padding: "15px 13px" }}>
                                                 <div style={{ fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8A8A93" }}>{tier.name}</div>
@@ -854,10 +1144,11 @@ function SeasideEditions(props: EditionsProps) {
                                 </>
                             ) : null}
                             {isUpcoming ? (
-                                <button
+                                <m.button
                                     type="button"
                                     onClick={onRequestAccess}
                                     className="ss-btn-solid"
+                                    {...pressable}
                                     style={{
                                         marginTop: 24,
                                         alignSelf: "flex-start",
@@ -873,7 +1164,7 @@ function SeasideEditions(props: EditionsProps) {
                                     }}
                                 >
                                     Request the Passcode →
-                                </button>
+                                </m.button>
                             ) : (
                                 <div
                                     style={{
@@ -893,7 +1184,7 @@ function SeasideEditions(props: EditionsProps) {
                             )}
                         </div>
                     </div>
-                    <div style={{ display: "flex", gap: 10, marginTop: 26, justifyContent: "center" }}>
+                    <div style={{ display: "flex", gap: 0, marginTop: 9, justifyContent: "center" }}>
                         {Array.from({ length: editionCount }, (_, i) => (
                             <button
                                 key={i}
@@ -901,16 +1192,25 @@ function SeasideEditions(props: EditionsProps) {
                                 onClick={() => onSelectDot(i)}
                                 aria-label={`Go to edition ${i + 1}`}
                                 style={{
-                                    width: i === editionIndex ? 30 : 10,
-                                    height: 10,
-                                    borderRadius: 20,
                                     border: "none",
-                                    padding: 0,
+                                    background: "transparent",
+                                    padding: "17px 5px",
                                     cursor: "pointer",
-                                    background: i === editionIndex ? "#3A6EA5" : "rgba(245,245,242,0.28)",
-                                    transition: "all .3s",
+                                    display: "inline-flex",
+                                    alignItems: "center",
                                 }}
-                            />
+                            >
+                                <span
+                                    style={{
+                                        display: "block",
+                                        width: i === editionIndex ? 30 : 10,
+                                        height: 10,
+                                        borderRadius: 20,
+                                        background: i === editionIndex ? "#3A6EA5" : "rgba(245,245,242,0.28)",
+                                        transition: "all .3s",
+                                    }}
+                                />
+                            </button>
                         ))}
                     </div>
                 </Reveal>
@@ -929,6 +1229,7 @@ interface RosterGroupProps {
 }
 
 function RosterGroup({ edition, activeKey, onSelectArtist }: RosterGroupProps) {
+    const reduced = useReducedMotion()
     return (
         <div
             style={{
@@ -949,10 +1250,11 @@ function RosterGroup({ edition, activeKey, onSelectArtist }: RosterGroupProps) {
                         const isHeadliner = /headliner/i.test(artist.role)
                         const active = key === activeKey
                         return (
-                            <button
+                            <m.button
                                 key={key}
                                 type="button"
                                 onClick={() => onSelectArtist(key)}
+                                whileHover={reduced ? undefined : { y: -2 }}
                                 style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "inline-flex", flexDirection: "column", alignItems: "flex-start", gap: 5 }}
                             >
                                 <span
@@ -972,7 +1274,7 @@ function RosterGroup({ edition, activeKey, onSelectArtist }: RosterGroupProps) {
                                 <span style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 500, fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8A8A93" }}>
                                     {artist.genre}
                                 </span>
-                            </button>
+                            </m.button>
                         )
                     })
                 ) : (
@@ -1004,8 +1306,9 @@ interface LineupProps {
 }
 
 function SeasideLineup({ activeArtist, onSelectArtist }: LineupProps) {
+    const reduced = useReducedMotion()
     return (
-        <section id="lineup" style={{ scrollMarginTop: 70, padding: "clamp(60px,9vh,110px) clamp(20px,5vw,64px)", background: "#0E0E13", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
+        <section id="lineup" style={{ scrollMarginTop: 84, padding: "clamp(60px,9vh,110px) clamp(20px,5vw,64px)", background: "#0E0E13", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
             <div style={{ maxWidth: 1500, margin: "0 auto" }}>
                 <Reveal style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", color: "#3A6EA5", fontWeight: 600 }}>(03)</span>
@@ -1022,11 +1325,19 @@ function SeasideLineup({ activeArtist, onSelectArtist }: LineupProps) {
                         textTransform: "uppercase",
                     }}
                 >
-                    Featured Artists
+                    <AnimatedText segments={[{ text: "Featured Artists" }]} />
                 </Reveal>
 
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(28px,4vw,56px)", alignItems: "flex-start" }}>
-                    <Reveal style={{ flex: "0 1 clamp(210px,25vw,280px)", minWidth: 200 }}>
+                    <Reveal className="ss-lineup-portrait">
+                        <AnimatePresence mode="wait" initial={false}>
+                        <m.div
+                            key={activeArtist.key}
+                            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+                            animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                            transition={{ duration: 0.3, ease: SS_EASE }}
+                        >
                         <div
                             style={{
                                 position: "relative",
@@ -1082,6 +1393,8 @@ function SeasideLineup({ activeArtist, onSelectArtist }: LineupProps) {
                                 </a>
                             ))}
                         </div>
+                        </m.div>
+                        </AnimatePresence>
                     </Reveal>
 
                     <Reveal delay={120} style={{ flex: "1 1 360px" }}>
@@ -1106,7 +1419,7 @@ function SeasideLineup({ activeArtist, onSelectArtist }: LineupProps) {
  * ============================================================ */
 function SeasidePartners() {
     return (
-        <section id="partners" style={{ scrollMarginTop: 70, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0E0E13", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
+        <section id="partners" style={{ scrollMarginTop: 84, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0E0E13", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
             <div style={{ maxWidth: 1500, margin: "0 auto" }}>
                 <Reveal style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", color: "#3A6EA5", fontWeight: 600 }}>(04)</span>
@@ -1123,31 +1436,36 @@ function SeasidePartners() {
                         textTransform: "uppercase",
                     }}
                 >
-                    Partners
+                    <AnimatedText segments={[{ text: "Partners" }]} />
                 </Reveal>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
-                    <Reveal
+                <Reveal stagger style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 16 }}>
+                    <RevealItem
+                        hoverLift
                         className="ss-partner-card"
-                        style={{ border: "1px solid rgba(58,110,165,0.4)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                        style={{ border: "1px solid rgba(58,110,165,0.4)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", gap: 22 }}
                     >
                         <div style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#5B8FCB" }}>Operator</div>
                         <div>
-                            <Image src="/seaside/lupfr-le.webp" alt="LUPFR Entertainment" width={56} height={56} style={{ display: "block", marginBottom: 16 }} />
+                            <div className="ss-partner-logo">
+                                <Image src="/seaside/lupfr-le.webp" alt="LUPFR Entertainment" width={56} height={56} style={{ display: "block", width: "auto", height: "100%" }} />
+                            </div>
                             <h3 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(26px,3vw,40px)", textTransform: "uppercase", letterSpacing: "0.02em" }}>
                                 LUPFR Entertainment
                             </h3>
                             <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.65, color: "#8A8A93" }}>Dream On Yacht · Hornblower · Long Beach</p>
                         </div>
-                    </Reveal>
-                    <Reveal
-                        delay={80}
+                    </RevealItem>
+                    <RevealItem
+                        hoverLift
                         className="ss-partner-card"
-                        style={{ border: "1px solid rgba(245,245,242,0.1)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                        style={{ border: "1px solid rgba(245,245,242,0.1)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", gap: 22 }}
                     >
                         <div style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#5B8FCB" }}>Title Sponsor</div>
                         <div>
-                            <Image src="/seaside/vybes-logo.webp" alt="Vybes" width={62} height={42} style={{ display: "block", marginBottom: 16 }} />
-                            <h3 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(30px,3.4vw,46px)", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+                            <div className="ss-partner-logo">
+                                <Image src="/seaside/vybes-logo.webp" alt="Vybes" width={62} height={42} style={{ display: "block", width: "auto", height: "100%" }} />
+                            </div>
+                            <h3 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(26px,3vw,40px)", textTransform: "uppercase", letterSpacing: "0.02em" }}>
                                 Vybes
                             </h3>
                             <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.65, color: "#8A8A93" }}>Influencer network + social amplification · 12 comp tickets</p>
@@ -1161,21 +1479,40 @@ function SeasidePartners() {
                                 vybes.co ↗
                             </a>
                         </div>
-                    </Reveal>
-                    <Reveal
-                        delay={160}
+                    </RevealItem>
+                    <RevealItem
+                        hoverLift
                         className="ss-partner-card"
-                        style={{ border: "1px solid rgba(245,245,242,0.1)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                        style={{ border: "1px solid rgba(245,245,242,0.1)", background: "#16161D", padding: "clamp(26px,3vw,38px)", minHeight: 220, display: "flex", flexDirection: "column", gap: 22 }}
                     >
                         <div style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#5B8FCB" }}>Media Partner</div>
                         <div>
-                            <h3 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(24px,2.6vw,34px)", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+                            <div className="ss-partner-logo">
+                                <div
+                                    aria-hidden="true"
+                                    style={{
+                                        width: 52,
+                                        height: 52,
+                                        border: "1px solid rgba(91,143,203,0.5)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontFamily: "var(--font-anton), sans-serif",
+                                        fontSize: 20,
+                                        letterSpacing: "0.08em",
+                                        color: "#5B8FCB",
+                                    }}
+                                >
+                                    LS
+                                </div>
+                            </div>
+                            <h3 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(26px,3vw,40px)", textTransform: "uppercase", letterSpacing: "0.02em" }}>
                                 Link Studios
                             </h3>
                             <p style={{ margin: "12px 0 0", fontSize: 13, lineHeight: 1.65, color: "#8A8A93" }}>Creator-led content &amp; recap · delivered ≤4 days after the sail</p>
                         </div>
-                    </Reveal>
-                </div>
+                    </RevealItem>
+                </Reveal>
 
                 <Reveal style={{ display: "flex", alignItems: "center", gap: 14, margin: "clamp(56px,9vh,96px) 0 12px" }}>
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", color: "#3A6EA5", fontWeight: 600 }}>(05)</span>
@@ -1192,17 +1529,17 @@ function SeasidePartners() {
                         textTransform: "uppercase",
                     }}
                 >
-                    The Team
+                    <AnimatedText segments={[{ text: "The Team" }]} />
                 </Reveal>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16 }}>
+                <Reveal stagger style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))", gap: 16 }}>
                     {TEAM_MEMBERS.map((member) => (
-                        <Reveal key={member.name} delay={member.delay} style={{ borderTop: "1px solid rgba(58,110,165,0.5)", paddingTop: 20 }}>
+                        <RevealItem key={member.name} style={{ borderTop: "1px solid rgba(58,110,165,0.5)", paddingTop: 20 }}>
                             <h3 style={{ margin: 0, fontWeight: 500, fontSize: 19, letterSpacing: "0.01em" }}>{member.name}</h3>
                             <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#5B8FCB", marginTop: 7 }}>{member.role}</div>
                             <p style={{ margin: "14px 0 0", fontSize: 13, lineHeight: 1.7, color: "#8A8A93" }}>{member.bio}</p>
-                        </Reveal>
+                        </RevealItem>
                     ))}
-                </div>
+                </Reveal>
             </div>
         </section>
     )
@@ -1213,7 +1550,7 @@ function SeasidePartners() {
  * ============================================================ */
 function SeasideAbout() {
     return (
-        <section id="about" style={{ scrollMarginTop: 70, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0B0B0F", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
+        <section id="about" style={{ scrollMarginTop: 84, padding: "clamp(80px,12vh,150px) clamp(20px,5vw,64px)", background: "#0B0B0F", borderTop: "1px solid rgba(245,245,242,0.07)" }}>
             <div style={{ maxWidth: 1500, margin: "0 auto" }}>
                 <Reveal style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: "clamp(30px,4.5vh,48px)" }}>
                     <span style={{ fontSize: 12, letterSpacing: "0.22em", color: "#3A6EA5", fontWeight: 600 }}>(06)</span>
@@ -1223,7 +1560,7 @@ function SeasideAbout() {
                     <Reveal>
                         <Image src="/seaside/lupfr-mark.webp" alt="LUPFR" width={56} height={56} style={{ display: "block", opacity: 0.92, marginBottom: 26 }} />
                         <h2 style={{ margin: 0, fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(34px,5vw,72px)", lineHeight: 0.96, letterSpacing: "0.01em", textTransform: "uppercase" }}>
-                            LUPFR Entertainment
+                            <AnimatedText segments={[{ text: "LUPFR Entertainment" }]} />
                         </h2>
                         <p style={{ margin: "26px 0 0", maxWidth: "54ch", fontSize: "clamp(15px,1.3vw,18px)", lineHeight: 1.75, color: "#B9B9B6", fontWeight: 300 }}>
                             SEA <span style={{ color: "#5B8FCB" }}>{"//"}</span> SIDE is a LUPFR original — the offshore franchise of Lupfer Entertainment Group. LUPFR builds
@@ -1281,6 +1618,8 @@ interface FooterProps {
 }
 
 function SeasideFooter({ onRequestAccess, onPartner }: FooterProps) {
+    const reduced = useReducedMotion()
+    const pressable = usePressable()
     return (
         <footer id="contact" style={{ position: "relative", overflow: "hidden", background: "#0B0B0F", borderTop: "1px solid rgba(245,245,242,0.08)" }}>
             <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
@@ -1294,26 +1633,34 @@ function SeasideFooter({ onRequestAccess, onPartner }: FooterProps) {
                     </div>
                     <h2 style={{ margin: 0, fontWeight: 200, fontSize: "clamp(44px,10vw,150px)", lineHeight: 0.9, letterSpacing: "0.08em" }}>SEA // SIDE</h2>
                     <p style={{ margin: "24px 0 0", fontFamily: "var(--font-anton), sans-serif", fontWeight: 400, fontSize: "clamp(26px,4vw,58px)", textTransform: "uppercase", color: "#5B8FCB", lineHeight: 1, letterSpacing: "0.01em" }}>
-                        The water is calling.
+                        <AnimatedText segments={[{ text: "The water is calling." }]} />
                     </p>
-                    <div style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(26px,4vh,38px) 0 clamp(24px,3.5vh,32px)" }} />
+                    <m.div
+                        initial={reduced ? false : { scaleX: 0 }}
+                        whileInView={reduced ? undefined : { scaleX: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, ease: SS_EASE, delay: 0.15 }}
+                        style={{ width: 130, height: 4, background: "#3A6EA5", margin: "clamp(26px,4vh,38px) 0 clamp(24px,3.5vh,32px)", transformOrigin: "left" }}
+                    />
                     <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-                        <button
+                        <m.button
                             type="button"
                             onClick={onRequestAccess}
                             className="ss-btn-solid"
+                            {...pressable}
                             style={{ border: "none", background: "#F5F5F2", color: "#0B0B0F", padding: "17px 40px", fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit" }}
                         >
                             Request Access
-                        </button>
-                        <button
+                        </m.button>
+                        <m.button
                             type="button"
                             onClick={onPartner}
                             className="ss-btn-outline"
+                            {...pressable}
                             style={{ border: "1px solid rgba(245,245,242,0.5)", background: "transparent", color: "#F5F5F2", padding: "17px 40px", fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit" }}
                         >
                             Partner With Us
-                        </button>
+                        </m.button>
                     </div>
                 </Reveal>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 30, flexWrap: "wrap", marginTop: "clamp(56px,9vh,100px)", paddingTop: 34, borderTop: "1px solid rgba(245,245,242,0.12)" }}>
@@ -1401,13 +1748,19 @@ interface ModalProps {
 
 function SeasideModal(props: ModalProps) {
     const { open, intent, form, submitted, submitting, error, onChange, onSubmit, onClose } = props
+    const reduced = useReducedMotion()
+    const pressable = usePressable()
     if (!open) return null
     const copy = MODAL_COPY[intent]
 
     return (
-        <div
+        <m.div
             onClick={onClose}
             role="presentation"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduced ? 0.15 : 0.25 }}
             style={{
                 position: "fixed",
                 inset: 0,
@@ -1421,11 +1774,16 @@ function SeasideModal(props: ModalProps) {
                 padding: 24,
             }}
         >
-            <div
+            <m.div
                 onClick={(event) => event.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
                 aria-label={copy.title}
+                className="ss-modal-panel"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
+                animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
+                transition={{ duration: reduced ? 0.15 : 0.3, ease: SS_EASE }}
                 style={{ position: "relative", width: "100%", maxWidth: 520, background: "#101015", border: "1px solid rgba(245,245,242,0.14)", padding: "clamp(28px,4vw,48px)" }}
             >
                 <button
@@ -1433,7 +1791,7 @@ function SeasideModal(props: ModalProps) {
                     onClick={onClose}
                     aria-label="Close"
                     className="ss-modal-close"
-                    style={{ position: "absolute", top: 16, right: 16, width: 38, height: 38, border: "1px solid rgba(245,245,242,0.2)", background: "transparent", color: "#F5F5F2", cursor: "pointer", fontSize: 15, fontFamily: "inherit" }}
+                    style={{ position: "absolute", top: 16, right: 16, width: 44, height: 44, border: "1px solid rgba(245,245,242,0.2)", background: "transparent", color: "#F5F5F2", cursor: "pointer", fontSize: 15, fontFamily: "inherit" }}
                 >
                     ✕
                 </button>
@@ -1471,7 +1829,7 @@ function SeasideModal(props: ModalProps) {
                                     aria-label="Full name"
                                     required
                                     className="ss-input"
-                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
+                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 16, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />
                                 <input
                                     value={form.email}
@@ -1481,7 +1839,7 @@ function SeasideModal(props: ModalProps) {
                                     aria-label="Email address"
                                     required
                                     className="ss-input"
-                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
+                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 16, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />
                                 <input
                                     value={form.three}
@@ -1489,7 +1847,7 @@ function SeasideModal(props: ModalProps) {
                                     placeholder={copy.field3}
                                     aria-label={copy.field3}
                                     className="ss-input"
-                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
+                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 16, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />
                                 <input
                                     value={form.four}
@@ -1497,14 +1855,15 @@ function SeasideModal(props: ModalProps) {
                                     placeholder={copy.field4}
                                     aria-label={copy.field4}
                                     className="ss-input"
-                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 14, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
+                                    style={{ background: "#0B0B0F", border: "1px solid rgba(245,245,242,0.16)", color: "#F5F5F2", padding: "14px 16px", fontSize: 16, fontFamily: "inherit", letterSpacing: "0.02em", outline: "none" }}
                                 />
                             </div>
                             {error ? <div style={{ marginTop: 12, fontSize: 12, color: "#E88" }}>{error}</div> : null}
-                            <button
+                            <m.button
                                 type="submit"
                                 disabled={submitting}
                                 className="ss-btn-solid"
+                                {...(submitting ? {} : pressable)}
                                 style={{
                                     width: "100%",
                                     marginTop: 20,
@@ -1521,12 +1880,12 @@ function SeasideModal(props: ModalProps) {
                                 }}
                             >
                                 {submitting ? "Sending…" : copy.cta}
-                            </button>
+                            </m.button>
                         </form>
                     </div>
                 )}
-            </div>
-        </div>
+            </m.div>
+        </m.div>
     )
 }
 
@@ -1627,6 +1986,7 @@ export function SeasideLanding() {
     const activeArtist = useMemo(() => ARTISTS[featArtistKey], [featArtistKey])
 
     return (
+        <LazyMotion features={domAnimation} strict>
         <div className="ss-root" style={{ fontFamily: "var(--font-inter), sans-serif" }}>
             <style>{SEASIDE_STYLES}</style>
             <SeasideNav onRequestAccess={openAccess} />
@@ -1648,17 +2008,23 @@ export function SeasideLanding() {
             <SeasidePartners />
             <SeasideAbout />
             <SeasideFooter onRequestAccess={openAccess} onPartner={openPartner} />
-            <SeasideModal
-                open={modalOpen}
-                intent={intent}
-                form={form}
-                submitted={submitted}
-                submitting={submitting}
-                error={error}
-                onChange={handleFieldChange}
-                onSubmit={handleSubmit}
-                onClose={closeModal}
-            />
+            <AnimatePresence>
+                {modalOpen ? (
+                    <SeasideModal
+                        key="ss-modal"
+                        open={modalOpen}
+                        intent={intent}
+                        form={form}
+                        submitted={submitted}
+                        submitting={submitting}
+                        error={error}
+                        onChange={handleFieldChange}
+                        onSubmit={handleSubmit}
+                        onClose={closeModal}
+                    />
+                ) : null}
+            </AnimatePresence>
         </div>
+        </LazyMotion>
     )
 }
