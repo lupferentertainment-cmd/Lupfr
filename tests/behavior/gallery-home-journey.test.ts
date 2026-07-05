@@ -1,47 +1,44 @@
 import { describe, expect, it } from "vitest"
-import { GALLERY_CAROUSEL_PHOTOS } from "@/lib/data/gallery"
+import { getGalleryPhotosByDateISO } from "@/lib/data/gallery"
 import {
   GALLERY_FROM_PARAM,
   galleryPhotoHref,
   galleryPhotoListBackHref,
-  homeHistoryReplaceForGalleryBack,
 } from "@/lib/gallery-nav"
 import { getEscapeBackHref } from "@/lib/escape-back"
+import { EVENTS } from "@/lib/events"
 
 /**
- * **Website behavior (URL contract)** for: home carousel → photo page → “up” / Escape back.
- * Not tied to a specific component shape; if routes or query names change, update these and product copy together.
+ * **Website behavior (URL contract)** for the event-page gallery journey:
+ * event detail grid → photo page → “up” / Escape back. The standalone home
+ * `#gallery` carousel is retired; photos are reached from their event page and
+ * return to the full `/gallery` index (shared photo URLs stay alive).
+ * Not tied to a specific component shape; if routes or query names change,
+ * update these and product copy together.
  */
-describe("gallery: home carousel entry and return targets", () => {
-  it("every home carousel item links to its photo with from=home so return goes to /#gallery", () => {
-    expect(GALLERY_CAROUSEL_PHOTOS.length).toBeGreaterThan(0)
-    expect(galleryPhotoListBackHref("home")).toBe("/#gallery")
-    for (const p of GALLERY_CAROUSEL_PHOTOS) {
-      const href = galleryPhotoHref(p.id, "home")
-      expect(href).toBe(`/gallery/p/${p.id}?${GALLERY_FROM_PARAM}=home`)
+describe("gallery: event page entry and return targets", () => {
+  it("every event-page photo links to its photo page with from=gallery", () => {
+    const photos = EVENTS.flatMap((e) => getGalleryPhotosByDateISO(e.dateISO))
+    expect(photos.length).toBeGreaterThan(0)
+    for (const p of photos) {
+      const href = galleryPhotoHref(p.id, "gallery")
+      expect(href).toBe(`/gallery/p/${p.id}?${GALLERY_FROM_PARAM}=gallery`)
       expect(
-        getEscapeBackHref(`/gallery/p/${p.id}`, `?${GALLERY_FROM_PARAM}=home`)
-      ).toBe("/#gallery")
+        getEscapeBackHref(`/gallery/p/${p.id}`, `?${GALLERY_FROM_PARAM}=gallery`)
+      ).toBe("/gallery")
     }
   })
 
-  it("from gallery index keeps “up” on /gallery, not the home hash", () => {
+  it("from gallery index keeps “up” on /gallery", () => {
     expect(galleryPhotoListBackHref("gallery")).toBe("/gallery")
     expect(
       getEscapeBackHref("/gallery/p/1", `?${GALLERY_FROM_PARAM}=gallery`)
     ).toBe("/gallery")
   })
 
-  it("omitted or invalid from acts like the full gallery (not home hash)", () => {
+  it("omitted or invalid from acts like the full gallery", () => {
     expect(galleryPhotoListBackHref(null)).toBe("/gallery")
     expect(galleryPhotoListBackHref(undefined)).toBe("/gallery")
     expect(getEscapeBackHref("/gallery/p/1", "")).toBe("/gallery")
-  })
-
-  it("home carousel click should rewrite history from / so browser Back lands on #gallery", () => {
-    expect(homeHistoryReplaceForGalleryBack("/", "")).toBe("/#gallery")
-    expect(homeHistoryReplaceForGalleryBack("/", "#events")).toBe("/#gallery")
-    expect(homeHistoryReplaceForGalleryBack("/", "#gallery")).toBeNull()
-    expect(homeHistoryReplaceForGalleryBack("/gallery", "")).toBeNull()
   })
 })

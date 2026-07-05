@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
-import { describe, it, expect, vi, beforeAll } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { describe, it, expect, vi, beforeAll, afterEach } from "vitest"
+import { render, screen, waitFor, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { SeasideLanding } from "@/components/seaside/seaside-landing"
 
@@ -88,5 +88,116 @@ describe("SeasideLanding — motion + mobile regression locks", () => {
     expect(menu).not.toBeNull()
     const menuLinks = menu!.querySelectorAll("a[href^='#']")
     expect(menuLinks.length).toBeGreaterThanOrEqual(5)
+  })
+})
+
+describe("SeasideLanding — access/partner modal + editions/lineup interactions", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  function stubFetch(ok: boolean) {
+    const fetchMock = vi.fn().mockResolvedValue({ ok })
+    vi.stubGlobal("fetch", fetchMock)
+    return fetchMock
+  }
+
+  async function openAccessModal(user: ReturnType<typeof userEvent.setup>) {
+    const openers = screen.getAllByRole("button", { name: "Request Access" })
+    await user.click(openers[0])
+    return screen.getByRole("dialog", { name: "Request Access" })
+  }
+
+  it("Request Access opens the access modal; a successful submit posts to /api/phone-list and confirms", async () => {
+    const fetchMock = stubFetch(true)
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    const dialog = await openAccessModal(user)
+    await user.type(screen.getByLabelText("Full name"), "Test Guest")
+    await user.type(screen.getByLabelText("Email address"), "guest@example.com")
+    await user.type(screen.getByLabelText("Instagram handle"), "@guest")
+    await user.click(within(dialog).getByRole("button", { name: "Request Access" }))
+    await waitFor(() => expect(screen.getByText("Request received.")).toBeInTheDocument())
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/phone-list",
+      expect.objectContaining({ method: "POST" })
+    )
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string) as { name: string; email: string }
+    expect(body.email).toBe("guest@example.com")
+    expect(body.name).toContain("Test Guest")
+  })
+
+  it("a failed submit surfaces the retry error and keeps the form", async () => {
+    stubFetch(false)
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    const dialog = await openAccessModal(user)
+    await user.type(screen.getByLabelText("Full name"), "Test Guest")
+    await user.type(screen.getByLabelText("Email address"), "guest@example.com")
+    await user.click(within(dialog).getByRole("button", { name: "Request Access" }))
+    await waitFor(() =>
+      expect(screen.getByText("Something went wrong. Please try again.")).toBeInTheDocument()
+    )
+    expect(screen.queryByText("Request received.")).toBeNull()
+  })
+
+  it("footer Partner CTA opens the partner variant; Close and Escape both dismiss", async () => {
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    await user.click(screen.getByRole("button", { name: /Partner With Us/i }))
+    expect(screen.getByRole("dialog", { name: "Partner With Us" })).toBeInTheDocument()
+    expect(screen.getByLabelText("Company / brand")).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: "Close" }))
+    // AnimatePresence exit: the dialog leaves the DOM after the fade completes.
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+    // Re-open and dismiss with Escape (the modal owns the key while open).
+    await user.click(screen.getByRole("button", { name: /Partner With Us/i }))
+    expect(screen.getByRole("dialog", { name: "Partner With Us" })).toBeInTheDocument()
+    await user.keyboard("{Escape}")
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull())
+  })
+
+  it("edition carousel next/prev and dots swap the active edition", async () => {
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    // The active edition owns the panel image alt `<headline> — <num>`.
+    expect(screen.getAllByAltText(/— 001/).length).toBeGreaterThan(0)
+    await user.click(screen.getByRole("button", { name: "Next edition" }))
+    await waitFor(() => expect(screen.getAllByAltText(/— 002/).length).toBeGreaterThan(0))
+    await user.click(screen.getByRole("button", { name: "Previous edition" }))
+    await waitFor(() => expect(screen.getAllByAltText(/— 001/).length).toBeGreaterThan(0))
+    await user.click(screen.getByRole("button", { name: "Go to edition 2" }))
+    await waitFor(() => expect(screen.getAllByAltText(/— 002/).length).toBeGreaterThan(0))
+  })
+
+  it("selecting an edition spec row swaps the panel image", async () => {
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    const locationRow = screen.getAllByRole("button", { name: /Location/i })[0]
+    await user.click(locationRow)
+    await waitFor(() => {
+      const imgs = Array.from(document.querySelectorAll<HTMLImageElement>("img"))
+      expect(imgs.some((img) => img.src.includes("keys-skyline"))).toBe(true)
+    })
+  })
+
+  it("clicking a mobile menu link closes the dropdown", async () => {
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    const burger = document.querySelector<HTMLButtonElement>("button.ss-nav-burger")!
+    await user.click(burger)
+    const menu = document.getElementById("ss-nav-menu")!
+    const firstLink = menu.querySelector<HTMLAnchorElement>("a[href^='#']")!
+    await user.click(firstLink)
+    await waitFor(() => expect(burger).toHaveAttribute("aria-expanded", "false"))
+  })
+
+  it("selecting a lineup artist swaps the featured profile", async () => {
+    const user = userEvent.setup()
+    render(<SeasideLanding />)
+    // Default profile is HLWA; Auguste's profile copy is unique to his card.
+    expect(screen.queryByText(/French \/ Martiniquan/)).toBeNull()
+    await user.click(screen.getAllByRole("button", { name: /Auguste/i })[0])
+    await waitFor(() => expect(screen.getByText(/French \/ Martiniquan/)).toBeInTheDocument())
   })
 })

@@ -25,8 +25,9 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
-        expect(homePage).toContain("id=\"gallery\"")
+        expect(homePage).not.toContain("id=\"gallery\"")
         expect(homePage).toContain("id=\"about\"")
+        expect(homePage).toContain("id=\"team\"")
         expect(homePage).toContain("id=\"contact\"")
     })
 
@@ -48,14 +49,14 @@ describe("home page mobile transfer guardrails", () => {
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
         expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]"')
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
     it("keeps the remaining heavyweight lower sections out of the initial server/client payload", () => {
         expect(homePage).toContain("{ ssr: false }")
         expect(homePage).toContain("<Artists />")
-        expect(homePage).toContain("<Gallery />")
+        expect(homePage).not.toContain("<Gallery />")
         expect(homePage).toContain("<About />")
         expect(homePage).toContain("<Contact />")
         expect(homePage).toContain("<Footer />")
@@ -66,8 +67,10 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).not.toContain('<DeferredHomeSection\n        id="artists"')
     })
 
-    it("keeps immediately visible reviews out of dynamic chunk preload warnings", () => {
-        expect(homePage).toContain('import { Reviews } from "@/components/reviews"')
+    it("mounts the partners strip eagerly right under the hero (stats section retired)", () => {
+        expect(homePage).toContain('import { PartnersStrip } from "@/components/partners-strip"')
+        expect(homePage).toContain("<PartnersStrip />")
+        expect(homePage).not.toContain("Reviews")
     })
 
     it("checks deferred named exports before handing them to Next dynamic", () => {

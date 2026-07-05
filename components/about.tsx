@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { motion, useInView, useScroll, useTransform, animate, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import { MapPin, Sparkles, Users, Zap } from "lucide-react"
@@ -8,7 +7,6 @@ import { MapPin, Sparkles, Users, Zap } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { TextReveal } from "@/components/text-reveal"
-import { cn } from "@/lib/utils"
 
 function CountUpOrdinal({ end, isInView }: { end: number; isInView: boolean }) {
   const [display, setDisplay] = useState(0)
@@ -208,7 +206,6 @@ function AboutValueCard({
 export function About() {
   const ref = useRef(null)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
-  const [portraitReady, setPortraitReady] = useState(false)
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
   const [hasRevealed, setHasRevealed] = useState(false)
   useEffect(() => {
@@ -241,44 +238,7 @@ export function About() {
               <br />
               <span className="lupfr-heading-subline">Experience</span>
             </h2>
-            <div className="flex flex-col gap-4 mb-6 sm:mb-8">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-px bg-accent" />
-                <p className="text-foreground font-medium">Will Lupfer, Founder &amp; CEO of LUPFR</p>
-              </div>
-              <p className="flex items-center gap-2 text-muted-foreground text-sm">
-                <MapPin size={14} className="shrink-0" aria-hidden />
-                87 N Raymond, Pasadena, CA
-              </p>
-            </div>
-            {/* Portrait: dark = vignette fade into section; light = minimal overlay so the photo stays clear */}
-            <div className="relative w-full max-w-sm mb-8 overflow-hidden rounded-2xl ring-1 ring-black/[0.06] dark:ring-0">
-              <div
-                className={cn(
-                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  portraitReady ? "opacity-0" : "opacity-100"
-                )}
-                aria-hidden
-              />
-              <div className="absolute inset-0 z-[11] bg-gradient-to-t from-background/25 via-transparent to-transparent dark:from-background dark:via-background/20 pointer-events-none" />
-              <div className="absolute inset-0 z-[11] hidden dark:block bg-gradient-to-r from-background/80 via-transparent to-background/80 pointer-events-none" />
-              <Image
-                src="/images/will_lupfer.webp"
-                alt="Will Lupfer, Founder & CEO of LUPFR"
-                width={400}
-                height={500}
-                sizes="(max-width: 768px) 100vw, 400px"
-                onLoad={() => setPortraitReady(true)}
-                className={cn(
-                  "relative z-[1] w-full h-auto object-cover object-top",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  portraitReady ? "opacity-100" : "opacity-0"
-                )}
-              />
-            </div>
+            {/* Condensed: no founder portrait here — his face lives in the Team section below (owner request, 2026-07-02). */}
             <div className="space-y-6 text-muted-foreground leading-relaxed">
               <p>
                 <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> redefines the music experience. We blend non-traditional venues with specially curated artists to create a one of a kind music experience. LUPFR was founded in 2025 with a simple idea: California deserves music experiences that match its energy and creativity. We saw a gap between the underground scene and accessible, high-quality events.
@@ -291,6 +251,17 @@ export function About() {
                 text="Whether you're a venue looking to elevate your programming, a brand seeking a high caliber artist for a launch party, or simply someone who wants to dance to great music with a great crowd - we're here to make it happen."
                 stagger={0.012}
               />
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-px bg-accent" />
+                <p className="text-foreground font-medium">Will Lupfer — CEO &amp; Founder of LUPFR Entertainment</p>
+              </div>
+              <p className="flex items-center gap-2 text-muted-foreground text-sm">
+                <MapPin size={14} className="shrink-0" aria-hidden />
+                87 N Raymond, Pasadena, CA
+              </p>
             </div>
 
           </motion.div>

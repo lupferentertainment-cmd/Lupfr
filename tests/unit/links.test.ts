@@ -4,7 +4,7 @@ import { LINKS } from "@/lib/links"
 describe("LINKS", () => {
   it("exposes the expected public keys", () => {
     expect(Object.keys(LINKS).sort()).toEqual(
-      ["instagram", "linkedin", "linkedinLife", "partiful", "scheduleCall", "tiktok", "watchReel", "youtube"].sort()
+      ["instagram", "instagramReels", "linkedin", "linkedinLife", "partiful", "scheduleCall", "tiktok", "watchReel", "youtube"].sort()
     )
   })
 

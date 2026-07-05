@@ -82,31 +82,16 @@ describe("about scroll-flicker guard", () => {
     expect(about).toContain("[isInView]")
   })
 
-  it("portrait image opacity is controlled by portraitReady not isInView (image never disappears mid-scroll)", () => {
-    expect(about).toContain("portraitReady ? \"opacity-100\" : \"opacity-0\"")
-    expect(about).not.toMatch(/isInView.*opacity-0.*portrait|portrait.*isInView.*opacity-0/)
-  })
 })
 
-// ── gallery / events use the latch pattern (already correct) ──────────────────
+// ── events uses the latch pattern (already correct) ───────────────────────────
+// (the home gallery carousel + album sections are retired to _deprecated/)
 
-describe("gallery and events use the hasRevealed latch pattern (no regression)", () => {
-  const gallery = read("components/gallery.tsx")
+describe("events uses the hasRevealed latch pattern (no regression)", () => {
   const events = read("components/events.tsx")
-  const gallerySec = read("components/gallery-section.tsx")
-
-  it("gallery uses hasRevealed latch", () => {
-    expect(gallery).toContain("hasRevealed")
-    expect(gallery).toContain("setHasRevealed(true)")
-  })
 
   it("events uses hasRevealed latch", () => {
     expect(events).toContain("hasRevealed")
     expect(events).toContain("setHasRevealed(true)")
-  })
-
-  it("gallery-section uses hasRevealed latch", () => {
-    expect(gallerySec).toContain("hasRevealed")
-    expect(gallerySec).toContain("setHasRevealed(true)")
   })
 })

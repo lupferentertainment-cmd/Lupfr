@@ -4,8 +4,10 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState, useEffect, useCallback, type RefObject } from "react"
-import { Calendar, MapPin, Clock } from "lucide-react"
+import { Calendar, MapPin, Clock, Instagram, ExternalLink } from "lucide-react"
 import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
+import { getReels } from "@/lib/data/reels"
+import { LINKS } from "@/lib/links"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
@@ -86,7 +88,8 @@ function EventCard({
       }
     >
       <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
-        <div className="h-[220px] sm:h-[280px] md:h-[340px] lg:h-[400px] overflow-hidden relative bg-muted shrink-0">
+        {/* Desktop heights deliberately compact — owner feedback 2026-07-02: event images were too big on desktop. */}
+        <div className="h-[220px] sm:h-[280px] md:h-[260px] lg:h-[280px] overflow-hidden relative bg-muted shrink-0">
           <div
             className={cn(
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
@@ -144,11 +147,11 @@ function EventCard({
           </motion.span>
         </div>
 
-        <div className="p-6 sm:p-8 md:p-10">
+        <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between mb-6">
             <div>
               <motion.h3
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.5rem] font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
+                className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
                 whileHover={{ x: 4 }}
               >
                 {event.title}
@@ -255,7 +258,7 @@ function EventsCarousel({
           {events.map((event, i) => (
             <CarouselItem
               key={event.id}
-              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(580px,55vw)] lg:basis-[min(640px,48%)] h-full"
+              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(460px,48vw)] lg:basis-[min(480px,33%)] h-full"
             >
               <EventCard
                 event={event}
@@ -275,6 +278,65 @@ function EventsCarousel({
         <CarouselDots />
       </Carousel>
     </div>
+  )
+}
+
+const reels = getReels()
+
+/** Instagram recap videos ("Reels") — link cards, so the page never embeds third-party players. */
+function ReelsBlock({
+  isRevealed,
+  shineSectionRef,
+}: {
+  isRevealed: boolean
+  shineSectionRef: RefObject<HTMLElement | null>
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      className="pt-6 pb-4"
+    >
+      <GoldShineText
+        as="h3"
+        scrollTargetRef={shineSectionRef}
+        className="lupfr-heading-sub mb-4 md:mb-5"
+      >
+        Reels
+      </GoldShineText>
+      <p className="text-muted-foreground text-base sm:text-lg max-w-xl mb-6">
+        Event recaps, straight from our Instagram — watch the night back.
+      </p>
+      <div className="flex flex-wrap gap-3 sm:gap-4">
+        {reels.map((reel) => (
+          <a
+            key={reel.url}
+            href={reel.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group/reel inline-flex max-w-full min-w-0 items-center gap-3 rounded-2xl border border-border bg-card px-5 py-4 transition-colors hover:border-accent/50"
+          >
+            <Instagram size={20} className="text-accent shrink-0" aria-hidden />
+            <span className="min-w-0">
+              <span className="block truncate font-semibold text-foreground transition-colors group-hover/reel:text-accent">
+                {reel.label}
+              </span>
+              <span className="block text-sm text-muted-foreground">Watch on Instagram</span>
+            </span>
+          </a>
+        ))}
+        <a
+          href={LINKS.instagramReels}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 self-center rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
+        >
+          <ExternalLink size={16} className="shrink-0" aria-hidden />
+          View all reels
+        </a>
+      </div>
+    </motion.div>
   )
 }
 
@@ -389,6 +451,8 @@ export function Events() {
             />
           </motion.div>
         )}
+
+        <ReelsBlock isRevealed={isRevealed} shineSectionRef={ref} />
       </ScrollReveal>
     </section>
   )

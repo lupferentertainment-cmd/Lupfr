@@ -3,9 +3,6 @@
 import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import {
-  Mail,
-  MapPin,
-  Phone,
   ArrowRight,
   CalendarHeart,
   Briefcase,
@@ -18,7 +15,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { toast } from "sonner"
-import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
 import {
   PHONE_LIST_DISMISSED_KEY,
@@ -38,12 +34,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-const socialLinks = [
-  { name: "Instagram", href: LINKS.instagram },
-  { name: "TikTok", href: LINKS.tiktok },
-  { name: "YouTube", href: LINKS.youtube },
-]
-
 const inquiryOptions: { label: string; icon: LucideIcon }[] = [
   { label: "Book an Event", icon: CalendarHeart },
   { label: "Corporate Event", icon: Briefcase },
@@ -56,34 +46,6 @@ const inquiryOptions: { label: string; icon: LucideIcon }[] = [
 ]
 
 const inquiryTypes = inquiryOptions.map((option) => option.label)
-
-// Phone stored as char codes so it's not plain text in source or initial HTML; decoded and rendered client-side only.
-const PHONE_CHAR_CODES = [40, 51, 50, 51, 41, 32, 51, 54, 54, 45, 57, 50, 52, 54]
-
-function ProtectedPhone() {
-  const [decoded, setDecoded] = useState<string | null>(null)
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDecoded(String.fromCharCode(...PHONE_CHAR_CODES))
-    }, 0)
-    return () => window.clearTimeout(timeoutId)
-  }, [])
-  if (!decoded) return <span className="inline-block min-w-[14ch]" aria-hidden />
-  return (
-    <span
-      className="select-none inline-flex items-center gap-0.5 text-foreground"
-      aria-label={`Phone: ${decoded}`}
-      onCopy={(e) => e.preventDefault()}
-      onCut={(e) => e.preventDefault()}
-    >
-      {decoded.split("").map((char, i) => (
-        <span key={i} className="inline-block select-none">
-          {char}
-        </span>
-      ))}
-    </span>
-  )
-}
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
 const LUPFR_EMAIL = "will@lupfr.com"
@@ -247,92 +209,22 @@ export function Contact() {
             <br />
             <span className="lupfr-heading-subline">Something</span>
           </h2>
+          {/* "Ready to elevate" card retired; its copy lives here under the heading (owner request, 2026-07-02). */}
           <TextReveal
-            text="Tell us what you're building and we'll shape the right sound, talent, and production plan around it."
+            text="Whether you're planning a corporate event, looking for DJ talent, or want to partner on a production, we'd love to hear from you."
             className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
           />
+          <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
+            Typical response in 24 hours
+          </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10 xl:gap-12">
-          <motion.aside
-            initial={{ opacity: 0, x: -32 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-6 lg:col-span-4 lg:sticky lg:top-24 lg:self-start"
-          >
-            <div className="rounded-3xl border border-border/80 bg-card/70 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
-              <h3 className="mb-4 text-2xl font-bold">Ready to elevate your event?</h3>
-              <p className="leading-relaxed text-muted-foreground">
-                Whether you&apos;re planning a corporate event, looking for DJ talent, or want to partner on a production, we&apos;d love to hear from you.
-              </p>
-              <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
-                Typical response in 24 hours
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-border/80 bg-card/60 p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur">
-              <div className="space-y-5">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                    <Mail size={20} className="text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email us</p>
-                    <a href="mailto:will@lupfr.com" className="text-foreground transition-colors hover:text-accent">
-                      will@lupfr.com
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                    <MapPin size={20} className="text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Based in</p>
-                    <p className="text-foreground">SF & LA, California</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
-                    <Phone size={20} className="text-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Call us</p>
-                    <p className="text-foreground">
-                      <ProtectedPhone />
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-7 border-t border-border/70 pt-5">
-                <p className="mb-3 text-sm text-muted-foreground">Follow the movement</p>
-                <div className="flex flex-wrap gap-3">
-                  {socialLinks.map((social) => (
-                    <motion.a
-                      key={social.name}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-secondary px-4 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {social.name}
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.aside>
-
+        <div className="mx-auto max-w-3xl">
           <motion.div
-            initial={{ opacity: 0, x: 32 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-6 lg:col-span-8"
+            initial={{ opacity: 0, y: 32 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-6"
           >
             <div className="rounded-3xl border border-border/80 bg-card/70 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
               <form onSubmit={handleSubmit} className="space-y-6">

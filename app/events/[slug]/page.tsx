@@ -22,7 +22,9 @@ import {
 import { EventBreadcrumb } from "@/components/event-breadcrumb"
 import { EventDetailHeroImage } from "@/components/event-detail-hero-image"
 import { EventTagBadge } from "@/components/event-tag-badge"
+import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
 import { GalleryShareRow } from "@/components/gallery-share-row"
+import { getGalleryPhotosByDateISO } from "@/lib/data/gallery"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { SITE_URL } from "@/lib/site"
@@ -143,6 +145,7 @@ export default async function EventPage({ params }: EventPageParams) {
 
   const shareUrl = `${SITE_URL}${eventDetailPath(event.slug)}`
   const shareTitle = eventShareTitle(event)
+  const galleryPhotos = getGalleryPhotosByDateISO(event.dateISO)
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
@@ -211,6 +214,17 @@ export default async function EventPage({ params }: EventPageParams) {
               ) : null}
 
               <EventTicketCta ticket={ticket} fallbackLabel={event.ticketLabel?.trim()} />
+
+              {galleryPhotos.length > 0 ? (
+                <div className="mt-10 pt-8 border-t border-border">
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">Event gallery</h2>
+                  <GalleryPhotoGrid
+                    photos={galleryPhotos}
+                    dateSections={false}
+                    className="grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+                  />
+                </div>
+              ) : null}
 
               {event.contentLinks && event.contentLinks.length > 0 ? (
                 <div className="mt-10 pt-8 border-t border-border">

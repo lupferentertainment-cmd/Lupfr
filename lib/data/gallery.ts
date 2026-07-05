@@ -182,6 +182,12 @@ export function getGalleryPhotosByAlbumFolder(folder: string): readonly GalleryP
   return GALLERY_PHOTOS.filter((p) => p.albumFolder === folder)
 }
 
+/** Photos for one event date (`events.yml` `dateISO`), in YAML order — the event-page gallery. */
+export function getGalleryPhotosByDateISO(dateISO: string | null | undefined): readonly GalleryPhoto[] {
+  if (!dateISO) return []
+  return GALLERY_PHOTOS.filter((p) => p.dateISO === dateISO)
+}
+
 export function getGalleryPhotoById(id: number): GalleryPhoto | undefined {
   return GALLERY_PHOTOS.find((p) => p.id === id)
 }

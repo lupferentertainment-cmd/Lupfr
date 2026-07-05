@@ -18,7 +18,6 @@ const navLinksBase = [
   { name: "Artists", href: "#artists" },
   { name: "News", href: "#news" },
   { name: "Blog", href: "/blog" },
-  { name: "Gallery", href: "#gallery" },
   { name: "About", href: "#about" },
   { name: "Team", href: "#team" },
   { name: "Contact", href: "#contact" },
@@ -96,12 +95,6 @@ export function Navigation() {
     if (href.startsWith("#")) {
       const id = href.slice(1)
       if (id === "about" && pathname === "/about") return true
-      if (
-        id === "gallery" &&
-        (pathname === "/gallery" || pathname.startsWith("/gallery/p/"))
-      ) {
-        return true
-      }
       return isHome && activeSection === id
     }
     if (href === "/blog") return pathname === "/blog" || pathname.startsWith("/blog/")

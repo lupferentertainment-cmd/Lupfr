@@ -1,0 +1,7 @@
+# Instagram reels — event recap videos rendered in the home Events section.
+# Each row: label (card text) + url (https Instagram permalink, e.g.
+# https://www.instagram.com/reel/<id>/ — the reels tab works as a catch-all).
+# Add a row per event recap as reels are published.
+
+- label: LUPFR event recaps
+  url: https://www.instagram.com/lupfr_/reels/

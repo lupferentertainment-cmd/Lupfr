@@ -8,7 +8,7 @@ import { MapPin } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
-import { getTeam, type TeamMember } from "@/lib/data/team"
+import { getTeam, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
@@ -47,30 +47,41 @@ function TeamCard({
         id={`team-bio-trigger-${index}`}
       >
         <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted">
-          <div
-            className={cn(
-              "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
-              "motion-safe:transition-opacity motion-safe:duration-300",
-              "motion-reduce:transition-none",
-              imageReady ? "opacity-0" : "opacity-100"
-            )}
-            aria-hidden
-          />
-          <Image
-            src={member.image}
-            alt={`${member.name}, ${member.title}`}
-            width={TEAM_IMAGE_WIDTH}
-            height={TEAM_IMAGE_HEIGHT}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            loading="lazy"
-            onLoad={() => setImageReady(true)}
-            className={cn(
-              "relative z-[1] w-full h-full object-cover object-center",
-              "motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-reduce:transition-none",
-              "motion-safe:group-hover:scale-[1.08]",
-              imageReady ? "opacity-100" : "opacity-0"
-            )}
-          />
+          {member.image ? (
+            <>
+              <div
+                className={cn(
+                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+                  "motion-safe:transition-opacity motion-safe:duration-300",
+                  "motion-reduce:transition-none",
+                  imageReady ? "opacity-0" : "opacity-100"
+                )}
+                aria-hidden
+              />
+              <Image
+                src={member.image}
+                alt={`${member.name}, ${member.title}`}
+                width={TEAM_IMAGE_WIDTH}
+                height={TEAM_IMAGE_HEIGHT}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                loading="lazy"
+                onLoad={() => setImageReady(true)}
+                className={cn(
+                  "relative z-[1] w-full h-full object-cover object-center",
+                  "motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-reduce:transition-none",
+                  "motion-safe:group-hover:scale-[1.08]",
+                  imageReady ? "opacity-100" : "opacity-0"
+                )}
+              />
+            </>
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
+              <span className="font-serif text-4xl font-bold text-accent/50" aria-hidden>
+                {member.name.charAt(0)}
+              </span>
+              <span className="text-xs tracking-normal text-muted-foreground">Portrait coming soon</span>
+            </div>
+          )}
         </div>
         <div className="p-4 md:p-5">
           <div className="flex items-center gap-2 mb-1">
@@ -120,11 +131,26 @@ function TeamCard({
   )
 }
 
+const TEAM_FILTERS = ["All", ...TEAM_TAGS] as const
+
+type TeamFilter = (typeof TEAM_FILTERS)[number]
+
 export function Team() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
   const isMobile = useIsMobile()
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [activeFilter, setActiveFilter] = useState<TeamFilter>("All")
+
+  const visibleTeam =
+    activeFilter === "All"
+      ? team
+      : team.filter((member) => member.teams.includes(activeFilter as TeamTag))
+
+  const selectFilter = (filter: TeamFilter) => {
+    setActiveFilter(filter)
+    setExpandedIndex(null)
+  }
 
   return (
     <section
@@ -140,10 +166,31 @@ export function Team() {
           <span className="lupfr-heading-subline">Team</span>
         </h2>
 
+        {/* Clickable team boxes: All / LA / SF / Exec (owner request, 2026-07-02). */}
+        <div className="mb-8 flex flex-wrap gap-2 sm:gap-3" role="group" aria-label="Filter team by city">
+          {TEAM_FILTERS.map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => selectFilter(filter)}
+              aria-pressed={activeFilter === filter}
+              aria-label={`Show ${filter} team`}
+              className={cn(
+                "min-h-[44px] rounded-full border px-5 py-2 text-sm font-medium tracking-normal transition-colors duration-200 ease-snap",
+                activeFilter === filter
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
+              )}
+            >
+              {filter}
+            </button>
+          ))}
+        </div>
+
         {/* items-start: an expanded bio must not stretch the neighboring cards.
-            4-up on desktop keeps the cards compact (events-card scale), 2-up tablet, 1-up phones. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 items-start">
-          {team.map((member, i) => (
+            4-up on desktop keeps the cards compact (events-card scale); phones show 2 per row (owner request). */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 items-start">
+          {visibleTeam.map((member, i) => (
             <TeamCard
               key={member.name}
               member={member}

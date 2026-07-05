@@ -25,9 +25,12 @@ const artistsComponent = fs.readFileSync(path.join(rootDir, "components", "artis
 const contact = fs.readFileSync(path.join(rootDir, "components", "contact.tsx"), "utf8")
 const phoneListPopup = fs.readFileSync(path.join(rootDir, "components", "phone-list-popup.tsx"), "utf8")
 const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "utf8")
+const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
+const partnersStrip = fs.readFileSync(path.join(rootDir, "components", "partners-strip.tsx"), "utf8")
+const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
 
 function getContactPhoneCodes() {
-  const match = contact.match(/const PHONE_CHAR_CODES = \[([^\]]+)\]/)
+  const match = protectedPhone.match(/const PHONE_CHAR_CODES = \[([^\]]+)\]/)
   if (!match) throw new Error("PHONE_CHAR_CODES missing")
   return match[1].split(",").map((value) => Number(value.trim()))
 }
@@ -186,10 +189,15 @@ describe("partner logo CSS system", () => {
 
 describe("navigation structure", () => {
   it("defines all expected section nav links", () => {
-    const expected = ["#events", "#services", "#artists", "#gallery", "#about", "#team", "#contact"]
+    const expected = ["#events", "#services", "#artists", "#about", "#team", "#contact"]
     for (const href of expected) {
       expect(navigation, `nav missing link to ${href}`).toContain(`href: "${href}"`)
     }
+  })
+
+  it("no longer links the retired standalone gallery section", () => {
+    expect(navigation).not.toContain('href: "#gallery"')
+    expect(footer).not.toContain('"Gallery"')
   })
 
   it("hides the Blog page link while public access is disabled", () => {
@@ -236,11 +244,32 @@ describe("home page section structure", () => {
     expect(artistsComponent).toContain('id="artists"')
   })
 
-  it("defers gallery, about, contact behind intersection observer; news is eager like artists", () => {
+  it("defers about, team, contact behind intersection observer; the standalone gallery section is retired", () => {
     expect(homePage).not.toContain('<DeferredHomeSection id="news"')
-    expect(homePage).toContain('id="gallery"')
+    expect(homePage).not.toContain('id="gallery"')
     expect(homePage).toContain('id="about"')
+    expect(homePage).toContain('id="team"')
     expect(homePage).toContain('id="contact"')
+  })
+
+  it("mounts the corporate partners strip directly under the hero, without the stats section", () => {
+    expect(homePage).toContain('import { PartnersStrip } from "@/components/partners-strip"')
+    expect(homePage).toMatch(/<Hero \/>\s*<PartnersStrip \/>/)
+    expect(homePage).not.toContain("Reviews")
+    expect(fs.existsSync(path.join(rootDir, "components", "reviews.tsx"))).toBe(false)
+  })
+
+  it("partners strip keeps the marquee but drops the big section header; services no longer owns partners", () => {
+    expect(partnersStrip).toContain("partner-marquee")
+    expect(partnersStrip).not.toContain("lupfr-heading-stack")
+    expect(servicesComponent).not.toContain("partner-marquee")
+    expect(servicesComponent).not.toContain("getPartners")
+  })
+
+  it("events section renders the Instagram reels block", () => {
+    expect(eventsComponent).toContain('from "@/lib/data/reels"')
+    expect(eventsComponent).toContain("Reels")
+    expect(eventsComponent).toContain("instagramReels")
   })
 
   it("mounts Events eagerly for instant #events navigation", () => {
@@ -283,6 +312,55 @@ describe("contact structure", () => {
 
   it("uses neutral popup phone placeholders", () => {
     expect(phoneListPopup).toContain('placeholder="Your phone number"')
+  })
+
+  it("drops the 'Ready to elevate' card and moves its subtext under the heading", () => {
+    expect(contact).not.toContain("Ready to elevate your event?")
+    expect(contact).toContain("Whether you're planning a corporate event")
+  })
+
+  it("no longer renders the email/location/phone info cards (they live in the footer)", () => {
+    expect(contact).not.toContain("Email us")
+    expect(contact).not.toContain("Based in")
+    expect(contact).not.toContain("Call us")
+    expect(contact).not.toContain("ProtectedPhone")
+  })
+})
+
+// ── footer contact info ──────────────────────────────────────────────────────
+
+describe("footer contact info", () => {
+  it("footer carries email, location, and the protected phone", () => {
+    expect(footer).toContain("will@lupfr.com")
+    expect(footer).toContain("SF &amp; LA, California")
+    expect(footer).toContain("ProtectedPhone")
+  })
+})
+
+// ── about structure ──────────────────────────────────────────────────────────
+
+describe("about structure", () => {
+  it("drops the founder portrait (face lives in the Team section below)", () => {
+    expect(about).not.toContain("will_lupfer.webp")
+  })
+
+  it("closes with the founder byline at the bottom", () => {
+    expect(about).toContain("Will Lupfer — CEO &amp; Founder of LUPFR Entertainment")
+  })
+})
+
+// ── event card desktop sizing ────────────────────────────────────────────────
+
+describe("event card desktop sizing", () => {
+  it("caps event card images at a more viewable desktop height", () => {
+    expect(eventsComponent).not.toContain("lg:h-[400px]")
+    expect(eventsComponent).not.toContain("md:h-[340px]")
+    expect(eventsComponent).toContain("md:h-[260px] lg:h-[280px]")
+  })
+
+  it("narrows the desktop carousel card so more events are viewable at once", () => {
+    expect(eventsComponent).not.toContain("lg:basis-[min(640px,48%)]")
+    expect(eventsComponent).toContain("lg:basis-[min(480px,33%)]")
   })
 })
 

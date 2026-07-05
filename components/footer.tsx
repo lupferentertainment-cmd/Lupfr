@@ -5,9 +5,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
-import { ArrowUp } from "lucide-react"
+import { ArrowUp, MapPin, Phone } from "lucide-react"
 import { toast } from "sonner"
 import { MotionScheduleCallCta } from "@/components/schedule-call-cta-motion"
+import { ProtectedPhone } from "@/components/protected-phone"
 import { LINKS } from "@/lib/links"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
 import {
@@ -25,7 +26,6 @@ const companyLinksBase = [
     { name: "About", href: "#about" },
     { name: "Events", href: "#events" },
     { name: "Blog", href: "/blog" },
-    { name: "Gallery", href: "/gallery" },
     { name: "Services", href: "#services" },
     { name: "Careers", href: "/careers" },
     { name: "Contact", href: "#contact" },
@@ -141,6 +141,14 @@ export function Footer() {
             >
               will@lupfr.com
             </motion.a>
+            <p className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin size={14} className="text-accent shrink-0" aria-hidden />
+              <span>Based in SF &amp; LA, California</span>
+            </p>
+            <p className="mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+              <Phone size={14} className="text-accent shrink-0" aria-hidden />
+              <ProtectedPhone />
+            </p>
             <MotionScheduleCallCta
               tone="on-surface"
               size="md"

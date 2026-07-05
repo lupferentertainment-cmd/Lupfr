@@ -5,6 +5,8 @@
 export const LINKS = {
   partiful: "https://partiful.com/u/0SHzuWD8fZTwWwVJixNo",
   instagram: "https://www.instagram.com/lupfr_/",
+  /** Instagram reels tab — event recap videos ("view all" CTA for the Reels block). */
+  instagramReels: "https://www.instagram.com/lupfr_/reels/",
   linkedin: "https://www.linkedin.com/company/lupfr/",
   /** LinkedIn "Life" tab — behind-the-scenes + open roles. */
   linkedinLife: "https://www.linkedin.com/company/lupfr/life/",

@@ -8,16 +8,10 @@ import { Artists } from "@/components/artists"
 import { Press } from "@/components/press"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
-import { Reviews } from "@/components/reviews"
+import { PartnersStrip } from "@/components/partners-strip"
 import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
-const Gallery = dynamic(() =>
-  import("@/components/gallery").then((m) =>
-    resolveDynamicComponent(m, "Gallery", "@/components/gallery")
-  ),
-  { ssr: false }
-)
 const About = dynamic(() =>
   import("@/components/about").then((m) =>
     resolveDynamicComponent(m, "About", "@/components/about")
@@ -146,14 +140,11 @@ export function HomePage() {
       <ScrollProgress />
       <Navigation />
       <Hero />
-      <Reviews />
+      <PartnersStrip />
       <Events />
       <Services />
       <Artists />
       <Press />
-      <DeferredHomeSection id="gallery" estimatedHeightClassName="min-h-[420px] sm:min-h-[700px]">
-        <Gallery />
-      </DeferredHomeSection>
       <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
         <About />
       </DeferredHomeSection>
