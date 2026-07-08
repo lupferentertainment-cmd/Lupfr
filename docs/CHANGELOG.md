@@ -7,6 +7,7 @@ All notable project changes are recorded here.
 ### Added
 
 - **Owner change-set 2026-07-06 (Will's email):** two upcoming events in `data/events.yml` — **Devvy Dub Live** (July 24, 2026, 8–10:30 PM, ERIA Sausalito, Eventbrite ticket link) and **SEA//SIDE 001** (August 1, 2026, 7–10 PM, Long Beach Harbor, links to https://seaside.la) with flyers in `public/events/`; four artists in `data/artists.yml` — **Auguste** (Afro House, list position 1), **Devvy Dub** (Alternative Rock, position 2), **Nick Rosen** (House), **Admiral** (Afro House), portraits in `public/artists/`. Contract tests (`tests/unit/artists-list.test.ts`, `tests/unit/events-list.test.ts`) updated for the new order.
+- **On-disk asset guardrails for artist + team portraits:** `tests/unit/data-integrity.test.ts` now asserts every featured-artist `image` and every team member `image` resolves to a real file under `public/` (mirrors the existing event-hero / gallery / partner checks), so a renamed or dropped owner portrait (e.g. Auguste, Devvy Dub, Nick Rosen, Admiral, Cianna) fails CI instead of shipping a broken image. `docs/TESTING.md` updated.
 
 ### Changed
 

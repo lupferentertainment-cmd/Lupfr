@@ -15,6 +15,8 @@ import { PARTNERS } from "@/lib/data/partners"
 import { PRESS } from "@/lib/data/press"
 import { CAREERS } from "@/lib/data/careers"
 import { getBlogPosts } from "@/lib/data/blog"
+import { getArtists } from "@/lib/data/artists"
+import { getTeam } from "@/lib/data/team"
 
 function publicFileExists(urlPath: string): boolean {
   const rel = urlPath.replace(/^\//, "")
@@ -80,6 +82,20 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
         `missing event hero: ${e.title} → ${e.image}`,
       ).toBe(true)
     }
+  })
+
+  it("artist image paths exist under public/", () => {
+    const missing = getArtists().filter(
+      (artist) => artist.image?.startsWith("/") && !publicFileExists(artist.image)
+    )
+    expect(missing.map((artist) => `${artist.name} → ${artist.image}`)).toEqual([])
+  })
+
+  it("team member image paths exist under public/", () => {
+    const missing = getTeam().filter(
+      (member) => member.image?.startsWith("/") && !publicFileExists(member.image)
+    )
+    expect(missing.map((member) => `${member.name} → ${member.image}`)).toEqual([])
   })
 
   it("partner logo image paths exist under public/", () => {
