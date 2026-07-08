@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest"
 
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const homePagePath = path.join(rootDir, "components", "home-page.tsx")
+const deferredSectionPath = path.join(rootDir, "components", "deferred-home-section.tsx")
 const artistsPath = path.join(rootDir, "components", "artists.tsx")
 const heroMobilePath = path.join(rootDir, "components", "hero-mobile-static.tsx")
 const scheduleCallCtaPath = path.join(rootDir, "components", "schedule-call-cta.tsx")
@@ -12,17 +13,21 @@ const eventsPath = path.join(rootDir, "components", "events.tsx")
 
 describe("home page mobile transfer guardrails", () => {
     const homePage = fs.readFileSync(homePagePath, "utf8")
+    const deferredSection = fs.readFileSync(deferredSectionPath, "utf8")
     const artists = fs.readFileSync(artistsPath, "utf8")
     const heroMobile = fs.readFileSync(heroMobilePath, "utf8")
     const scheduleCallCta = fs.readFileSync(scheduleCallCtaPath, "utf8")
     const events = fs.readFileSync(eventsPath, "utf8")
 
     it("defers lower home sections behind hash-preserving placeholders", () => {
-        expect(homePage).toContain("function DeferredHomeSection")
-        expect(homePage).toContain("IntersectionObserver")
-        expect(homePage).toContain("window.location.hash")
-        expect(homePage).toContain("aria-hidden=\"true\"")
-        expect(homePage).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
+        // The deferred-section component lives in its own module so tests (and the
+        // coverage denominator) don't drag in the whole home component graph.
+        expect(deferredSection).toContain("export function DeferredHomeSection")
+        expect(deferredSection).toContain("IntersectionObserver")
+        expect(deferredSection).toContain("window.location.hash")
+        expect(deferredSection).toContain("aria-hidden=\"true\"")
+        expect(deferredSection).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
+        expect(homePage).toContain('import { DeferredHomeSection } from "@/components/deferred-home-section"')
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
         expect(homePage).not.toContain("id=\"gallery\"")
@@ -38,7 +43,16 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("only realigns deferred hash targets when the mounted section still owns the current hash", () => {
-        expect(homePage).toContain("if (window.location.hash !== `#${id}`) return")
+        // Realignment is a bounded rAF loop instead of a fixed ladder of setTimeouts...
+        expect(deferredSection).toContain("realignHashTargetUntilStable")
+        expect(deferredSection).not.toContain("HASH_REALIGN_DELAYS_MS")
+        // ...which stops the moment the hash stops targeting the mounted section.
+        const hashScroll = fs.readFileSync(path.join(rootDir, "lib", "hash-scroll.ts"), "utf8")
+        expect(hashScroll).toContain("if (hashToId(getHash()) !== id) return stop()")
+    })
+
+    it("mounts deferred sections at or above the hash target so the target lands stably", () => {
+        expect(deferredSection).toContain("deferredSectionShouldMountForHash")
     })
 
     it("mounts the services section eagerly so fast scrolling from events never lands on a blank deferred placeholder", () => {
@@ -88,6 +102,13 @@ describe("home page mobile transfer guardrails", () => {
         expect(events).toContain("prefetchDetails={isMobile === false}")
         expect(events).toContain("prioritizeFirstImage={isMobile === false}")
         expect(events).toContain("priority={prioritizeImage}")
+    })
+
+    it("serves the tiny mobile-only hero posters (not the 2560px desktop posters) so the phone LCP source stays small", () => {
+        expect(heroMobile).toContain("HERO_POSTER_DARK_MOBILE")
+        expect(heroMobile).toContain("HERO_POSTER_LIGHT_MOBILE")
+        // Must not fall back to the heavy desktop posters on the mobile path.
+        expect(heroMobile).not.toMatch(/HERO_POSTER_(DARK|LIGHT)\b/)
     })
 
     it("keeps the base schedule CTA free of Framer Motion", () => {

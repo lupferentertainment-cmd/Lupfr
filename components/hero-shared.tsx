@@ -23,6 +23,15 @@ export const HERO_POSTER_LIGHT = "/hero/hero-poster-light.webp"
 export const HERO_POSTER = HERO_POSTER_DARK
 
 /**
+ * Mobile-only hero posters: purpose-built ~1080px, aggressively compressed
+ * (<90KB) so the phone LCP loads a tiny source instead of the 2560px / ~700KB
+ * desktop posters (whose on-demand AVIF re-encode of a huge source was the main
+ * cause of the slow mobile hero paint). Desktop keeps the full posters + video.
+ */
+export const HERO_POSTER_DARK_MOBILE = "/hero/hero-poster-dark-mobile.webp"
+export const HERO_POSTER_LIGHT_MOBILE = "/hero/hero-poster-light-mobile.webp"
+
+/**
  * Theme for hero media src selection. SSR cannot know the stored theme, so the
  * server (and first client render) always resolve "dark" via the hydration
  * snapshot — avoids the next/image src hydration mismatch — then swaps to the

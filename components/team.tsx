@@ -109,19 +109,38 @@ function TeamCard({
         </div>
       </motion.button>
 
+      {/* In-place bio: an overlay that covers the card in the SAME footprint
+          (owner request 2026-07-08 — the bio must not push the card taller than
+          its row). The front above defines the height; this panel fades/rises
+          over it and scrolls internally for long bios. */}
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
             id={`team-bio-${index}`}
             role="region"
             aria-labelledby={`team-bio-trigger-${index}`}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] }, opacity: { duration: 0.18 } }}
-            className="overflow-hidden border-t border-border/80"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute inset-0 z-10 flex flex-col overflow-y-auto bg-card/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl"
           >
-            <div className="px-4 py-4 md:px-5 md:py-5 bg-muted/30">
+            <div className="flex items-start justify-between gap-2 px-4 pt-4 md:px-5 md:pt-5">
+              <div>
+                <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">{member.name}</h3>
+                <p className="mt-0.5 text-sm text-muted-foreground">{member.title}</p>
+              </div>
+              <button
+                type="button"
+                onClick={onToggle}
+                aria-label={`Close ${member.name} bio`}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-accent/90 transition-colors duration-200 ease-snap hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              >
+                Back
+                <motion.span animate={{ rotate: 180 }}>▼</motion.span>
+              </button>
+            </div>
+            <div className="flex-1 px-4 pb-4 pt-3 md:px-5 md:pb-5">
               <p className="text-muted-foreground leading-relaxed text-sm">{member.bio}</p>
             </div>
           </motion.div>

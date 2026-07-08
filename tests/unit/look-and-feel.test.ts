@@ -15,6 +15,7 @@ import { describe, expect, it } from "vitest"
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const css = fs.readFileSync(path.join(rootDir, "app", "globals.css"), "utf8")
 const homePage = fs.readFileSync(path.join(rootDir, "components", "home-page.tsx"), "utf8")
+const deferredSection = fs.readFileSync(path.join(rootDir, "components", "deferred-home-section.tsx"), "utf8")
 const navigation = fs.readFileSync(path.join(rootDir, "components", "navigation.tsx"), "utf8")
 const siteConfig = fs.readFileSync(path.join(rootDir, "lib", "site.ts"), "utf8")
 const heroDesktop = fs.readFileSync(path.join(rootDir, "components", "hero-desktop.tsx"), "utf8")
@@ -290,11 +291,11 @@ describe("home page section structure", () => {
 
   it("uses DeferredHomeSection for below-fold sections", () => {
     expect(homePage).toContain("DeferredHomeSection")
-    expect(homePage).toContain("IntersectionObserver")
+    expect(deferredSection).toContain("IntersectionObserver")
   })
 
   it("uses a tight mobile observer margin to avoid premature loads", () => {
-    expect(homePage).toContain("DEFERRED_SECTION_ROOT_MARGIN_MOBILE")
+    expect(deferredSection).toContain("DEFERRED_SECTION_ROOT_MARGIN_MOBILE")
   })
 })
 

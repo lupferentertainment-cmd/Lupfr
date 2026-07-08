@@ -15,6 +15,7 @@ export VITEST_COVERAGE_DIR="${CI_TMP_ROOT}/coverage"
 export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$((4310 + RANDOM % 20000))}"
 export VERIFY_ASSETS_PORT="${VERIFY_ASSETS_PORT:-$((14310 + RANDOM % 5000))}"
 export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$((24310 + RANDOM % 20000))}"
+export VERIFY_NAV_SCROLL_PORT="${VERIFY_NAV_SCROLL_PORT:-$((5310 + RANDOM % 8000))}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
 
@@ -70,6 +71,8 @@ run_asset_checks() {
 run_browser_checks() {
   [[ "$MODE" == "ci" && "${LUPFR_SKIP_BROWSER_CHECK:-0}" != "1" ]] || return 0
   bun run _verify:console
+  restore_next_snapshots
+  bun run _verify:nav-scroll
   restore_next_snapshots
 }
 

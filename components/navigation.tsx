@@ -40,9 +40,11 @@ function pushHashAndScroll(hash: string): void {
   const before = window.location.href
   window.history.pushState(window.history.state, "", hash)
   window.dispatchEvent(new HashChangeEvent("hashchange", { oldURL: before, newURL: window.location.href }))
+  // Eager sections are already mounted, so a single post-hashchange scroll lands
+  // them. Deferred sections (#about/#team/#contact) run their own bounded realign
+  // loop once they mount (lib/hash-scroll via DeferredHomeSection), so we no
+  // longer fire blind retry timers here that would fight that convergence.
   requestAnimationFrame(() => requestAnimationFrame(() => scrollHashIntoView(hash)))
-  window.setTimeout(() => scrollHashIntoView(hash), 120)
-  window.setTimeout(() => scrollHashIntoView(hash), 360)
 }
 
 /**

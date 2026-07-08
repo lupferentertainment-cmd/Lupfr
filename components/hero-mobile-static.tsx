@@ -10,8 +10,8 @@ import {
   HeroFallbackPoster,
   HeroTitleContentMobile,
   HERO_PHRASES,
-  HERO_POSTER_DARK,
-  HERO_POSTER_LIGHT,
+  HERO_POSTER_DARK_MOBILE,
+  HERO_POSTER_LIGHT_MOBILE,
   useHeroTheme,
 } from "@/components/hero-shared"
 
@@ -28,7 +28,8 @@ export function HeroMobileStaticSection({
   reducePhraseMotion,
 }: HeroMobileStaticSectionProps) {
   const heroTheme = useHeroTheme()
-  const activePosterSrc = heroTheme === "light" ? HERO_POSTER_LIGHT : HERO_POSTER_DARK
+  const activePosterSrc =
+    heroTheme === "light" ? HERO_POSTER_LIGHT_MOBILE : HERO_POSTER_DARK_MOBILE
 
   return (
     <>

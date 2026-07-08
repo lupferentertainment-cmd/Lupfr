@@ -213,7 +213,7 @@ export function Press() {
     <section
       id="news"
       ref={ref}
-      className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden"
+      className="pt-14 sm:pt-16 md:pt-20 pb-8 sm:pb-9 md:pb-11 px-4 sm:px-6 relative overflow-hidden"
       aria-labelledby="news-section-title"
     >
       <div className="container mx-auto max-w-7xl relative z-10">

@@ -22,6 +22,7 @@
     "_verify:routes": "bash scripts/verify-routes.sh",
     "_verify:assets": "bunx vitest run tests/integration/asset-crawl.test.ts",
     "_verify:console": "bun scripts/verify-console.mjs",
+    "_verify:nav-scroll": "bun scripts/verify-nav-scroll.mjs",
     "_verify:client-bundle": "bun scripts/verify-client-bundle.mjs",
     "_images:optimize": "bun scripts/optimize-public-raster.mjs",
     "_vercel:env:check": "bash scripts/vercel-env-check.sh"
