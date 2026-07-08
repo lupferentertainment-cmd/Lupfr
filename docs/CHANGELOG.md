@@ -10,6 +10,7 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- **Partners marquee is full-bleed (owner request 2026-07-08):** the auto-scrolling logo row in `components/partners-strip.tsx` moved outside the section's `max-w-7xl` container so it runs edge-to-edge across the viewport on desktop and mobile; the "Corporate partners" eyebrow stays centered in the contained wrapper. Structural lock added to `tests/unit/look-and-feel.test.ts`; `docs/DESIGN.md` Partners + Layout-containment sections updated.
 - **Cianna's team card is complete:** `data/team.yml` row upgraded from the pending-portrait placeholder to **Cianna Foppoli — Marketing & Strategy Intern** with her delivered portrait (`public/images/team/cianna.webp`, 1000×800) and full owner-provided bio; LA+SF tags unchanged. The "Portrait coming soon" placeholder branch in `components/team.tsx` stays covered by a mocked imageless fixture in `tests/components/team-section.behavior.test.tsx` (`tests/unit/data-lists.test.ts` updated).
 
 ## [1.20.0] - 2026-07-05

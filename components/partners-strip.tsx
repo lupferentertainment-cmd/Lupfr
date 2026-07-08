@@ -109,37 +109,39 @@ export function PartnersStrip() {
         <p className="text-gold-accent tracking-tight text-sm mb-3 text-center">
           Corporate partners
         </p>
-        <div className="partner-marquee w-full py-2 sm:py-3">
-          <div
-            className={cn(
-              "partner-marquee-track flex items-center gap-x-8",
-              "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
-            )}
-          >
-            {[false, true].map((isDuplicate) => (
-              <div
-                key={isDuplicate ? "duplicate" : "primary"}
-                aria-hidden={isDuplicate || undefined}
-                inert={isDuplicate || undefined}
-                className={cn(
-                  "flex shrink-0 items-center gap-x-8",
-                  "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
-                )}
-              >
-                {partners.map((p) => (
-                  <PartnerLogoChip
-                    key={p.name}
-                    name={p.name}
-                    image={p.image}
-                    imageDark={p.imageDark}
-                    imageClassName={p.imageClassName}
-                    ariaLabel={p.ariaLabel ?? p.name}
-                    href={p.url}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+      </div>
+      {/* Full-bleed: the logo row deliberately escapes the max-w container so the
+          marquee runs edge-to-edge on all viewports (owner request 2026-07-08). */}
+      <div className="partner-marquee w-full py-2 sm:py-3">
+        <div
+          className={cn(
+            "partner-marquee-track flex items-center gap-x-8",
+            "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+          )}
+        >
+          {[false, true].map((isDuplicate) => (
+            <div
+              key={isDuplicate ? "duplicate" : "primary"}
+              aria-hidden={isDuplicate || undefined}
+              inert={isDuplicate || undefined}
+              className={cn(
+                "flex shrink-0 items-center gap-x-8",
+                "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+              )}
+            >
+              {partners.map((p) => (
+                <PartnerLogoChip
+                  key={p.name}
+                  name={p.name}
+                  image={p.image}
+                  imageDark={p.imageDark}
+                  imageClassName={p.imageClassName}
+                  ariaLabel={p.ariaLabel ?? p.name}
+                  href={p.url}
+                />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>

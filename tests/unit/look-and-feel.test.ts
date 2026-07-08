@@ -266,6 +266,17 @@ describe("home page section structure", () => {
     expect(servicesComponent).not.toContain("getPartners")
   })
 
+  it("partners marquee row is full-bleed: it sits outside the contained eyebrow wrapper (owner request 2026-07-08)", () => {
+    // The eyebrow's max-w container must close before the marquee div opens, so
+    // the logo row spans the full viewport on desktop and mobile.
+    expect(partnersStrip).toMatch(/Corporate partners\s*<\/p>\s*<\/div>/)
+    expect(partnersStrip).toMatch(/<div className="partner-marquee[^"]*">/)
+    const containerClose = partnersStrip.indexOf("</div>", partnersStrip.indexOf("Corporate partners"))
+    const marqueeOpen = partnersStrip.indexOf('"partner-marquee')
+    expect(containerClose).toBeGreaterThan(-1)
+    expect(marqueeOpen).toBeGreaterThan(containerClose)
+  })
+
   it("events section renders the Instagram reels block", () => {
     expect(eventsComponent).toContain('from "@/lib/data/reels"')
     expect(eventsComponent).toContain("Reels")
