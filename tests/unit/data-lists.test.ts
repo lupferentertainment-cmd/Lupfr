@@ -36,14 +36,16 @@ describe("team list", () => {
     }
   })
 
-  it("images are root-relative when present; Cianna is pending a portrait", () => {
+  it("images are root-relative when present; Cianna has her portrait and LA+SF tags", () => {
     const team = getTeam()
     for (const member of team) {
       if (member.image) expect(member.image.startsWith("/")).toBe(true)
     }
     const cianna = team.find((m) => m.name.includes("Cianna"))
     expect(cianna).toBeDefined()
-    expect(cianna?.image).toBeUndefined()
+    expect(cianna?.name).toBe("Cianna Foppoli")
+    expect(cianna?.title).toBe("Marketing & Strategy Intern")
+    expect(cianna?.image).toBe("/images/team/cianna.webp")
     expect(cianna?.teams.sort()).toEqual(["LA", "SF"])
   })
 

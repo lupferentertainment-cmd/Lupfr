@@ -5,6 +5,22 @@
 # SoundCloud: use the FULL track page URL (https://soundcloud.com/username/track-slug), NOT on.soundcloud.com short links.
 # featuredTrack: { url: <track URL>, platform: spotify | soundcloud }
 
+- id: 9
+  name: Auguste
+  genre: Afro House
+  image: /artists/auguste.webp
+  bio: Afro house artist blending organic percussion, warm melodic layers, and rolling grooves shaped for open-air floors. Headlining SEA//SIDE 001 in Long Beach.
+  spotify: https://open.spotify.com/artist/4iS5S3n4kI5QvnYV2dNziq
+  appleMusic: https://music.apple.com/us/artist/auguste/368789993
+
+- id: 10
+  name: Devvy Dub
+  genre: Alternative Rock
+  image: /artists/devvy_dub.webp
+  bio: Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.
+  spotify: https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0
+  appleMusic: https://music.apple.com/us/artist/devvy-dub/1257899389
+
 - id: 7
   name: fromclay
   genre: UK Garage
@@ -75,6 +91,19 @@
   featuredTrack:
     url: https://soundcloud.com/user-999208104/bunker-pop-up-3-7
     platform: soundcloud
+
+- id: 11
+  name: Nick Rosen
+  genre: House
+  image: /artists/nick_rosen.webp
+  bio: House DJ with a deep crate and a feel for the floor — smooth, driving selections that keep the room locked in.
+
+- id: 12
+  name: Admiral
+  genre: Afro House
+  image: /artists/admiral.webp
+  bio: Afro house selector channeling deep rhythms and hypnotic percussion into sets that build, breathe, and move the crowd.
+  spotify: https://open.spotify.com/artist/6Ua0zshzKHjw9gyYftjNeD
 
 - id: 6
   name: LUPFR

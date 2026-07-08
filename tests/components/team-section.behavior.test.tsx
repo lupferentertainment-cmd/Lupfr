@@ -111,12 +111,34 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(willCard).toHaveAttribute("aria-expanded", "false")
   })
 
-  it("Cianna renders a placeholder (no portrait yet), other members render their portraits", async () => {
+  it("every member renders a portrait (Cianna's arrived 2026-07-06)", async () => {
     const user = userEvent.setup()
     render(<Team />)
     await user.click(screen.getByRole("button", { name: "Show SF team" }))
     expect(screen.getByAltText(/Mateen/)).toBeInTheDocument()
-    expect(screen.queryByAltText(/Cianna/)).toBeNull()
+    expect(screen.getByAltText(/Cianna/)).toBeInTheDocument()
+    expect(screen.queryByText("Portrait coming soon")).toBeNull()
+  })
+
+  it("a member without an image still renders the 'Portrait coming soon' placeholder", async () => {
+    vi.resetModules()
+    vi.doMock("@/lib/data/team", () => ({
+      TEAM_TAGS: ["LA", "SF", "Exec"],
+      getTeam: () => [
+        {
+          name: "Pending Portrait",
+          title: "New Hire",
+          location: "San Francisco, CA",
+          teams: ["SF"],
+          bio: "Bio pending.",
+        },
+      ],
+    }))
+    const { Team: TeamWithPendingMember } = await import("@/components/team")
+    render(<TeamWithPendingMember />)
     expect(screen.getByText("Portrait coming soon")).toBeInTheDocument()
+    expect(screen.queryByAltText(/Pending Portrait/)).toBeNull()
+    vi.doUnmock("@/lib/data/team")
+    vi.resetModules()
   })
 })

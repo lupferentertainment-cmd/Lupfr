@@ -4,6 +4,14 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Added
+
+- **Owner change-set 2026-07-06 (Will's email):** two upcoming events in `data/events.yml` — **Devvy Dub Live** (July 24, 2026, 8–10:30 PM, ERIA Sausalito, Eventbrite ticket link) and **SEA//SIDE 001** (August 1, 2026, 7–10 PM, Long Beach Harbor, links to https://seaside.la) with flyers in `public/events/`; four artists in `data/artists.yml` — **Auguste** (Afro House, list position 1), **Devvy Dub** (Alternative Rock, position 2), **Nick Rosen** (House), **Admiral** (Afro House), portraits in `public/artists/`. Contract tests (`tests/unit/artists-list.test.ts`, `tests/unit/events-list.test.ts`) updated for the new order.
+
+### Changed
+
+- **Cianna's team card is complete:** `data/team.yml` row upgraded from the pending-portrait placeholder to **Cianna Foppoli — Marketing & Strategy Intern** with her delivered portrait (`public/images/team/cianna.webp`, 1000×800) and full owner-provided bio; LA+SF tags unchanged. The "Portrait coming soon" placeholder branch in `components/team.tsx` stays covered by a mocked imageless fixture in `tests/components/team-section.behavior.test.tsx` (`tests/unit/data-lists.test.ts` updated).
+
 ## [1.20.0] - 2026-07-05
 
 ### Added

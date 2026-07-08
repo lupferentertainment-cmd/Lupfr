@@ -127,6 +127,34 @@
     "description": "Marina Music returns with fromclay and thatfranco at ERIA MARINA."
   },
   {
+    "id": 13,
+    "slug": "devvy-dub-live-eria-sausalito",
+    "title": "Devvy Dub Live",
+    "subtitle": "feat. Devvy Dub",
+    "date": "July 24th, 2026",
+    "dateISO": "2026-07-24",
+    "time": "8 - 10:30 PM",
+    "location": "ERIA, Sausalito",
+    "image": "/events/devvy_dub_live.webp",
+    "ticketLink": "https://www.eventbrite.com/e/devvy-dub-eria-sausalito-tickets-1993158528814",
+    "ticketLabel": "Tickets",
+    "description": "Devvy Dub brings a live alternative rock set to ERIA in Sausalito."
+  },
+  {
+    "id": 14,
+    "slug": "seaside-001-long-beach-harbor",
+    "title": "SEA//SIDE 001",
+    "subtitle": "feat. Auguste and Nick Rosen",
+    "date": "August 1st, 2026",
+    "dateISO": "2026-08-01",
+    "time": "7 - 10 PM",
+    "location": "Long Beach Harbor, CA",
+    "image": "/events/seaside_001.webp",
+    "ticketLink": "https://seaside.la",
+    "ticketLabel": "Event Info",
+    "description": "SEA//SIDE debuts in Long Beach Harbor with Auguste and Nick Rosen — LUPFR's LA waterfront series, edition 001."
+  },
+  {
     "id": 2,
     "slug": "shamrock-house",
     "title": "Shamrock & House",

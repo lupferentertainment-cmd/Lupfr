@@ -39,7 +39,9 @@ describe("events list ordering", () => {
       "boiler-party-marina-lupfr-baum",
       "fifa-world-cup-watch-party-eria-marina",
       "gas-money-eria-marina",
+      "devvy-dub-live-eria-sausalito",
       "marina-music-002-fromclay-thatfranco",
+      "seaside-001-long-beach-harbor",
     ])
   })
 
@@ -47,7 +49,9 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
+      "seaside-001-long-beach-harbor",
       "marina-music-002-fromclay-thatfranco",
+      "devvy-dub-live-eria-sausalito",
       "gas-money-eria-marina",
       "fifa-world-cup-watch-party-eria-marina",
       "boiler-party-marina-lupfr-baum",

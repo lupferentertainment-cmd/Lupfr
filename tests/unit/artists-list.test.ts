@@ -22,14 +22,48 @@ function getPublicImageHash(imagePath: string): string {
 describe("featured artist data", () => {
   it("keeps the requested front artist order", () => {
     expect(getArtists().map((artist) => artist.name)).toEqual([
+      "Auguste",
+      "Devvy Dub",
       "fromclay",
       "Zusebi",
       "Where's West?",
       "thatfranco",
       "HLWA",
       "BAUM",
+      "Nick Rosen",
+      "Admiral",
       "LUPFR",
     ])
+  })
+
+  it("loads the 2026-07-06 owner additions with their streaming links", () => {
+    const auguste = getArtists().find((artist) => artist.name === "Auguste")
+    expect(auguste).toMatchObject({
+      genre: "Afro House",
+      image: "/artists/auguste.webp",
+      spotify: "https://open.spotify.com/artist/4iS5S3n4kI5QvnYV2dNziq",
+      appleMusic: "https://music.apple.com/us/artist/auguste/368789993",
+    })
+
+    const devvyDub = getArtists().find((artist) => artist.name === "Devvy Dub")
+    expect(devvyDub).toMatchObject({
+      genre: "Alternative Rock",
+      image: "/artists/devvy_dub.webp",
+      spotify: "https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0",
+      appleMusic: "https://music.apple.com/us/artist/devvy-dub/1257899389",
+    })
+
+    const nickRosen = getArtists().find((artist) => artist.name === "Nick Rosen")
+    expect(nickRosen).toMatchObject({ genre: "House", image: "/artists/nick_rosen.webp" })
+    expect(nickRosen?.spotify).toBeUndefined()
+
+    const admiral = getArtists().find((artist) => artist.name === "Admiral")
+    expect(admiral).toMatchObject({
+      genre: "Afro House",
+      image: "/artists/admiral.webp",
+      spotify: "https://open.spotify.com/artist/6Ua0zshzKHjw9gyYftjNeD",
+    })
+    expect(admiral?.appleMusic).toBeUndefined()
   })
 
   it("removes retired artists from the featured lineup", () => {
