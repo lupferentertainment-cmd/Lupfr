@@ -52,6 +52,9 @@ function routeToMetadata(route: string): MetadataRoute.Sitemap[number] {
 }
 
 function isPublicRoute(route: string): boolean {
+  // /seaside is decommissioned (2026-07-08) — it 308-redirects to seaside.la, so
+  // it must not be advertised in this site's sitemap.
+  if (route === '/seaside') return false
   if (BLOG_PUBLIC_ACCESS_ENABLED) return true
   return route !== '/blog' && !route.startsWith('/blog/')
 }

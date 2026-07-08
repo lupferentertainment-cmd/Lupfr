@@ -50,6 +50,7 @@ const nextMock = vi.hoisted(() => {
 
     static next = vi.fn(() => ({ type: "next" }))
     static rewrite = vi.fn((url: { pathname: string }) => ({ type: "rewrite", pathname: url.pathname }))
+    static redirect = vi.fn((url: string, status?: number) => ({ type: "redirect", url, status: status ?? 307 }))
   }
 
   return { NextResponse: MockNextResponse }
@@ -160,59 +161,61 @@ describe("proxy() — disabled blog access", () => {
   })
 })
 
-describe("proxy() — seaside host rewrite", () => {
+describe("proxy() — seaside decommissioned (308 → seaside.la)", () => {
   beforeEach(() => {
     nextMock.NextResponse.next.mockClear()
     nextMock.NextResponse.rewrite.mockClear()
+    nextMock.NextResponse.redirect.mockClear()
   })
 
-  it("defines seaside.lupfr.com as a SEASIDE_HOST", () => {
+  it("still defines seaside.lupfr.com as a (legacy) SEASIDE_HOST", () => {
     expect(proxySource).toContain("seaside.lupfr.com")
   })
 
-  it("defines seaside.localhost as a SEASIDE_HOST for local dev", () => {
+  it("still defines seaside.localhost as a SEASIDE_HOST for local dev", () => {
     expect(proxySource).toContain("seaside.localhost")
   })
 
-  it("rewrites seaside.lupfr.com root to /seaside", async () => {
+  it("308-redirects seaside.lupfr.com root to seaside.la", async () => {
     const { proxy } = await import("@/proxy")
-    const res = proxy(buildRequest("/", "seaside.lupfr.com") as never) as { pathname?: string }
-    expect(res.pathname).toBe("/seaside")
-  })
-
-  it("rewrites seaside.lupfr.com subpaths under /seaside", async () => {
-    const { proxy } = await import("@/proxy")
-    const res = proxy(buildRequest("/editions", "seaside.localhost:3000") as never) as { pathname?: string }
-    expect(res.pathname).toBe("/seaside/editions")
-  })
-
-  it("rewrites the dev.seaside.lupfr.com staging host root to /seaside", async () => {
-    const { proxy } = await import("@/proxy")
-    const res = proxy(buildRequest("/", "dev.seaside.lupfr.com") as never) as { pathname?: string }
-    expect(res.pathname).toBe("/seaside")
-  })
-
-  it("skips rewrite for /_next/* on seaside host", async () => {
-    const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/_next/static/chunks/main.js", "seaside.lupfr.com") as never)
+    const res = proxy(buildRequest("/", "seaside.lupfr.com") as never) as { status?: number; url?: string }
+    expect(res.status).toBe(308)
+    expect(res.url).toBe("https://seaside.la/")
     expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
   })
 
-  it("skips rewrite for /api/* on seaside host", async () => {
+  it("redirects any subpath on a seaside host to seaside.la (whole host retired)", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/api/phone-list", "seaside.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+    const res = proxy(buildRequest("/editions", "seaside.localhost:3000") as never) as { status?: number; url?: string }
+    expect(res.status).toBe(308)
+    expect(res.url).toBe("https://seaside.la/")
   })
 
-  it("skips rewrite for /seaside asset paths on seaside host", async () => {
+  it("308-redirects the dev.seaside.lupfr.com staging host to seaside.la", async () => {
     const { proxy } = await import("@/proxy")
-    proxy(buildRequest("/seaside/hero-golden.webp", "seaside.lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+    const res = proxy(buildRequest("/", "dev.seaside.lupfr.com") as never) as { status?: number; url?: string }
+    expect(res.status).toBe(308)
+    expect(res.url).toBe("https://seaside.la/")
   })
 
-  it("does not rewrite the primary host to /seaside", async () => {
+  it("308-redirects the exact /seaside page route on the primary host", async () => {
+    const { proxy } = await import("@/proxy")
+    const res = proxy(buildRequest("/seaside", "lupfr.com") as never) as { status?: number; url?: string }
+    expect(res.status).toBe(308)
+    expect(res.url).toBe("https://seaside.la/")
+  })
+
+  it("does NOT redirect /seaside/<asset> on the primary host (static files still serve)", async () => {
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/seaside/hero-golden.webp", "lupfr.com") as never)
+    expect(nextMock.NextResponse.redirect).not.toHaveBeenCalled()
+    expect(nextMock.NextResponse.next).toHaveBeenCalledOnce()
+  })
+
+  it("does not redirect the primary host root", async () => {
     const { proxy } = await import("@/proxy")
     proxy(buildRequest("/", "lupfr.com") as never)
-    expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+    expect(nextMock.NextResponse.redirect).not.toHaveBeenCalled()
+    expect(nextMock.NextResponse.next).toHaveBeenCalledOnce()
   })
 })

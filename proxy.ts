@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
+import { BLOG_PUBLIC_ACCESS_ENABLED, SEASIDE_REDIRECT_URL } from "@/lib/site"
 
 const BLOCKED_PREFIXES = ["/docs", "/_docs"]
 const BLOG_HOSTS = ["blog.localhost", "blog.lupfr.com"]
@@ -87,20 +87,22 @@ function isSeasideHost(hostHeader: string | null): boolean {
   return SEASIDE_HOSTS.includes(host)
 }
 
-function shouldSkipSeasideRewrite(pathname: string): boolean {
-  const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
-  if (BLOG_SKIP_EXACT.has(normalized)) return true
-  if (normalized === "/seaside" || normalized.startsWith("/seaside/")) return true
-  return BLOG_SKIP_PREFIXES.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`))
-}
-
-function rewriteSeasideHost(request: NextRequest): NextResponse | null {
-  if (!isSeasideHost(request.headers.get("host"))) return null
-  if (shouldSkipSeasideRewrite(request.nextUrl.pathname)) return null
-
-  const url = request.nextUrl.clone()
-  url.pathname = request.nextUrl.pathname === "/" ? "/seaside" : `/seaside${request.nextUrl.pathname}`
-  return NextResponse.rewrite(url)
+/**
+ * SEA // SIDE is decommissioned here (owner decision 2026-07-08): the microsite
+ * now lives at seaside.la (separate Vercel project). Every legacy seaside host
+ * 308-redirects to seaside.la so old links and search ranking transfer; on the
+ * primary host only the exact `/seaside` page route redirects, while
+ * `/seaside/<asset>` static files still serve.
+ */
+function redirectDecommissionedSeaside(request: NextRequest): NextResponse | null {
+  if (isSeasideHost(request.headers.get("host"))) {
+    return NextResponse.redirect(SEASIDE_REDIRECT_URL, 308)
+  }
+  const normalized = request.nextUrl.pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  if (normalized === "/seaside") {
+    return NextResponse.redirect(SEASIDE_REDIRECT_URL, 308)
+  }
+  return null
 }
 
 export function proxy(request: NextRequest) {
@@ -108,8 +110,11 @@ export function proxy(request: NextRequest) {
     return notFoundResponse()
   }
 
+  const seasideRedirect = redirectDecommissionedSeaside(request)
+  if (seasideRedirect) return seasideRedirect
+
   if (!shouldBlock(request.nextUrl.pathname)) {
-    const rewritten = rewriteBlogHost(request) ?? rewriteSeasideHost(request)
+    const rewritten = rewriteBlogHost(request)
     if (rewritten) return rewritten
     return NextResponse.next()
   }

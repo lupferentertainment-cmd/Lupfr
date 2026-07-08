@@ -10,14 +10,18 @@ export const BLOG_HOST = "blog.lupfr.com" as const
 export const BLOG_URL = `https://${BLOG_HOST}` as const
 
 /**
- * SEA // SIDE microsite host and URL (app/seaside served via proxy host rewrite).
- * Production is `seaside.lupfr.com`; the `dev` branch Preview is reachable at
- * `dev.seaside.lupfr.com` (assign that domain to the `dev` branch in Vercel).
- * `proxy.ts` rewrites all seaside hosts to `/seaside`.
+ * SEA // SIDE — decommissioned here (owner decision 2026-07-08). The microsite now
+ * lives at its own domain/project, `seaside.la` (`SEASIDE_REDIRECT_URL`). These legacy
+ * hosts are the redirect *source*: `proxy.ts` 308-redirects every seaside host (and the
+ * primary-host `/seaside` page route) to `seaside.la` so old links and ranking transfer.
+ * Keep the domains attached to the lupfr project so the redirect fires (detaching yields
+ * `DEPLOYMENT_NOT_FOUND`). The `app/seaside` page + `components/seaside/*` code is retained
+ * but no longer publicly routed.
  */
 export const SEASIDE_HOST = "seaside.lupfr.com" as const
 export const SEASIDE_DEV_HOST = "dev.seaside.lupfr.com" as const
 export const SEASIDE_URL = `https://${SEASIDE_HOST}` as const
+export const SEASIDE_REDIRECT_URL = "https://seaside.la/" as const
 
 /**
  * Temporary blog kill switch.
