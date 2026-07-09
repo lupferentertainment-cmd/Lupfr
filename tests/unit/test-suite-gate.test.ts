@@ -14,6 +14,7 @@ const shipDevPath = path.join(rootDir, "scripts", "ship-dev.sh")
 const promoteProdPath = path.join(rootDir, "scripts", "promote-prod.sh")
 const verifyRoutesPath = path.join(rootDir, "scripts", "verify-routes.sh")
 const verifyConsolePath = path.join(rootDir, "scripts", "verify-console.mjs")
+const mobileBudgetsPath = path.join(rootDir, "tests", "performance", "mobile-budgets.json")
 const vercelConfigPath = path.join(rootDir, "vercel.json")
 const vitestConfigPath = path.join(rootDir, "vitest.config.ts")
 
@@ -103,6 +104,24 @@ describe("canonical package workflow gate", () => {
 
     it("keeps browser runtime crawling inside the full suite", () => {
         expect(ciScript).toContain("bun run _verify:console")
+    })
+
+    it("keeps the First Load JS bundle-budget gate inside the build checks", () => {
+        expect(ciScript).toContain("bun run _verify:bundle-budget")
+        expect(packageJson.scripts["_verify:bundle-budget"]).toBe(
+            "bun scripts/verify-bundle-budget.mjs"
+        )
+    })
+
+    it("keeps the mobile runtime performance gate inside the browser checks", () => {
+        expect(ciScript).toContain("bun run _verify:mobile-perf")
+        expect(packageJson.scripts["_verify:mobile-perf"]).toBe(
+            "bun scripts/verify-mobile-perf.mjs"
+        )
+    })
+
+    it("keeps mobile performance budgets on disk", () => {
+        expect(fs.existsSync(mobileBudgetsPath)).toBe(true)
     })
 
     it("keeps external-link extraction inside route verification", () => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useScroll } from "framer-motion"
+import { m, useScroll } from "framer-motion"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -8,7 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 function ScrollProgressBar() {
   const { scrollYProgress } = useScroll()
   return (
-    <motion.div
+    <m.div
       className="fixed top-0 left-0 right-0 h-[3px] origin-left z-[100] rounded-r-full pointer-events-none"
       style={{
         scaleX: scrollYProgress,

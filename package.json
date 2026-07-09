@@ -24,6 +24,8 @@
     "_verify:console": "bun scripts/verify-console.mjs",
     "_verify:nav-scroll": "bun scripts/verify-nav-scroll.mjs",
     "_verify:client-bundle": "bun scripts/verify-client-bundle.mjs",
+    "_verify:bundle-budget": "bun scripts/verify-bundle-budget.mjs",
+    "_verify:mobile-perf": "bun scripts/verify-mobile-perf.mjs",
     "_images:optimize": "bun scripts/optimize-public-raster.mjs",
     "_vercel:env:check": "bash scripts/vercel-env-check.sh"
   },

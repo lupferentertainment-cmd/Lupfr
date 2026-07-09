@@ -1,6 +1,6 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { m } from "framer-motion"
 import { type ReactNode } from "react"
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -55,7 +55,7 @@ function ScrollRevealInner({
   variant = "none",
 }: ScrollRevealProps) {
   return (
-    <motion.div
+    <m.div
       className={className ? `gpu-accelerate ${className}` : "gpu-accelerate"}
       initial={initialByVariant[variant]}
       whileInView={revealedByVariant[variant]}
@@ -63,7 +63,7 @@ function ScrollRevealInner({
       transition={revealTransition}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -92,7 +92,7 @@ export function ScrollRevealStagger({
   amountIn = 0.2,
 }: ScrollRevealStaggerProps) {
   return (
-    <motion.div
+    <m.div
       className={className}
       initial="hidden"
       whileInView="visible"
@@ -103,7 +103,7 @@ export function ScrollRevealStagger({
       }}
     >
       {children}
-    </motion.div>
+    </m.div>
   )
 }
 

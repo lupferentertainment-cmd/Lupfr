@@ -10,6 +10,20 @@ const artistsPath = path.join(rootDir, "components", "artists.tsx")
 const heroMobilePath = path.join(rootDir, "components", "hero-mobile-static.tsx")
 const scheduleCallCtaPath = path.join(rootDir, "components", "schedule-call-cta.tsx")
 const eventsPath = path.join(rootDir, "components", "events.tsx")
+const motionProviderPath = path.join(rootDir, "components", "motion-provider.tsx")
+const layoutPath = path.join(rootDir, "app", "layout.tsx")
+const liquidMetalCanvasPath = path.join(rootDir, "components", "liquid-metal-canvas.tsx")
+
+/** Initial-chunk modules that must use LazyMotion `m`, not the full `motion` proxy. */
+const INITIAL_CHUNK_M_MODULES = [
+    "scroll-reveal.tsx",
+    "gold-shine-text.tsx",
+    "scroll-progress.tsx",
+    "services.tsx",
+    "events.tsx",
+    "artists.tsx",
+    "phone-list-popup.tsx",
+] as const
 
 describe("home page mobile transfer guardrails", () => {
     const homePage = fs.readFileSync(homePagePath, "utf8")
@@ -29,11 +43,16 @@ describe("home page mobile transfer guardrails", () => {
         expect(deferredSection).toContain('DEFERRED_SECTION_ROOT_MARGIN_MOBILE = "900px 0px"')
         expect(homePage).toContain('import { DeferredHomeSection } from "@/components/deferred-home-section"')
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
-        expect(homePage).not.toContain('<DeferredHomeSection id="news"')
         expect(homePage).not.toContain("id=\"gallery\"")
         expect(homePage).toContain("id=\"about\"")
         expect(homePage).toContain("id=\"team\"")
         expect(homePage).toContain("id=\"contact\"")
+    })
+
+    it("defers Press only behind DeferredHomeSection id=\"news\"", () => {
+        expect(homePage).toContain('<DeferredHomeSection id="news"')
+        expect(homePage).toContain("<Press />")
+        expect(homePage).toMatch(/const Press = dynamic\(/)
     })
 
     it("mounts the events section eagerly so #events navigation is instant", () => {
@@ -77,8 +96,37 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("mounts the artists section eagerly to avoid blank placeholders on fast laptop navigation", () => {
+        expect(homePage).toContain('import { Artists } from "@/components/artists"')
         expect(homePage).toContain("<Artists />")
+        expect(homePage).not.toContain('<DeferredHomeSection id="artists"')
         expect(homePage).not.toContain('<DeferredHomeSection\n        id="artists"')
+    })
+
+    it("loads MotionProvider with LazyMotion + domAnimation (non-strict)", () => {
+        expect(fs.existsSync(motionProviderPath)).toBe(true)
+        const motionProvider = fs.readFileSync(motionProviderPath, "utf8")
+        expect(motionProvider).toContain("LazyMotion")
+        expect(motionProvider).toContain("domAnimation")
+        expect(motionProvider).toContain("export function MotionProvider")
+        // Non-strict: must not pass strict to LazyMotion
+        expect(motionProvider).not.toMatch(/<LazyMotion[^>]*\bstrict\b/)
+        const layout = fs.readFileSync(layoutPath, "utf8")
+        expect(layout).toContain("MotionProvider")
+        expect(layout).not.toContain("liquid-metal-canvas")
+    })
+
+    it("uses LazyMotion m (not motion proxy) in initial-chunk modules", () => {
+        for (const fileName of INITIAL_CHUNK_M_MODULES) {
+            const source = fs.readFileSync(path.join(rootDir, "components", fileName), "utf8")
+            expect(source, `${fileName} should import m`).toMatch(/\bimport\s*\{[^}]*\bm\b/)
+            expect(source, `${fileName} should not import motion proxy`).not.toMatch(
+                /\bimport\s*\{[^}]*\bmotion\b/
+            )
+        }
+    })
+
+    it("does not ship dead liquid-metal-canvas", () => {
+        expect(fs.existsSync(liquidMetalCanvasPath)).toBe(false)
     })
 
     it("mounts the partners strip eagerly right under the hero (stats section retired)", () => {
@@ -151,10 +199,11 @@ describe("mobile artists black-screen regression", () => {
     })
 
     it("skips 3D card tilt transforms on mobile to eliminate unused compositor layers", () => {
-        // Mobile always skips tilt; desktop keeps the original hover tilt.
-        expect(artists).toContain("const noTilt = isMobile")
-        expect(artists).toContain("noTilt ? undefined : { rotateX, rotateY")
-        expect(artists).toContain("if (noTilt || !cardRef.current) return")
+        // Tilt springs live in ArtistCardTiltShell, mounted only when !isMobile.
+        expect(artists).toContain("function ArtistCardTiltShell")
+        expect(artists).toContain("const enableTilt = !isMobile")
+        expect(artists).toContain("if (enableTilt)")
+        expect(artists).toContain("<ArtistCardTiltShell")
     })
 })
 

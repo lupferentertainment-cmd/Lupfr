@@ -100,6 +100,8 @@
   --lupfr-fixed-header-scroll-padding: 7.5rem;
   /* Gallery tiles / carousel hero frames: token radius + squircle curve where supported (see .rounded-gallery-squircle) */
   --lupfr-gallery-squircle-radius: clamp(1.25rem, 0.45rem + 3.25vw, 2.875rem);
+  /* SkeletonShimmerLayer waits this long after `show` before revealing (JS timeout mirrors the value). */
+  --lupfr-skeleton-shimmer-show-delay: 200ms;
   /* Partner row: mono marks ≈ foreground on light chips (see .partner-logo) */
   --partner-logo-opacity: 0.92;
   --partner-logo-opacity-outline: 0.93;
@@ -433,6 +435,8 @@
    * `position: relative; overflow: hidden;` and set border-radius (inherited
    * here). Hide with `opacity-0` when the image has fired `onLoad`.
    * `.gallery-grid-tile-placeholder` is an alias for the same look on `/gallery` tiles.
+   * `SkeletonShimmerLayer` delays show by `--lupfr-skeleton-shimmer-show-delay`
+   * so fast loads never flash the sweep.
    */
   .skeleton-shimmer,
   .gallery-grid-tile-placeholder {
@@ -1211,6 +1215,24 @@ html:not(.dark) .stat-tile-surface:hover {
 
   50% {
     border-radius: var(--lupfr-gallery-squircle-radius);
+  }
+}
+
+/**
+ * Mobile-only: skip off-screen layout/paint for below-fold home sections.
+ * Eager first content (`#events` + hero) stays fully laid out. Generous
+ * contain-intrinsic-size keeps hash/nav scroll from jumping badly.
+ * Breakpoint matches `hooks/use-mobile.ts` (max-width: 767px).
+ */
+@media (max-width: 767px) {
+  #services,
+  #artists,
+  #news,
+  #about,
+  #team,
+  #contact {
+    content-visibility: auto;
+    contain-intrinsic-size: 800px;
   }
 }
 

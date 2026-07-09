@@ -4,7 +4,6 @@ import dynamic from "next/dynamic"
 
 import { Events } from "@/components/events"
 import { Artists } from "@/components/artists"
-import { Press } from "@/components/press"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { PartnersStrip } from "@/components/partners-strip"
@@ -12,6 +11,12 @@ import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { DeferredHomeSection } from "@/components/deferred-home-section"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
+const Press = dynamic(() =>
+  import("@/components/press").then((m) =>
+    resolveDynamicComponent(m, "Press", "@/components/press")
+  ),
+  { ssr: false }
+)
 const About = dynamic(() =>
   import("@/components/about").then((m) =>
     resolveDynamicComponent(m, "About", "@/components/about")
@@ -47,7 +52,9 @@ export function HomePage() {
       <Events />
       <Services />
       <Artists />
-      <Press />
+      <DeferredHomeSection id="news" estimatedHeightClassName="min-h-[720px] lg:min-h-[640px]">
+        <Press />
+      </DeferredHomeSection>
       <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
         <About />
       </DeferredHomeSection>

@@ -1,8 +1,8 @@
 "use client"
 
-import { memo } from "react"
+import { memo, type ReactNode } from "react"
 import Image from "next/image"
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
@@ -34,8 +34,8 @@ const mobileArtistSlides = artists.map((a) => [a])
 
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
-  const m = trackUrl.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/)
-  const id = m ? m[1] : ""
+  const match = trackUrl.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/)
+  const id = match ? match[1] : ""
   return id ? `https://open.spotify.com/embed/track/${id}?theme=0` : ""
 }
 
@@ -47,6 +47,97 @@ function soundcloudEmbedUrl(trackUrl: string): string {
 
 const FALLBACK_IMAGE =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%236b7280'/%3E%3Cstop offset='100%25' style='stop-color:%234b5563'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='800' fill='url(%23g)'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='system-ui' font-size='48'%3EDJ%3C/text%3E%3C/svg%3E"
+
+/** Mount Spotify/SoundCloud iframe only when the card is near the viewport. */
+function FeaturedTrackEmbed({
+  featuredTrackEmbedUrl,
+  platform,
+  artistName,
+  label,
+}: {
+  featuredTrackEmbedUrl: string
+  platform: "spotify" | "soundcloud"
+  artistName: string
+  label: string
+}) {
+  const embedRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(embedRef, { once: true, margin: "200px" })
+  const height = platform === "spotify" ? "80" : "166"
+
+  return (
+    <div ref={embedRef} className="mt-4 w-full pt-4 border-t border-border/80">
+      <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
+      <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
+        {isInView ? (
+          <iframe
+            src={featuredTrackEmbedUrl}
+            width="100%"
+            height={height}
+            loading="lazy"
+            allow={
+              platform === "spotify"
+                ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                : "autoplay; encrypted-media; fullscreen"
+            }
+            className="border-0"
+            title={`Listen to ${artistName} on ${label}`}
+          />
+        ) : (
+          <div
+            className="w-full bg-muted"
+            style={{ height: `${height}px` }}
+            aria-hidden
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+/** Tilt springs live here so ArtistCard never creates them on touch/mobile. */
+function ArtistCardTiltShell({
+  children,
+  onHover,
+  onLeave,
+}: {
+  children: ReactNode
+  onHover: () => void
+  onLeave: () => void
+}) {
+  const cardRef = useRef<HTMLElement>(null)
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const centerX = rect.left + rect.width / 2
+    const centerY = rect.top + rect.height / 2
+    x.set((e.clientX - centerX) / rect.width)
+    y.set((e.clientY - centerY) / rect.height)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+    onLeave()
+  }
+
+  return (
+    <m.article
+      ref={cardRef}
+      className="group relative rounded-2xl bg-card overflow-hidden"
+      onMouseEnter={onHover}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
+    >
+      {children}
+    </m.article>
+  )
+}
 
 const ArtistCard = memo(function ArtistCard({
   artist,
@@ -61,31 +152,9 @@ const ArtistCard = memo(function ArtistCard({
   onHover: () => void
   onLeave: () => void
 }) {
-  const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
   const [imageReady, setImageReady] = useState(false)
-  const noTilt = isMobile
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (noTilt || !cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const centerX = rect.left + rect.width / 2
-    const centerY = rect.top + rect.height / 2
-    x.set((e.clientX - centerX) / rect.width)
-    y.set((e.clientY - centerY) / rect.height)
-  }
-
-  const handleMouseLeave = () => {
-    if (!noTilt) {
-      x.set(0)
-      y.set(0)
-    }
-    onLeave()
-  }
+  const enableTilt = !isMobile
 
   const hasSpotify = "spotify" in artist && artist.spotify
   const hasAppleMusic = "appleMusic" in artist && artist.appleMusic
@@ -98,186 +167,181 @@ const ArtistCard = memo(function ArtistCard({
     : ""
   const featuredTrackLabel = artist.featuredTrack?.platform === "spotify" ? "Spotify" : "SoundCloud"
 
-  return (
-    <motion.article
-      ref={cardRef}
-      className="group relative rounded-2xl bg-card overflow-hidden"
-      onMouseEnter={isMobile ? undefined : onHover}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={noTilt ? undefined : { rotateX, rotateY, transformPerspective: 800 }}
-    >
-      {/* Card: image, then full blur overlay, then name+player on top of blur so no gap + player clickable */}
-      <div className="relative w-full rounded-2xl overflow-hidden">
-        {/* Image + bio overlay on hover */}
-        <div className="relative rounded-t-2xl overflow-hidden bg-card">
-          <motion.div
-            className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-muted"
-            animate={{ scale: isHovered ? 1.03 : 1 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+  const body = (
+    <div className="relative w-full rounded-2xl overflow-hidden">
+      {/* Image + bio overlay on hover */}
+      <div className="relative rounded-t-2xl overflow-hidden bg-card">
+        <m.div
+          className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-muted"
+          animate={{ scale: isHovered ? 1.03 : 1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {!imageError ? (
+            <div
+              className={cn(
+                "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+                "motion-safe:transition-opacity motion-safe:duration-300",
+                "motion-reduce:transition-none",
+                imageReady ? "opacity-0" : "opacity-100"
+              )}
+              aria-hidden
+            />
+          ) : null}
+          {imageError ? (
+            <Image
+              src={FALLBACK_IMAGE}
+              alt={`${artist.name}, ${artist.genre}`}
+              width={ARTIST_IMAGE_SIZE}
+              height={ARTIST_IMAGE_SIZE}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image
+              src={artist.image}
+              alt={`${artist.name}, ${artist.genre}`}
+              width={ARTIST_IMAGE_SIZE}
+              height={ARTIST_IMAGE_SIZE}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="lazy"
+              className={cn(
+                "relative z-[1] w-full h-full object-cover",
+                "motion-safe:transition-opacity motion-safe:duration-300",
+                "motion-reduce:transition-none",
+                imageReady ? "opacity-100" : "opacity-0"
+              )}
+              onError={() => setImageError(true)}
+              onLoad={() => setImageReady(true)}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
+          <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm">
+            {artist.genre}
+          </span>
+        </m.div>
+        {/* Bio overlay — desktop hover only; not rendered on mobile to avoid compositing cost */}
+        {!isMobile && (
+          <m.div
+            className="absolute inset-0 rounded-t-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
+            initial={false}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
-            {!imageError ? (
-              <div
-                className={cn(
-                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  imageReady ? "opacity-0" : "opacity-100"
-                )}
-                aria-hidden
-              />
-            ) : null}
-            {imageError ? (
-              <Image
-                src={FALLBACK_IMAGE}
-                alt={`${artist.name}, ${artist.genre}`}
-                width={ARTIST_IMAGE_SIZE}
-                height={ARTIST_IMAGE_SIZE}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <Image
-                src={artist.image}
-                alt={`${artist.name}, ${artist.genre}`}
-                width={ARTIST_IMAGE_SIZE}
-                height={ARTIST_IMAGE_SIZE}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                loading="lazy"
-                className={cn(
-                  "relative z-[1] w-full h-full object-cover",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  imageReady ? "opacity-100" : "opacity-0"
-                )}
-                onError={() => setImageError(true)}
-                onLoad={() => setImageReady(true)}
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent opacity-70 pointer-events-none" />
-            <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold tracking-tight rounded-full bg-muted/90 text-foreground backdrop-blur-sm">
-              {artist.genre}
-            </span>
-          </motion.div>
-          {/* Bio overlay — desktop hover only; not rendered on mobile to avoid compositing cost */}
-          {!isMobile && (
-            <motion.div
-              className="absolute inset-0 rounded-t-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
+            <m.p
+              className="p-5 md:p-6 text-sm text-muted-foreground leading-relaxed tracking-wide font-[450] antialiased line-clamp-3"
               initial={false}
-              animate={{ opacity: isHovered ? 1 : 0 }}
+              animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 12 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
-              <motion.p
-                className="p-5 md:p-6 text-sm text-muted-foreground leading-relaxed tracking-wide font-[450] antialiased line-clamp-3"
-                initial={false}
-                animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 12 }}
-                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              >
-                {artist.bio}
-              </motion.p>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Name, links (above Listen), player — always visible */}
-        <div className="p-4 md:p-5 rounded-b-2xl bg-card">
-          <div className="flex items-center gap-2 mb-1">
-            <Music size={14} className="text-accent shrink-0" />
-            <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
-          </div>
-          <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
-            {artist.name}
-          </h3>
-          <div className="flex items-center gap-3 flex-wrap mt-4">
-            {hasSpotify && (
-              <motion.a
-                href={artist.spotify}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.92 }}
-                aria-label="Spotify"
-              >
-                <ExternalLink size={16} />
-              </motion.a>
-            )}
-            {hasAppleMusic && (
-              <motion.a
-                href={artist.appleMusic}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.92 }}
-                aria-label="Apple Music"
-              >
-                <Music size={16} />
-              </motion.a>
-            )}
-            {artist.instagram && (
-              <motion.a
-                href={artist.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.92 }}
-                aria-label="Instagram"
-              >
-                <Instagram size={16} />
-              </motion.a>
-            )}
-            {hasYoutube && (
-              <motion.a
-                href={artist.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.92 }}
-                aria-label="YouTube"
-              >
-                <Youtube size={16} />
-              </motion.a>
-            )}
-            {hasSoundcloud && (
-              <motion.a
-                href={artist.soundcloud}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-                whileHover={{ scale: 1.12 }}
-                whileTap={{ scale: 0.92 }}
-                aria-label="SoundCloud"
-              >
-                <ExternalLink size={16} />
-              </motion.a>
-            )}
-          </div>
-          {artist.featuredTrack && featuredTrackEmbedUrl && (
-            <div className="mt-4 w-full pt-4 border-t border-border/80">
-              <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
-              <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
-                <iframe
-                  src={featuredTrackEmbedUrl}
-                  width="100%"
-                  height={artist.featuredTrack.platform === "spotify" ? "80" : "166"}
-                  loading="lazy"
-                  allow={
-                    artist.featuredTrack.platform === "spotify"
-                      ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                      : "autoplay; encrypted-media; fullscreen"
-                  }
-                  className="border-0"
-                  title={`Listen to ${artist.name} on ${featuredTrackLabel}`}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+              {artist.bio}
+            </m.p>
+          </m.div>
+        )}
       </div>
-    </motion.article>
+
+      {/* Name, links (above Listen), player — always visible */}
+      <div className="p-4 md:p-5 rounded-b-2xl bg-card">
+        <div className="flex items-center gap-2 mb-1">
+          <Music size={14} className="text-accent shrink-0" />
+          <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
+        </div>
+        <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
+          {artist.name}
+        </h3>
+        <div className="flex items-center gap-3 flex-wrap mt-4">
+          {hasSpotify && (
+            <m.a
+              href={artist.spotify}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label="Spotify"
+            >
+              <ExternalLink size={16} />
+            </m.a>
+          )}
+          {hasAppleMusic && (
+            <m.a
+              href={artist.appleMusic}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label="Apple Music"
+            >
+              <Music size={16} />
+            </m.a>
+          )}
+          {artist.instagram && (
+            <m.a
+              href={artist.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label="Instagram"
+            >
+              <Instagram size={16} />
+            </m.a>
+          )}
+          {hasYoutube && (
+            <m.a
+              href={artist.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label="YouTube"
+            >
+              <Youtube size={16} />
+            </m.a>
+          )}
+          {hasSoundcloud && (
+            <m.a
+              href={artist.soundcloud}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              aria-label="SoundCloud"
+            >
+              <ExternalLink size={16} />
+            </m.a>
+          )}
+        </div>
+        {artist.featuredTrack && featuredTrackEmbedUrl && (
+          <FeaturedTrackEmbed
+            featuredTrackEmbedUrl={featuredTrackEmbedUrl}
+            platform={artist.featuredTrack.platform}
+            artistName={artist.name}
+            label={featuredTrackLabel}
+          />
+        )}
+      </div>
+    </div>
+  )
+
+  if (enableTilt) {
+    return (
+      <ArtistCardTiltShell onHover={onHover} onLeave={onLeave}>
+        {body}
+      </ArtistCardTiltShell>
+    )
+  }
+
+  return (
+    <m.article
+      className="group relative rounded-2xl bg-card overflow-hidden"
+      onMouseLeave={onLeave}
+    >
+      {body}
+    </m.article>
   )
 })
 
@@ -376,7 +440,7 @@ export function Artists() {
           <p className="text-muted-foreground mb-6">
             Are you a DJ or producer? We&apos;re always looking for fresh talent.
           </p>
-          <motion.button
+          <m.button
             type="button"
             onClick={() => {
               window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
@@ -388,7 +452,7 @@ export function Artists() {
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
           >
             Submit Your Mix
-          </motion.button>
+          </m.button>
         </div>
       </div>
     </section>

@@ -16,6 +16,7 @@ export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$((4310 + RANDOM % 20000))}"
 export VERIFY_ASSETS_PORT="${VERIFY_ASSETS_PORT:-$((14310 + RANDOM % 5000))}"
 export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$((24310 + RANDOM % 20000))}"
 export VERIFY_NAV_SCROLL_PORT="${VERIFY_NAV_SCROLL_PORT:-$((5310 + RANDOM % 8000))}"
+export VERIFY_MOBILE_PERF_PORT="${VERIFY_MOBILE_PERF_PORT:-$((6310 + RANDOM % 8000))}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
 
@@ -50,6 +51,8 @@ run_build_checks() {
   restore_next_snapshots
   bun run _verify:client-bundle
   restore_next_snapshots
+  bun run _verify:bundle-budget
+  restore_next_snapshots
 }
 
 run_route_checks() {
@@ -73,6 +76,8 @@ run_browser_checks() {
   bun run _verify:console
   restore_next_snapshots
   bun run _verify:nav-scroll
+  restore_next_snapshots
+  bun run _verify:mobile-perf
   restore_next_snapshots
 }
 

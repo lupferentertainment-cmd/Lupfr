@@ -1,16 +1,16 @@
 "use client"
 
-import { motion, useScroll, useTransform, type UseScrollOptions } from "framer-motion"
+import { m, useScroll, useTransform, type UseScrollOptions } from "framer-motion"
 
 const DEFAULT_SCROLL_OFFSET: NonNullable<UseScrollOptions["offset"]> = ["start start", "end start"]
 
 const motionByTag = {
-  h1: motion.h1,
-  h2: motion.h2,
-  h3: motion.h3,
-  h4: motion.h4,
-  div: motion.div,
-  span: motion.span,
+  h1: m.h1,
+  h2: m.h2,
+  h3: m.h3,
+  h4: m.h4,
+  div: m.div,
+  span: m.span,
 } as const
 
 export type GoldShineTextAs = keyof typeof motionByTag

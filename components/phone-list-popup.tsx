@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { m, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { isValidPhone } from "@/lib/contact-input"
@@ -104,7 +104,7 @@ export function PhoneListPopup() {
     return (
         <AnimatePresence>
             {isOpen ? (
-                <motion.div
+                <m.div
                     data-lupfr-phone-list-open="true"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -114,7 +114,7 @@ export function PhoneListPopup() {
                         if (e.target === e.currentTarget) closePopup()
                     }}
                 >
-                    <motion.div
+                    <m.div
                         role="dialog"
                         aria-modal="true"
                         aria-label="Join the contact list"
@@ -184,8 +184,8 @@ export function PhoneListPopup() {
                                 {isSubmitting ? "Saving..." : "Join"}
                             </button>
                         </form>
-                    </motion.div>
-                </motion.div>
+                    </m.div>
+                </m.div>
             ) : null}
         </AnimatePresence>
     )

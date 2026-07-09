@@ -1,0 +1,14 @@
+{
+  "route": "/",
+  "firstLoadJsBytes": 1350000,
+  "lcpMs": 5000,
+  "fcpMs": 3000,
+  "transferBytes": 2000000,
+  "longTaskMs": 3500,
+  "samples": 3,
+  "cpuThrottle": 4,
+  "netDownMbps": 1.6,
+  "netLatencyMs": 150,
+  "viewport": { "width": 390, "height": 844 },
+  "deviceScaleFactor": 3
+}

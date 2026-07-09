@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { motion, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState, useEffect, useCallback, type RefObject } from "react"
+import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { useRef, useState, useEffect, useCallback, type ReactNode, type RefObject } from "react"
 import { Calendar, MapPin, Clock, Instagram, ExternalLink } from "lucide-react"
 import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
 import { getReels } from "@/lib/data/reels"
@@ -24,39 +24,32 @@ import { cn } from "@/lib/utils"
 const EVENT_IMAGE_WIDTH = 1200
 const EVENT_IMAGE_HEIGHT = 800
 
-function EventCard({
-  event,
-  index,
-  prioritizeImage,
-  isRevealed,
-  enableTilt,
-  isHovered,
+/** Tilt springs live here so EventCard never creates them on touch/mobile. */
+function EventCardTiltShell({
+  children,
   onHover,
   onLeave,
-  now,
-  shineSectionRef,
+  className,
+  initial,
+  animate,
+  transition,
 }: {
-  event: EventItem
-  index: number
-  prioritizeImage: boolean
-  isRevealed: boolean
-  enableTilt: boolean
-  isHovered: boolean
+  children: ReactNode
   onHover: () => void
   onLeave: () => void
-  now: Date
-  shineSectionRef: RefObject<HTMLElement | null>
+  className: string
+  initial: { opacity: number; y: number }
+  animate: { opacity: number; y: number }
+  transition: { duration: number; delay: number; ease: number[] }
 }) {
   const cardRef = useRef<HTMLElement>(null)
-  const [imageReady, setImageReady] = useState(false)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
   const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-6, 6]), { stiffness: 420, damping: 32 })
-  const tag = getEventTag(event, now)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    if (!enableTilt || !cardRef.current) return
+    if (!cardRef.current) return
     const rect = cardRef.current.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
@@ -70,23 +63,102 @@ function EventCard({
     onLeave()
   }
 
-  const isFirstCard = index === 0
   return (
-    <motion.article
+    <m.article
       ref={cardRef}
-      initial={isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: isFirstCard ? 1 : 0, y: isFirstCard ? 0 : 40 }}
-      transition={{ duration: 0.45, delay: isFirstCard ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
+      initial={initial}
+      animate={animate}
+      transition={transition}
+      className={className}
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={
-        enableTilt
-          ? { rotateX, rotateY, transformPerspective: 800 }
-          : { rotateX: 0, rotateY: 0 }
-      }
+      style={{ rotateX, rotateY, transformPerspective: 800 }}
     >
+      {children}
+    </m.article>
+  )
+}
+
+function EventCard({
+  event,
+  index,
+  prioritizeImage,
+  isRevealed,
+  enableTilt,
+  staticInner,
+  isHovered,
+  onHover,
+  onLeave,
+  now,
+  shineSectionRef,
+}: {
+  event: EventItem
+  index: number
+  prioritizeImage: boolean
+  isRevealed: boolean
+  enableTilt: boolean
+  /** Mobile/touch: skip hover-only motion nodes that never fire. */
+  staticInner: boolean
+  isHovered: boolean
+  onHover: () => void
+  onLeave: () => void
+  now: Date
+  shineSectionRef: RefObject<HTMLElement | null>
+}) {
+  const [imageReady, setImageReady] = useState(false)
+  const tag = getEventTag(event, now)
+
+  const isFirstCard = index === 0
+  const initial = isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
+  const animate = isRevealed
+    ? { opacity: 1, y: 0 }
+    : { opacity: isFirstCard ? 1 : 0, y: isFirstCard ? 0 : 40 }
+  const transition = {
+    duration: 0.45,
+    delay: isFirstCard ? 0 : index * 0.08,
+    ease: [0.22, 1, 0.36, 1],
+  }
+  const className =
+    "group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
+
+  const image = event.image ? (
+    <Image
+      src={event.image}
+      alt={event.title}
+      width={EVENT_IMAGE_WIDTH}
+      height={EVENT_IMAGE_HEIGHT}
+      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
+      priority={prioritizeImage}
+      loading={prioritizeImage ? "eager" : "lazy"}
+      fetchPriority={prioritizeImage ? "high" : undefined}
+      unoptimized={event.image.startsWith("http")}
+      onLoad={() => setImageReady(true)}
+      className={cn(
+        "w-full h-full object-cover object-center",
+        "motion-safe:transition-opacity motion-safe:duration-300",
+        "motion-reduce:transition-none",
+        imageReady ? "opacity-100" : "opacity-0"
+      )}
+    />
+  ) : (
+    <div className="w-full h-full bg-gradient-to-br from-card via-muted/50 to-card" />
+  )
+
+  const tagPill = (
+    <h4 suppressHydrationWarning className={tag.textClass}>
+      {tag.kind === "today" ? (
+        tag.label
+      ) : (
+        <GoldShineText as="span" scrollTargetRef={shineSectionRef}>
+          {tag.label}
+        </GoldShineText>
+      )}
+    </h4>
+  )
+
+  const body = (
+    <>
       <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
         {/* Desktop heights deliberately compact — owner feedback 2026-07-02: event images were too big on desktop. */}
         <div className="h-[220px] sm:h-[280px] md:h-[260px] lg:h-[280px] overflow-hidden relative bg-muted shrink-0">
@@ -99,63 +171,53 @@ function EventCard({
             )}
             aria-hidden
           />
-          <motion.div
-            className="relative z-[1] w-full h-full"
-            animate={{ scale: enableTilt && isHovered ? 1.08 : 1 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {event.image ? (
-              <Image
-                src={event.image}
-                alt={event.title}
-                width={EVENT_IMAGE_WIDTH}
-                height={EVENT_IMAGE_HEIGHT}
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
-                priority={prioritizeImage}
-                loading={prioritizeImage ? "eager" : "lazy"}
-                fetchPriority={prioritizeImage ? "high" : undefined}
-                unoptimized={event.image.startsWith("http")}
-                onLoad={() => setImageReady(true)}
-                className={cn(
-                  "w-full h-full object-cover object-center",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  imageReady ? "opacity-100" : "opacity-0"
-                )}
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-card via-muted/50 to-card" />
-            )}
-          </motion.div>
+          {staticInner ? (
+            <div className="relative z-[1] w-full h-full">{image}</div>
+          ) : (
+            <m.div
+              className="relative z-[1] w-full h-full"
+              animate={{ scale: enableTilt && isHovered ? 1.08 : 1 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {image}
+            </m.div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
-          <motion.span
-            suppressHydrationWarning
-            className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ delay: index * 0.12 + 0.2 }}
-          >
-            <h4 suppressHydrationWarning className={tag.textClass}>
-              {tag.kind === "today" ? (
-                tag.label
-              ) : (
-                <GoldShineText as="span" scrollTargetRef={shineSectionRef}>
-                  {tag.label}
-                </GoldShineText>
-              )}
-            </h4>
-          </motion.span>
+          {staticInner ? (
+            <span
+              suppressHydrationWarning
+              className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
+            >
+              {tagPill}
+            </span>
+          ) : (
+            <m.span
+              suppressHydrationWarning
+              className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+              transition={{ delay: index * 0.12 + 0.2 }}
+            >
+              {tagPill}
+            </m.span>
+          )}
         </div>
 
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between mb-6">
             <div>
-              <motion.h3
-                className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
-                whileHover={{ x: 4 }}
-              >
-                {event.title}
-              </motion.h3>
+              {staticInner ? (
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight">
+                  {event.title}
+                </h3>
+              ) : (
+                <m.h3
+                  className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
+                  whileHover={{ x: 4 }}
+                >
+                  {event.title}
+                </m.h3>
+              )}
               {event.subtitle ? (
                 <p className="text-muted-foreground text-base sm:text-lg mt-1">{event.subtitle}</p>
               ) : null}
@@ -179,13 +241,44 @@ function EventCard({
         </div>
       </EventDetailLink>
 
-      <motion.div
-        className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl bg-accent/5"
-        initial={false}
-        animate={{ opacity: isHovered ? 1 : 0 }}
-        transition={{ duration: 0.22 }}
-      />
-    </motion.article>
+      {staticInner ? null : (
+        <m.div
+          className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl bg-accent/5"
+          initial={false}
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          transition={{ duration: 0.22 }}
+        />
+      )}
+    </>
+  )
+
+  if (enableTilt) {
+    return (
+      <EventCardTiltShell
+        onHover={onHover}
+        onLeave={onLeave}
+        className={className}
+        initial={initial}
+        animate={animate}
+        transition={transition}
+      >
+        {body}
+      </EventCardTiltShell>
+    )
+  }
+
+  return (
+    <m.article
+      initial={initial}
+      animate={animate}
+      transition={transition}
+      className={className}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      style={{ rotateX: 0, rotateY: 0 }}
+    >
+      {body}
+    </m.article>
   )
 }
 
@@ -199,6 +292,7 @@ function EventsCarousel({
   events,
   isRevealed,
   enableTilt,
+  staticInner,
   hoveredId,
   onHover,
   onLeave,
@@ -210,6 +304,7 @@ function EventsCarousel({
   events: EventItem[]
   isRevealed: boolean
   enableTilt: boolean
+  staticInner: boolean
   hoveredId: number | null
   onHover: (id: number) => void
   onLeave: () => void
@@ -266,6 +361,7 @@ function EventsCarousel({
                 prioritizeImage={prioritizeFirstImage && i === 0}
                 isRevealed={isRevealed}
                 enableTilt={enableTilt}
+                staticInner={staticInner}
                 isHovered={hoveredId === event.id}
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
@@ -292,7 +388,7 @@ function ReelsBlock({
   shineSectionRef: RefObject<HTMLElement | null>
 }) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 24 }}
       animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -336,7 +432,7 @@ function ReelsBlock({
           View all reels
         </a>
       </div>
-    </motion.div>
+    </m.div>
   )
 }
 
@@ -354,6 +450,8 @@ function useFinePointerHover(): boolean {
 
 export function Events() {
   const ref = useRef(null)
+  // once:false + hasRevealed latch: section can leave view without fading cards back out.
+  // margin preloads Past/Reels slightly before the section is fully on screen.
   const inViewNow = useInView(ref, { once: false, margin: "0px 0px 80px 0px", amount: 0.12 })
   const [hasRevealed, setHasRevealed] = useState(false)
   useEffect(() => {
@@ -362,8 +460,12 @@ export function Events() {
     return () => window.clearTimeout(timeoutId)
   }, [inViewNow])
   const isRevealed = hasRevealed
+  // Mount Past + Reels only after the section has been (or is about to be) in view.
+  const mountBelowFold = hasRevealed
   const enableTilt = useFinePointerHover()
   const isMobile = useIsMobile()
+  // Touch/unresolved: skip hover-only motion nodes; desktop keeps full card inners.
+  const staticInner = isMobile !== false
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const clearHover = useCallback(() => setHoveredId(null), [])
   const now = useEventCalendarClock()
@@ -379,7 +481,7 @@ export function Events() {
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
       <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-7xl">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 36 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -388,9 +490,9 @@ export function Events() {
           <h2>
             <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
           </h2>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 24 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
           transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -408,6 +510,7 @@ export function Events() {
               events={upcoming}
               isRevealed={isRevealed}
               enableTilt={enableTilt}
+              staticInner={staticInner}
               hoveredId={hoveredId}
               onHover={setHoveredId}
               onLeave={clearHover}
@@ -421,10 +524,10 @@ export function Events() {
               More dates coming soon — join the list below to hear first.
             </p>
           )}
-        </motion.div>
+        </m.div>
 
-        {past.length > 0 && (
-          <motion.div
+        {mountBelowFold && past.length > 0 && (
+          <m.div
             initial={{ opacity: 0, y: 24 }}
             animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
@@ -441,6 +544,7 @@ export function Events() {
               events={past}
               isRevealed={isRevealed}
               enableTilt={enableTilt}
+              staticInner={staticInner}
               hoveredId={hoveredId}
               onHover={setHoveredId}
               onLeave={clearHover}
@@ -449,10 +553,10 @@ export function Events() {
               prefetchDetails={isMobile === false}
               prioritizeFirstImage={isMobile === false}
             />
-          </motion.div>
+          </m.div>
         )}
 
-        <ReelsBlock isRevealed={isRevealed} shineSectionRef={ref} />
+        {mountBelowFold ? <ReelsBlock isRevealed={isRevealed} shineSectionRef={ref} /> : null}
       </ScrollReveal>
     </section>
   )

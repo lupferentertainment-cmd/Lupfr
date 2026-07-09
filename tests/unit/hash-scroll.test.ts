@@ -10,27 +10,30 @@ import {
 /**
  * Unit spec for the home-page hash-scroll helpers.
  *
- * Root cause these guard against: navigating to a deferred section (#about /
- * #team / #contact) used to mount only the target, leaving the deferred sections
- * *above* it as wrong-height placeholders — so the target's scroll position kept
- * drifting while async chunks loaded, and a cascade of blind timers chased it for
- * ~2s ("takes forever to scroll").
+ * Root cause these guard against: navigating to a deferred section (#news /
+ * #about / #team / #contact) used to mount only the target, leaving the deferred
+ * sections *above* it as wrong-height placeholders — so the target's scroll
+ * position kept drifting while async chunks loaded, and a cascade of blind
+ * timers chased it for ~2s ("takes forever to scroll").
  */
 
 describe("deferredSectionShouldMountForHash", () => {
   it("exposes the deferred sections top-to-bottom", () => {
-    expect(DEFERRED_SECTION_IDS).toEqual(["about", "team", "contact"])
+    expect(DEFERRED_SECTION_IDS).toEqual(["news", "about", "team", "contact"])
   })
 
   it("mounts a section when the hash targets it directly", () => {
+    expect(deferredSectionShouldMountForHash("news", "#news")).toBe(true)
     expect(deferredSectionShouldMountForHash("about", "#about")).toBe(true)
     expect(deferredSectionShouldMountForHash("contact", "#contact")).toBe(true)
   })
 
   it("mounts sections ABOVE the target so the target lands at a stable position", () => {
-    // Target #contact needs about + team at real height to be positioned right.
+    // Target #contact needs news + about + team at real height to be positioned right.
+    expect(deferredSectionShouldMountForHash("news", "#contact")).toBe(true)
     expect(deferredSectionShouldMountForHash("about", "#contact")).toBe(true)
     expect(deferredSectionShouldMountForHash("team", "#contact")).toBe(true)
+    expect(deferredSectionShouldMountForHash("news", "#about")).toBe(true)
     expect(deferredSectionShouldMountForHash("about", "#team")).toBe(true)
   })
 
@@ -38,6 +41,7 @@ describe("deferredSectionShouldMountForHash", () => {
     expect(deferredSectionShouldMountForHash("contact", "#about")).toBe(false)
     expect(deferredSectionShouldMountForHash("team", "#about")).toBe(false)
     expect(deferredSectionShouldMountForHash("contact", "#team")).toBe(false)
+    expect(deferredSectionShouldMountForHash("about", "#news")).toBe(false)
   })
 
   it("ignores hashes that are not deferred sections (eager sections, empty, junk)", () => {

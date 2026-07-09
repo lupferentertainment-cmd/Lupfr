@@ -1,6 +1,6 @@
 "use client"
 
-import { motion, useReducedMotion, type Variants } from "framer-motion"
+import { m, useReducedMotion, type Variants } from "framer-motion"
 import { Fragment } from "react"
 
 const ease = [0.22, 1, 0.36, 1] as const
@@ -8,9 +8,9 @@ const ease = [0.22, 1, 0.36, 1] as const
 type RevealTag = "p" | "span" | "h3"
 
 const motionByTag = {
-  p: motion.p,
-  span: motion.span,
-  h3: motion.h3,
+  p: m.p,
+  span: m.span,
+  h3: m.h3,
 } as const
 
 const wordVariants: Variants = {
@@ -64,13 +64,13 @@ export function TextReveal({
     >
       {text.split(" ").map((word, index) => (
         <Fragment key={`${word}-${index}`}>
-          <motion.span
+          <m.span
             aria-hidden
             className="inline-block will-change-transform"
             variants={wordVariants}
           >
             {word}
-          </motion.span>{" "}
+          </m.span>{" "}
         </Fragment>
       ))}
     </Tag>
