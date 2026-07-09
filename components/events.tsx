@@ -13,7 +13,6 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { EventDetailLink } from "@/components/event-detail-link"
-import { LiquidGoldFx } from "@/components/liquid-gold-fx"
 import {
   Carousel,
   CarouselContent,
@@ -327,17 +326,15 @@ function ReelsBlock({
             </span>
           </a>
         ))}
-        <LiquidGoldFx className="inline-flex self-center">
-          <a
-            href={LINKS.instagramReels}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
-          >
-            <ExternalLink size={16} className="shrink-0" aria-hidden />
-            View all reels
-          </a>
-        </LiquidGoldFx>
+        <a
+          href={LINKS.instagramReels}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 self-center rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
+        >
+          <ExternalLink size={16} className="shrink-0" aria-hidden />
+          View all reels
+        </a>
       </div>
     </motion.div>
   )

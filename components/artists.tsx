@@ -8,7 +8,6 @@ import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { LiquidGoldFx, useLiquidGoldActive } from "@/components/liquid-gold-fx"
 import { cn } from "@/lib/utils"
 import {
   Carousel,
@@ -53,22 +52,19 @@ const ArtistCard = memo(function ArtistCard({
   artist,
   isHovered,
   isMobile,
-  ringed = false,
   onHover,
   onLeave,
 }: {
   artist: ArtistItem
   isHovered: boolean
   isMobile: boolean
-  /** Wrapped in the liquid-gold ring — disable pointer tilt so the ring stays aligned. */
-  ringed?: boolean
   onHover: () => void
   onLeave: () => void
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const [imageError, setImageError] = useState(false)
   const [imageReady, setImageReady] = useState(false)
-  const noTilt = isMobile || ringed
+  const noTilt = isMobile
   const x = useMotionValue(0)
   const y = useMotionValue(0)
   const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [6, -6]), { stiffness: 420, damping: 32 })
@@ -297,7 +293,6 @@ function ArtistCarousel({
   onLeave: () => void
 }) {
   const slides = isMobile ? mobileArtistSlides : desktopArtistSlides
-  const ringed = useLiquidGoldActive()
 
   return (
     <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
@@ -315,16 +310,14 @@ function ArtistCarousel({
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {slide.map((artist) => (
-                  <LiquidGoldFx key={artist.id} className="block h-full">
-                    <ArtistCard
-                      artist={artist}
-                      isHovered={hoveredId === artist.id}
-                      isMobile={isMobile}
-                      ringed={ringed}
-                      onHover={() => onHover(artist.id)}
-                      onLeave={onLeave}
-                    />
-                  </LiquidGoldFx>
+                  <ArtistCard
+                    key={artist.id}
+                    artist={artist}
+                    isHovered={hoveredId === artist.id}
+                    isMobile={isMobile}
+                    onHover={() => onHover(artist.id)}
+                    onLeave={onLeave}
+                  />
                 ))}
               </div>
             )}
@@ -383,21 +376,19 @@ export function Artists() {
           <p className="text-muted-foreground mb-6">
             Are you a DJ or producer? We&apos;re always looking for fresh talent.
           </p>
-          <LiquidGoldFx className="inline-flex">
-            <motion.button
-              type="button"
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
-                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
-              }}
-              className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors"
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            >
-              Submit Your Mix
-            </motion.button>
-          </LiquidGoldFx>
+          <motion.button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+            }}
+            className="inline-flex items-center gap-2 px-8 py-4 border border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          >
+            Submit Your Mix
+          </motion.button>
         </div>
       </div>
     </section>

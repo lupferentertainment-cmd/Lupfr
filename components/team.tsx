@@ -10,7 +10,6 @@ import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
 import { getTeam, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { LiquidGoldFx, useLiquidGoldActive } from "@/components/liquid-gold-fx"
 import { cn } from "@/lib/utils"
 
 // Portraits are cropped clean photos (5:4) — name/title/frame from the source
@@ -25,7 +24,6 @@ function TeamCard({
   index,
   isInView,
   isMobile,
-  ringed,
   isExpanded,
   onToggle,
 }: {
@@ -33,16 +31,13 @@ function TeamCard({
   index: number
   isInView: boolean
   isMobile: boolean | undefined
-  /** Wrapped in the liquid-gold ring — disable pointer tilt so the ring stays aligned. */
-  ringed: boolean
   isExpanded: boolean
   onToggle: () => void
 }) {
   const [imageReady, setImageReady] = useState(false)
 
   return (
-    <LiquidGoldFx className="block">
-    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile && !ringed} tiltMaxDeg={10}>
+    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={10}>
       <motion.button
         type="button"
         onClick={onToggle}
@@ -152,7 +147,6 @@ function TeamCard({
         )}
       </AnimatePresence>
     </GoldCard>
-    </LiquidGoldFx>
   )
 }
 
@@ -164,7 +158,6 @@ export function Team() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
   const isMobile = useIsMobile()
-  const ringed = useLiquidGoldActive()
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
   const [activeFilter, setActiveFilter] = useState<TeamFilter>("All")
 
@@ -195,22 +188,21 @@ export function Team() {
         {/* Clickable team boxes: All / LA / SF / Exec (owner request, 2026-07-02). */}
         <div className="mb-8 flex flex-wrap gap-2 sm:gap-3" role="group" aria-label="Filter team by city">
           {TEAM_FILTERS.map((filter) => (
-            <LiquidGoldFx key={filter} className="inline-flex">
-              <button
-                type="button"
-                onClick={() => selectFilter(filter)}
-                aria-pressed={activeFilter === filter}
-                aria-label={`Show ${filter} team`}
-                className={cn(
-                  "min-h-[44px] rounded-full border px-5 py-2 text-sm font-medium tracking-normal transition-colors duration-200 ease-snap",
-                  activeFilter === filter
-                    ? "border-accent bg-accent/10 text-accent"
-                    : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
-                )}
-              >
-                {filter}
-              </button>
-            </LiquidGoldFx>
+            <button
+              key={filter}
+              type="button"
+              onClick={() => selectFilter(filter)}
+              aria-pressed={activeFilter === filter}
+              aria-label={`Show ${filter} team`}
+              className={cn(
+                "min-h-[44px] rounded-full border px-5 py-2 text-sm font-medium tracking-normal transition-colors duration-200 ease-snap",
+                activeFilter === filter
+                  ? "border-accent bg-accent/10 text-accent"
+                  : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
+              )}
+            >
+              {filter}
+            </button>
           ))}
         </div>
 
@@ -231,7 +223,6 @@ export function Team() {
                 index={i}
                 isInView={isInView}
                 isMobile={isMobile}
-                ringed={ringed}
                 isExpanded={expandedIndex === i}
                 onToggle={() => setExpandedIndex((prev) => (prev === i ? null : i))}
               />
