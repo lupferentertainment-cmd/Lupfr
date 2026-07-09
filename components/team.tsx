@@ -10,6 +10,7 @@ import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
 import { getTeam, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { LiquidGoldFx, useLiquidGoldActive } from "@/components/liquid-gold-fx"
 import { cn } from "@/lib/utils"
 
 // Portraits are cropped clean photos (5:4) — name/title/frame from the source
@@ -24,6 +25,7 @@ function TeamCard({
   index,
   isInView,
   isMobile,
+  ringed,
   isExpanded,
   onToggle,
 }: {
@@ -31,13 +33,16 @@ function TeamCard({
   index: number
   isInView: boolean
   isMobile: boolean | undefined
+  /** Wrapped in the liquid-gold ring — disable pointer tilt so the ring stays aligned. */
+  ringed: boolean
   isExpanded: boolean
   onToggle: () => void
 }) {
   const [imageReady, setImageReady] = useState(false)
 
   return (
-    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={10}>
+    <LiquidGoldFx className="block">
+    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile && !ringed} tiltMaxDeg={10}>
       <motion.button
         type="button"
         onClick={onToggle}
@@ -147,6 +152,7 @@ function TeamCard({
         )}
       </AnimatePresence>
     </GoldCard>
+    </LiquidGoldFx>
   )
 }
 
@@ -158,6 +164,7 @@ export function Team() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
   const isMobile = useIsMobile()
+  const ringed = useLiquidGoldActive()
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
   const [activeFilter, setActiveFilter] = useState<TeamFilter>("All")
 
@@ -188,37 +195,47 @@ export function Team() {
         {/* Clickable team boxes: All / LA / SF / Exec (owner request, 2026-07-02). */}
         <div className="mb-8 flex flex-wrap gap-2 sm:gap-3" role="group" aria-label="Filter team by city">
           {TEAM_FILTERS.map((filter) => (
-            <button
-              key={filter}
-              type="button"
-              onClick={() => selectFilter(filter)}
-              aria-pressed={activeFilter === filter}
-              aria-label={`Show ${filter} team`}
-              className={cn(
-                "min-h-[44px] rounded-full border px-5 py-2 text-sm font-medium tracking-normal transition-colors duration-200 ease-snap",
-                activeFilter === filter
-                  ? "border-accent bg-accent/10 text-accent"
-                  : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
-              )}
-            >
-              {filter}
-            </button>
+            <LiquidGoldFx key={filter} className="inline-flex">
+              <button
+                type="button"
+                onClick={() => selectFilter(filter)}
+                aria-pressed={activeFilter === filter}
+                aria-label={`Show ${filter} team`}
+                className={cn(
+                  "min-h-[44px] rounded-full border px-5 py-2 text-sm font-medium tracking-normal transition-colors duration-200 ease-snap",
+                  activeFilter === filter
+                    ? "border-accent bg-accent/10 text-accent"
+                    : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
+                )}
+              >
+                {filter}
+              </button>
+            </LiquidGoldFx>
           ))}
         </div>
 
-        {/* items-start: an expanded bio must not stretch the neighboring cards.
-            4-up on desktop keeps the cards compact (events-card scale); phones show 2 per row (owner request). */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 items-start">
+        {/* Fit-all centered row (owner request 2026-07-08: show every member, no manual
+            horizontal scroll, no stranded bottom-right gap). flex-wrap + justify-center
+            centers sparse filters (Exec=1, SF=2) instead of stranding them left; on desktop
+            all five sit in one row. items-start so an expanded bio doesn't stretch neighbors.
+            Phones stay 2-up; sm+ cards grow to fill the row (capped) so few-member filters
+            still read full. */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 items-start">
           {visibleTeam.map((member, i) => (
-            <TeamCard
+            <div
               key={member.name}
-              member={member}
-              index={i}
-              isInView={isInView}
-              isMobile={isMobile}
-              isExpanded={expandedIndex === i}
-              onToggle={() => setExpandedIndex((prev) => (prev === i ? null : i))}
-            />
+              className="basis-[calc(50%-0.375rem)] sm:basis-[calc(33.333%-1rem)] lg:basis-[calc(20%-1.2rem)] sm:grow max-w-[300px]"
+            >
+              <TeamCard
+                member={member}
+                index={i}
+                isInView={isInView}
+                isMobile={isMobile}
+                ringed={ringed}
+                isExpanded={expandedIndex === i}
+                onToggle={() => setExpandedIndex((prev) => (prev === i ? null : i))}
+              />
+            </div>
           ))}
         </div>
       </ScrollReveal>

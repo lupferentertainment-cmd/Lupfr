@@ -13,6 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { EventDetailLink } from "@/components/event-detail-link"
+import { LiquidGoldFx } from "@/components/liquid-gold-fx"
 import {
   Carousel,
   CarouselContent,
@@ -296,7 +297,7 @@ function ReelsBlock({
       initial={{ opacity: 0, y: 24 }}
       animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-      className="pt-6 pb-4"
+      className="pt-4 pb-0"
     >
       <GoldShineText
         as="h3"
@@ -326,15 +327,17 @@ function ReelsBlock({
             </span>
           </a>
         ))}
-        <a
-          href={LINKS.instagramReels}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 self-center rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
-        >
-          <ExternalLink size={16} className="shrink-0" aria-hidden />
-          View all reels
-        </a>
+        <LiquidGoldFx className="inline-flex self-center">
+          <a
+            href={LINKS.instagramReels}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
+          >
+            <ExternalLink size={16} className="shrink-0" aria-hidden />
+            View all reels
+          </a>
+        </LiquidGoldFx>
       </div>
     </motion.div>
   )
@@ -374,7 +377,7 @@ export function Events() {
     <section
       id="events"
       ref={ref}
-      className="pt-10 sm:pt-12 md:pt-14 lg:pt-16 pb-20 sm:pb-24 md:pb-28 lg:pb-32 px-4 sm:px-6 lg:px-8 relative overflow-visible"
+      className="pt-10 sm:pt-12 md:pt-14 lg:pt-16 pb-10 sm:pb-12 md:pb-14 lg:pb-16 px-4 sm:px-6 lg:px-8 relative overflow-visible"
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 

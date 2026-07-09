@@ -92,11 +92,16 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(screen.getByRole("button", { name: "Show All team" })).toHaveAttribute("aria-pressed", "false")
   })
 
-  it("uses a 2-up grid on phones (grid-cols-2 base)", () => {
+  it("lays out the team in a centered fit-all row, 2-up on phones (owner request 2026-07-08)", () => {
     const { container } = render(<Team />)
-    const grid = container.querySelector(".grid")
-    expect(grid?.className).toContain("grid-cols-2")
-    expect(grid?.className).not.toContain("grid-cols-1")
+    // flex-wrap + justify-center: all members visible, no manual horizontal scroll,
+    // sparse filters center instead of a stranded bottom-right grid gap.
+    const row = container.querySelector(".flex.flex-wrap.justify-center")
+    expect(row).not.toBeNull()
+    expect(row?.className).not.toContain("grid-cols-4")
+    // phones are 2-up via a 50%-basis wrapper on each card.
+    const firstItem = row?.firstElementChild
+    expect(firstItem?.className).toContain("basis-[calc(50%-0.375rem)]")
   })
 
   it("tapping a card toggles the expandable bio open and closed", async () => {

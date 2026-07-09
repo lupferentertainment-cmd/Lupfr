@@ -11,15 +11,15 @@ export const BLOG_URL = `https://${BLOG_HOST}` as const
 
 /**
  * SEA // SIDE — decommissioned here (owner decision 2026-07-08). The microsite now
- * lives at its own domain/project, `seaside.la` (`SEASIDE_REDIRECT_URL`). These legacy
- * hosts are the redirect *source*: `proxy.ts` 308-redirects every seaside host (and the
+ * lives at its own domain/project, `seaside.la` (`SEASIDE_REDIRECT_URL`). The prod host
+ * `seaside.lupfr.com` is the redirect *source*: `proxy.ts` 308-redirects it (and the
  * primary-host `/seaside` page route) to `seaside.la` so old links and ranking transfer.
- * Keep the domains attached to the lupfr project so the redirect fires (detaching yields
- * `DEPLOYMENT_NOT_FOUND`). The `app/seaside` page + `components/seaside/*` code is retained
- * but no longer publicly routed.
+ * Keep `seaside.lupfr.com` attached to the lupfr project so the redirect fires (detaching
+ * yields `DEPLOYMENT_NOT_FOUND`). The old staging host `dev.seaside.lupfr.com` is retired
+ * (owner decision 2026-07-08) — staging now lives at `dev.seaside.la` on the seaside project.
+ * The `app/seaside` page + `components/seaside/*` code is retained but no longer publicly routed.
  */
 export const SEASIDE_HOST = "seaside.lupfr.com" as const
-export const SEASIDE_DEV_HOST = "dev.seaside.lupfr.com" as const
 export const SEASIDE_URL = `https://${SEASIDE_HOST}` as const
 export const SEASIDE_REDIRECT_URL = "https://seaside.la/" as const
 

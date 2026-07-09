@@ -191,11 +191,15 @@ describe("proxy() — seaside decommissioned (308 → seaside.la)", () => {
     expect(res.url).toBe("https://seaside.la/")
   })
 
-  it("308-redirects the dev.seaside.lupfr.com staging host to seaside.la", async () => {
+  it("no longer treats dev.seaside.lupfr.com as a seaside host (retired; staging is dev.seaside.la)", () => {
+    expect(proxySource).not.toContain("dev.seaside.lupfr.com")
+  })
+
+  it("does NOT redirect dev.seaside.lupfr.com — the retired staging host falls through to the app", async () => {
     const { proxy } = await import("@/proxy")
-    const res = proxy(buildRequest("/", "dev.seaside.lupfr.com") as never) as { status?: number; url?: string }
-    expect(res.status).toBe(308)
-    expect(res.url).toBe("https://seaside.la/")
+    proxy(buildRequest("/", "dev.seaside.lupfr.com") as never)
+    expect(nextMock.NextResponse.redirect).not.toHaveBeenCalled()
+    expect(nextMock.NextResponse.next).toHaveBeenCalledOnce()
   })
 
   it("308-redirects the exact /seaside page route on the primary host", async () => {

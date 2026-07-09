@@ -6,7 +6,11 @@
     "image": "/artists/auguste.webp",
     "bio": "Afro house artist blending organic percussion, warm melodic layers, and rolling grooves shaped for open-air floors. Headlining SEA//SIDE 001 in Long Beach.",
     "spotify": "https://open.spotify.com/artist/4iS5S3n4kI5QvnYV2dNziq",
-    "appleMusic": "https://music.apple.com/us/artist/auguste/368789993"
+    "appleMusic": "https://music.apple.com/us/artist/auguste/368789993",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/6i6qKFqRA3ZBYtAWAv4Ikf?si=72786a1b0ae54b62",
+      "platform": "spotify"
+    }
   },
   {
     "id": 10,
@@ -15,7 +19,11 @@
     "image": "/artists/devvy_dub.webp",
     "bio": "Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.",
     "spotify": "https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0",
-    "appleMusic": "https://music.apple.com/us/artist/devvy-dub/1257899389"
+    "appleMusic": "https://music.apple.com/us/artist/devvy-dub/1257899389",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9",
+      "platform": "spotify"
+    }
   },
   {
     "id": 7,

@@ -151,8 +151,11 @@ describe("mobile artists black-screen regression", () => {
     })
 
     it("skips 3D card tilt transforms on mobile to eliminate unused compositor layers", () => {
-        expect(artists).toContain("isMobile ? undefined : { rotateX, rotateY")
-        expect(artists).toContain("if (isMobile || !cardRef.current) return")
+        // `noTilt = isMobile || ringed` — mobile still always skips tilt (ringed also
+        // disables it on desktop so the liquid-gold ring stays aligned).
+        expect(artists).toContain("const noTilt = isMobile || ringed")
+        expect(artists).toContain("noTilt ? undefined : { rotateX, rotateY")
+        expect(artists).toContain("if (noTilt || !cardRef.current) return")
     })
 })
 

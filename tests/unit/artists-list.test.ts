@@ -43,6 +43,10 @@ describe("featured artist data", () => {
       image: "/artists/auguste.webp",
       spotify: "https://open.spotify.com/artist/4iS5S3n4kI5QvnYV2dNziq",
       appleMusic: "https://music.apple.com/us/artist/auguste/368789993",
+      featuredTrack: {
+        url: "https://open.spotify.com/track/6i6qKFqRA3ZBYtAWAv4Ikf?si=72786a1b0ae54b62",
+        platform: "spotify",
+      },
     })
 
     const devvyDub = getArtists().find((artist) => artist.name === "Devvy Dub")
@@ -51,6 +55,10 @@ describe("featured artist data", () => {
       image: "/artists/devvy_dub.webp",
       spotify: "https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0",
       appleMusic: "https://music.apple.com/us/artist/devvy-dub/1257899389",
+      featuredTrack: {
+        url: "https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9",
+        platform: "spotify",
+      },
     })
 
     const nickRosen = getArtists().find((artist) => artist.name === "Nick Rosen")

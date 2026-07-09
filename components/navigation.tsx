@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { ScheduleCallCta } from "@/components/schedule-call-cta"
 import { BLOG_PUBLIC_ACCESS_ENABLED, CONTACT_PAGE_PATH } from "@/lib/site"
+import { LiquidGoldFx } from "@/components/liquid-gold-fx"
 const HEADER_SCROLL_THRESHOLD_PX = 50
 const SECTION_SPY_OFFSET_PX = 120
 const SECTION_SPY_MIN_DELTA_PX = 96
@@ -241,18 +242,22 @@ export function Navigation() {
 
           <div className="hidden min-h-[2.5rem] w-full min-w-[19rem] items-center justify-end justify-self-stretch gap-x-2.5 self-center pl-2 [contain:layout] sm:pl-3 lg:flex lg:gap-x-3 xl:gap-x-3.5">
             <ThemeToggle withSound className="shrink-0" />
-            <ScheduleCallCta
-              tone={scheduleTone}
-              size="sm"
-              className="shrink-0 hidden lg:inline-flex"
-            />
-            <Link
-              href={bookHref}
-              prefetch={false}
-              className="flex h-9 min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap px-4 !text-sm font-medium leading-tight tracking-normal transition-[color,background-color,transform] duration-150 ease-out btn-metallic-gold rounded-full hover:scale-[1.03] active:scale-[0.98]"
-            >
-              {bookLabel}
-            </Link>
+            <LiquidGoldFx className="shrink-0 hidden lg:inline-flex">
+              <ScheduleCallCta
+                tone={scheduleTone}
+                size="sm"
+                className="shrink-0"
+              />
+            </LiquidGoldFx>
+            <LiquidGoldFx className="inline-flex shrink-0">
+              <Link
+                href={bookHref}
+                prefetch={false}
+                className="flex h-9 min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap px-4 !text-sm font-medium leading-tight tracking-normal transition-[color,background-color,transform] duration-150 ease-out btn-metallic-gold rounded-full hover:scale-[1.03] active:scale-[0.98]"
+              >
+                {bookLabel}
+              </Link>
+            </LiquidGoldFx>
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-3 [contain:layout] lg:hidden">
