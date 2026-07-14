@@ -43,6 +43,14 @@ describe("hero video performance guardrails", () => {
         expect(heroDesktop).not.toContain(".catch(() => { })")
     })
 
+    it("keeps the hero video within the desktop download budget", () => {
+        // 9s 720p24 loop — 1.6 MB is plenty at a sane CRF; anything above is
+        // wasted bandwidth on every desktop first paint.
+        const videoPath = path.join(rootDir, "public", "hero", "hero_event_eria_marina.mp4")
+        const { size } = fs.statSync(videoPath)
+        expect(size).toBeLessThanOrEqual(1_600_000)
+    })
+
     it("caches public hero media with immutable headers", () => {
         expect(nextConfig).toContain('source: "/hero/:path*"')
         expect(nextConfig).toContain('key: "Cache-Control"')

@@ -180,8 +180,15 @@ describe("mobile artists black-screen regression", () => {
         "utf8"
     )
 
-    it("does not wrap the artists section in ScrollReveal (whileInView opacity:0 never fires on fast scroll)", () => {
-        expect(artists).not.toContain("ScrollReveal")
+    it("never mounts ScrollReveal on mobile (whileInView opacity:0 never fires on fast scroll)", () => {
+        // Desktop-only entrance reveal (owner request 2026-07-11): every reveal
+        // goes through ArtistsRevealShell, whose mobile branch is a plain div.
+        expect(artists).toContain("function ArtistsRevealShell")
+        expect(artists).toMatch(/if \(isMobile\) return <div className=\{className\}>\{children\}<\/div>/)
+        // No direct (ungated) ScrollReveal usage outside the shell.
+        const directUses = artists.match(/<ScrollReveal/g) ?? []
+        expect(directUses).toHaveLength(1)
+        expect(artists).toContain("<ArtistsRevealShell")
     })
 
     it("defaults isMobile to true before hydration so cards never start invisible on mobile", () => {

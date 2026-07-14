@@ -6,6 +6,7 @@ import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-mo
 import { useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -128,7 +129,7 @@ function ArtistCardTiltShell({
   return (
     <m.article
       ref={cardRef}
-      className="group relative rounded-2xl bg-card overflow-hidden"
+      className="group relative h-full w-full flex flex-col rounded-2xl bg-card overflow-hidden"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -168,7 +169,7 @@ const ArtistCard = memo(function ArtistCard({
   const featuredTrackLabel = artist.featuredTrack?.platform === "spotify" ? "Spotify" : "SoundCloud"
 
   const body = (
-    <div className="relative w-full rounded-2xl overflow-hidden">
+    <div className="relative w-full flex-1 flex flex-col rounded-2xl overflow-hidden">
       {/* Image + bio overlay on hover */}
       <div className="relative rounded-t-2xl overflow-hidden bg-card">
         <m.div
@@ -240,7 +241,7 @@ const ArtistCard = memo(function ArtistCard({
       </div>
 
       {/* Name, links (above Listen), player — always visible */}
-      <div className="p-4 md:p-5 rounded-b-2xl bg-card">
+      <div className="flex-1 p-4 md:p-5 rounded-b-2xl bg-card">
         <div className="flex items-center gap-2 mb-1">
           <Music size={14} className="text-accent shrink-0" />
           <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
@@ -337,7 +338,7 @@ const ArtistCard = memo(function ArtistCard({
 
   return (
     <m.article
-      className="group relative rounded-2xl bg-card overflow-hidden"
+      className="group relative h-full w-full flex flex-col rounded-2xl bg-card overflow-hidden"
       onMouseLeave={onLeave}
     >
       {body}
@@ -362,7 +363,9 @@ function ArtistCarousel({
     <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
       <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
         {slides.map((slide) => (
-          <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full">
+          /* flex (not h-full) so slides stretch to the tallest and card heights
+             stay uniform across slides — same fix as the events carousels. */
+          <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full flex">
             {isMobile ? (
               <ArtistCard
                 artist={slide[0]}
@@ -372,7 +375,7 @@ function ArtistCarousel({
                 onLeave={onLeave}
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {slide.map((artist) => (
                   <ArtistCard
                     key={artist.id}
@@ -395,6 +398,28 @@ function ArtistCarousel({
   )
 }
 
+/**
+ * Mobile black-screen regression guard: phones NEVER mount whileInView
+ * opacity-0 wrappers here — fast scroll could leave the section invisible.
+ * Desktop gets the same entrance reveal as sibling sections.
+ */
+function ArtistsRevealShell({
+  isMobile,
+  className,
+  children,
+}: {
+  isMobile: boolean
+  className?: string
+  children: ReactNode
+}) {
+  if (isMobile) return <div className={className}>{children}</div>
+  return (
+    <ScrollReveal variant="up" freezeAfterReveal className={className}>
+      {children}
+    </ScrollReveal>
+  )
+}
+
 export function Artists() {
   const ref = useRef(null)
   const [hoveredId, setHoveredId] = useState<number | null>(null)
@@ -409,7 +434,7 @@ export function Artists() {
       aria-labelledby="artists-section-title"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="mb-10 sm:mb-12 md:mb-14">
+        <ArtistsRevealShell isMobile={isMobile} className="mb-10 sm:mb-12 md:mb-14">
           <p
             id="artists-section-title"
             className="text-gold-accent tracking-tight text-sm mb-4"
@@ -426,17 +451,19 @@ export function Artists() {
               We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
             </p>
           </div>
-        </div>
+        </ArtistsRevealShell>
 
-        <ArtistCarousel
-          hoveredId={hoveredId}
-          isMobile={isMobile}
-          onHover={setHoveredId}
-          onLeave={() => setHoveredId(null)}
-        />
+        <ArtistsRevealShell isMobile={isMobile}>
+          <ArtistCarousel
+            hoveredId={hoveredId}
+            isMobile={isMobile}
+            onHover={setHoveredId}
+            onLeave={() => setHoveredId(null)}
+          />
+        </ArtistsRevealShell>
 
         {/* CTA */}
-        <div className="mt-6 text-center">
+        <ArtistsRevealShell isMobile={isMobile} className="mt-6 text-center">
           <p className="text-muted-foreground mb-6">
             Are you a DJ or producer? We&apos;re always looking for fresh talent.
           </p>
@@ -453,7 +480,7 @@ export function Artists() {
           >
             Submit Your Mix
           </m.button>
-        </div>
+        </ArtistsRevealShell>
       </div>
     </section>
   )

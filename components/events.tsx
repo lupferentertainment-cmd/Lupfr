@@ -203,7 +203,7 @@ function EventCard({
           )}
         </div>
 
-        <div className="p-6 sm:p-8">
+        <div className="flex flex-1 flex-col p-6 sm:p-8">
           <div className="flex items-start justify-between mb-6">
             <div>
               {staticInner ? (
@@ -224,7 +224,7 @@ function EventCard({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 sm:gap-6">
+          <div className="grid grid-cols-2 gap-5 sm:gap-6 mt-auto">
             <div className="flex items-center gap-3 text-base sm:text-lg text-muted-foreground">
               <Calendar size={18} className="text-accent shrink-0" />
               <span>{event.date}</span>
@@ -351,9 +351,11 @@ function EventsCarousel({
           viewportClassName="py-6 md:py-8"
         >
           {events.map((event, i) => (
+            /* No h-full on items: a specified % height on a flex child of an auto-height
+               row disables align-items:stretch, so cards stop matching heights. */
             <CarouselItem
               key={event.id}
-              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(460px,48vw)] lg:basis-[min(480px,33%)] h-full"
+              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(460px,48vw)] lg:basis-[min(480px,33%)] flex"
             >
               <EventCard
                 event={event}

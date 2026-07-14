@@ -5,6 +5,7 @@ import Image from "next/image"
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { ArrowUpRight, Newspaper } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { getPress, type PressItem } from "@/lib/data/press"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -217,7 +218,7 @@ export function Press() {
       aria-labelledby="news-section-title"
     >
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="mb-10 sm:mb-12 md:mb-14">
+        <ScrollReveal variant="up" className="mb-10 sm:mb-12 md:mb-14">
           <p
             id="news-section-title"
             className="text-gold-accent tracking-tight text-sm mb-4"
@@ -227,9 +228,11 @@ export function Press() {
           <h2 className="lupfr-heading-split-leading">
             <GoldShineText scrollTargetRef={ref}>News</GoldShineText>
           </h2>
-        </div>
+        </ScrollReveal>
 
-        <PressCarousel isMobile={isMobile} />
+        <ScrollReveal variant="up" freezeAfterReveal>
+          <PressCarousel isMobile={isMobile} />
+        </ScrollReveal>
       </div>
     </section>
   )

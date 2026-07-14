@@ -267,15 +267,19 @@ describe("home page section structure", () => {
     expect(servicesComponent).not.toContain("getPartners")
   })
 
-  it("partners marquee row is full-bleed: it sits outside the contained eyebrow wrapper (owner request 2026-07-08)", () => {
-    // The eyebrow's max-w container must close before the marquee div opens, so
-    // the logo row spans the full viewport on desktop and mobile.
-    expect(partnersStrip).toMatch(/Corporate partners\s*<\/p>\s*<\/div>/)
-    expect(partnersStrip).toMatch(/<div className="partner-marquee[^"]*">/)
-    const containerClose = partnersStrip.indexOf("</div>", partnersStrip.indexOf("Corporate partners"))
-    const marqueeOpen = partnersStrip.indexOf('"partner-marquee')
-    expect(containerClose).toBeGreaterThan(-1)
-    expect(marqueeOpen).toBeGreaterThan(containerClose)
+  it("partners marquee row is full-bleed with no visible section text (owner requests 2026-07-08 / 2026-07-11)", () => {
+    // No eyebrow paragraph at all — the section is named via aria-label only,
+    // and the logo row spans the full viewport on desktop and mobile.
+    expect(partnersStrip).not.toMatch(/Corporate partners\s*<\/p>/)
+    expect(partnersStrip).toContain('aria-label="Corporate partners"')
+    expect(partnersStrip).toMatch(/className="partner-marquee[^"]*"/)
+  })
+
+  it("every home section has a scroll-reveal entrance (Artists was the last static one)", () => {
+    // Artists' useInView only lazy-mounts embeds — the section entrance must
+    // come from ScrollReveal like its siblings (owner request 2026-07-11).
+    expect(artistsComponent).toContain('import { ScrollReveal } from "@/components/scroll-reveal"')
+    expect(artistsComponent).toMatch(/<ScrollReveal variant="up"/)
   })
 
   it("events section renders the Instagram reels block", () => {

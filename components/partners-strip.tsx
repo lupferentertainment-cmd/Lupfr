@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useTheme } from "next-themes"
 import { type ReactNode, useEffect, useState } from "react"
 import { getPartners } from "@/lib/data/partners"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { cn } from "@/lib/utils"
 
 const partners = getPartners()
@@ -34,8 +35,8 @@ function PartnerLogoChip({
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
       <div
         className={cn(
-          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border/75 bg-card p-3 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
-          "dark:border-border/90 dark:bg-card group-hover:scale-[1.03]"
+          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-card p-3 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
+          "dark:border-border/90 dark:bg-card dark:shadow-none group-hover:scale-[1.03]"
         )}
       >
         <div
@@ -101,18 +102,17 @@ function PartnerLogoShell({
  */
 export function PartnersStrip() {
   return (
+    // No tinted band: the section inherits the page background entirely — pure
+    // white in light, pure dark in dark (owner request 2026-07-11).
     <section
       aria-label="Corporate partners"
-      className="relative bg-muted/40 dark:bg-muted/30 border-y border-border/50 py-6 sm:py-8"
+      className="relative py-6 sm:py-8"
     >
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6">
-        <p className="text-gold-accent tracking-tight text-sm mb-3 text-center">
-          Corporate partners
-        </p>
-      </div>
+      {/* No visible section text — the "Corporate partners" eyebrow was removed
+          (owner request 2026-07-11); the aria-label above keeps the section named. */}
       {/* Full-bleed: the logo row deliberately escapes the max-w container so the
           marquee runs edge-to-edge on all viewports (owner request 2026-07-08). */}
-      <div className="partner-marquee w-full py-2 sm:py-3">
+      <ScrollReveal variant="up" className="partner-marquee w-full py-2 sm:py-3">
         <div
           className={cn(
             "partner-marquee-track flex items-center gap-x-8",
@@ -143,7 +143,7 @@ export function PartnersStrip() {
             </div>
           ))}
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

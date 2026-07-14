@@ -521,14 +521,16 @@
   }
 
   .lupfr-hero-media-wash {
-    /* No gradient over the video — only a thin top veil for nav legibility and a soft bottom blend into the page */
+    /* No gradient over the video — only a thin top veil for nav legibility and a soft bottom blend into the page.
+       Light mode must resolve to ~full background at the seam: a translucent band
+       there reads as a murky gray ghost of the video above the partners strip. */
     background: linear-gradient(180deg,
         color-mix(in oklch, var(--background) 22%, transparent) 0%,
         color-mix(in oklch, var(--background) 8%, transparent) 16%,
         transparent 28%,
         transparent 76%,
-        color-mix(in oklch, var(--background) 50%, transparent) 90%,
-        color-mix(in oklch, var(--background) 84%, transparent) 100%);
+        color-mix(in oklch, var(--background) 62%, transparent) 90%,
+        color-mix(in oklch, var(--background) 97%, transparent) 100%);
   }
 
   .dark .lupfr-hero-media-wash {
