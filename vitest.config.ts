@@ -14,6 +14,12 @@ const testConfig = {
   fileParallelism: true,
   maxWorkers,
   minWorkers: 1,
+  // Vitest's 5000ms default is too thin a margin on Vercel's shared 2-core
+  // build machine under transient load (observed cumulative transform/setup
+  // times of 150s+ there vs <1s locally) — raised so a slow-but-fine test
+  // doesn't flake, while still catching genuine hangs.
+  testTimeout: 20000,
+  hookTimeout: 20000,
   coverage: {
     provider: "v8" as const,
     reportsDirectory: coverageReportsDirectory,
