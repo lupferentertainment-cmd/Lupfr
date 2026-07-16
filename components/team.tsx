@@ -88,7 +88,7 @@ function TeamCard({
             <MapPin size={14} className="text-accent shrink-0" aria-hidden />
             <span className="text-xs tracking-normal text-muted-foreground">{member.location}</span>
           </div>
-          <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground transition-colors duration-200 ease-snap group-hover:text-accent/90">
+          <h3 className="font-condensed text-xl md:text-2xl font-bold tracking-tight text-foreground transition-colors duration-200 ease-snap group-hover:text-accent/90">
             {member.name}
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{member.title}</p>
@@ -127,7 +127,7 @@ function TeamCard({
           >
             <div className="flex items-start justify-between gap-2 px-4 pt-4 md:px-5 md:pt-5">
               <div>
-                <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">{member.name}</h3>
+                <h3 className="font-condensed text-xl md:text-2xl font-bold tracking-tight text-foreground">{member.name}</h3>
                 <p className="mt-0.5 text-sm text-muted-foreground">{member.title}</p>
               </div>
               <button

@@ -266,6 +266,14 @@ describe("artists card corporate polish", () => {
   })
 })
 
+// ── team card corporate polish ──────────────────────────────────────────────────
+
+describe("team card corporate polish", () => {
+  it("member name uses font-condensed at a larger size (owner redesign 2026-07-16)", () => {
+    expect(team.match(/font-condensed text-xl md:text-2xl font-bold tracking-tight/g)).toHaveLength(2)
+  })
+})
+
 // ── partner logo system ───────────────────────────────────────────────────────
 
 describe("partner logo CSS system", () => {
