@@ -5,11 +5,12 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { GoldCard } from "@/components/gold-card"
 
 /**
- * GoldCard shell contract: squircle card surface, reveal gate, and pointer-only
- * tilt (mouse math runs only when enableTilt is true).
+ * GoldCard shell contract: card surface (sharper corporate `rounded-sm`
+ * corners, owner redesign 2026-07-16 — was a `rounded-2xl` squircle), reveal
+ * gate, and pointer-only tilt (mouse math runs only when enableTilt is true).
  */
 describe("GoldCard", () => {
-  it("renders children in the squircle card shell", () => {
+  it("renders children in the card shell", () => {
     render(
       <GoldCard index={1} isRevealed>
         <p>Card body</p>
@@ -17,7 +18,7 @@ describe("GoldCard", () => {
     )
     expect(screen.getByText("Card body")).toBeInTheDocument()
     const article = document.querySelector("article")
-    expect(article?.className).toContain("rounded-2xl")
+    expect(article?.className).toContain("rounded-sm")
     expect(article?.className).toContain("bg-card")
   })
 

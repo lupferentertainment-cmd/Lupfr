@@ -223,7 +223,7 @@ export function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.12, ease }}
           >
-            <div className="rounded-2xl border border-border bg-secondary/40 p-6 backdrop-blur-sm">
+            <div className="rounded-sm border border-border bg-secondary/40 p-6 backdrop-blur-sm">
               <h4 className="lupfr-heading-eyebrow mb-2">Stay in the loop</h4>
               <p className="text-muted-foreground text-sm mb-5">
                 Get notified about upcoming events and exclusive presales.

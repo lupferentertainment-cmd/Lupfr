@@ -129,7 +129,7 @@ function ArtistCardTiltShell({
   return (
     <m.article
       ref={cardRef}
-      className="group relative h-full w-full flex flex-col rounded-2xl bg-card overflow-hidden"
+      className="group relative h-full w-full flex flex-col rounded-sm bg-card overflow-hidden"
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -169,11 +169,11 @@ const ArtistCard = memo(function ArtistCard({
   const featuredTrackLabel = artist.featuredTrack?.platform === "spotify" ? "Spotify" : "SoundCloud"
 
   const body = (
-    <div className="relative w-full flex-1 flex flex-col rounded-2xl overflow-hidden">
+    <div className="relative w-full flex-1 flex flex-col rounded-sm overflow-hidden">
       {/* Image + bio overlay on hover */}
-      <div className="relative rounded-t-2xl overflow-hidden bg-card">
+      <div className="relative rounded-t-sm overflow-hidden bg-card">
         <m.div
-          className="relative aspect-square w-full overflow-hidden rounded-t-2xl bg-muted"
+          className="relative aspect-square w-full overflow-hidden rounded-t-sm bg-muted"
           animate={{ scale: isHovered ? 1.03 : 1 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
@@ -223,7 +223,7 @@ const ArtistCard = memo(function ArtistCard({
         {/* Bio overlay — desktop hover only; not rendered on mobile to avoid compositing cost */}
         {!isMobile && (
           <m.div
-            className="absolute inset-0 rounded-t-2xl flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
+            className="absolute inset-0 rounded-t-sm flex flex-col justify-end bg-gradient-to-t from-background/95 via-background/80 to-transparent backdrop-blur-[2px] pointer-events-none"
             initial={false}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -241,7 +241,7 @@ const ArtistCard = memo(function ArtistCard({
       </div>
 
       {/* Name, links (above Listen), player — always visible */}
-      <div className="flex-1 p-4 md:p-5 rounded-b-2xl bg-card">
+      <div className="flex-1 p-4 md:p-5 rounded-b-sm bg-card">
         <div className="flex items-center gap-2 mb-1">
           <Music size={14} className="text-accent shrink-0" />
           <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
@@ -338,7 +338,7 @@ const ArtistCard = memo(function ArtistCard({
 
   return (
     <m.article
-      className="group relative h-full w-full flex flex-col rounded-2xl bg-card overflow-hidden"
+      className="group relative h-full w-full flex flex-col rounded-sm bg-card overflow-hidden"
       onMouseLeave={onLeave}
     >
       {body}

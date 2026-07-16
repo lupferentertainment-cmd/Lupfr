@@ -121,7 +121,7 @@ function EventCard({
     ease: [0.22, 1, 0.36, 1],
   }
   const className =
-    "group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
+    "group relative overflow-hidden rounded-sm sm:rounded-md bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
 
   const image = event.image ? (
     <Image
@@ -244,7 +244,7 @@ function EventCard({
 
       {staticInner ? null : (
         <m.div
-          className="absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl bg-accent/5"
+          className="absolute inset-0 pointer-events-none rounded-sm sm:rounded-md bg-accent/5"
           initial={false}
           animate={{ opacity: isHovered ? 1 : 0 }}
           transition={{ duration: 0.22 }}
@@ -414,7 +414,7 @@ function ReelsBlock({
             href={reel.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/reel inline-flex max-w-full min-w-0 items-center gap-3 rounded-2xl border border-border bg-card px-5 py-4 transition-colors hover:border-accent/50"
+            className="group/reel inline-flex max-w-full min-w-0 items-center gap-3 rounded-sm border border-border bg-card px-5 py-4 transition-colors hover:border-accent/50"
           >
             <Instagram size={20} className="text-accent shrink-0" aria-hidden />
             <span className="min-w-0">

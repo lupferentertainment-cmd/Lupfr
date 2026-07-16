@@ -81,7 +81,7 @@ const PressCard = memo(function PressCard({
   return (
     <motion.article
       ref={cardRef}
-      className="group relative h-full rounded-2xl bg-card overflow-hidden"
+      className="group relative h-full rounded-sm bg-card overflow-hidden"
       onMouseEnter={isMobile ? undefined : () => setIsHovered(true)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -92,10 +92,10 @@ const PressCard = memo(function PressCard({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Read "${item.title}" on ${item.outlet}`}
-        className="flex h-full flex-col rounded-2xl overflow-hidden"
+        className="flex h-full flex-col rounded-sm overflow-hidden"
       >
         <motion.div
-          className="relative aspect-[2/1] w-full overflow-hidden rounded-t-2xl bg-muted"
+          className="relative aspect-[2/1] w-full overflow-hidden rounded-t-sm bg-muted"
           animate={{ scale: isHovered ? 1.03 : 1 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
@@ -143,7 +143,7 @@ const PressCard = memo(function PressCard({
           </span>
         </motion.div>
 
-        <div className="flex flex-1 flex-col p-4 md:p-5 rounded-b-2xl bg-card">
+        <div className="flex flex-1 flex-col p-4 md:p-5 rounded-b-sm bg-card">
           <div className="flex items-center gap-2 mb-1">
             <Newspaper size={14} className="text-accent shrink-0" />
             <span className="text-xs tracking-normal text-muted-foreground">

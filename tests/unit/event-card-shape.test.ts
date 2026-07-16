@@ -10,7 +10,9 @@ const artistsSource = fs.readFileSync(path.join(rootDir, "components", "artists.
 /**
  * Event cards must render as one uniform shape in both carousels (owner
  * request 2026-07-11): equal heights regardless of copy length, meta row
- * pinned to the card bottom so bottoms align.
+ * pinned to the card bottom so bottoms align. Corner radius is the sharper
+ * corporate `rounded-sm`/`rounded-md` scale (owner redesign 2026-07-16,
+ * replacing the earlier `rounded-2xl`/`rounded-3xl` squircle).
  */
 describe("event card shape guardrails", () => {
     it("lets carousel items stretch to equal height (no explicit h-full on CarouselItem)", () => {
@@ -43,8 +45,8 @@ describe("artist card shape guardrails", () => {
 
     it("stretches the card shells and body so embed-less cards match embed cards", () => {
         // Both article shells fill the stretched slide…
-        expect(artistsSource.match(/h-full w-full flex flex-col rounded-2xl bg-card overflow-hidden/g)).toHaveLength(2)
+        expect(artistsSource.match(/h-full w-full flex flex-col rounded-sm bg-card overflow-hidden/g)).toHaveLength(2)
         // …and the content block absorbs the leftover height.
-        expect(artistsSource).toContain('className="flex-1 p-4 md:p-5 rounded-b-2xl bg-card"')
+        expect(artistsSource).toContain('className="flex-1 p-4 md:p-5 rounded-b-sm bg-card"')
     })
 })

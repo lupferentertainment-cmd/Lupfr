@@ -41,7 +41,7 @@ function TeamCard({
       <motion.button
         type="button"
         onClick={onToggle}
-        className="group w-full cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl sm:rounded-3xl"
+        className="group w-full cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm sm:rounded-md"
         aria-expanded={isExpanded}
         aria-controls={`team-bio-${index}`}
         id={`team-bio-trigger-${index}`}
@@ -123,7 +123,7 @@ function TeamCard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 z-10 flex flex-col overflow-y-auto bg-card/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl"
+            className="absolute inset-0 z-10 flex flex-col overflow-y-auto bg-card/95 backdrop-blur-sm rounded-sm sm:rounded-md"
           >
             <div className="flex items-start justify-between gap-2 px-4 pt-4 md:px-5 md:pt-5">
               <div>

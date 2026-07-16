@@ -122,7 +122,7 @@ export function PhoneListPopup() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.98 }}
                         transition={{ duration: 0.2 }}
-                        className="mx-auto mt-[10vh] w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl"
+                        className="mx-auto mt-[10vh] w-full max-w-md rounded-sm border border-border bg-card p-5 sm:p-6 shadow-2xl"
                     >
                         <div className="mb-4 flex items-start justify-between gap-4">
                             <div>

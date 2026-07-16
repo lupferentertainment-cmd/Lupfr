@@ -29,9 +29,9 @@ function CareerCard({ job, index, isInView }: { job: CareerItem; index: number; 
       initial={{ opacity: 0, y: 24, scale: 0.97 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.97 }}
       transition={{ ...SPRING_PUNCH, delay: 0.12 + index * CARD_STAGGER }}
-      className="group relative flex h-full flex-col rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 p-8 transition-shadow duration-200 hover:shadow-[0_0_0_1px_rgba(184,148,58,0.2),0_20px_40px_-12px_rgba(168,132,48,0.25)]"
+      className="group relative flex h-full flex-col rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 p-8 transition-shadow duration-200 hover:shadow-[0_0_0_1px_rgba(184,148,58,0.2),0_20px_40px_-12px_rgba(168,132,48,0.25)]"
     >
-      <div className="absolute inset-x-0 top-0 h-px rounded-t-2xl bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent pointer-events-none" aria-hidden />
+      <div className="absolute inset-x-0 top-0 h-px rounded-t-sm bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent pointer-events-none" aria-hidden />
 
       <h3 className="text-xl font-semibold tracking-tight mb-3 group-hover:text-accent transition-colors">
         {job.title}

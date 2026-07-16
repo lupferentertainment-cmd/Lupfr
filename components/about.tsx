@@ -93,7 +93,7 @@ function AboutValueCard({
       initial={{ opacity: 0, x: 40 }}
       animate={isInView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden rounded-2xl border bg-card transition-[border-color,box-shadow] duration-200 ease-snap"
+      className="relative overflow-hidden rounded-sm border bg-card transition-[border-color,box-shadow] duration-200 ease-snap"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
@@ -107,12 +107,12 @@ function AboutValueCard({
             : "0 0 0 1px transparent",
         }}
         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        className="rounded-2xl border border-transparent"
+        className="rounded-sm border border-transparent"
       >
         <motion.button
           type="button"
           onClick={onToggle}
-          className="group w-full cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl"
+          className="group w-full cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
           aria-expanded={isExpanded}
           aria-controls={`value-detail-${value.number}`}
           id={`value-trigger-${value.number}`}

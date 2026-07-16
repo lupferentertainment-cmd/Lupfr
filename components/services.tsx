@@ -85,14 +85,14 @@ function ServiceCardStaticBody({ service }: { service: ServiceItem }) {
     <>
       {/* Floating shadow layer for depth — resting values (mobile has no hover lift) */}
       <div
-        className="absolute inset-x-2 top-4 bottom-0 rounded-2xl bg-black/8 dark:bg-black/25 blur-2xl pointer-events-none opacity-[0.35] scale-[0.96]"
+        className="absolute inset-x-2 top-4 bottom-0 rounded-sm bg-black/8 dark:bg-black/25 blur-2xl pointer-events-none opacity-[0.35] scale-[0.96]"
         aria-hidden
       />
       <div
-        className="relative p-8 rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
+        className="relative p-8 rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
         style={{ boxShadow: CARD_REST_SHADOW }}
       >
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-2xl pointer-events-none" aria-hidden />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
 
         <div className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
           <service.icon
@@ -135,7 +135,7 @@ function ServiceCardMotionBody({
     <>
       {/* Floating shadow layer for depth */}
       <m.div
-        className="absolute inset-x-2 top-4 bottom-0 rounded-2xl bg-black/8 dark:bg-black/25 blur-2xl pointer-events-none"
+        className="absolute inset-x-2 top-4 bottom-0 rounded-sm bg-black/8 dark:bg-black/25 blur-2xl pointer-events-none"
         animate={{
           opacity: isActive ? 0.5 : 0.35,
           scale: isActive ? 0.98 : 0.96,
@@ -144,7 +144,7 @@ function ServiceCardMotionBody({
         aria-hidden
       />
       <m.div
-        className="relative p-8 rounded-2xl border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
+        className="relative p-8 rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
         animate={{
           boxShadow: isActive ? CARD_ACTIVE_SHADOW : CARD_REST_SHADOW,
           y: isActive ? -6 : 0,
@@ -152,7 +152,7 @@ function ServiceCardMotionBody({
         transition={SPRING_SNAPPY}
       >
         {/* Subtle top-edge highlight for raised surface feel */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-2xl pointer-events-none" aria-hidden />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
 
         <m.div
           className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
@@ -201,7 +201,7 @@ function ServiceCardMotionBody({
         </ul>
 
         <m.div
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent rounded-b-2xl origin-left"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent rounded-b-sm origin-left"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: isActive ? 1 : 0 }}
           transition={SPRING_SNAPPY}

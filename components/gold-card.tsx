@@ -10,7 +10,7 @@ const TILT_SPRING = { stiffness: 420, damping: 32 }
 const CARD_EASE = [0.22, 1, 0.36, 1] as const
 
 /**
- * Shared event-card shell: squircle (`rounded-2xl sm:rounded-3xl`), `bg-card`
+ * Shared event-card shell: squircle (`rounded-sm sm:rounded-md`), `bg-card`
  * surface, gold accent border + soft gold wash on hover, ±6° tilt on pointer
  * devices, and the staggered rise-in reveal. Visuals match the Events cards
  * so any section can reuse the same card language (Team uses it today).
@@ -62,7 +62,7 @@ export function GoldCard({
       animate={isRevealed ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: index * 0.08, ease: CARD_EASE }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-card border border-border",
+        "group relative overflow-hidden rounded-sm sm:rounded-md bg-card border border-border",
         "hover:border-accent/60 transition-[border-color,box-shadow] duration-200 ease-out shadow-xl",
         "hover:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.45),0_0_28px_rgba(168,130,52,0.28)]",
         className
@@ -76,14 +76,14 @@ export function GoldCard({
       {/* Gold wash on hover — the "shine through" layer, same as the Events cards */}
       <div
         className={cn(
-          "absolute inset-0 pointer-events-none rounded-2xl sm:rounded-3xl bg-accent/5",
+          "absolute inset-0 pointer-events-none rounded-sm sm:rounded-md bg-accent/5",
           "opacity-0 group-hover:opacity-100 motion-safe:transition-opacity motion-safe:duration-200"
         )}
         aria-hidden
       />
       {/* Gold glint: diagonal sheen sweeps across the card on hover */}
       <div
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl sm:rounded-3xl"
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-sm sm:rounded-md"
         aria-hidden
       >
         <div
