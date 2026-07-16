@@ -281,7 +281,7 @@ function HeroDesktopParallaxSection({
                 <GoldShineText
                   as="div"
                   scrollTargetRef={containerRef}
-                  className="text-sm sm:text-base md:text-lg font-medium font-sans tracking-tight leading-snug antialiased subpixel-antialiased"
+                  className="text-xs sm:text-sm md:text-base font-medium font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased"
                 >
                   {HERO_PHRASES[phraseIndex]}
                 </GoldShineText>

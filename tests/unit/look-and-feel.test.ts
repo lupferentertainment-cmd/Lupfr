@@ -138,6 +138,17 @@ describe("brand-slash divider", () => {
   })
 })
 
+// ── hero tagline corporate treatment (owner redesign 2026-07-16) ───────────────
+
+describe("hero tagline corporate treatment", () => {
+  it("desktop and mobile rotating taglines use mono/uppercase/wide-tracked type, keeping the metallic gold shine", () => {
+    expect(heroDesktop).toMatch(/font-mono uppercase tracking-wide/)
+    expect(heroDesktop).toContain("GoldShineText")
+    expect(heroMobile).toMatch(/font-mono uppercase tracking-wide/)
+    expect(heroMobile).toContain("heading-metallic-gold gold-shine-text")
+  })
+})
+
 // ── border-radius system ──────────────────────────────────────────────────────
 
 describe("border-radius token system", () => {

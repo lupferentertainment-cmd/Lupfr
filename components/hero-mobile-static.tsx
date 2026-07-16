@@ -51,7 +51,7 @@ export function HeroMobileStaticSection({
             <div
               key={phraseIndex}
               className={
-                "heading-metallic-gold gold-shine-text gpu-accelerate max-w-2xl mx-auto w-full text-center text-sm sm:text-base md:text-lg font-medium font-sans tracking-tight leading-snug antialiased subpixel-antialiased " +
+                "heading-metallic-gold gold-shine-text gpu-accelerate max-w-2xl mx-auto w-full text-center text-xs sm:text-sm md:text-base font-medium font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased " +
                 (reducePhraseMotion
                   ? ""
                   : "motion-safe:animate-[fade-up_600ms_cubic-bezier(0.22,1,0.36,1)_both]")
