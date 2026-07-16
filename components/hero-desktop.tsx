@@ -9,6 +9,7 @@ import { GoldShineText } from "@/components/gold-shine-text"
 import { MotionScheduleCallCta } from "@/components/schedule-call-cta-motion"
 import {
   FADE_DURATION_S,
+  HeroCornerReadout,
   HeroFallbackPoster,
   HeroLiteOrbs,
   HeroLupfrText,
@@ -240,6 +241,8 @@ function HeroDesktopParallaxSection({
         <div className="absolute inset-0 bg-black/25 z-[5]" aria-hidden />
         <div className="absolute inset-0 lupfr-hero-media-wash z-10" aria-hidden />
       </motion.div>
+
+      <HeroCornerReadout />
 
       <motion.div
         style={{ opacity }}

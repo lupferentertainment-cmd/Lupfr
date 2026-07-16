@@ -20,6 +20,7 @@ const navigation = fs.readFileSync(path.join(rootDir, "components", "navigation.
 const siteConfig = fs.readFileSync(path.join(rootDir, "lib", "site.ts"), "utf8")
 const heroDesktop = fs.readFileSync(path.join(rootDir, "components", "hero-desktop.tsx"), "utf8")
 const heroMobile = fs.readFileSync(path.join(rootDir, "components", "hero-mobile-static.tsx"), "utf8")
+const heroShared = fs.readFileSync(path.join(rootDir, "components", "hero-shared.tsx"), "utf8")
 const eventsComponent = fs.readFileSync(path.join(rootDir, "components", "events.tsx"), "utf8")
 const servicesComponent = fs.readFileSync(path.join(rootDir, "components", "services.tsx"), "utf8")
 const artistsComponent = fs.readFileSync(path.join(rootDir, "components", "artists.tsx"), "utf8")
@@ -230,6 +231,14 @@ describe("hero visual system", () => {
 
   it(".stat-tile-surface is defined for metric card backgrounds", () => {
     expect(css).toContain(".stat-tile-surface {")
+  })
+
+  it("desktop hero renders the comp's coordinates/corner-bracket readout; mobile hero omits it (static, decorative, desktop-only)", () => {
+    expect(heroShared).toContain("export function HeroCornerReadout")
+    expect(heroShared).toMatch(/34\.1478°N \/\/ 118\.1445°W/)
+    expect(heroDesktop).toContain("HeroCornerReadout")
+    expect(heroDesktop).toContain("<HeroCornerReadout />")
+    expect(heroMobile).not.toContain("HeroCornerReadout")
   })
 })
 

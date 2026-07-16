@@ -6,6 +6,7 @@ import { memo, useEffect, useState } from "react"
 
 import { cn } from "@/lib/utils"
 
+import { BrandSlashText } from "@/components/brand-slash-text"
 import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
 
 /** Shared hero copy rotation (mounted in parent for phrase interval). */
@@ -104,6 +105,33 @@ export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
     </h1>
   )
 })
+
+/**
+ * Desktop-only decorative framing from the comp: a coordinates readout and
+ * corner brackets pinned to the hero's bottom corners (static text/borders,
+ * no motion — safe to add without touching the mobile no-video/no-loop
+ * performance budget, so this is not rendered on the mobile hero).
+ */
+export function HeroCornerReadout() {
+  return (
+    <>
+      <div className="absolute bottom-6 left-6 z-[15] font-mono text-[10px] tracking-[0.1em] text-foreground/50 pointer-events-none">
+        <BrandSlashText text="34.1478°N // 118.1445°W" />
+      </div>
+      <div className="absolute bottom-6 right-6 z-[15] font-mono text-[10px] tracking-[0.1em] text-foreground/50 pointer-events-none">
+        <BrandSlashText text="LA · SF // EST. 2025" />
+      </div>
+      <div
+        className="absolute bottom-[120px] left-6 z-[15] h-[14px] w-[14px] border-t border-l border-accent/50 pointer-events-none"
+        aria-hidden
+      />
+      <div
+        className="absolute bottom-[120px] right-6 z-[15] h-[14px] w-[14px] border-b border-r border-accent/50 pointer-events-none"
+        aria-hidden
+      />
+    </>
+  )
+}
 
 export type HeroOrbVariant = "mobile" | "desktop"
 
