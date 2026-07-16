@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Playfair_Display, Barlow_Condensed, Work_Sans, Space_Mono } from 'next/font/google'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { EscapeBack } from '@/components/escape-back'
@@ -9,6 +10,34 @@ import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SITE_URL } from '@/lib/site'
 import './globals.css'
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-playfair-display',
+  display: 'swap',
+})
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-barlow-condensed',
+  display: 'swap',
+})
+
+const workSans = Work_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-work-sans',
+  display: 'swap',
+})
+
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-space-mono',
+  display: 'swap',
+})
 
 const siteName = 'LUPFR Entertainment'
 const defaultTitle = 'LUPFR Entertainment | SF & LA Music Events & Talent Curation'
@@ -138,7 +167,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${playfairDisplay.variable} ${barlowCondensed.variable} ${workSans.variable} ${spaceMono.variable}`}
+    >
       <body className="font-sans antialiased bg-background text-foreground">
         <script
           type="application/ld+json"

@@ -43,16 +43,20 @@ function getContactPhoneText() {
 // ── typography ────────────────────────────────────────────────────────────────
 
 describe("typography system", () => {
-  it("defines Space Grotesk as the sans-serif body font", () => {
-    expect(css).toContain("--font-sans: 'Space Grotesk'")
+  it("defines Work Sans (via next/font variable) as the sans-serif body font (corporate redesign 2026-07-15)", () => {
+    expect(css).toMatch(/--font-sans:\s*var\(--font-work-sans\)[^;]*'Work Sans'/)
   })
 
-  it("defines Playfair Display as the serif display font", () => {
-    expect(css).toContain("--font-serif: 'Playfair Display'")
+  it("defines Playfair Display (via next/font variable) as the serif display font", () => {
+    expect(css).toMatch(/--font-serif:\s*var\(--font-playfair-display\)[^;]*'Playfair Display'/)
   })
 
-  it("defines Geist Mono as the monospace font", () => {
-    expect(css).toContain("--font-mono: 'Geist Mono'")
+  it("defines Barlow Condensed (via next/font variable) as the condensed display font for eyebrows/labels", () => {
+    expect(css).toMatch(/--font-condensed:\s*var\(--font-barlow-condensed\)[^;]*'Barlow Condensed'/)
+  })
+
+  it("defines Space Mono (via next/font variable) as the monospace font", () => {
+    expect(css).toMatch(/--font-mono:\s*var\(--font-space-mono\)[^;]*'Space Mono'/)
   })
 
   it("applies serif font to blockquote elements", () => {
@@ -71,6 +75,19 @@ describe("typography system", () => {
 
   it("heading eyebrow class is defined", () => {
     expect(css).toContain(".lupfr-heading-eyebrow")
+  })
+
+  it("footer eyebrow stays sentence case — the mono/uppercase corporate label is scoped to section kickers only", () => {
+    expect(css).toMatch(/\.lupfr-heading-eyebrow\s*\{[^}]*\}/)
+    const eyebrowBlock = css.match(/\.lupfr-heading-eyebrow\s*\{[^}]*\}/)![0]
+    expect(eyebrowBlock).not.toContain("text-transform")
+  })
+
+  it("defines the corporate section-kicker eyebrow (mono, uppercase, wide-tracked; owner redesign 2026-07-15)", () => {
+    expect(css).toContain(".lupfr-section-kicker")
+    expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*font-family:\s*var\(--font-mono\)/)
+    expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*text-transform:\s*uppercase/)
+    expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*letter-spacing:\s*0\.2em/)
   })
 })
 

@@ -293,9 +293,12 @@
 }
 
 @theme inline {
-  --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Playfair Display', ui-serif, serif;
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  /* Corporate redesign (2026-07-15): Work Sans / Playfair Display / Barlow Condensed / Space Mono,
+     loaded via next/font/google in app/layout.tsx (see --font-work-sans etc. variables on <html>). */
+  --font-sans: var(--font-work-sans), 'Work Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair-display), 'Playfair Display', ui-serif, serif;
+  --font-condensed: var(--font-barlow-condensed), 'Barlow Condensed', ui-sans-serif, sans-serif;
+  --font-mono: var(--font-space-mono), 'Space Mono', ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -828,6 +831,7 @@
   }
 }
 
+/* Footer column eyebrows stay sentence case (DESIGN.md footer contract) — unchanged. */
 .lupfr-heading-eyebrow {
   color: var(--gold);
   @apply tracking-tight text-sm sm:text-base;
@@ -871,10 +875,19 @@
   color: color-mix(in oklch, var(--muted-foreground) 82%, var(--background) 18%);
 }
 
-/* Back-compat — prefer `main h1`/`h2` and `.lupfr-heading-sub` */
+/**
+ * Corporate section eyebrow (owner redesign 2026-07-15, ported from the LUPFR
+ * Website Restructure comp): mono, uppercase, wide-tracked label above a
+ * section's `h2` (e.g. "The Sound", "What We Do"). Deliberate, scoped
+ * exception to the site-wide sentence-case rule — eyebrows only; nav links,
+ * CTAs, footer, and form labels stay sentence case per DESIGN.md.
+ */
 .lupfr-section-kicker {
   color: var(--gold);
-  @apply tracking-tight text-sm sm:text-base;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  @apply text-[11px] sm:text-xs;
 }
 
 .lupfr-section-title {
