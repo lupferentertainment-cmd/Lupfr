@@ -19,6 +19,11 @@ const CARD_PERSPECTIVE = 1200
 
 const services = getServices()
 
+/** "01", "02", ... — comp's faint background numeral per service card. */
+function serviceNumeral(index: number): string {
+  return String(index + 1).padStart(2, "0")
+}
+
 function ServiceCardTiltShell({
   children,
   onHover,
@@ -80,7 +85,7 @@ const CARD_REST_SHADOW =
 const CARD_ACTIVE_SHADOW =
   "0 0 0 1px rgba(184, 148, 58, 0.2), 0 20px 40px -12px rgba(168, 132, 48, 0.25), 0 0 64px -16px rgba(150, 118, 42, 0.2)"
 
-function ServiceCardStaticBody({ service }: { service: ServiceItem }) {
+function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index: number }) {
   return (
     <>
       {/* Floating shadow layer for depth — resting values (mobile has no hover lift) */}
@@ -93,6 +98,12 @@ function ServiceCardStaticBody({ service }: { service: ServiceItem }) {
         style={{ boxShadow: CARD_REST_SHADOW }}
       >
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
+        <span
+          className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
+          aria-hidden
+        >
+          {serviceNumeral(index)}
+        </span>
 
         <div className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
           <service.icon
@@ -101,14 +112,14 @@ function ServiceCardStaticBody({ service }: { service: ServiceItem }) {
           />
         </div>
 
-        <h3 className="text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors">
+        <h3 className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors">
           {service.title}
         </h3>
-        <p className="text-muted-foreground text-sm leading-relaxed mb-5">
+        <p className="relative z-10 text-muted-foreground text-sm leading-relaxed mb-5">
           {service.description}
         </p>
 
-        <ul className="space-y-1.5">
+        <ul className="relative z-10 space-y-1.5">
           {service.features.map((feature) => (
             <li
               key={feature}
@@ -126,9 +137,11 @@ function ServiceCardStaticBody({ service }: { service: ServiceItem }) {
 
 function ServiceCardMotionBody({
   service,
+  index,
   isActive,
 }: {
   service: ServiceItem
+  index: number
   isActive: boolean
 }) {
   return (
@@ -153,6 +166,12 @@ function ServiceCardMotionBody({
       >
         {/* Subtle top-edge highlight for raised surface feel */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
+        <span
+          className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
+          aria-hidden
+        >
+          {serviceNumeral(index)}
+        </span>
 
         <m.div
           className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
@@ -232,7 +251,7 @@ function ServiceCard({
   if (!enableTilt) {
     return (
       <article className={className}>
-        <ServiceCardStaticBody service={service} />
+        <ServiceCardStaticBody service={service} index={index} />
       </article>
     )
   }
@@ -255,7 +274,7 @@ function ServiceCard({
       animate={animate}
       transition={transition}
     >
-      <ServiceCardMotionBody service={service} isActive={isActive} />
+      <ServiceCardMotionBody service={service} index={index} isActive={isActive} />
     </ServiceCardTiltShell>
   )
 }

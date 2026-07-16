@@ -184,6 +184,10 @@ function EventCard({
             </m.div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
+          <div
+            className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
+            aria-hidden
+          />
           {staticInner ? (
             <span
               suppressHydrationWarning

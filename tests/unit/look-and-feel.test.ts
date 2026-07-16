@@ -242,6 +242,16 @@ describe("hero visual system", () => {
   })
 })
 
+// ── services card corporate numeral ─────────────────────────────────────────────
+
+describe("services card corporate numeral", () => {
+  it("services cards render the comp's faint background numeral (01, 02, ...) behind the title", () => {
+    expect(servicesComponent).toContain("function serviceNumeral")
+    expect(servicesComponent).toMatch(/padStart\(2, "0"\)/)
+    expect(servicesComponent).toContain("serviceNumeral(index)")
+  })
+})
+
 // ── partner logo system ───────────────────────────────────────────────────────
 
 describe("partner logo CSS system", () => {

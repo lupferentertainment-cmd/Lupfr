@@ -35,6 +35,10 @@ describe("event card shape guardrails", () => {
     it("keeps the poster region a fixed height so image bands align across cards", () => {
         expect(eventsSource).toContain('h-[220px] sm:h-[280px] md:h-[260px] lg:h-[280px]')
     })
+
+    it("renders the comp's corner-bracket accent in the poster region (owner redesign 2026-07-16)", () => {
+        expect(eventsSource).toMatch(/border-b border-l border-foreground\/50/)
+    })
 })
 
 describe("artist card shape guardrails", () => {
