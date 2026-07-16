@@ -28,6 +28,7 @@ const phoneListPopup = fs.readFileSync(path.join(rootDir, "components", "phone-l
 const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "utf8")
 const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
 const partnersStrip = fs.readFileSync(path.join(rootDir, "components", "partners-strip.tsx"), "utf8")
+const brandsComponent = fs.readFileSync(path.join(rootDir, "components", "brands.tsx"), "utf8")
 const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
 const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
 const careers = fs.readFileSync(path.join(rootDir, "components", "careers.tsx"), "utf8")
@@ -104,6 +105,7 @@ describe("corporate section eyebrows", () => {
     expect(artistsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Sound/)
     expect(careers).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*Join the Team/)
     expect(press).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Story/)
+    expect(brandsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Portfolio/)
   })
 
   it("Contact's section eyebrow (above the h2) uses the kicker class; the form label and popup copy stay untouched", () => {
@@ -265,7 +267,7 @@ describe("partner logo CSS system", () => {
 
 describe("navigation structure", () => {
   it("defines all expected section nav links", () => {
-    const expected = ["#events", "#services", "#artists", "#about", "#team", "#contact"]
+    const expected = ["#brands", "#events", "#services", "#artists", "#about", "#team", "#contact"]
     for (const href of expected) {
       expect(navigation, `nav missing link to ${href}`).toContain(`href: "${href}"`)
     }
@@ -308,6 +310,10 @@ describe("navigation structure", () => {
 // ── home page section structure ───────────────────────────────────────────────
 
 describe("home page section structure", () => {
+  it("brands component owns the #brands section anchor", () => {
+    expect(brandsComponent).toContain('id="brands"')
+  })
+
   it("events component owns the #events section anchor", () => {
     expect(eventsComponent).toContain('id="events"')
   })

@@ -1,0 +1,43 @@
+[
+  {
+    "key": "seaside",
+    "title": "SEA//SIDE",
+    "tag": "YACHTS",
+    "accent": "#6fb8c9",
+    "description": "An off-shore music series taking the experience aboard yachts, cruises, and sailboats.",
+    "format": "Yacht sessions · LA & SF · 21+",
+    "externalUrl": "https://seaside.la"
+  },
+  {
+    "key": "highrise",
+    "title": "HIGH//RISE",
+    "tag": "CORPORATE",
+    "accent": "#e08a4a",
+    "description": "Corporate galas, product launches, and executive gatherings that produce music with class.",
+    "format": "Corporate events · LA & SF"
+  },
+  {
+    "key": "soundcheck",
+    "title": "SOUND//CHECK",
+    "tag": "COMING FALL 2026",
+    "accent": "#c9a869",
+    "description": "The LUPFR podcast — conversations with the artists, producers, and managers shaping the music industry.",
+    "format": "Weekly episodes · LA"
+  },
+  {
+    "key": "inside",
+    "title": "IN//SIDE",
+    "tag": "INDOORS",
+    "accent": "#e8e4da",
+    "description": "Indoor live music experiences redefining what nights out mean in California.",
+    "format": "Indoor sessions · LA & SF"
+  },
+  {
+    "key": "outside",
+    "title": "OUT//SIDE",
+    "tag": "OUTDOORS",
+    "accent": "#8aa878",
+    "description": "The open-air music series melding nature and sound into one.",
+    "format": "Outdoor sessions · LA & SF"
+  }
+]

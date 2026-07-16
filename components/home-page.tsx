@@ -4,6 +4,7 @@ import dynamic from "next/dynamic"
 
 import { Events } from "@/components/events"
 import { Artists } from "@/components/artists"
+import { Brands } from "@/components/brands"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { PartnersStrip } from "@/components/partners-strip"
@@ -49,6 +50,7 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <PartnersStrip />
+      <Brands />
       <Events />
       <Services />
       <Artists />

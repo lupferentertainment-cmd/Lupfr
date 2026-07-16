@@ -22,6 +22,7 @@ const INITIAL_CHUNK_M_MODULES = [
     "services.tsx",
     "events.tsx",
     "artists.tsx",
+    "brands.tsx",
     "phone-list-popup.tsx",
 ] as const
 
@@ -78,6 +79,12 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain('import { Services } from "@/components/services"')
         expect(homePage).toContain("<Services />")
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
+    })
+
+    it("mounts the brands section eagerly, directly under the partners strip", () => {
+        expect(homePage).toContain('import { Brands } from "@/components/brands"')
+        expect(homePage).toMatch(/<PartnersStrip \/>\s*<Brands \/>\s*<Events \/>/)
+        expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
     })
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {

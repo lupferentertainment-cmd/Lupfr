@@ -13,6 +13,7 @@ const SECTION_SPY_OFFSET_PX = 120
 const SECTION_SPY_MIN_DELTA_PX = 96
 
 const navLinksBase = [
+  { name: "Brands", href: "#brands" },
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
