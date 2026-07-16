@@ -12,6 +12,7 @@ import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { BrandSlashText } from "@/components/brand-slash-text"
 import { EventDetailLink } from "@/components/event-detail-link"
 import {
   Carousel,
@@ -208,14 +209,14 @@ function EventCard({
             <div>
               {staticInner ? (
                 <h3 className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight">
-                  {event.title}
+                  <BrandSlashText text={event.title} />
                 </h3>
               ) : (
                 <m.h3
                   className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
                   whileHover={{ x: 4 }}
                 >
-                  {event.title}
+                  <BrandSlashText text={event.title} />
                 </m.h3>
               )}
               {event.subtitle ? (

@@ -118,6 +118,26 @@ describe("corporate section eyebrows", () => {
   })
 })
 
+// ── brand-slash divider (owner redesign 2026-07-16) ────────────────────────────
+
+describe("brand-slash divider", () => {
+  it("defines .lupfr-brand-slash as a skewed gold accent", () => {
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[^}]*color:\s*var\(--gold\)/)
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[^}]*transform:\s*skewX\(-12deg\)/)
+  })
+
+  it("event card and detail-page titles render through BrandSlashText (e.g. SEA//SIDE)", () => {
+    expect(eventsComponent).toContain('import { BrandSlashText } from "@/components/brand-slash-text"')
+    expect(eventsComponent).toContain("<BrandSlashText text={event.title} />")
+    const eventDetailPage = fs.readFileSync(
+      path.join(rootDir, "app", "events", "[slug]", "page.tsx"),
+      "utf8"
+    )
+    expect(eventDetailPage).toContain('import { BrandSlashText } from "@/components/brand-slash-text"')
+    expect(eventDetailPage).toContain("<BrandSlashText text={event.title} />")
+  })
+})
+
 // ── border-radius system ──────────────────────────────────────────────────────
 
 describe("border-radius token system", () => {

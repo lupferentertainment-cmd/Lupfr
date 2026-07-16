@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { cache } from "react"
 import { Calendar, MapPin, Clock, ArrowLeft, Ticket, ExternalLink } from "lucide-react"
+import { BrandSlashText } from "@/components/brand-slash-text"
 import {
   EVENTS,
   type EventItem,
@@ -186,7 +187,7 @@ export default async function EventPage({ params }: EventPageParams) {
             </div>
             <div className="p-6 sm:p-8">
               <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-2">
-                {event.title}
+                <BrandSlashText text={event.title} />
               </h1>
               {event.subtitle ? (
                 <p className="text-xl text-muted-foreground mb-6">{event.subtitle}</p>

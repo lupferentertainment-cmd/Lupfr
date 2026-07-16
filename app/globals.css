@@ -890,6 +890,17 @@
   @apply text-[11px] sm:text-xs;
 }
 
+/**
+ * Corporate brand-slash divider (owner redesign 2026-07-16, ported from the
+ * LUPFR Website Restructure comp): the "//" in brand names like "SEA//SIDE"
+ * renders as a skewed gold accent. See `components/brand-slash-text.tsx`.
+ */
+.lupfr-brand-slash {
+  color: var(--gold);
+  display: inline-block;
+  transform: skewX(-12deg);
+}
+
 .lupfr-section-title {
   @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
 }

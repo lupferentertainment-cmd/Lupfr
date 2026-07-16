@@ -38,6 +38,7 @@
 - `tests/unit/data-lists.test.ts` – small YAML list contracts: press rows sorted newest-first with normalized image paths, careers array shape, and the team roster invariants (every member tagged with valid `teams`, Will the only Exec, Cianna Foppoli with her portrait and LA+SF tags).
 - `tests/components/team-section.behavior.test.tsx` – **RTL**: the LA / SF / Exec filter boxes (aria-pressed state, per-filter rosters — Exec → Will only; LA → Zac/Kylie/Cianna; SF → Mateen/Cianna), 2-up phone grid (`grid-cols-2` base), expandable bios, every current member rendering a portrait, and the “Portrait coming soon” placeholder branch kept covered via a mocked imageless fixture member.
 - `tests/components/gold-shine-text.behavior.test.tsx` – **RTL**: static vs scroll shine variants, `as` heading tags, and target-ref binding without pre-hydration crashes.
+- `tests/components/brand-slash-text.behavior.test.tsx` – **RTL**: `BrandSlashText` renders plain strings unchanged, wraps every `//` in `.lupfr-brand-slash`, and handles multiple `//` occurrences in one string.
 - `tests/components/gold-card.behavior.test.tsx` – **RTL**: the shared card shell renders children with the squircle classes; tilt handlers are active when enabled and inert when disabled.
 - `tests/unit/escape-back.test.ts` – `getEscapeBackHref` targets by route + query (including `/contact` → `/`); `isDocumentBlockingEscapeBack` with minimal document doubles; `isEscapeBackFormFieldTarget` for form fields (happy-dom).
 - `tests/unit/site.test.ts` – `CONTACT_PAGE_PATH` for `/contact` (Book an Event).
