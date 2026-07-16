@@ -252,6 +252,20 @@ describe("services card corporate numeral", () => {
   })
 })
 
+// ── artists card corporate polish ───────────────────────────────────────────────
+
+describe("artists card corporate polish", () => {
+  it("social-link chips are 26px circles with 14px icons (owner redesign 2026-07-16)", () => {
+    expect(artistsComponent).toContain("size-[26px]")
+    expect(artistsComponent).not.toContain("size={16}")
+  })
+
+  it("Listen label uses the mono corporate-eyebrow treatment, not the gold/semibold treatment", () => {
+    expect(artistsComponent).toMatch(/font-mono text-\[9px\] tracking-\[0\.1em\] uppercase text-muted-foreground">Listen/)
+    expect(artistsComponent).not.toContain('text-xs font-semibold tracking-tight text-accent">Listen')
+  })
+})
+
 // ── partner logo system ───────────────────────────────────────────────────────
 
 describe("partner logo CSS system", () => {

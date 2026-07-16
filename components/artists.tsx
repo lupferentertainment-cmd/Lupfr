@@ -67,7 +67,7 @@ function FeaturedTrackEmbed({
 
   return (
     <div ref={embedRef} className="mt-4 w-full pt-4 border-t border-border/80">
-      <span className="text-xs font-semibold tracking-tight text-accent">Listen</span>
+      <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted-foreground">Listen</span>
       <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
         {isInView ? (
           <iframe
@@ -244,7 +244,7 @@ const ArtistCard = memo(function ArtistCard({
       <div className="flex-1 p-4 md:p-5 rounded-b-sm bg-card">
         <div className="flex items-center gap-2 mb-1">
           <Music size={14} className="text-accent shrink-0" />
-          <span className="text-xs tracking-normal text-muted-foreground">{artist.genre}</span>
+          <span className="text-xs tracking-[0.08em] text-muted-foreground">{artist.genre}</span>
         </div>
         <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
           {artist.name}
@@ -255,12 +255,12 @@ const ArtistCard = memo(function ArtistCard({
               href={artist.spotify}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.92 }}
               aria-label="Spotify"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={14} />
             </m.a>
           )}
           {hasAppleMusic && (
@@ -268,12 +268,12 @@ const ArtistCard = memo(function ArtistCard({
               href={artist.appleMusic}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.92 }}
               aria-label="Apple Music"
             >
-              <Music size={16} />
+              <Music size={14} />
             </m.a>
           )}
           {artist.instagram && (
@@ -281,12 +281,12 @@ const ArtistCard = memo(function ArtistCard({
               href={artist.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.92 }}
               aria-label="Instagram"
             >
-              <Instagram size={16} />
+              <Instagram size={14} />
             </m.a>
           )}
           {hasYoutube && (
@@ -294,12 +294,12 @@ const ArtistCard = memo(function ArtistCard({
               href={artist.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.92 }}
               aria-label="YouTube"
             >
-              <Youtube size={16} />
+              <Youtube size={14} />
             </m.a>
           )}
           {hasSoundcloud && (
@@ -307,12 +307,12 @@ const ArtistCard = memo(function ArtistCard({
               href={artist.soundcloud}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
               whileHover={{ scale: 1.12 }}
               whileTap={{ scale: 0.92 }}
               aria-label="SoundCloud"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={14} />
             </m.a>
           )}
         </div>
