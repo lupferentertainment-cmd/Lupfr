@@ -101,7 +101,7 @@ export function Careers() {
           className="text-center mb-10 sm:mb-12 md:mb-14"
         >
           <motion.p
-            className="text-gold-accent tracking-tight text-sm mb-4"
+            className="lupfr-section-kicker mb-4"
             initial={{ opacity: 0, x: -24 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ ...SPRING_PUNCH, delay: 0.05 }}

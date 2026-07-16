@@ -29,6 +29,9 @@ const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "
 const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
 const partnersStrip = fs.readFileSync(path.join(rootDir, "components", "partners-strip.tsx"), "utf8")
 const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
+const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
+const careers = fs.readFileSync(path.join(rootDir, "components", "careers.tsx"), "utf8")
+const press = fs.readFileSync(path.join(rootDir, "components", "press.tsx"), "utf8")
 
 function getContactPhoneCodes() {
   const match = protectedPhone.match(/const PHONE_CHAR_CODES = \[([^\]]+)\]/)
@@ -88,6 +91,30 @@ describe("typography system", () => {
     expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*font-family:\s*var\(--font-mono\)/)
     expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*text-transform:\s*uppercase/)
     expect(css).toMatch(/\.lupfr-section-kicker\s*\{[^}]*letter-spacing:\s*0\.2em/)
+  })
+})
+
+// ── corporate section eyebrows (owner redesign 2026-07-15) ─────────────────────
+
+describe("corporate section eyebrows", () => {
+  it("Services, Team, About, Artists, Careers, and Press eyebrows use the corporate kicker class", () => {
+    expect(servicesComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*What We Do/)
+    expect(team).toMatch(/className="lupfr-section-kicker[^"]*">Who We Are/)
+    expect(about).toMatch(/className="lupfr-section-kicker[^"]*">The story/)
+    expect(artistsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Sound/)
+    expect(careers).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*Join the Team/)
+    expect(press).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Story/)
+  })
+
+  it("Contact's section eyebrow (above the h2) uses the kicker class; the form label and popup copy stay untouched", () => {
+    expect(contact).toMatch(/className="lupfr-section-kicker[^"]*">Get in touch/)
+    // Form field label and newsletter-popup line are not section eyebrows — leave their existing treatment alone.
+    expect(contact).toContain('className="mb-3 block text-sm font-medium tracking-tight text-gold-accent"')
+    expect(contact).toContain('className="mb-2 text-xs tracking-tight text-gold-accent"')
+  })
+
+  it("does not touch the partners strip (owner contract: no visible section text at all)", () => {
+    expect(partnersStrip).not.toContain("lupfr-section-kicker")
   })
 })
 

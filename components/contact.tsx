@@ -203,7 +203,7 @@ export function Contact() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-8 max-w-4xl text-center sm:mb-10 md:mb-12"
         >
-          <p className="mb-4 text-sm tracking-tight text-gold-accent">Get in touch</p>
+          <p className="lupfr-section-kicker mb-4">Get in touch</p>
           <h2 className="mb-5 lupfr-heading-split-leading">
             <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>
             <br />

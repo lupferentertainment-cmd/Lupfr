@@ -232,7 +232,7 @@ export function About() {
             animate={hasRevealed ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="text-gold-accent tracking-tight text-sm mb-4">The story</p>
+            <p className="lupfr-section-kicker mb-4">The story</p>
             <h2 className="lupfr-heading--compact lupfr-heading-stack--tight">
               <GoldShineText scrollTargetRef={ref}>Redefining the Music</GoldShineText>
               <br />

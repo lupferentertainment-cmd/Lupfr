@@ -437,7 +437,7 @@ export function Artists() {
         <ArtistsRevealShell isMobile={isMobile} className="mb-10 sm:mb-12 md:mb-14">
           <p
             id="artists-section-title"
-            className="text-gold-accent tracking-tight text-sm mb-4"
+            className="lupfr-section-kicker mb-4"
           >
             The Sound · Featured Artists
           </p>
