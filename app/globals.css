@@ -7,21 +7,21 @@
 /* Lupfer Entertainment - Metallic Gold & Black Theme */
 /* :root = light theme (all text visible); .dark = dark theme */
 :root {
-  /* Light base - modern cool off-white surface, pure black ink, bronzed gold accents. */
-  /* Light mode: barely-tinted cool off-white background; pure white cards elevate above it; subtle visible borders for structure. */
-  --background: oklch(0.974 0.005 255);
-  --foreground: oklch(0 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0 0 0);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.992 0.003 255);
-  --secondary-foreground: oklch(0 0 0);
+  /* Light base — the comp's own warm cream surface + warm ink (owner directive, phase 23, 2026-07-17). */
+  /* Light mode: warm cream background; pure white cards elevate above it; translucent ink borders. */
+  --background: #faf7f0;
+  --foreground: #1c1710;
+  --card: #ffffff;
+  --card-foreground: #1c1710;
+  --popover: #ffffff;
+  --popover-foreground: #1c1710;
+  --primary: #1c1710;
+  --primary-foreground: #ffffff;
+  --secondary: rgba(20,16,8,0.04);
+  --secondary-foreground: #1c1710;
   /* Cool off-white muted for section fills — distinct from background without warmth */
   --muted: oklch(0.942 0.006 255);
-  --muted-foreground: oklch(0.42 0.006 255);
+  --muted-foreground: #5a5346;
   /* Metallic gold - light mode: bronzed luxe gold (less bright/glary, keeps shine), hue aligned to dark white-gold. */
   --gold-shadow: oklch(0.34 0.08 72);
   --gold-dark: oklch(0.45 0.11 74);
@@ -35,8 +35,8 @@
   --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.98 0.005 280);
-  /* Subtle visible borders — modern structural depth without harsh lines. */
-  --border: oklch(0.878 0.004 255);
+  /* Translucent ink-on-cream border overlay — matches the comp's own technique. */
+  --border: rgba(20,16,8,0.10);
   --input: oklch(0.966 0.005 255);
   --ring: var(--gold);
   --chart-1: var(--gold);
@@ -140,23 +140,25 @@
       var(--gold) 75%,
       var(--gold-dark) 88%,
       var(--gold-shadow) 100%);
-  --background: oklch(0.055 0.004 280);
-  --foreground: oklch(0.96 0.008 85);
-  --card: oklch(0.085 0.005 280);
-  --card-foreground: oklch(0.96 0.008 85);
-  --popover: oklch(0.075 0.005 280);
-  --popover-foreground: oklch(0.96 0.008 85);
-  --primary: oklch(0.96 0.008 85);
-  --primary-foreground: oklch(0.055 0.004 280);
-  --secondary: oklch(0.12 0.01 80);
-  --secondary-foreground: oklch(0.92 0.05 88);
+  /* Dark base — the comp's own warm brownish-black surface + warm cream ink (owner directive, phase 23, 2026-07-17). */
+  --background: #0b0a08;
+  --foreground: #f3efe6;
+  --card: #141210;
+  --card-foreground: #f3efe6;
+  --popover: #141210;
+  --popover-foreground: #f3efe6;
+  --primary: #f3efe6;
+  --primary-foreground: #0b0a08;
+  --secondary: rgba(255,255,255,0.04);
+  --secondary-foreground: #f3efe6;
   --muted: oklch(0.14 0.01 80);
-  --muted-foreground: oklch(0.62 0.03 85);
+  --muted-foreground: #bdb6a9;
   --accent: var(--gold);
   --accent-foreground: oklch(0.06 0.005 280);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.98 0.005 280);
-  --border: oklch(0.18 0.015 80);
+  /* Translucent white-on-black border overlay — matches the comp's own technique. */
+  --border: rgba(255,255,255,0.08);
   --input: oklch(0.12 0.008 280);
   --ring: var(--gold);
   --chart-1: var(--gold);
