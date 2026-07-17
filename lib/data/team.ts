@@ -16,6 +16,8 @@ export interface TeamMember {
   bio: string
   /** Which team filter boxes show this member. */
   teams: TeamTag[]
+  /** Short card badges (phase 25, ported from the comp): teams ∪ city codes parsed from location. */
+  badges: string[]
 }
 
 function normalizeImage(path: string | undefined): string | undefined {
@@ -28,13 +30,25 @@ function normalizeTeams(teams: unknown): TeamTag[] {
   return teams.filter((t): t is TeamTag => (TEAM_TAGS as readonly string[]).includes(t))
 }
 
-type TeamRow = Omit<TeamMember, "image" | "teams"> & { image?: string; teams?: unknown }
+/** Union of filter teams + city codes parsed from the descriptive location string. */
+function deriveBadges(teams: TeamTag[], location: string): string[] {
+  const badges = new Set<string>(teams)
+  if (location.includes("Los Angeles")) badges.add("LA")
+  if (location.includes("San Francisco")) badges.add("SF")
+  return TEAM_TAGS.filter((tag) => badges.has(tag))
+}
 
-export const TEAM: TeamMember[] = (teamJson as TeamRow[]).map((m) => ({
-  ...m,
-  image: normalizeImage(m.image),
-  teams: normalizeTeams(m.teams),
-}))
+type TeamRow = Omit<TeamMember, "image" | "teams" | "badges"> & { image?: string; teams?: unknown }
+
+export const TEAM: TeamMember[] = (teamJson as TeamRow[]).map((m) => {
+  const teams = normalizeTeams(m.teams)
+  return {
+    ...m,
+    image: normalizeImage(m.image),
+    teams,
+    badges: deriveBadges(teams, m.location),
+  }
+})
 
 export function getTeam(): TeamMember[] {
   return TEAM

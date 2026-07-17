@@ -2,11 +2,14 @@
 # accent = per-brand hex used only for the card's tag pill/dot (site otherwise
 # uses one shared gold --accent everywhere else). title uses "//" for the
 # brand-slash divider (rendered via components/brand-slash-text.tsx).
+# image = full-bleed card background photo (site-root, WebP under public/brands/);
+# ported from the comp's assets/brands/*-bg.jpg (owner redesign 2026-07-17).
 
 - key: seaside
   title: "SEA//SIDE"
   tag: YACHTS
   accent: "#6fb8c9"
+  image: "/brands/seaside.webp"
   description: "An off-shore music series taking the experience aboard yachts, cruises, and sailboats."
   format: "Yacht sessions · LA & SF · 21+"
   externalUrl: "https://seaside.la"
@@ -15,6 +18,7 @@
   title: "HIGH//RISE"
   tag: CORPORATE
   accent: "#e08a4a"
+  image: "/brands/highrise.webp"
   description: "Corporate galas, product launches, and executive gatherings that produce music with class."
   format: "Corporate events · LA & SF"
 
@@ -22,6 +26,7 @@
   title: "SOUND//CHECK"
   tag: "COMING FALL 2026"
   accent: "#c9a869"
+  image: "/brands/soundcheck.webp"
   description: "The LUPFR podcast — conversations with the artists, producers, and managers shaping the music industry."
   format: "Weekly episodes · LA"
 
@@ -29,6 +34,7 @@
   title: "IN//SIDE"
   tag: INDOORS
   accent: "#e8e4da"
+  image: "/brands/inside.webp"
   description: "Indoor live music experiences redefining what nights out mean in California."
   format: "Indoor sessions · LA & SF"
 
@@ -36,5 +42,6 @@
   title: "OUT//SIDE"
   tag: OUTDOORS
   accent: "#8aa878"
+  image: "/brands/outside.webp"
   description: "The open-air music series melding nature and sound into one."
   format: "Outdoor sessions · LA & SF"

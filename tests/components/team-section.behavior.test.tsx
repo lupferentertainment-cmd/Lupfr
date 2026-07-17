@@ -49,6 +49,17 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(names.some((n) => n.includes("Cianna"))).toBe(true)
   })
 
+  it("renders a location/role badge per team tag on Will's card (phase 25, ported from the comp)", () => {
+    render(<Team />)
+    const willHeading = screen.getAllByRole("heading", { level: 3 }).find((h) => h.textContent?.includes("Will Lupfer"))
+    expect(willHeading).toBeDefined()
+    const card = willHeading!.closest("button")
+    expect(card).not.toBeNull()
+    for (const tag of ["Exec", "LA", "SF"]) {
+      expect(card!.textContent).toContain(tag)
+    }
+  })
+
   it("Exec shows only Will", async () => {
     const user = userEvent.setup()
     render(<Team />)
@@ -135,6 +146,7 @@ describe("Team — LA / SF / Exec filter boxes", () => {
           title: "New Hire",
           location: "San Francisco, CA",
           teams: ["SF"],
+          badges: ["SF"],
           bio: "Bio pending.",
         },
       ],

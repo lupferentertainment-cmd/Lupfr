@@ -92,6 +92,16 @@ function TeamCard({
             {member.name}
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{member.title}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {member.badges.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-xs border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
           <motion.span
             className="mt-3 inline-flex items-center gap-2 text-sm text-accent/80"
             initial={false}

@@ -8,6 +8,7 @@ export interface BrandItem {
   title: string
   tag: string
   accent: string
+  image?: string
   description: string
   format: string
   externalUrl?: string

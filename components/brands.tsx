@@ -1,6 +1,7 @@
 "use client"
 
 import { m, useInView } from "framer-motion"
+import Image from "next/image"
 import { useRef } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { TextReveal } from "@/components/text-reveal"
@@ -16,8 +17,23 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex flex-col overflow-hidden rounded-sm sm:rounded-md bg-card border border-border hover:border-accent/50 transition-colors duration-150 ease-out p-6 sm:p-7 min-h-[260px]"
+      className="group relative flex flex-col overflow-hidden rounded-sm sm:rounded-md border border-border hover:border-accent/50 transition-colors duration-150 ease-out p-6 sm:p-7 min-h-[420px]"
     >
+      {brand.image && (
+        <>
+          <Image
+            src={brand.image}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
+            className="object-cover -z-20"
+          />
+          <div
+            className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/35 to-black/85"
+            aria-hidden
+          />
+        </>
+      )}
       <div
         className="absolute top-2 left-2 h-2.5 w-2.5 border-t border-l"
         style={{ borderColor: brand.accent }}
