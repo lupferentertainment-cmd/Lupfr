@@ -143,7 +143,13 @@ function EventCard({
       )}
     />
   ) : (
-    <div className="w-full h-full bg-gradient-to-br from-card via-muted/50 to-card" />
+    <div
+      className="w-full h-full"
+      style={{
+        backgroundImage:
+          "repeating-linear-gradient(135deg, var(--muted) 0, var(--muted) 10px, var(--card) 10px, var(--card) 20px)",
+      }}
+    />
   )
 
   const tagPill = (
