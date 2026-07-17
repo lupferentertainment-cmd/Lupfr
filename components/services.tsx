@@ -1,6 +1,7 @@
 "use client"
 
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
+import Image from "next/image"
 import { useRef, useState, type ReactNode } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { TextReveal } from "@/components/text-reveal"
@@ -94,42 +95,56 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
         aria-hidden
       />
       <div
-        className="relative p-8 rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
+        className="relative flex h-full flex-col overflow-hidden rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90"
         style={{ boxShadow: CARD_REST_SHADOW }}
       >
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
-        <span
-          className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
-          aria-hidden
-        >
-          {serviceNumeral(index)}
-        </span>
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
+        {service.image && (
+          <div className="relative h-[120px] w-full shrink-0 overflow-hidden bg-muted">
+            <Image
+              src={service.image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover"
+            />
+          </div>
+        )}
 
-        <div className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
-          <service.icon
-            size={24}
-            className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
-          />
+        <div className="relative flex-1 p-8">
+          <span
+            className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
+            aria-hidden
+          >
+            {serviceNumeral(index)}
+          </span>
+
+          <div className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
+            <service.icon
+              size={24}
+              className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
+            />
+          </div>
+
+          <h3 className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors">
+            {service.title}
+          </h3>
+          <p className="relative z-10 text-muted-foreground text-sm leading-relaxed mb-5">
+            {service.description}
+          </p>
+
+          <ul className="relative z-10 space-y-1.5">
+            {service.features.map((feature) => (
+              <li
+                key={feature}
+                className="flex items-center gap-2 text-sm text-muted-foreground"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 opacity-[0.85]" />
+                {feature}
+              </li>
+            ))}
+          </ul>
         </div>
-
-        <h3 className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors">
-          {service.title}
-        </h3>
-        <p className="relative z-10 text-muted-foreground text-sm leading-relaxed mb-5">
-          {service.description}
-        </p>
-
-        <ul className="relative z-10 space-y-1.5">
-          {service.features.map((feature) => (
-            <li
-              key={feature}
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 opacity-[0.85]" />
-              {feature}
-            </li>
-          ))}
-        </ul>
       </div>
     </>
   )
@@ -157,7 +172,7 @@ function ServiceCardMotionBody({
         aria-hidden
       />
       <m.div
-        className="relative p-8 rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90 h-full overflow-hidden"
+        className="relative flex h-full flex-col overflow-hidden rounded-sm border border-border/80 bg-gradient-to-b from-card to-card/95 dark:from-card dark:to-card/90"
         animate={{
           boxShadow: isActive ? CARD_ACTIVE_SHADOW : CARD_REST_SHADOW,
           y: isActive ? -6 : 0,
@@ -165,62 +180,76 @@ function ServiceCardMotionBody({
         transition={SPRING_SNAPPY}
       >
         {/* Subtle top-edge highlight for raised surface feel */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none" aria-hidden />
-        <span
-          className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
-          aria-hidden
-        >
-          {serviceNumeral(index)}
-        </span>
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
+        {service.image && (
+          <div className="relative h-[120px] w-full shrink-0 overflow-hidden bg-muted">
+            <Image
+              src={service.image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover"
+            />
+          </div>
+        )}
+
+        <div className="relative flex-1 p-8">
+          <span
+            className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
+            aria-hidden
+          >
+            {serviceNumeral(index)}
+          </span>
+
+          <m.div
+            className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
+            animate={{
+              scale: isActive ? 1.05 : 1,
+            }}
+            transition={SPRING_PUNCH}
+          >
+            <service.icon
+              size={24}
+              className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
+            />
+          </m.div>
+
+          <m.h3
+            className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors"
+            animate={{ scale: isActive ? 1.01 : 1 }}
+            transition={SPRING_SNAPPY}
+          >
+            {service.title}
+          </m.h3>
+          <p className="relative z-10 text-muted-foreground text-sm leading-relaxed mb-5">
+            {service.description}
+          </p>
+
+          <ul className="relative z-10 space-y-1.5">
+            {service.features.map((feature, fi) => (
+              <m.li
+                key={feature}
+                className="flex items-center gap-2 text-sm text-muted-foreground"
+              >
+                <m.span
+                  className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
+                  animate={{
+                    scale: isActive ? 1.2 : 1,
+                    opacity: isActive ? 1 : 0.85,
+                  }}
+                  transition={{
+                    scale: { duration: 0.35, delay: fi * 0.04 },
+                    opacity: { duration: 0.2 },
+                  }}
+                />
+                {feature}
+              </m.li>
+            ))}
+          </ul>
+        </div>
 
         <m.div
-          className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
-          animate={{
-            scale: isActive ? 1.05 : 1,
-          }}
-          transition={SPRING_PUNCH}
-        >
-          <service.icon
-            size={24}
-            className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
-          />
-        </m.div>
-
-        <m.h3
-          className="text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors"
-          animate={{ scale: isActive ? 1.01 : 1 }}
-          transition={SPRING_SNAPPY}
-        >
-          {service.title}
-        </m.h3>
-        <p className="text-muted-foreground text-sm leading-relaxed mb-5">
-          {service.description}
-        </p>
-
-        <ul className="space-y-1.5">
-          {service.features.map((feature, fi) => (
-            <m.li
-              key={feature}
-              className="flex items-center gap-2 text-sm text-muted-foreground"
-            >
-              <m.span
-                className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                animate={{
-                  scale: isActive ? 1.2 : 1,
-                  opacity: isActive ? 1 : 0.85,
-                }}
-                transition={{
-                  scale: { duration: 0.35, delay: fi * 0.04 },
-                  opacity: { duration: 0.2 },
-                }}
-              />
-              {feature}
-            </m.li>
-          ))}
-        </ul>
-
-        <m.div
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent rounded-b-sm origin-left"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent rounded-b-sm origin-left z-10"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: isActive ? 1 : 0 }}
           transition={SPRING_SNAPPY}

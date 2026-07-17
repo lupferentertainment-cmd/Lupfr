@@ -1,7 +1,10 @@
 # Services offered. icon = Lucide icon name (PartyPopper, Mic2, Building2, Users, Music, Sparkles)
+# image = optional thumbnail path (site-root, WebP under public/services/); ported from the
+# "LUPFR Website Restructure" comp's per-service thumbnail header (owner redesign 2026-07-16).
 
 - icon: PartyPopper
   title: Owned Events
+  image: "/services/owned-events.webp"
   description: "Our signature branded experiences—from Boiler Boat to Rooftop Grooves. We handle everything: venue, talent, production, and promotion."
   features:
     - Full Production
@@ -11,6 +14,7 @@
 
 - icon: Mic2
   title: Talent Booking
+  image: "/services/talent-booking.webp"
   description: "Connect with the right artists through our extensive network. We source, negotiate, and coordinate talent for your events."
   features:
     - Artist Discovery
@@ -20,6 +24,7 @@
 
 - icon: Building2
   title: Venue Programming
+  image: "/services/venue-programming.webp"
   description: "We curate regular music programming for venues looking to elevate their nightlife presence with consistent, quality entertainment."
   features:
     - Monthly DJ Nights
@@ -29,6 +34,7 @@
 
 - icon: Users
   title: Private Events
+  image: "/services/private-events.webp"
   description: "From corporate gatherings to luxury celebrations, we bring the same energy and attention to detail to every private event."
   features:
     - Custom Concepts
@@ -38,6 +44,7 @@
 
 - icon: Music
   title: Event Production
+  image: "/services/event-production.webp"
   description: "End-to-end production services for venues and brands. We bring the vision, crew, and execution to make it happen."
   features:
     - Sound & Lighting
@@ -47,6 +54,7 @@
 
 - icon: Sparkles
   title: Brand Partnerships
+  image: "/services/brand-partnerships.webp"
   description: "Collaborate with us on activations that reach the SF nightlife community through our events and platform."
   features:
     - Event Sponsorships

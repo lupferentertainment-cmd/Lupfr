@@ -25,6 +25,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 export interface ServiceItemRaw {
   icon: string
   title: string
+  image?: string
   description: string
   features: string[]
 }
@@ -32,6 +33,7 @@ export interface ServiceItemRaw {
 export interface ServiceItem {
   icon: LucideIcon
   title: string
+  image?: string
   description: string
   features: string[]
 }
@@ -45,6 +47,7 @@ function mapServices(raw: ServiceItemRaw[]): ServiceItem[] {
     return {
       icon: Icon,
       title: s.title,
+      image: s.image,
       description: s.description,
       features: s.features,
     }
