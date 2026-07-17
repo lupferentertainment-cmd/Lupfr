@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { m, useInView } from "framer-motion"
 import { useRef } from "react"
 import { ShimmerImage } from "@/components/shimmer-image"
@@ -7,7 +8,7 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { TextReveal } from "@/components/text-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
-import { getBrands, type BrandItem } from "@/lib/data/brands"
+import { brandPath, brandPlainTitle, getBrands, type BrandItem } from "@/lib/data/brands"
 
 const brands = getBrands()
 
@@ -53,7 +54,13 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       </div>
 
       <h3 className="relative font-condensed font-extrabold uppercase tracking-tight text-xl sm:text-2xl leading-tight mb-3 text-foreground">
-        <BrandSlashText text={brand.title} color={brand.accent} />
+        <Link
+          href={brandPath(brand)}
+          aria-label={`View ${brandPlainTitle(brand)} brand`}
+          className="transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        >
+          <BrandSlashText text={brand.title} color={brand.accent} />
+        </Link>
       </h3>
       <p className="relative text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
         {brand.description}
@@ -72,6 +79,12 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
           </a>
         ) : null}
       </div>
+      <Link
+        href={brandPath(brand)}
+        className="relative mt-3 inline-block text-sm text-accent underline-offset-4 transition-colors hover:underline"
+      >
+        Learn more →
+      </Link>
     </m.article>
   )
 }

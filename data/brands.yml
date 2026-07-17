@@ -1,9 +1,14 @@
-# The LUPFR portfolio of sub-brands, shown in the "Our Brands" home section.
+# The LUPFR portfolio of sub-brands, shown in the "Our Brands" home section and
+# each brand's own /brands/<key> detail page.
 # accent = per-brand hex used only for the card's tag pill/dot (site otherwise
 # uses one shared gold --accent everywhere else). title uses "//" for the
 # brand-slash divider (rendered via components/brand-slash-text.tsx).
 # image = full-bleed card background photo (site-root, WebP under public/brands/);
 # ported from the comp's assets/brands/*-bg.jpg (owner redesign 2026-07-17).
+# comingSoon (optional) = brand has no live events yet; detail page shows a
+# centered "COMING SOON" block instead of UPCOMING/PAST event lists.
+# gallery (optional) = list of site-root WebP paths under public/brands/ shown
+# as a 3-up preview grid on the brand detail page (seaside only, per comp).
 
 - key: seaside
   title: "SEA//SIDE"
@@ -13,6 +18,13 @@
   description: "An off-shore music series taking the experience aboard yachts, cruises, and sailboats."
   format: "Yacht sessions · LA & SF · 21+"
   externalUrl: "https://seaside.la"
+  gallery:
+    - "/brands/seaside-gallery-1.webp"
+    - "/brands/seaside-gallery-2.webp"
+    - "/brands/seaside-gallery-3.webp"
+    - "/brands/seaside-gallery-4.webp"
+    - "/brands/seaside-gallery-5.webp"
+    - "/brands/seaside-gallery-6.webp"
 
 - key: highrise
   title: "HIGH//RISE"
@@ -21,6 +33,7 @@
   image: "/brands/highrise.webp"
   description: "Corporate galas, product launches, and executive gatherings that produce music with class."
   format: "Corporate events · LA & SF"
+  comingSoon: true
 
 - key: soundcheck
   title: "SOUND//CHECK"
@@ -29,6 +42,7 @@
   image: "/brands/soundcheck.webp"
   description: "The LUPFR podcast — conversations with the artists, producers, and managers shaping the music industry."
   format: "Weekly episodes · LA"
+  comingSoon: true
 
 - key: inside
   title: "IN//SIDE"

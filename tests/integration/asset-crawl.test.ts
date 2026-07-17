@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { getBlogPosts } from "@/lib/data/blog"
 import { getServices, servicePath } from "@/lib/data/services"
+import { brandPath, getBrands } from "@/lib/data/brands"
 import { EVENTS } from "@/lib/events"
 import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
 
@@ -142,6 +143,7 @@ function buildRoutes(): string[] {
     "/gallery",
     "/privacy",
     "/services",
+    "/brands",
     "/terms",
   ])
   if (BLOG_PUBLIC_ACCESS_ENABLED) routes.add("/blog")
@@ -150,6 +152,7 @@ function buildRoutes(): string[] {
   }
   for (const e of EVENTS) routes.add(`/events/${e.slug}`)
   for (const s of getServices()) routes.add(servicePath(s))
+  for (const b of getBrands()) routes.add(brandPath(b))
   return Array.from(routes).sort()
 }
 

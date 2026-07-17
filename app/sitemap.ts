@@ -4,6 +4,7 @@ import { join, relative } from 'node:path'
 
 import { EVENTS } from '@/lib/events'
 import { getServices, servicePath } from '@/lib/data/services'
+import { brandPath, getBrands } from '@/lib/data/brands'
 import { GALLERY_PHOTOS } from '@/lib/data/gallery'
 import { getBlogPosts } from '@/lib/data/blog'
 import { BLOG_PUBLIC_ACCESS_ENABLED } from '@/lib/site'
@@ -65,12 +66,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = (await collectStaticAppRoutes(appRoot, appRoot)).filter(isPublicRoute)
   const eventRoutes = EVENTS.map((event) => `/events/${event.slug}`)
   const serviceRoutes = getServices().map(servicePath)
+  const brandRoutes = getBrands().map(brandPath)
   const galleryPhotoRoutes = GALLERY_PHOTOS.map((p) => `/gallery/p/${p.id}`)
   const blogRoutes = BLOG_PUBLIC_ACCESS_ENABLED ? getBlogPosts().map((post) => `/blog/${post.slug}`) : []
 
-  const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...serviceRoutes, ...galleryPhotoRoutes, ...blogRoutes])].sort((a, b) =>
-    a.localeCompare(b)
-  )
+  const allRoutes = [
+    ...new Set([...staticRoutes, ...eventRoutes, ...serviceRoutes, ...brandRoutes, ...galleryPhotoRoutes, ...blogRoutes]),
+  ].sort((a, b) => a.localeCompare(b))
 
   return allRoutes.map(routeToMetadata)
 }

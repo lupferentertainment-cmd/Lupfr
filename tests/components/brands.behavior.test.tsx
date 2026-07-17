@@ -29,7 +29,7 @@ describe("Brands", () => {
     const { container } = render(<Brands />)
     const slashes = container.querySelectorAll(".lupfr-brand-slash")
     expect(slashes.length).toBe(5)
-    expect(screen.getByText((_, el) => el?.textContent === "SEA // SIDE")).toBeInTheDocument()
+    expect(container.querySelector("h3")?.textContent).toBe("SEA // SIDE")
   })
 
   it("colors each title's '//' with that brand's accent, matching its tag pill", () => {
@@ -45,5 +45,22 @@ describe("Brands", () => {
     const { container } = render(<Brands />)
     const links = Array.from(container.querySelectorAll('a[href="https://seaside.la"]'))
     expect(links).toHaveLength(1)
+  })
+
+  it("links each card's wordmark to its dedicated brand page with an accessible name", () => {
+    render(<Brands />)
+    expect(screen.getByRole("link", { name: "View SEA SIDE brand" })).toHaveAttribute("href", "/brands/seaside")
+    expect(screen.getByRole("link", { name: "View HIGH RISE brand" })).toHaveAttribute("href", "/brands/highrise")
+  })
+
+  it("renders a 'Learn more' link on every card pointing at its brand page", () => {
+    const { container } = render(<Brands />)
+    const learnMoreLinks = Array.from(container.querySelectorAll("a")).filter(
+      (a) => a.textContent === "Learn more →"
+    )
+    expect(learnMoreLinks).toHaveLength(5)
+    expect(learnMoreLinks.map((a) => a.getAttribute("href")).sort()).toEqual(
+      ["/brands/highrise", "/brands/inside", "/brands/outside", "/brands/seaside", "/brands/soundcheck"].sort()
+    )
   })
 })
