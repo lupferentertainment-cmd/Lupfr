@@ -26,27 +26,22 @@ const HERO_VIDEO_DARK = "/hero/hero_event_eria_marina.mp4"
 const HERO_VIDEO_LIGHT = "/hero/hero_event_eria_marina.mp4"
 const VIDEO_READY_STATE_HAS_CURRENT_DATA = 2
 
-const staticShinePositionCss = "50% 50%"
-
-/** Desktop: Entertainment line uses static shine to avoid scroll-time repaint flicker. */
+/** Desktop: LUPFR keeps its gold-shine gradient; Entertainment is plain condensed/uppercase (matches the comp). */
 const HeroTitleContentDesktop = memo(function HeroTitleContentDesktop({
   prefersReducedMotion,
-  shinePosition,
 }: {
   prefersReducedMotion: boolean | null
-  shinePosition: string
 }) {
   return (
     <h1
-      className="font-serif hero-title-lupfr font-bold tracking-tighter leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
+      className="font-condensed hero-title-lupfr font-extrabold tracking-normal leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
     >
       <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
-      <motion.span
-        className="block hero-title-entertainment font-medium hero-entertainment-text normal-case tracking-normal"
-        style={{ backgroundPosition: prefersReducedMotion ? staticShinePositionCss : shinePosition }}
+      <span
+        className="block hero-title-entertainment font-medium uppercase tracking-normal text-foreground"
       >
         Entertainment
-      </motion.span>
+      </span>
     </h1>
   )
 })
@@ -213,7 +208,6 @@ function HeroDesktopParallaxSection({
   const y = "0%"
   const opacity = 1
   const scale = 1
-  const shinePosition = staticShinePositionCss
 
   return (
     <>
@@ -256,7 +250,6 @@ function HeroDesktopParallaxSection({
         >
           <HeroTitleContentDesktop
             prefersReducedMotion={prefersReducedMotion}
-            shinePosition={shinePosition}
           />
 
           <div

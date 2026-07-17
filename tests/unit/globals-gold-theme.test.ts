@@ -50,9 +50,6 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-specular) 70%, var(--gold-bright)) 42%,")
     expect(rootBlock).toContain("      color-mix(in oklch, var(--gold-shadow) 96%, black) 100%);")
     expect(rootBlock).toContain("  --lupfr-heading-subline-fg: oklch(0 0 0);")
-    expect(rootBlock).toContain("  --entertainment-line-start: oklch(0.82 0.05 84);")
-    expect(rootBlock).toContain("  --entertainment-line-mid: oklch(0.62 0.12 78);")
-    expect(rootBlock).toContain("  --entertainment-line-end: oklch(0.5 0.13 70);")
     // Body uses the cool off-white background token — no gold wash, no warm-cream gradient
     expect(css).toContain("html:not(.dark) body")
     expect(css).toContain("  html:not(.dark) body {\n    background: var(--background);")

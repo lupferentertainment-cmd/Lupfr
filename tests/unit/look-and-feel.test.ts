@@ -215,12 +215,12 @@ describe("hero visual system", () => {
     expect(css).toContain(".hero-title-entertainment {")
   })
 
-  it("defines .hero-entertainment-gradient for the coloured ENTERTAINMENT line", () => {
-    expect(css).toContain(".hero-entertainment-gradient {")
-  })
-
-  it("hero desktop uses hero-entertainment-text for the Entertainment line", () => {
-    expect(heroDesktop).toContain("hero-entertainment-text")
+  it("does not define the dead .hero-entertainment-text/.hero-entertainment-gradient classes or their gradient tokens (phase 22 — Entertainment line dropped its gold gradient to match the comp's plain text)", () => {
+    expect(css).not.toContain(".hero-entertainment-text")
+    expect(css).not.toContain(".hero-entertainment-gradient")
+    expect(css).not.toContain("--entertainment-line-start")
+    expect(css).not.toContain("--entertainment-line-mid")
+    expect(css).not.toContain("--entertainment-line-end")
   })
 
   it("hero desktop references hero-title-lupfr and hero-title-entertainment classes", () => {
@@ -230,6 +230,16 @@ describe("hero visual system", () => {
 
   it("hero desktop uses hero-title-lupfr for the LUPFR wordmark wrapper", () => {
     expect(heroDesktop).toContain("hero-title-lupfr")
+  })
+
+  it("hero wordmark (LUPFR + Entertainment) uses the comp's condensed/uppercase/extrabold treatment on both desktop and mobile (phase 22, ported from the comp's bound titleFont/titleTransform/titleWeight)", () => {
+    for (const source of [heroDesktop, heroShared]) {
+      expect(source).toMatch(/font-condensed hero-title-lupfr font-extrabold tracking-normal/)
+      expect(source).toMatch(/hero-title-entertainment font-medium uppercase tracking-normal/)
+      expect(source).not.toMatch(/hero-title-lupfr[^"]*font-serif|font-serif[^"]*hero-title-lupfr/)
+      expect(source).not.toContain("hero-entertainment-text")
+      expect(source).not.toContain("normal-case")
+    }
   })
 
   it(".stat-tile-surface is defined for metric card backgrounds", () => {

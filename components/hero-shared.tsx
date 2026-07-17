@@ -86,7 +86,7 @@ export const HeroLupfrText = memo(function HeroLupfrText({
   )
 })
 
-/** Mobile: no scroll-linked MotionValues — static Entertainment gradient. */
+/** Mobile: LUPFR keeps its gold-shine gradient; Entertainment is plain condensed/uppercase (matches the comp). */
 export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
   prefersReducedMotion,
 }: {
@@ -94,11 +94,11 @@ export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
 }) {
   return (
     <h1
-      className="font-serif hero-title-lupfr font-bold tracking-tighter leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
+      className="font-condensed hero-title-lupfr font-extrabold tracking-normal leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
     >
       <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
       <span
-        className="block hero-title-entertainment font-medium hero-entertainment-text normal-case tracking-normal"
+        className="block hero-title-entertainment font-medium uppercase tracking-normal text-foreground"
       >
         Entertainment
       </span>

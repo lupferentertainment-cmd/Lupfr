@@ -25,10 +25,9 @@ describe("hero video performance guardrails", () => {
         expect(heroDesktop).not.toContain("videoLightRef")
     })
 
-    it("defines the static shine position before passing it to the hero title", () => {
-        expect(heroDesktop).toContain("const shinePosition = staticShinePositionCss")
-        expect(heroDesktop).toContain("shinePosition={shinePosition}")
-        expect(heroDesktop).not.toContain("shinePositionDelayed")
+    it("does not prop-drill a shine position into the hero title (phase 22 — Entertainment dropped its gradient, so there's nothing left to position)", () => {
+        expect(heroDesktop).not.toContain("shinePosition")
+        expect(heroDesktop).not.toContain("staticShinePositionCss")
     })
 
     it("falls back quickly if desktop video playback is too slow", () => {

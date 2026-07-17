@@ -109,10 +109,6 @@
   --partner-logo-opacity-natural: 0.94;
   /* Split h2 second line — pure black ink in light mode; `.dark` overrides to theme white */
   --lupfr-heading-subline-fg: oklch(0 0 0);
-  /* “Entertainment” line gradient (optional class); bronzed gold (less bright) → deep gold (see `.hero-entertainment-gradient`) */
-  --entertainment-line-start: oklch(0.82 0.05 84);
-  --entertainment-line-mid: oklch(0.62 0.12 78);
-  --entertainment-line-end: oklch(0.5 0.13 70);
 }
 
 .dark {
@@ -906,19 +902,6 @@
   color: var(--gold);
 }
 
-/* Hero "Entertainment" line: explicit metallic gold highlight. */
-.hero-entertainment-text {
-  background: linear-gradient(90deg,
-      var(--entertainment-line-start) 0%,
-      var(--entertainment-line-mid) 46%,
-      var(--entertainment-line-end) 100%);
-  background-position: 50% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: var(--filter-hero-gold);
-}
-
 .stat-tile-surface {
   transform: translateZ(0);
 }
@@ -1046,17 +1029,6 @@ html:not(.dark) .stat-tile-surface:hover {
 .hero-title-entertainment {
   font-size: clamp(1.25rem, 3.5vw + 0.75rem, 3.5rem);
   line-height: 1.2;
-}
-
-/* Hero title: "Entertainment" – horizontal gradient; stops from `--entertainment-line-*` in `:root` */
-.hero-entertainment-gradient {
-  background: linear-gradient(90deg,
-      var(--entertainment-line-start) 0%,
-      var(--entertainment-line-mid) 35%,
-      var(--entertainment-line-end) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 /* Brassy metallic gold button – LE logo: whiter highlights, brown/beige depth, metallic sheen */
