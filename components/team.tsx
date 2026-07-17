@@ -177,7 +177,7 @@ export function Team() {
       ref={ref}
       className="py-14 sm:py-16 md:py-20 px-4 sm:px-6 relative overflow-hidden"
     >
-      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-7xl relative z-10">
+      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px] relative z-10">
         <p className="lupfr-section-kicker mb-4">Who We Are</p>
         <h2 className="lupfr-heading--compact lupfr-heading-stack">
           <GoldShineText scrollTargetRef={ref}>Our</GoldShineText>

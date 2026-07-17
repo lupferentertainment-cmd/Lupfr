@@ -217,7 +217,7 @@ export function Press() {
       className="pt-14 sm:pt-16 md:pt-20 pb-8 sm:pb-9 md:pb-11 px-4 sm:px-6 relative overflow-hidden"
       aria-labelledby="news-section-title"
     >
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container mx-auto max-w-[1400px] relative z-10">
         <ScrollReveal variant="up" className="mb-10 sm:mb-12 md:mb-14">
           <p
             id="news-section-title"

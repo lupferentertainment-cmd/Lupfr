@@ -493,7 +493,7 @@ export function Events() {
     >
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
 
-      <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-7xl">
+      <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-[1400px]">
         <m.div
           initial={{ opacity: 0, y: 36 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}

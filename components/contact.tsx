@@ -196,7 +196,7 @@ export function Contact() {
         <div className="absolute right-0 top-1/2 h-[340px] w-[340px] -translate-y-1/2 rounded-full bg-gold-accent/10 blur-[130px]" />
       </div>
 
-      <ScrollReveal variant="up" className="container relative z-10 mx-auto max-w-7xl">
+      <ScrollReveal variant="up" className="container relative z-10 mx-auto max-w-[1400px]">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}

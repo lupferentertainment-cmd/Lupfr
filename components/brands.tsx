@@ -68,21 +68,23 @@ export function Brands() {
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
 
   return (
-    <section id="brands" ref={ref} className="py-14 sm:py-16 md:py-20 px-4 sm:px-6">
-      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-7xl">
-        <div className="text-center mb-10 sm:mb-12 md:mb-14">
+    <section id="brands" ref={ref} className="py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-12">
+      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px]">
+        <div className="mb-10 sm:mb-12 md:mb-14">
           <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
-          <h2 className="mb-6">
-            <GoldShineText scrollTargetRef={ref}>Our Brands</GoldShineText>
-          </h2>
-          <TextReveal
-            text="Five brands, one company — LUPFR Entertainment spans live music events and private corporate programming."
-            className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
-            delay={0.2}
-          />
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <h2>
+              <GoldShineText scrollTargetRef={ref}>Our Brands</GoldShineText>
+            </h2>
+            <TextReveal
+              text="Five brands, one company — LUPFR Entertainment spans live music events and private corporate programming."
+              className="text-muted-foreground max-w-md leading-relaxed"
+              delay={0.2}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
           {brands.map((brand, i) => (
             <BrandCard key={brand.key} brand={brand} index={i} isInView={isInView} />
           ))}

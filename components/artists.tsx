@@ -433,7 +433,7 @@ export function Artists() {
       className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
-      <div className="container mx-auto max-w-7xl relative z-10">
+      <div className="container mx-auto max-w-[1400px] relative z-10">
         <ArtistsRevealShell isMobile={isMobile} className="mb-10 sm:mb-12 md:mb-14">
           <p
             id="artists-section-title"

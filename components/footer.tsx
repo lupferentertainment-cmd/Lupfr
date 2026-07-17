@@ -123,7 +123,7 @@ export function Footer() {
       {/* Soft gold ambience anchored to the bottom-left brand corner */}
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-accent/[0.06] blur-3xl" aria-hidden />
 
-      <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="relative container mx-auto max-w-7xl">
+      <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="relative container mx-auto max-w-[1400px]">
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12 sm:gap-y-14 mb-14 sm:mb-16">
           {/* Brand */}

@@ -293,7 +293,7 @@ export function Services() {
     <section
       id="services"
       ref={ref}
-      className="relative [overflow-x:clip] py-14 sm:py-16 md:py-20 px-4 sm:px-6"
+      className="relative [overflow-x:clip] py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-12"
     >
       {/* Background orbs — infinite pulse on desktop only */}
       {animateOrbs ? (
@@ -322,12 +322,12 @@ export function Services() {
         </>
       )}
 
-      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-7xl relative z-10">
+      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px] relative z-10">
         <m.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ ...SPRING_SNAPPY, delay: 0.1 }}
-          className="text-center mb-10 sm:mb-12 md:mb-14"
+          className="mb-10 sm:mb-12 md:mb-14"
         >
           <m.p
             className="lupfr-section-kicker mb-4"
@@ -337,19 +337,20 @@ export function Services() {
           >
             What We Do
           </m.p>
-          <m.h2
-            className="mb-6"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-            transition={{ ...SPRING_PUNCH, delay: 0.12 }}
-          >
-            <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
-          </m.h2>
-          <TextReveal
-            text="From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA."
-            className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed"
-            delay={0.2}
-          />
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <m.h2
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ ...SPRING_PUNCH, delay: 0.12 }}
+            >
+              <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
+            </m.h2>
+            <TextReveal
+              text="From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA."
+              className="text-muted-foreground max-w-md leading-relaxed"
+              delay={0.2}
+            />
+          </div>
         </m.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
