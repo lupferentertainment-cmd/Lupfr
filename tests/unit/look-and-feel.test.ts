@@ -30,6 +30,7 @@ const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "
 const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
 const partnersStrip = fs.readFileSync(path.join(rootDir, "components", "partners-strip.tsx"), "utf8")
 const brandsComponent = fs.readFileSync(path.join(rootDir, "components", "brands.tsx"), "utf8")
+const notFoundPage = fs.readFileSync(path.join(rootDir, "app", "not-found.tsx"), "utf8")
 const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
 const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
 const careers = fs.readFileSync(path.join(rootDir, "components", "careers.tsx"), "utf8")
@@ -107,6 +108,7 @@ describe("corporate section eyebrows", () => {
     expect(careers).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*Join the Team/)
     expect(press).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Story/)
     expect(brandsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Portfolio/)
+    expect(notFoundPage).toMatch(/className="lupfr-section-kicker[^"]*">404/)
   })
 
   it("Contact's section eyebrow (above the h2) uses the kicker class; the form label and popup copy stay untouched", () => {

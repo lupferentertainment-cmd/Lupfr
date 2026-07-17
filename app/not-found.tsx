@@ -13,7 +13,7 @@ export default function NotFound() {
           alt="LUPFR Entertainment"
         />
       </a>
-      <p className="text-gold-accent tracking-tight text-xs sm:text-sm mb-4">404</p>
+      <p className="lupfr-section-kicker mb-4">404</p>
       <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-4">
         Page not found
       </h1>
