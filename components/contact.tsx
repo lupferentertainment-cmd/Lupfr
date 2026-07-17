@@ -238,7 +238,7 @@ export function Contact() {
                   >
                     <SelectTrigger
                       aria-label="What can we help with?"
-                      className="w-full min-h-[52px] data-[size=default]:h-auto rounded-xl border-border bg-secondary px-4 py-3 text-sm text-foreground shadow-none transition-colors hover:border-accent/50 focus-visible:border-accent focus-visible:ring-0 data-[state=open]:border-accent data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-gold-accent [&>svg]:transition-transform [&>svg]:duration-300 data-[state=open]:[&>svg]:rotate-180"
+                      className="w-full min-h-[52px] data-[size=default]:h-auto rounded-sm border-border bg-secondary px-4 py-3 text-sm text-foreground shadow-none transition-colors hover:border-accent/50 focus-visible:border-accent focus-visible:ring-0 data-[state=open]:border-accent data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-gold-accent [&>svg]:transition-transform [&>svg]:duration-300 data-[state=open]:[&>svg]:rotate-180"
                     >
                       <SelectValue placeholder="Choose an inquiry type" />
                     </SelectTrigger>
@@ -251,7 +251,7 @@ export function Contact() {
                         <SelectItem
                           key={label}
                           value={label}
-                          className="rounded-xl py-3 pl-3 text-sm text-muted-foreground transition-colors focus:bg-gold-accent/10 focus:text-foreground data-[state=checked]:text-gold-accent [&_svg:not([class*='text-'])]:text-gold-accent/80"
+                          className="rounded-sm py-3 pl-3 text-sm text-muted-foreground transition-colors focus:bg-gold-accent/10 focus:text-foreground data-[state=checked]:text-gold-accent [&_svg:not([class*='text-'])]:text-gold-accent/80"
                         >
                           <Icon className="size-4" aria-hidden />
                           {label}
@@ -268,7 +268,7 @@ export function Contact() {
                       name="name"
                       type="text"
                       required
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="Your name"
                     />
                   </div>
@@ -278,7 +278,7 @@ export function Contact() {
                       name="email"
                       type="email"
                       required
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -292,7 +292,7 @@ export function Contact() {
                     <input
                       name="company"
                       type="text"
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="Your organization"
                     />
                   </div>
@@ -301,7 +301,7 @@ export function Contact() {
                     <input
                       name="budget"
                       type="text"
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="Budget range or amount"
                     />
                   </div>
@@ -313,7 +313,7 @@ export function Contact() {
                     name="message"
                     required
                     rows={4}
-                    className="w-full resize-none rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                    className="w-full resize-none rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                     placeholder="Share details about your event, project, or inquiry..."
                   />
                 </div>
@@ -351,7 +351,7 @@ export function Contact() {
                     required
                     value={contactListName}
                     onChange={(e) => setContactListName(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                    className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                     placeholder="Jane Smith"
                   />
                 </div>
@@ -363,7 +363,7 @@ export function Contact() {
                       autoComplete="email"
                       value={contactListEmail}
                       onChange={(e) => setContactListEmail(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -374,7 +374,7 @@ export function Contact() {
                       autoComplete="tel"
                       value={contactListPhone}
                       onChange={(e) => setContactListPhone(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
+                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
                       placeholder="Your phone number"
                     />
                   </div>

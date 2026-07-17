@@ -105,7 +105,7 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
           {serviceNumeral(index)}
         </span>
 
-        <div className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
+        <div className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
           <service.icon
             size={24}
             className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
@@ -174,7 +174,7 @@ function ServiceCardMotionBody({
         </span>
 
         <m.div
-          className="w-12 h-12 rounded-xl bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
+          className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
           animate={{
             scale: isActive ? 1.05 : 1,
           }}

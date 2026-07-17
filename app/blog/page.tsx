@@ -39,7 +39,7 @@ function PostMeta({ post }: { post: BlogPost }) {
 
 function BlogCard({ post }: { post: BlogPost }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border/80 bg-card/70 shadow-2xl shadow-black/15 transition duration-300 hover:-translate-y-1 hover:border-accent/45 hover:bg-card">
+    <article className="group flex h-full flex-col overflow-hidden rounded-sm sm:rounded-md border border-border/80 bg-card/70 shadow-2xl shadow-black/15 transition duration-300 hover:-translate-y-1 hover:border-accent/45 hover:bg-card">
       <Link href={postHref(post)} prefetch className="flex h-full flex-col">
         <div className="relative aspect-[16/11] overflow-hidden bg-muted">
           <Image src={post.coverImage} alt={post.title} width={BLOG_IMAGE_WIDTH} height={BLOG_IMAGE_HEIGHT} sizes="(max-width: 768px) 100vw, 33vw" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.05]" />

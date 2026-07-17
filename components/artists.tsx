@@ -68,7 +68,7 @@ function FeaturedTrackEmbed({
   return (
     <div ref={embedRef} className="mt-4 w-full pt-4 border-t border-border/80">
       <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted-foreground">Listen</span>
-      <div className="mt-1.5 rounded-lg overflow-hidden bg-muted/80 border border-border/80 w-full">
+      <div className="mt-1.5 rounded-sm overflow-hidden bg-muted/80 border border-border/80 w-full">
         {isInView ? (
           <iframe
             src={featuredTrackEmbedUrl}

@@ -165,7 +165,7 @@ export default async function EventPage({ params }: EventPageParams) {
             <EventBreadcrumb event={event} />
           </div>
 
-          <div className="rounded-2xl overflow-hidden bg-card border border-border mb-10 shadow-xl">
+          <div className="rounded-sm sm:rounded-md overflow-hidden bg-card border border-border mb-10 shadow-xl">
             <div className="relative">
               {resolvedImage ? (
                 <EventDetailHeroImage
