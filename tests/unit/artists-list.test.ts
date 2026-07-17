@@ -33,7 +33,38 @@ describe("featured artist data", () => {
       "Nick Rosen",
       "Admiral",
       "LUPFR",
+      "MALEK",
+      "Alex Rayne",
+      "Midfield Avenue",
     ])
+  })
+
+  it("loads the phase 20 roster completion with copy sourced verbatim from the comp's embedded artist data", () => {
+    const malek = getArtists().find((artist) => artist.name === "MALEK")
+    expect(malek).toMatchObject({
+      genre: "House",
+      image: "/artists/malek.webp",
+      bio: "House selector and LUPFR team member bringing his own sound to the decks.",
+      soundcloud: "https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6",
+    })
+    expect(malek?.spotify).toBeUndefined()
+
+    const alexRayne = getArtists().find((artist) => artist.name === "Alex Rayne")
+    expect(alexRayne).toMatchObject({
+      genre: "Electronic",
+      image: "/artists/alex_rayne.webp",
+      bio: "Electronic duo bringing atmospheric, festival-scale energy to the LUPFR lineup.",
+    })
+    // The comp's own spotifyUrl for this artist is a '#' placeholder — no real link, so none was added.
+    expect(alexRayne?.spotify).toBeUndefined()
+
+    const midfieldAvenue = getArtists().find((artist) => artist.name === "Midfield Avenue")
+    expect(midfieldAvenue).toMatchObject({
+      genre: "Indie Rock",
+      image: "/artists/midfield_avenue.webp",
+      bio: "Indie rock band bringing live, atmospheric energy to the LUPFR lineup.",
+      spotify: "https://open.spotify.com/artist/4QzticMQIsDTn6hWvesWsv",
+    })
   })
 
   it("loads the 2026-07-06 owner additions with their streaming links", () => {

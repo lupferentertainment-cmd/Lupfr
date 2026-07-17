@@ -120,3 +120,23 @@
   featuredTrack:
     url: https://soundcloud.com/lupfr/piece-of-your-heart-lupfer
     platform: soundcloud
+
+- id: 5
+  name: MALEK
+  genre: House
+  image: /artists/malek.webp
+  bio: House selector and LUPFR team member bringing his own sound to the decks.
+  soundcloud: https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6
+
+- id: 13
+  name: Alex Rayne
+  genre: Electronic
+  image: /artists/alex_rayne.webp
+  bio: Electronic duo bringing atmospheric, festival-scale energy to the LUPFR lineup.
+
+- id: 14
+  name: Midfield Avenue
+  genre: Indie Rock
+  image: /artists/midfield_avenue.webp
+  bio: Indie rock band bringing live, atmospheric energy to the LUPFR lineup.
+  spotify: https://open.spotify.com/artist/4QzticMQIsDTn6hWvesWsv
