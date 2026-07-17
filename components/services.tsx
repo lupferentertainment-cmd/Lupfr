@@ -1,13 +1,14 @@
 "use client"
 
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import Image from "next/image"
+import Link from "next/link"
 import { useRef, useState, type ReactNode } from "react"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { ShimmerImage } from "@/components/shimmer-image"
 import { TextReveal } from "@/components/text-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { getServices, type ServiceItem } from "@/lib/data/services"
+import { getServices, servicePath, type ServiceItem } from "@/lib/data/services"
 
 const CARD_STAGGER = 0.08
 const SPRING_PUNCH = { type: "spring" as const, stiffness: 500, damping: 26 }
@@ -66,6 +67,7 @@ function ServiceCardTiltShell({
   return (
     <m.article
       ref={cardRef}
+      tabIndex={-1}
       initial={initial}
       animate={animate}
       transition={transition}
@@ -100,8 +102,8 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
       >
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
         {service.image && (
-          <div className="relative h-[120px] w-full shrink-0 overflow-hidden bg-muted">
-            <Image
+          <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
+            <ShimmerImage
               src={service.image}
               alt=""
               fill
@@ -182,8 +184,8 @@ function ServiceCardMotionBody({
         {/* Subtle top-edge highlight for raised surface feel */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
         {service.image && (
-          <div className="relative h-[120px] w-full shrink-0 overflow-hidden bg-muted">
-            <Image
+          <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
+            <ShimmerImage
               src={service.image}
               alt=""
               fill
@@ -280,7 +282,13 @@ function ServiceCard({
   if (!enableTilt) {
     return (
       <article className={className}>
-        <ServiceCardStaticBody service={service} index={index} />
+        <Link
+          href={servicePath(service)}
+          className="block h-full rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+          aria-label={`View ${service.title} service`}
+        >
+          <ServiceCardStaticBody service={service} index={index} />
+        </Link>
       </article>
     )
   }
@@ -303,7 +311,13 @@ function ServiceCard({
       animate={animate}
       transition={transition}
     >
-      <ServiceCardMotionBody service={service} index={index} isActive={isActive} />
+      <Link
+        href={servicePath(service)}
+        className="block h-full rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        aria-label={`View ${service.title} service`}
+      >
+        <ServiceCardMotionBody service={service} index={index} isActive={isActive} />
+      </Link>
     </ServiceCardTiltShell>
   )
 }

@@ -19,18 +19,24 @@ export const PHRASE_DURATION_MOBILE_MS = 9000
 
 export const FADE_DURATION_S = 0.6
 
-export const HERO_POSTER_DARK = "/hero/hero-poster-dark.webp"
-export const HERO_POSTER_LIGHT = "/hero/hero-poster-light.webp"
+/**
+ * Poster = a still from the hero drone clip (phase 29) so the video's first
+ * frame, its slow-network fallback, and the videoless mobile hero all show the
+ * same scene. One frame serves both themes — same precedent as the video
+ * itself (HERO_VIDEO_DARK === HERO_VIDEO_LIGHT); the hero's own washes handle
+ * theme contrast. The prior ERIA posters stay on disk for easy revert.
+ */
+export const HERO_POSTER_DARK = "/hero/hero-poster-yacht.webp"
+export const HERO_POSTER_LIGHT = "/hero/hero-poster-yacht.webp"
 export const HERO_POSTER = HERO_POSTER_DARK
 
 /**
- * Mobile-only hero posters: purpose-built ~1080px, aggressively compressed
- * (<90KB) so the phone LCP loads a tiny source instead of the 2560px / ~700KB
- * desktop posters (whose on-demand AVIF re-encode of a huge source was the main
- * cause of the slow mobile hero paint). Desktop keeps the full posters + video.
+ * Mobile-only hero poster: purpose-built 3:4 center crop, aggressively
+ * compressed (<90KB) so the phone LCP loads a tiny source instead of the
+ * full desktop poster. Desktop keeps the full poster + video.
  */
-export const HERO_POSTER_DARK_MOBILE = "/hero/hero-poster-dark-mobile.webp"
-export const HERO_POSTER_LIGHT_MOBILE = "/hero/hero-poster-light-mobile.webp"
+export const HERO_POSTER_DARK_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
+export const HERO_POSTER_LIGHT_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
 
 /**
  * Theme for hero media src selection. SSR cannot know the stored theme, so the

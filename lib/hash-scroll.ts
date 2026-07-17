@@ -16,7 +16,7 @@
  */
 
 /** Deferred home sections, ordered top-to-bottom as they appear on the page. */
-export const DEFERRED_SECTION_IDS = ["news", "about", "team", "contact"] as const
+export const DEFERRED_SECTION_IDS = ["about", "team", "contact"] as const
 
 export type DeferredSectionId = (typeof DEFERRED_SECTION_IDS)[number]
 

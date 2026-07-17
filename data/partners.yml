@@ -62,6 +62,7 @@
   imageClassName: scale-[0.9]
 
 - name: Soundcheck
+  url: https://lupfr.com/#brands
   image: /corporate_partners/soundcheck.webp
   logoTreatment: natural
   # Square asset with a baked-in cream background; same full-bleed treatment as

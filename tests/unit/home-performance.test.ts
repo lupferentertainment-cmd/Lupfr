@@ -50,10 +50,11 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("id=\"contact\"")
     })
 
-    it("defers Press only behind DeferredHomeSection id=\"news\"", () => {
-        expect(homePage).toContain('<DeferredHomeSection id="news"')
-        expect(homePage).toContain("<Press />")
-        expect(homePage).toMatch(/const Press = dynamic\(/)
+    it("has no standalone Press section — the press card lives inside About (owner restructure 2026-07-17)", () => {
+        expect(homePage).not.toContain('<DeferredHomeSection id="news"')
+        expect(homePage).not.toContain("<Press />")
+        const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
+        expect(about).toContain('getPress()[0]')
     })
 
     it("mounts the events section eagerly so #events navigation is instant", () => {
@@ -89,7 +90,7 @@ describe("home page mobile transfer guardrails", () => {
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
         expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]"')
+        expect(homePage).toContain('estimatedHeightClassName="min-h-[1100px] lg:min-h-[640px]"')
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
@@ -221,28 +222,23 @@ describe("mobile artists black-screen regression", () => {
     })
 })
 
-describe("mobile artist carousel (one-artist-per-slide)", () => {
+describe("artists static grid (no carousel)", () => {
     const artists = fs.readFileSync(
         path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "components", "artists.tsx"),
         "utf8"
     )
 
-    it("defines a per-artist mobile slide array so each swipe shows exactly one artist", () => {
-        expect(artists).toContain("mobileArtistSlides")
-        expect(artists).toContain("artists.map((a) => [a])")
+    it("renders all artists at once in a static responsive grid, not a carousel", () => {
+        expect(artists).toContain("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4")
+        expect(artists).toContain("artists.map((artist) =>")
     })
 
-    it("keeps desktop slides at 6 artists per slide", () => {
-        expect(artists).toContain("ARTISTS_PER_DESKTOP_SLIDE = 6")
-        expect(artists).toContain("desktopArtistSlides")
-    })
-
-    it("switches the carousel between mobile and desktop slide arrays based on isMobile", () => {
-        expect(artists).toContain("isMobile ? mobileArtistSlides : desktopArtistSlides")
-    })
-
-    it("renders a single ArtistCard (no grid) per slide on mobile to reduce compositor layers", () => {
-        expect(artists).toContain("isMobile ? (")
-        expect(artists).toContain("slide[0]")
+    it("carries no Embla carousel scaffolding — no arrows, dots, or slide arrays", () => {
+        expect(artists).not.toContain("@/components/ui/carousel")
+        expect(artists).not.toContain("Carousel")
+        expect(artists).not.toContain("CarouselDots")
+        expect(artists).not.toContain("mobileArtistSlides")
+        expect(artists).not.toContain("desktopArtistSlides")
+        expect(artists).not.toContain("ARTISTS_PER_DESKTOP_SLIDE")
     })
 })

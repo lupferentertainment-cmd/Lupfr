@@ -34,7 +34,6 @@ const notFoundPage = fs.readFileSync(path.join(rootDir, "app", "not-found.tsx"),
 const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
 const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
 const careers = fs.readFileSync(path.join(rootDir, "components", "careers.tsx"), "utf8")
-const press = fs.readFileSync(path.join(rootDir, "components", "press.tsx"), "utf8")
 
 function getContactPhoneCodes() {
   const match = protectedPhone.match(/const PHONE_CHAR_CODES = \[([^\]]+)\]/)
@@ -101,13 +100,12 @@ describe("typography system", () => {
 // ── corporate section eyebrows (owner redesign 2026-07-15) ─────────────────────
 
 describe("corporate section eyebrows", () => {
-  it("Services, Team, About, Artists, Careers, and Press eyebrows use the corporate kicker class", () => {
+  it("Services, Team, About, Artists, and Careers eyebrows use the corporate kicker class", () => {
     expect(servicesComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*What We Do/)
     expect(team).toMatch(/className="lupfr-section-kicker[^"]*">Who We Are/)
-    expect(about).toMatch(/className="lupfr-section-kicker[^"]*">The story/)
+    expect(about).toMatch(/className="lupfr-section-kicker[^"]*">About LUPFR/)
     expect(artistsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Sound/)
     expect(careers).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*Join the Team/)
-    expect(press).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Story/)
     expect(brandsComponent).toMatch(/className="lupfr-section-kicker[^"]*"[\s\S]{0,200}>\s*The Portfolio/)
     expect(notFoundPage).toMatch(/className="lupfr-section-kicker[^"]*">404/)
   })
@@ -364,6 +362,15 @@ describe("navigation structure", () => {
 // ── home page section structure ───────────────────────────────────────────────
 
 describe("home page section structure", () => {
+  it("uses the restructure comp's faded treatment for Brands photography", () => {
+    expect(brandsComponent).toContain("object-cover")
+    expect(brandsComponent).toMatch(/opacity-\[0\.16\]|style=\{\{ opacity: 0\.16 \}\}/)
+    expect(brandsComponent).not.toContain("from-black/55 via-black/35 to-black/85")
+    expect(brandsComponent).toContain("min-h-[460px]")
+    expect(brandsComponent).toContain("sm:min-h-[340px]")
+    expect(brandsComponent).toContain("lg:gap-8")
+  })
+
   it("brands component owns the #brands section anchor", () => {
     expect(brandsComponent).toContain('id="brands"')
   })
@@ -380,8 +387,8 @@ describe("home page section structure", () => {
     expect(artistsComponent).toContain('id="artists"')
   })
 
-  it("defers news, about, team, contact behind intersection observer; the standalone gallery section is retired", () => {
-    expect(homePage).toContain('<DeferredHomeSection id="news"')
+  it("defers about, team, contact behind intersection observer; standalone gallery and news sections are retired", () => {
+    expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     expect(homePage).not.toContain('id="gallery"')
     expect(homePage).toContain('id="about"')
     expect(homePage).toContain('id="team"')
@@ -417,10 +424,10 @@ describe("home page section structure", () => {
     expect(artistsComponent).toMatch(/<ScrollReveal variant="up"/)
   })
 
-  it("events section renders the Instagram reels block", () => {
-    expect(eventsComponent).toContain('from "@/lib/data/reels"')
-    expect(eventsComponent).toContain("Reels")
-    expect(eventsComponent).toContain("instagramReels")
+  it("keeps the archived Instagram reels block off the home Events section", () => {
+    expect(eventsComponent).not.toContain('from "@/lib/data/reels"')
+    expect(eventsComponent).not.toContain("ReelsBlock")
+    expect(eventsComponent).not.toContain("instagramReels")
   })
 
   it("mounts Events eagerly for instant #events navigation", () => {
@@ -483,7 +490,7 @@ describe("contact structure", () => {
 describe("footer contact info", () => {
   it("footer carries email, location, and the protected phone", () => {
     expect(footer).toContain("will@lupfr.com")
-    expect(footer).toContain("SF &amp; LA, California")
+    expect(footer).toContain("87 N Raymond, Floor 6, Pasadena, CA")
     expect(footer).toContain("ProtectedPhone")
   })
 })
@@ -495,23 +502,35 @@ describe("about structure", () => {
     expect(about).not.toContain("will_lupfer.webp")
   })
 
-  it("closes with the founder byline at the bottom", () => {
-    expect(about).toContain("Will Lupfer — CEO &amp; Founder of LUPFR Entertainment")
+  it("carries the comp's restructured copy: heading, quote attribution, and the featured press card", () => {
+    expect(about).toContain("Built From the Ground Up")
+    expect(about).toContain("— Will Lupfer, Founder &amp; CEO")
+    expect(about).toContain("getPress()[0]")
+    // Old split-section copy is gone: byline/address block and value cards.
+    expect(about).not.toContain("CEO &amp; Founder of LUPFR Entertainment")
+    expect(about).not.toContain("87 N Raymond")
+    expect(about).not.toContain("Curation")
+  })
+
+  it("rolls the five brands into the story with per-brand accent slashes", () => {
+    expect(about).toContain("BrandSlashText")
+    expect(about).toContain("getBrands()")
   })
 })
 
 // ── event card desktop sizing ────────────────────────────────────────────────
 
 describe("event card desktop sizing", () => {
-  it("caps event card images at a more viewable desktop height", () => {
+  it("uses the reference comp's square poster", () => {
     expect(eventsComponent).not.toContain("lg:h-[400px]")
     expect(eventsComponent).not.toContain("md:h-[340px]")
-    expect(eventsComponent).toContain("md:h-[260px] lg:h-[280px]")
+    expect(eventsComponent).toContain("relative aspect-square w-full")
   })
 
-  it("narrows the desktop carousel card so more events are viewable at once", () => {
+  it("uses the reference comp's 300px desktop card", () => {
     expect(eventsComponent).not.toContain("lg:basis-[min(640px,48%)]")
-    expect(eventsComponent).toContain("lg:basis-[min(480px,33%)]")
+    expect(eventsComponent).not.toContain("lg:basis-[min(480px,33%)]")
+    expect(eventsComponent).toContain("md:basis-[324px]")
   })
 })
 

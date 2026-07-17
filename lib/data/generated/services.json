@@ -3,19 +3,24 @@
     "icon": "PartyPopper",
     "title": "Owned Events",
     "image": "/services/owned-events.webp",
-    "description": "Our signature branded experiences—from Boiler Boat to Rooftop Grooves. We handle everything: venue, talent, production, and promotion.",
+    "description": "Our signature branded music experiences — venue, talent, production, and promotion, fully handled from concept to load-out.",
     "features": [
       "Full Production",
       "Curated Lineups",
       "Premium Venues",
       "Marketing & Promotion"
+    ],
+    "relatedBrands": [
+      "seaside",
+      "inside",
+      "outside"
     ]
   },
   {
     "icon": "Mic2",
     "title": "Talent Booking",
     "image": "/services/talent-booking.webp",
-    "description": "Connect with the right artists through our extensive network. We source, negotiate, and coordinate talent for your events.",
+    "description": "Connect with the right artists through our network. We source, negotiate contracts, and coordinate riders, travel, and logistics.",
     "features": [
       "Artist Discovery",
       "Contract Negotiation",
@@ -25,33 +30,41 @@
   },
   {
     "icon": "Building2",
-    "title": "Venue Programming",
+    "title": "Event Programming",
     "image": "/services/venue-programming.webp",
-    "description": "We curate regular music programming for venues looking to elevate their nightlife presence with consistent, quality entertainment.",
+    "description": "Curated, recurring event programming for venues or brands looking to elevate their community presence and drive consistent foot traffic.",
     "features": [
       "Monthly DJ Nights",
       "Music Curation",
       "Event Management",
       "Audience Development"
+    ],
+    "relatedBrands": [
+      "inside",
+      "outside"
     ]
   },
   {
     "icon": "Users",
     "title": "Private Events",
     "image": "/services/private-events.webp",
-    "description": "From corporate gatherings to luxury celebrations, we bring the same energy and attention to detail to every private event.",
+    "description": "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment.",
     "features": [
       "Custom Concepts",
       "Full Service",
       "Premium Sound",
       "Exclusive Access"
+    ],
+    "relatedBrands": [
+      "highrise",
+      "seaside"
     ]
   },
   {
     "icon": "Music",
     "title": "Event Production",
     "image": "/services/event-production.webp",
-    "description": "End-to-end production services for venues and brands. We bring the vision, crew, and execution to make it happen.",
+    "description": "End-to-end production — sound, lighting, staging, decor, and day-of coordination so the details never fall on you.",
     "features": [
       "Sound & Lighting",
       "Staging & Decor",
@@ -63,12 +76,16 @@
     "icon": "Sparkles",
     "title": "Brand Partnerships",
     "image": "/services/brand-partnerships.webp",
-    "description": "Collaborate with us on activations that reach the SF nightlife community through our events and platform.",
+    "description": "Activations that reach the LA & SF nightlife and events community through our brands, events, and platform.",
     "features": [
       "Event Sponsorships",
       "Brand Activations",
       "Content Creation",
       "Influencer Access"
+    ],
+    "relatedBrands": [
+      "soundcheck",
+      "highrise"
     ]
   }
 ]

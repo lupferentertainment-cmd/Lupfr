@@ -2,36 +2,19 @@
 
 import { memo, type ReactNode } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselDots,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 
 const ARTIST_IMAGE_SIZE = 400
-const ARTISTS_PER_DESKTOP_SLIDE = 6
-
-function getDesktopArtistSlides(items: ArtistItem[]): ArtistItem[][] {
-  const count = Math.ceil(items.length / ARTISTS_PER_DESKTOP_SLIDE)
-  return Array.from({ length: count }, (_, i) =>
-    items.slice(i * ARTISTS_PER_DESKTOP_SLIDE, (i + 1) * ARTISTS_PER_DESKTOP_SLIDE)
-  )
-}
 
 const artists = getArtists()
-const desktopArtistSlides = getDesktopArtistSlides(artists)
-const mobileArtistSlides = artists.map((a) => [a])
 
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
@@ -346,55 +329,34 @@ const ArtistCard = memo(function ArtistCard({
   )
 })
 
-function ArtistCarousel({
+function ArtistGrid({
+  items,
+  className,
   hoveredId,
   isMobile,
   onHover,
   onLeave,
 }: {
+  items: ArtistItem[]
+  className?: string
   hoveredId: number | null
   isMobile: boolean
   onHover: (id: number) => void
   onLeave: () => void
 }) {
-  const slides = isMobile ? mobileArtistSlides : desktopArtistSlides
-
   return (
-    <Carousel opts={{ align: "start", containScroll: "trimSnaps" }} className="w-full">
-      <CarouselContent className="-ml-4 md:-ml-6" viewportClassName="py-2 md:py-3">
-        {slides.map((slide) => (
-          /* flex (not h-full) so slides stretch to the tallest and card heights
-             stay uniform across slides — same fix as the events carousels. */
-          <CarouselItem key={slide.map((artist) => artist.id).join("-")} className="pl-4 md:pl-6 basis-full flex">
-            {isMobile ? (
-              <ArtistCard
-                artist={slide[0]}
-                isHovered={hoveredId === slide[0].id}
-                isMobile={isMobile}
-                onHover={() => onHover(slide[0].id)}
-                onLeave={onLeave}
-              />
-            ) : (
-              <div className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {slide.map((artist) => (
-                  <ArtistCard
-                    key={artist.id}
-                    artist={artist}
-                    isHovered={hoveredId === artist.id}
-                    isMobile={isMobile}
-                    onHover={() => onHover(artist.id)}
-                    onLeave={onLeave}
-                  />
-                ))}
-              </div>
-            )}
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      {slides.length > 1 ? <CarouselPrevious className="left-1 top-[45%] sm:-left-4 lg:-left-10" /> : null}
-      {slides.length > 1 ? <CarouselNext className="right-1 top-[45%] sm:-right-4 lg:-right-10" /> : null}
-      <CarouselDots />
-    </Carousel>
+    <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6", className)}>
+      {items.map((artist) => (
+        <ArtistCard
+          key={artist.id}
+          artist={artist}
+          isHovered={hoveredId === artist.id}
+          isMobile={isMobile}
+          onHover={() => onHover(artist.id)}
+          onLeave={onLeave}
+        />
+      ))}
+    </div>
   )
 }
 
@@ -430,7 +392,7 @@ export function Artists() {
     <section
       id="artists"
       ref={ref}
-      className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 relative overflow-hidden bg-card/50"
+      className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-12 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
       <div className="container mx-auto max-w-[1400px] relative z-10">
@@ -447,14 +409,23 @@ export function Artists() {
               <br />
               <span className="lupfr-heading-subline">Artists</span>
             </h2>
-            <p className="text-muted-foreground max-w-md leading-relaxed">
-              We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
-            </p>
+            <div className="max-w-md md:text-right">
+              <p className="text-muted-foreground leading-relaxed">
+                We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
+              </p>
+              <Link
+                href="/artists"
+                className="mt-4 inline-block border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
+              >
+                View all artists →
+              </Link>
+            </div>
           </div>
         </ArtistsRevealShell>
 
         <ArtistsRevealShell isMobile={isMobile}>
-          <ArtistCarousel
+          <ArtistGrid
+            items={artists}
             hoveredId={hoveredId}
             isMobile={isMobile}
             onHover={setHoveredId}
@@ -483,5 +454,66 @@ export function Artists() {
         </ArtistsRevealShell>
       </div>
     </section>
+  )
+}
+
+export function ArtistsDirectory() {
+  const [sort, setSort] = useState<"featured" | "az">("featured")
+  const [genre, setGenre] = useState("all")
+  const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const isMobile = useIsMobile() ?? true
+  const genres = useMemo(
+    () => [...new Set(artists.map((artist) => artist.genre))].sort((a, b) => a.localeCompare(b)),
+    []
+  )
+  const visibleArtists = useMemo(() => {
+    const filtered = genre === "all" ? artists : artists.filter((artist) => artist.genre === genre)
+    return sort === "az"
+      ? [...filtered].sort((a, b) => a.name.localeCompare(b.name))
+      : filtered
+  }, [genre, sort])
+
+  return (
+    <div>
+      <div className="mb-8 flex flex-wrap items-center gap-3 sm:mb-10">
+        {(["featured", "az"] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={sort === value}
+            onClick={() => setSort(value)}
+            className={cn(
+              "min-h-11 rounded-full border px-5 text-sm font-medium transition-colors",
+              sort === value
+                ? "border-accent bg-accent text-accent-foreground"
+                : "border-border bg-secondary text-foreground hover:border-accent"
+            )}
+          >
+            {value === "featured" ? "Featured" : "A–Z"}
+          </button>
+        ))}
+        <label className="sr-only" htmlFor="artist-genre">Filter artists by genre</label>
+        <select
+          id="artist-genre"
+          value={genre}
+          onChange={(event) => setGenre(event.target.value)}
+          className="min-h-11 rounded-full border border-border bg-secondary px-5 text-sm text-foreground outline-none transition-colors hover:border-accent focus-visible:border-accent"
+        >
+          <option value="all">All Genres</option>
+          {genres.map((value) => <option key={value} value={value}>{value}</option>)}
+        </select>
+      </div>
+
+      <ArtistGrid
+        items={visibleArtists}
+        hoveredId={hoveredId}
+        isMobile={isMobile}
+        onHover={setHoveredId}
+        onLeave={() => setHoveredId(null)}
+      />
+      {visibleArtists.length === 0 ? (
+        <p className="py-16 text-center text-muted-foreground">No artists match this genre.</p>
+      ) : null}
+    </div>
   )
 }

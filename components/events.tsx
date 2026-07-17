@@ -3,11 +3,8 @@
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState, useEffect, useCallback, type ReactNode, type RefObject } from "react"
-import { Calendar, MapPin, Clock, Instagram, ExternalLink } from "lucide-react"
+import { useRef, useState, useEffect, useCallback, type ReactNode } from "react"
 import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
-import { getReels } from "@/lib/data/reels"
-import { LINKS } from "@/lib/links"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
@@ -24,6 +21,17 @@ import { cn } from "@/lib/utils"
 
 const EVENT_IMAGE_WIDTH = 1200
 const EVENT_IMAGE_HEIGHT = 800
+const SHORT_EVENT_DATE = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+})
+
+function eventShortDate(event: EventItem): string {
+  return event.dateISO
+    ? SHORT_EVENT_DATE.format(new Date(`${event.dateISO}T00:00:00Z`))
+    : "TBD"
+}
 
 /** Tilt springs live here so EventCard never creates them on touch/mobile. */
 function EventCardTiltShell({
@@ -92,7 +100,6 @@ function EventCard({
   onHover,
   onLeave,
   now,
-  shineSectionRef,
 }: {
   event: EventItem
   index: number
@@ -105,7 +112,6 @@ function EventCard({
   onHover: () => void
   onLeave: () => void
   now: Date
-  shineSectionRef: RefObject<HTMLElement | null>
 }) {
   const [imageReady, setImageReady] = useState(false)
   const tag = getEventTag(event, now)
@@ -121,7 +127,7 @@ function EventCard({
     ease: [0.22, 1, 0.36, 1],
   }
   const className =
-    "group relative overflow-hidden rounded-sm sm:rounded-md bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out shadow-xl flex flex-col h-full"
+    "group relative w-full overflow-hidden rounded-sm bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out flex flex-col h-full"
 
   const image = event.image ? (
     <Image
@@ -129,14 +135,14 @@ function EventCard({
       alt={event.title}
       width={EVENT_IMAGE_WIDTH}
       height={EVENT_IMAGE_HEIGHT}
-      sizes="(max-width: 640px) 92vw, (max-width: 1024px) 55vw, 640px"
+      sizes="(max-width: 640px) 84vw, 300px"
       priority={prioritizeImage}
       loading={prioritizeImage ? "eager" : "lazy"}
       fetchPriority={prioritizeImage ? "high" : undefined}
       unoptimized={event.image.startsWith("http")}
       onLoad={() => setImageReady(true)}
       className={cn(
-        "w-full h-full object-cover object-center",
+        "w-full h-full object-cover object-top",
         "motion-safe:transition-opacity motion-safe:duration-300",
         "motion-reduce:transition-none",
         imageReady ? "opacity-100" : "opacity-0"
@@ -153,22 +159,15 @@ function EventCard({
   )
 
   const tagPill = (
-    <h4 suppressHydrationWarning className={tag.textClass}>
-      {tag.kind === "today" ? (
-        tag.label
-      ) : (
-        <GoldShineText as="span" scrollTargetRef={shineSectionRef}>
-          {tag.label}
-        </GoldShineText>
-      )}
+    <h4 className="m-0 font-mono text-[10px] font-normal uppercase tracking-[0.08em] text-[#f3efe6]">
+      {tag.label}
     </h4>
   )
 
   const body = (
     <>
       <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
-        {/* Desktop heights deliberately compact — owner feedback 2026-07-02: event images were too big on desktop. */}
-        <div className="h-[220px] sm:h-[280px] md:h-[260px] lg:h-[280px] overflow-hidden relative bg-muted shrink-0">
+        <div className="relative aspect-square w-full overflow-hidden bg-muted shrink-0">
           <div
             className={cn(
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
@@ -189,7 +188,6 @@ function EventCard({
               {image}
             </m.div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
           <div
             className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
             aria-hidden
@@ -197,14 +195,14 @@ function EventCard({
           {staticInner ? (
             <span
               suppressHydrationWarning
-              className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
+              className="absolute left-[14px] top-[14px] z-[2] rounded-full border border-white/15 bg-[#0b0a08]/75 px-[10px] py-[6px] backdrop-blur-sm"
             >
               {tagPill}
             </span>
           ) : (
             <m.span
               suppressHydrationWarning
-              className={`absolute top-5 left-5 sm:top-6 sm:left-6 z-[2] ${tag.pillClass}`}
+              className="absolute left-[14px] top-[14px] z-[2] rounded-full border border-white/15 bg-[#0b0a08]/75 px-[10px] py-[6px] backdrop-blur-sm"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
               transition={{ delay: index * 0.12 + 0.2 }}
@@ -212,43 +210,38 @@ function EventCard({
               {tagPill}
             </m.span>
           )}
+          <span className="text-gold-accent absolute right-[14px] top-[14px] z-[2] rounded-full border border-white/15 bg-[#0b0a08]/75 px-[10px] py-[6px] font-mono text-[10px] uppercase tracking-[0.08em] backdrop-blur-sm">
+            {event.city ?? "SF"}
+          </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-6 sm:p-8">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              {staticInner ? (
-                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight">
-                  <BrandSlashText text={event.title} />
-                </h3>
-              ) : (
-                <m.h3
-                  className="text-2xl sm:text-3xl font-bold tracking-tight group-hover:text-accent transition-colors leading-tight"
-                  whileHover={{ x: 4 }}
-                >
-                  <BrandSlashText text={event.title} />
-                </m.h3>
-              )}
-              {event.subtitle ? (
-                <p className="text-muted-foreground text-base sm:text-lg mt-1">{event.subtitle}</p>
-              ) : null}
-            </div>
+        <div className="flex flex-1 flex-col p-[22px]">
+          <div className="mb-2 flex items-center justify-between gap-3 font-mono text-[10px] uppercase">
+            <span className={event.brandTag === "SEA//SIDE" ? "text-[#6fb8c9]" : "text-foreground"}>
+              <BrandSlashText text={event.brandTag ?? "IN//SIDE"} />
+            </span>
+            <span className="shrink-0 tracking-[0.06em] text-muted-foreground">
+              {eventShortDate(event)}
+            </span>
           </div>
-
-          <div className="grid grid-cols-2 gap-5 sm:gap-6 mt-auto">
-            <div className="flex items-center gap-3 text-base sm:text-lg text-muted-foreground">
-              <Calendar size={18} className="text-accent shrink-0" />
-              <span>{event.date}</span>
-            </div>
-            <div className="flex items-center gap-3 text-base sm:text-lg text-muted-foreground">
-              <Clock size={18} className="text-accent shrink-0" />
-              <span>{event.time}</span>
-            </div>
-            <div className="flex items-center gap-3 text-base sm:text-lg text-muted-foreground col-span-2">
-              <MapPin size={18} className="text-accent shrink-0" />
-              <span>{event.location}</span>
-            </div>
-          </div>
+          {staticInner ? (
+            <h3 className="mb-[10px] font-condensed text-[26px] font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent">
+              <BrandSlashText text={event.title} />
+            </h3>
+          ) : (
+            <m.h3
+              className="mb-[10px] font-condensed text-[26px] font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent"
+              whileHover={{ x: 4 }}
+            >
+              <BrandSlashText text={event.title} />
+            </m.h3>
+          )}
+          {event.subtitle ? (
+            <p className="text-gold-accent mb-[14px] text-[13px] leading-snug">{event.subtitle}</p>
+          ) : null}
+          <span className="text-gold-accent mt-auto text-[13px] transition-colors group-hover:text-foreground">
+            View details →
+          </span>
         </div>
       </EventDetailLink>
 
@@ -308,7 +301,6 @@ function EventsCarousel({
   onHover,
   onLeave,
   now,
-  shineSectionRef,
   prefetchDetails,
   prioritizeFirstImage,
 }: {
@@ -320,7 +312,6 @@ function EventsCarousel({
   onHover: (id: number) => void
   onLeave: () => void
   now: Date
-  shineSectionRef: RefObject<HTMLElement | null>
   prefetchDetails: boolean
   prioritizeFirstImage: boolean
 }) {
@@ -358,15 +349,15 @@ function EventsCarousel({
     <div className="w-full">
       <Carousel opts={CAROUSEL_OPTS} className="w-full">
         <CarouselContent
-          className="-ml-4 md:-ml-6 lg:-ml-8"
-          viewportClassName="py-6 md:py-8"
+          className="-ml-4 md:-ml-6"
+          viewportClassName="pb-3"
         >
           {events.map((event, i) => (
             /* No h-full on items: a specified % height on a flex child of an auto-height
                row disables align-items:stretch, so cards stop matching heights. */
             <CarouselItem
               key={event.id}
-              className="pl-4 md:pl-6 lg:pl-8 basis-[min(380px,92vw)] sm:basis-[min(520px,85vw)] md:basis-[min(460px,48vw)] lg:basis-[min(480px,33%)] flex"
+              className="basis-[min(316px,89vw)] pl-4 md:basis-[324px] md:pl-6 flex"
             >
               <EventCard
                 event={event}
@@ -379,7 +370,6 @@ function EventsCarousel({
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
                 now={now}
-                shineSectionRef={shineSectionRef}
               />
             </CarouselItem>
           ))}
@@ -387,65 +377,6 @@ function EventsCarousel({
         <CarouselDots />
       </Carousel>
     </div>
-  )
-}
-
-const reels = getReels()
-
-/** Instagram recap videos ("Reels") — link cards, so the page never embeds third-party players. */
-function ReelsBlock({
-  isRevealed,
-  shineSectionRef,
-}: {
-  isRevealed: boolean
-  shineSectionRef: RefObject<HTMLElement | null>
-}) {
-  return (
-    <m.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.45, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-      className="pt-4 pb-0"
-    >
-      <GoldShineText
-        as="h3"
-        scrollTargetRef={shineSectionRef}
-        className="lupfr-heading-sub mb-4 md:mb-5"
-      >
-        Reels
-      </GoldShineText>
-      <p className="text-muted-foreground text-base sm:text-lg max-w-xl mb-6">
-        Event recaps, straight from our Instagram — watch the night back.
-      </p>
-      <div className="flex flex-wrap gap-3 sm:gap-4">
-        {reels.map((reel) => (
-          <a
-            key={reel.url}
-            href={reel.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group/reel inline-flex max-w-full min-w-0 items-center gap-3 rounded-sm border border-border bg-card px-5 py-4 transition-colors hover:border-accent/50"
-          >
-            <Instagram size={20} className="text-accent shrink-0" aria-hidden />
-            <span className="min-w-0">
-              <span className="block truncate font-semibold text-foreground transition-colors group-hover/reel:text-accent">
-                {reel.label}
-              </span>
-              <span className="block text-sm text-muted-foreground">Watch on Instagram</span>
-            </span>
-          </a>
-        ))}
-        <a
-          href={LINKS.instagramReels}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 self-center rounded-full border border-border px-4 py-2.5 text-sm font-semibold text-foreground/90 transition-colors hover:border-accent hover:text-accent"
-        >
-          <ExternalLink size={16} className="shrink-0" aria-hidden />
-          View all reels
-        </a>
-      </div>
-    </m.div>
   )
 }
 
@@ -464,7 +395,7 @@ function useFinePointerHover(): boolean {
 export function Events() {
   const ref = useRef(null)
   // once:false + hasRevealed latch: section can leave view without fading cards back out.
-  // margin preloads Past/Reels slightly before the section is fully on screen.
+  // Margin preloads Past slightly before the section is fully on screen.
   const inViewNow = useInView(ref, { once: false, margin: "0px 0px 80px 0px", amount: 0.12 })
   const [hasRevealed, setHasRevealed] = useState(false)
   useEffect(() => {
@@ -473,7 +404,7 @@ export function Events() {
     return () => window.clearTimeout(timeoutId)
   }, [inViewNow])
   const isRevealed = hasRevealed
-  // Mount Past + Reels only after the section has been (or is about to be) in view.
+  // Mount Past only after the section has been (or is about to be) in view.
   const mountBelowFold = hasRevealed
   const enableTilt = useFinePointerHover()
   const isMobile = useIsMobile()
@@ -489,20 +420,27 @@ export function Events() {
     <section
       id="events"
       ref={ref}
-      className="pt-10 sm:pt-12 md:pt-14 lg:pt-16 pb-10 sm:pb-12 md:pb-14 lg:pb-16 px-4 sm:px-6 lg:px-8 relative overflow-visible"
+      className="relative overflow-visible border-b border-border px-4 py-20 sm:px-6 md:py-24 lg:px-12 lg:py-[120px]"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-card/30 to-background" />
-
       <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-[1400px]">
         <m.div
           initial={{ opacity: 0, y: 36 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-6 sm:mb-8 md:mb-10"
+          className="mb-12 flex flex-wrap items-end justify-between gap-4 md:mb-14"
         >
-          <h2>
-            <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
-          </h2>
+          <div>
+            <p className="lupfr-section-kicker mb-[14px]">Upcoming</p>
+            <h2 className="text-foreground">Events</h2>
+          </div>
+          {past.length > 0 ? (
+            <a
+              href="#past-events"
+              className="text-gold-accent border-b border-[var(--gold)] pb-0.5 text-sm transition-colors hover:text-foreground"
+            >
+              View all events →
+            </a>
+          ) : null}
         </m.div>
 
         <m.div
@@ -511,13 +449,6 @@ export function Events() {
           transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mb-14 md:mb-18 lg:mb-20"
         >
-          <GoldShineText
-            as="h3"
-            scrollTargetRef={ref}
-            className="lupfr-heading-sub mb-8 md:mb-10"
-          >
-            Upcoming
-          </GoldShineText>
           {upcoming.length > 0 ? (
             <EventsCarousel
               events={upcoming}
@@ -528,7 +459,6 @@ export function Events() {
               onHover={setHoveredId}
               onLeave={clearHover}
               now={now}
-              shineSectionRef={ref}
               prefetchDetails={isMobile === false}
               prioritizeFirstImage={isMobile === false}
             />
@@ -541,6 +471,7 @@ export function Events() {
 
         {mountBelowFold && past.length > 0 && (
           <m.div
+            id="past-events"
             initial={{ opacity: 0, y: 24 }}
             animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
             transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
@@ -562,14 +493,11 @@ export function Events() {
               onHover={setHoveredId}
               onLeave={clearHover}
               now={now}
-              shineSectionRef={ref}
               prefetchDetails={isMobile === false}
               prioritizeFirstImage={isMobile === false}
             />
           </m.div>
         )}
-
-        {mountBelowFold ? <ReelsBlock isRevealed={isRevealed} shineSectionRef={ref} /> : null}
       </ScrollReveal>
     </section>
   )

@@ -58,6 +58,12 @@ describe("PARTNERS", () => {
       expect(p.name.length).toBeGreaterThan(0)
     }
   })
+
+  it("every partner logo links to an HTTPS destination", () => {
+    for (const p of PARTNERS) {
+      expect(p.url, `${p.name} is missing a destination`).toMatch(/^https:\/\//)
+    }
+  })
 })
 
 describe("getPartners", () => {

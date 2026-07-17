@@ -17,7 +17,6 @@ const navLinksBase = [
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
-  { name: "News", href: "#news" },
   { name: "Blog", href: "/blog" },
   { name: "About", href: "#about" },
   { name: "Team", href: "#team" },

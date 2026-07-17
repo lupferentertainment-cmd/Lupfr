@@ -3,9 +3,8 @@ import { getReels, REELS } from "@/lib/data/reels"
 import { LINKS } from "@/lib/links"
 
 /**
- * Reels contract: event recap videos live on Instagram; the home Events section
- * renders one card per data/reels.yml row plus a "view all" CTA. Every row must
- * be a real https Instagram destination so the external-link QA can verify it.
+ * Archived Reels contract: recap destinations remain valid while the home block
+ * is retired, so restoring the feature does not require reconstructing its data.
  */
 describe("reels list", () => {
   it("exposes at least one reel row", () => {

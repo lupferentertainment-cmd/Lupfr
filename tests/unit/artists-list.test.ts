@@ -153,15 +153,45 @@ describe("featured artist data", () => {
     expect(zusebi?.instagram).toBe("https://www.instagram.com/zusebimusic/")
     expect(zusebi?.youtube).toBe("https://www.youtube.com/@Zusebi")
     expect(zusebi?.featuredTrack).toEqual({
-      url: "https://open.spotify.com/track/6tAiVWmsaW50BtiHXSogJt?si=a65f6501dc6f4a6e",
+      url: "https://open.spotify.com/track/5pKW3ZTKNXovP0q8huEO9z",
       platform: "spotify",
     })
 
     expect(baum?.instagram).toBe("https://www.instagram.com/baum_dj/")
     expect(baum?.soundcloud).toBe("https://soundcloud.com/user-999208104/tracks")
     expect(baum?.featuredTrack).toEqual({
-      url: "https://soundcloud.com/user-999208104/bunker-pop-up-3-7",
+      url: "https://soundcloud.com/user-999208104/baum-live-brackish-petaluma",
       platform: "soundcloud",
+    })
+  })
+
+  it("loads the 2026-07-17 owner featured-track delivery", () => {
+    const byName = (name: string) => getArtists().find((artist) => artist.name === name)
+
+    expect(byName("Admiral")?.featuredTrack).toEqual({
+      url: "https://open.spotify.com/track/1YG74nIEwH4USJlwdcjpva",
+      platform: "spotify",
+    })
+    expect(byName("Alex Rayne")?.featuredTrack).toEqual({
+      url: "https://open.spotify.com/track/5MtTgUg2fOkUdrJn4I7VKp",
+      platform: "spotify",
+    })
+    // Owner delivered an on.soundcloud.com short link; stored as the resolved canonical track page.
+    expect(byName("MALEK")?.featuredTrack).toEqual({
+      url: "https://soundcloud.com/user-106497389/mainstage-mix",
+      platform: "soundcloud",
+    })
+    expect(byName("Midfield Avenue")?.featuredTrack).toEqual({
+      url: "https://open.spotify.com/track/4UJtVs2l4vszbUoVjrLEA5",
+      platform: "spotify",
+    })
+    expect(byName("Nick Rosen")?.featuredTrack).toEqual({
+      url: "https://soundcloud.com/nick-440042267/edm-house-set-all-the-bangers",
+      platform: "soundcloud",
+    })
+    expect(byName("Where's West?")?.featuredTrack).toEqual({
+      url: "https://open.spotify.com/track/2Ov0AaJT7TBHtOv6VB5Gim",
+      platform: "spotify",
     })
   })
 })

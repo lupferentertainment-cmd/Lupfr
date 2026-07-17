@@ -105,6 +105,8 @@
   dateISO: "2026-07-25"
   time: 9 PM - 1 AM
   location: ERIA MARINA, 2300 Chestnut Street, Marina District
+  brandTag: IN//SIDE
+  city: SF
   image: /events/marina_music_002_fromclay_thatfranco.webp
   ticketLink: https://www.eventbrite.com/e/fromclay-thatfranco-tickets-1990995712773?aff=oddtdtcreator
   ticketLabel: Tickets
@@ -118,6 +120,8 @@
   dateISO: "2026-07-24"
   time: 8 - 10:30 PM
   location: ERIA, Sausalito
+  brandTag: OUT//SIDE
+  city: SF
   image: /events/devvy_dub_live.webp
   ticketLink: https://www.eventbrite.com/e/devvy-dub-eria-sausalito-tickets-1993158528814
   ticketLabel: Tickets
@@ -131,6 +135,8 @@
   dateISO: "2026-08-01"
   time: 7 - 10 PM
   location: Long Beach Harbor, CA
+  brandTag: SEA//SIDE
+  city: LA
   image: /events/seaside_001.webp
   ticketLink: https://seaside.la
   ticketLabel: Event Info

@@ -12,12 +12,6 @@ import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { DeferredHomeSection } from "@/components/deferred-home-section"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
-const Press = dynamic(() =>
-  import("@/components/press").then((m) =>
-    resolveDynamicComponent(m, "Press", "@/components/press")
-  ),
-  { ssr: false }
-)
 const About = dynamic(() =>
   import("@/components/about").then((m) =>
     resolveDynamicComponent(m, "About", "@/components/about")
@@ -54,10 +48,7 @@ export function HomePage() {
       <Events />
       <Services />
       <Artists />
-      <DeferredHomeSection id="news" estimatedHeightClassName="min-h-[720px] lg:min-h-[640px]">
-        <Press />
-      </DeferredHomeSection>
-      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[900px] lg:min-h-[780px]">
+      <DeferredHomeSection id="about" estimatedHeightClassName="min-h-[1100px] lg:min-h-[640px]">
         <About />
       </DeferredHomeSection>
       <DeferredHomeSection id="team" estimatedHeightClassName="min-h-[1600px] sm:min-h-[1000px] lg:min-h-[640px]">

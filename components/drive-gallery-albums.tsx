@@ -1,4 +1,4 @@
-import Image from "next/image"
+import { ShimmerImage } from "@/components/shimmer-image"
 import type { DriveGalleryAlbum, DriveMediaItem } from "@/lib/drive-gallery"
 
 /**
@@ -15,7 +15,7 @@ const TILE_CLASS =
 function DriveImageTile({ item, title }: { item: Extract<DriveMediaItem, { kind: "image" }>; title: string }) {
   return (
     <div className={TILE_CLASS}>
-      <Image
+      <ShimmerImage
         src={item.src}
         alt={`${title} — ${item.name}`}
         fill

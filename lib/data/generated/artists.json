@@ -49,7 +49,7 @@
     "youtube": "https://www.youtube.com/@Zusebi",
     "instagram": "https://www.instagram.com/zusebimusic/",
     "featuredTrack": {
-      "url": "https://open.spotify.com/track/6tAiVWmsaW50BtiHXSogJt?si=a65f6501dc6f4a6e",
+      "url": "https://open.spotify.com/track/5pKW3ZTKNXovP0q8huEO9z",
       "platform": "spotify"
     }
   },
@@ -62,7 +62,7 @@
     "spotify": "https://open.spotify.com/artist/7380t6i98gEs1ysixt1cTO",
     "instagram": "https://www.instagram.com/wheres__west/",
     "featuredTrack": {
-      "url": "https://open.spotify.com/track/0BK8GoKCMBh3kAiOZ3t6hE?si=k4bNj7mVQ52t2qxvDyHg_g",
+      "url": "https://open.spotify.com/track/2Ov0AaJT7TBHtOv6VB5Gim",
       "platform": "spotify"
     }
   },
@@ -102,7 +102,7 @@
     "soundcloud": "https://soundcloud.com/user-999208104/tracks",
     "instagram": "https://www.instagram.com/baum_dj/",
     "featuredTrack": {
-      "url": "https://soundcloud.com/user-999208104/bunker-pop-up-3-7",
+      "url": "https://soundcloud.com/user-999208104/baum-live-brackish-petaluma",
       "platform": "soundcloud"
     }
   },
@@ -111,7 +111,11 @@
     "name": "Nick Rosen",
     "genre": "House",
     "image": "/artists/nick_rosen.webp",
-    "bio": "House DJ with a deep crate and a feel for the floor — smooth, driving selections that keep the room locked in."
+    "bio": "House DJ with a deep crate and a feel for the floor — smooth, driving selections that keep the room locked in.",
+    "featuredTrack": {
+      "url": "https://soundcloud.com/nick-440042267/edm-house-set-all-the-bangers",
+      "platform": "soundcloud"
+    }
   },
   {
     "id": 12,
@@ -119,7 +123,11 @@
     "genre": "Afro House",
     "image": "/artists/admiral.webp",
     "bio": "Afro house selector channeling deep rhythms and hypnotic percussion into sets that build, breathe, and move the crowd.",
-    "spotify": "https://open.spotify.com/artist/6Ua0zshzKHjw9gyYftjNeD"
+    "spotify": "https://open.spotify.com/artist/6Ua0zshzKHjw9gyYftjNeD",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/1YG74nIEwH4USJlwdcjpva",
+      "platform": "spotify"
+    }
   },
   {
     "id": 6,
@@ -139,14 +147,22 @@
     "genre": "House",
     "image": "/artists/malek.webp",
     "bio": "House selector and LUPFR team member bringing his own sound to the decks.",
-    "soundcloud": "https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6"
+    "soundcloud": "https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6",
+    "featuredTrack": {
+      "url": "https://soundcloud.com/user-106497389/mainstage-mix",
+      "platform": "soundcloud"
+    }
   },
   {
     "id": 13,
     "name": "Alex Rayne",
     "genre": "Electronic",
     "image": "/artists/alex_rayne.webp",
-    "bio": "Electronic duo bringing atmospheric, festival-scale energy to the LUPFR lineup."
+    "bio": "Electronic duo bringing atmospheric, festival-scale energy to the LUPFR lineup.",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/5MtTgUg2fOkUdrJn4I7VKp",
+      "platform": "spotify"
+    }
   },
   {
     "id": 14,
@@ -154,6 +170,10 @@
     "genre": "Indie Rock",
     "image": "/artists/midfield_avenue.webp",
     "bio": "Indie rock band bringing live, atmospheric energy to the LUPFR lineup.",
-    "spotify": "https://open.spotify.com/artist/4QzticMQIsDTn6hWvesWsv"
+    "spotify": "https://open.spotify.com/artist/4QzticMQIsDTn6hWvesWsv",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/4UJtVs2l4vszbUoVjrLEA5",
+      "platform": "spotify"
+    }
   }
 ]

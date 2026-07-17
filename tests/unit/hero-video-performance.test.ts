@@ -16,8 +16,8 @@ describe("hero video performance guardrails", () => {
         expect(heroDesktop).toContain("activeVideoSrc")
         expect(heroDesktop).toContain("<HeroFallbackPoster posterSrc={activePosterSrc} />")
         expect(heroDesktop).toContain("activePosterSrc")
-        expect(heroDesktop).toContain('const HERO_VIDEO_DARK = "/hero/hero_event_eria_marina.mp4"')
-        expect(heroDesktop).toContain('const HERO_VIDEO_LIGHT = "/hero/hero_event_eria_marina.mp4"')
+        expect(heroDesktop).toContain('const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"')
+        expect(heroDesktop).toContain('const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"')
         expect(heroDesktop).toContain("hasHeroVideo")
         expect(heroDesktop).toContain("key={activeVideoSrc}")
         expect(heroDesktop).toContain("src={activeVideoSrc}")
@@ -45,7 +45,7 @@ describe("hero video performance guardrails", () => {
     it("keeps the hero video within the desktop download budget", () => {
         // 9s 720p24 loop — 1.6 MB is plenty at a sane CRF; anything above is
         // wasted bandwidth on every desktop first paint.
-        const videoPath = path.join(rootDir, "public", "hero", "hero_event_eria_marina.mp4")
+        const videoPath = path.join(rootDir, "public", "hero", "hero_yacht_001.mp4")
         const { size } = fs.statSync(videoPath)
         expect(size).toBeLessThanOrEqual(1_600_000)
     })

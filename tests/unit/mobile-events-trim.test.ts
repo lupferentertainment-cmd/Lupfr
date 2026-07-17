@@ -17,12 +17,9 @@ describe("mobile events main-thread trim", () => {
     )
   })
 
-  it("gates Past carousel and ReelsBlock behind section in-view latch", () => {
+  it("gates the Past carousel behind the section in-view latch", () => {
     expect(events).toContain("const mountBelowFold = hasRevealed")
     expect(events).toContain("{mountBelowFold && past.length > 0 && (")
-    expect(events).toContain(
-      '{mountBelowFold ? <ReelsBlock isRevealed={isRevealed} shineSectionRef={ref} /> : null}'
-    )
   })
 
   it("uses static card inners on mobile while preserving tilt shell + m.article", () => {

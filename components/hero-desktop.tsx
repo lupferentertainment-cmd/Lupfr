@@ -22,8 +22,8 @@ import { LINKS } from "@/lib/links"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 const HERO_VIDEO_SLOW_MS = 8000
-const HERO_VIDEO_DARK = "/hero/hero_event_eria_marina.mp4"
-const HERO_VIDEO_LIGHT = "/hero/hero_event_eria_marina.mp4"
+const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"
+const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"
 const VIDEO_READY_STATE_HAS_CURRENT_DATA = 2
 
 /** Desktop: LUPFR keeps its gold-shine gradient; Entertainment is plain condensed/uppercase (matches the comp). */

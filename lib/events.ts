@@ -29,6 +29,9 @@ export interface EventItem {
   dateISO: string | null
   time: string
   location: string
+  /** Optional compact-card presentation metadata. */
+  brandTag?: string
+  city?: string
   /** Local WebP path under public/events/. Optional when partifulLink is set. */
   image?: string
   ticketLink?: string

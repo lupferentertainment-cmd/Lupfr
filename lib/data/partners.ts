@@ -7,7 +7,7 @@ export type PartnerLogoTreatment = "outline" | "solid" | "natural"
 
 export interface PartnerItem {
   name: string
-  url?: string
+  url: string
   image: string
   /** Dark-mode variant. Resolved at runtime via useTheme; falls back to `image` if absent. */
   imageDark?: string

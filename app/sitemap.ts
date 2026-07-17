@@ -3,6 +3,7 @@ import { readdir } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 
 import { EVENTS } from '@/lib/events'
+import { getServices, servicePath } from '@/lib/data/services'
 import { GALLERY_PHOTOS } from '@/lib/data/gallery'
 import { getBlogPosts } from '@/lib/data/blog'
 import { BLOG_PUBLIC_ACCESS_ENABLED } from '@/lib/site'
@@ -63,10 +64,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appRoot = join(process.cwd(), 'app')
   const staticRoutes = (await collectStaticAppRoutes(appRoot, appRoot)).filter(isPublicRoute)
   const eventRoutes = EVENTS.map((event) => `/events/${event.slug}`)
+  const serviceRoutes = getServices().map(servicePath)
   const galleryPhotoRoutes = GALLERY_PHOTOS.map((p) => `/gallery/p/${p.id}`)
   const blogRoutes = BLOG_PUBLIC_ACCESS_ENABLED ? getBlogPosts().map((post) => `/blog/${post.slug}`) : []
 
-  const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...galleryPhotoRoutes, ...blogRoutes])].sort((a, b) =>
+  const allRoutes = [...new Set([...staticRoutes, ...eventRoutes, ...serviceRoutes, ...galleryPhotoRoutes, ...blogRoutes])].sort((a, b) =>
     a.localeCompare(b)
   )
 

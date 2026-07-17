@@ -6,15 +6,16 @@ __v0_jsx-dev-runtime.ts
 # Common ignores
 node_modules/
 *.tsbuildinfo
-.next/
+# All Next build outputs, incl. isolated NEXT_DIST_DIR runs (.next-ci, .next-spacing, ...).
+# Must stay gitignored or Tailwind v4's auto content scan crawls compiled chunks
+# and can emit garbage utility classes that break the CSS build.
+.next*/
 
 # Bun-only: foreign lockfiles corrupt the React/Next module tree (see scripts/only-bun.mjs)
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-.next-ci/
-.next-preview-*/
 coverage/
 .env*.local
 .DS_Store

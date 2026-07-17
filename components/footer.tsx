@@ -117,7 +117,7 @@ export function Footer() {
   }
 
   return (
-    <footer ref={ref} className="relative pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8 px-4 sm:px-6 bg-background border-t border-border overflow-hidden">
+    <footer ref={ref} className="relative pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-8 px-4 sm:px-6 lg:px-12 bg-background border-t border-border overflow-hidden">
       {/* Premium top hairline: gold gradient rule that fades at both edges */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" aria-hidden />
       {/* Soft gold ambience anchored to the bottom-left brand corner */}
@@ -156,7 +156,7 @@ export function Footer() {
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">
                   <MapPin size={15} aria-hidden />
                 </span>
-                <span>Based in SF &amp; LA, California</span>
+                <span>87 N Raymond, Floor 6, Pasadena, CA</span>
               </p>
               <p className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">

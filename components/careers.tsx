@@ -92,7 +92,7 @@ export function Careers() {
   const isInView = useInView(ref, { once: false, margin: "0px 0px 80px 0px" })
 
   return (
-    <section id="careers" ref={ref} className="relative [overflow-x:clip] px-4 sm:px-6">
+    <section id="careers" ref={ref} className="relative [overflow-x:clip] px-4 sm:px-6 lg:px-12">
       <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto relative z-10 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 40 }}

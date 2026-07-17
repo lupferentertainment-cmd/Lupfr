@@ -1,8 +1,8 @@
 "use client"
 
 import { m, useInView } from "framer-motion"
-import Image from "next/image"
 import { useRef } from "react"
+import { ShimmerImage } from "@/components/shimmer-image"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { TextReveal } from "@/components/text-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
@@ -17,20 +17,17 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex flex-col overflow-hidden rounded-sm sm:rounded-md border border-border hover:border-accent/50 transition-colors duration-150 ease-out p-6 sm:p-7 min-h-[420px]"
+      className="group relative flex min-h-[460px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-colors duration-150 ease-out hover:border-accent/50 sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
     >
       {brand.image && (
         <>
-          <Image
+          <ShimmerImage
             src={brand.image}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
-            className="object-cover -z-20"
-          />
-          <div
-            className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/35 to-black/85"
-            aria-hidden
+            className="object-cover"
+            style={{ opacity: 0.16 }}
           />
         </>
       )}
@@ -56,7 +53,7 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       </div>
 
       <h3 className="relative font-condensed font-extrabold uppercase tracking-tight text-xl sm:text-2xl leading-tight mb-3 text-foreground">
-        <BrandSlashText text={brand.title} />
+        <BrandSlashText text={brand.title} color={brand.accent} />
       </h3>
       <p className="relative text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
         {brand.description}
@@ -100,7 +97,7 @@ export function Brands() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-5">
           {brands.map((brand, i) => (
             <BrandCard key={brand.key} brand={brand} index={i} isInView={isInView} />
           ))}

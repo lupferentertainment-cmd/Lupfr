@@ -189,7 +189,7 @@ export function Contact() {
     <section
       id="contact"
       ref={ref}
-      className="relative overflow-hidden bg-card/30 px-4 py-14 sm:px-6 sm:py-16 md:py-20"
+      className="relative overflow-hidden bg-card/30 px-4 py-14 sm:px-6 sm:py-16 md:py-20 lg:px-12"
     >
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-24 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-accent/5 blur-[140px]" />
