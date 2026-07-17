@@ -21,12 +21,33 @@ type ServicePageParams = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: ServicePageParams): Promise<Metadata> {
   const { slug } = await params
   const service = getServiceBySlug(slug)
-  if (!service) return {}
+  if (!service) {
+    return {
+      metadataBase: new URL(SITE_URL),
+      title: "Services",
+    }
+  }
+  const pageTitle = `${service.title} — Services`
+  const url = `${SITE_URL}/services/${slug}`
+  const imageUrl = service.image ? `${SITE_URL}${service.image}` : undefined
   return {
     metadataBase: new URL(SITE_URL),
-    title: `${service.title} — Services`,
+    title: pageTitle,
     description: service.description,
-    alternates: { canonical: `${SITE_URL}/services/${slug}` },
+    alternates: { canonical: url },
+    openGraph: {
+      title: pageTitle,
+      description: service.description,
+      type: "website",
+      url,
+      images: imageUrl ? [{ url: imageUrl, alt: `${service.title} by LUPFR Entertainment` }] : undefined,
+    },
+    twitter: {
+      card: imageUrl ? "summary_large_image" : "summary",
+      title: pageTitle,
+      description: service.description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
   }
 }
 
@@ -128,6 +149,7 @@ export default async function ServiceDetailPage({ params }: ServicePageParams) {
           >
             <Link
               href={servicePath(prev)}
+              aria-label={`Previous service: ${prev.title}`}
               className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent"
             >
               <ArrowLeft size={16} aria-hidden />
@@ -135,6 +157,7 @@ export default async function ServiceDetailPage({ params }: ServicePageParams) {
             </Link>
             <Link
               href={servicePath(next)}
+              aria-label={`Next service: ${next.title}`}
               className="inline-flex items-center gap-2 text-right text-sm text-muted-foreground transition-colors hover:text-accent"
             >
               {next.title}
