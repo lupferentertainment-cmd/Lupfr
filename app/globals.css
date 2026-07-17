@@ -820,7 +820,7 @@
 
   main h1,
   main h2 {
-    @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
+    @apply font-condensed uppercase text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-normal;
     margin: 0;
   }
 
@@ -843,7 +843,7 @@
 
 /* Subsection display (h3) — add to `h3` + `GoldShineText as="h3"` for events Upcoming/Past, etc. */
 .lupfr-heading-sub {
-  @apply font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter;
+  @apply font-condensed uppercase text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-normal;
   margin: 0;
 }
 
@@ -899,15 +899,6 @@
   color: var(--gold);
   display: inline-block;
   transform: skewX(-12deg);
-}
-
-.lupfr-section-title {
-  @apply font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter;
-}
-
-.lupfr-subsection-title {
-  @apply font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter;
-  margin: 0;
 }
 
 /* Gold accent for labels and small caps (no animation) */

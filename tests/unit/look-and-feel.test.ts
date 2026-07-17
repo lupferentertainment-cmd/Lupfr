@@ -69,14 +69,15 @@ describe("typography system", () => {
     expect(css).toContain("font-family: var(--font-serif)")
   })
 
-  it("section titles use font-serif and tracking-tighter", () => {
-    expect(css).toContain(".lupfr-section-title")
-    expect(css).toMatch(/\.lupfr-section-title[\s\S]{0,200}font-serif/)
-    expect(css).toMatch(/\.lupfr-section-title[\s\S]{0,200}tracking-tighter/)
+  it("main h1/h2 use the corporate condensed/uppercase display treatment (phase 19, ported from the comp's bound titleFont='Barlow Condensed', titleTransform='uppercase', titleWeight=800)", () => {
+    expect(css).toMatch(/main h1,\s*\n\s*main h2\s*\{[\s\S]{0,200}font-condensed/)
+    expect(css).toMatch(/main h1,\s*\n\s*main h2\s*\{[\s\S]{0,200}uppercase/)
+    expect(css).toMatch(/main h1,\s*\n\s*main h2\s*\{[\s\S]{0,200}font-extrabold/)
   })
 
-  it("subsection title class is defined", () => {
-    expect(css).toContain(".lupfr-subsection-title")
+  it("does not define the dead .lupfr-section-title/.lupfr-subsection-title classes (unused since before phase 19, superseded by the main h1/h2 rule + .lupfr-heading-sub)", () => {
+    expect(css).not.toContain(".lupfr-section-title")
+    expect(css).not.toContain(".lupfr-subsection-title")
   })
 
   it("heading eyebrow class is defined", () => {
