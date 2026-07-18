@@ -79,7 +79,7 @@ export default async function BrandDetailPage({ params }: BrandPageParams) {
           </Link>
 
           <span
-            className="mb-4 inline-flex w-fit items-center rounded-xs border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.15em]"
+            className="mb-4 flex w-fit items-center rounded-xs border px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.15em]"
             style={{ borderColor: brand.accent, color: brand.accent }}
           >
             {brand.tag}

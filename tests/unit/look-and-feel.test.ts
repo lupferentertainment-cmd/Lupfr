@@ -566,3 +566,19 @@ describe("heading split / subline system", () => {
     expect(css).toContain(".lupfr-heading-stack--tight {")
   })
 })
+
+// ── brand detail page layout ──────────────────────────────────────────────────
+
+describe("brand detail page back-link row", () => {
+  const brandDetailPage = fs.readFileSync(
+    path.join(rootDir, "app", "brands", "[slug]", "page.tsx"),
+    "utf8",
+  )
+
+  it("keeps the tag-pill kicker block-level so it cannot share a line with the All Brands back link", () => {
+    // Both the back link and the pill being inline-flex put them on one text
+    // line, collapsing the link's mb-8 gap (owner screenshot 2026-07-17).
+    expect(brandDetailPage).toContain('className="mb-4 flex w-fit items-center rounded-xs border')
+    expect(brandDetailPage).not.toContain("inline-flex w-fit items-center rounded-xs")
+  })
+})
