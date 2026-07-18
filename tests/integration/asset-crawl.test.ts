@@ -138,6 +138,7 @@ function buildRoutes(): string[] {
   const routes = new Set<string>([
     "/",
     "/artists",
+    "/events",
     "/careers",
     "/contact",
     "/gallery",

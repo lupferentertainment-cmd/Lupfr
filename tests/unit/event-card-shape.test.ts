@@ -39,9 +39,9 @@ describe("event card shape guardrails", () => {
         expect(eventsSource).toContain("md:basis-[324px]")
     })
 
-    it("matches the comp's Upcoming/Events header and archive link", () => {
+    it("matches the comp's Upcoming/Events header and all-events page link", () => {
         expect(eventsSource).toContain('className="lupfr-section-kicker mb-[14px]">Upcoming')
-        expect(eventsSource).toContain('href="#past-events"')
+        expect(eventsSource).toContain('href="/events"')
         expect(eventsSource).toContain("View all events →")
     })
 

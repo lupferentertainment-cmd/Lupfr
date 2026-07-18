@@ -35,6 +35,6 @@ describe("gallery photos by event date", () => {
     const eventPage = fs.readFileSync(path.join(rootDir, "app", "events", "[slug]", "page.tsx"), "utf8")
     expect(eventPage).toContain("getGalleryPhotosByDateISO")
     expect(eventPage).toContain("GalleryPhotoGrid")
-    expect(eventPage).toContain("Event gallery")
+    expect(eventPage).toContain(">Gallery</h2>")
   })
 })

@@ -21,8 +21,9 @@ import {
   type ResolvedTicket,
 } from "@/lib/partiful"
 import { EventBreadcrumb } from "@/components/event-breadcrumb"
-import { EventDetailHeroImage } from "@/components/event-detail-hero-image"
 import { EventTagBadge } from "@/components/event-tag-badge"
+import { ShimmerImage } from "@/components/shimmer-image"
+import { getBrands } from "@/lib/data/brands"
 import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
 import { GalleryShareRow } from "@/components/gallery-share-row"
 import { getGalleryPhotosByDateISO } from "@/lib/data/gallery"
@@ -42,7 +43,7 @@ function EventTicketCta({ ticket, fallbackLabel }: { ticket: ResolvedTicket | "t
       href={ticket.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
+      className="inline-flex w-full items-center justify-center gap-2 px-6 py-4 btn-metallic-gold font-semibold tracking-normal rounded-full max-w-full min-w-0"
     >
       <Ticket size={18} />
       {ticket.label}
@@ -52,11 +53,11 @@ function EventTicketCta({ ticket, fallbackLabel }: { ticket: ResolvedTicket | "t
 
 function EventTicketTbd({ label }: { label: string }) {
   return (
-    <span title="Link TBD" className="inline-flex max-w-full min-w-0" aria-label={`${label}: link TBD`}>
+    <span title="Link TBD" className="inline-flex w-full max-w-full min-w-0" aria-label={`${label}: link TBD`}>
       <button
         type="button"
         aria-disabled="true"
-        className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border border-border bg-muted px-6 py-4 font-semibold tracking-normal text-muted-foreground opacity-75"
+        className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border border-border bg-muted px-6 py-4 font-semibold tracking-normal text-muted-foreground opacity-75"
       >
         <Ticket size={18} />
         {label}
@@ -148,11 +149,15 @@ export default async function EventPage({ params }: EventPageParams) {
   const shareTitle = eventShareTitle(event)
   const galleryPhotos = getGalleryPhotosByDateISO(event.dateISO)
 
+  const brandAccent = event.brandTag
+    ? getBrands().find((brand) => brand.title === event.brandTag)?.accent
+    : undefined
+
   return (
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
-      <div className="pt-32 sm:pt-36 md:pt-40 pb-20 px-4 sm:px-6">
-        <div className="container mx-auto max-w-4xl">
+      <div className="pt-32 sm:pt-36 md:pt-40 pb-20 px-4 sm:px-6 lg:px-12">
+        <div className="container mx-auto max-w-[1300px]">
           <div className="flex items-center gap-4 mb-8 relative z-10">
             <Link
               href="/#events"
@@ -165,60 +170,90 @@ export default async function EventPage({ params }: EventPageParams) {
             <EventBreadcrumb event={event} />
           </div>
 
-          <div className="rounded-sm sm:rounded-md overflow-hidden bg-card border border-border mb-10 shadow-xl">
-            <div className="relative">
+          {/* Comp event-page split: sticky 4/5 poster left, spec column right. */}
+          <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-muted lg:sticky lg:top-24">
               {resolvedImage ? (
-                <EventDetailHeroImage
+                <ShimmerImage
                   key={event.slug}
                   src={resolvedImage}
                   alt={event.title}
-                  width={EVENT_POSTER_WIDTH}
-                  height={EVENT_POSTER_HEIGHT}
-                  sizes="(max-width: 768px) 100vw, 896px"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 650px"
+                  priority
                   unoptimized={resolvedImage.startsWith("http")}
+                  className="object-cover object-top"
                 />
               ) : (
-                <div className="aspect-[2/3] w-full bg-gradient-to-b from-muted to-card" />
+                <div
+                  className="flex h-full w-full items-center justify-center"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(135deg, var(--muted) 0, var(--muted) 10px, var(--card) 10px, var(--card) 20px)",
+                  }}
+                >
+                  <span className="font-mono text-sm uppercase tracking-[0.08em] text-foreground/40">
+                    Coming soon
+                  </span>
+                </div>
               )}
               <EventTagBadge
                 event={event}
                 className="absolute top-4 left-4 z-10 px-4 py-1.5 text-base sm:text-lg font-semibold tracking-tight rounded-full shadow-md"
               />
             </div>
-            <div className="p-6 sm:p-8">
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tighter mb-2">
+
+            <div className="lg:pt-2">
+              <p
+                className={`mb-3 font-mono text-[11px] uppercase tracking-[0.1em] ${brandAccent ? "" : "text-accent"}`}
+                style={brandAccent ? { color: brandAccent } : undefined}
+              >
+                {event.brandTag ? <BrandSlashText text={event.brandTag} color={brandAccent} /> : "LUPFR Event"}
+              </p>
+              <h1 className="mb-7 text-4xl sm:text-5xl leading-[1.02]">
                 <BrandSlashText text={event.title} />
               </h1>
-              {event.subtitle ? (
-                <p className="text-xl text-muted-foreground mb-6">{event.subtitle}</p>
-              ) : null}
 
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Calendar size={18} className="text-accent shrink-0" />
-                  <span>{event.date}</span>
+              <div className="mb-8 flex flex-col gap-4 border-y border-border py-6">
+                <div className="flex items-start justify-between gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
+                    Lineup
+                  </span>
+                  <span className="text-right text-[15px] text-gold-accent">{event.subtitle || "TBD"}</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Clock size={18} className="text-accent shrink-0" />
-                  <span>{event.time}</span>
+                <div className="flex items-start justify-between gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
+                    Location
+                  </span>
+                  <span className="inline-flex items-center gap-2 text-right text-[15px] text-foreground">
+                    <MapPin size={14} className="text-accent shrink-0" aria-hidden />
+                    {event.location}
+                  </span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <MapPin size={18} className="text-accent shrink-0" />
-                  <span>{event.location}</span>
+                <div className="flex items-start justify-between gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
+                    When
+                  </span>
+                  <span className="inline-flex items-center gap-2 text-right text-[15px] text-foreground">
+                    <Calendar size={14} className="text-accent shrink-0" aria-hidden />
+                    {event.date}
+                    <Clock size={14} className="text-accent shrink-0" aria-hidden />
+                    {event.time}
+                  </span>
                 </div>
               </div>
 
+              <EventTicketCta ticket={ticket} fallbackLabel={event.ticketLabel?.trim()} />
+
               {resolvedDescription ? (
-                <p className="text-muted-foreground leading-relaxed mb-8">
+                <p className="mt-8 text-muted-foreground leading-relaxed">
                   {resolvedDescription}
                 </p>
               ) : null}
 
-              <EventTicketCta ticket={ticket} fallbackLabel={event.ticketLabel?.trim()} />
-
               {galleryPhotos.length > 0 ? (
                 <div className="mt-10 pt-8 border-t border-border">
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-4">Event gallery</h2>
+                  <h2 className="mb-4 font-mono text-[11px] font-normal uppercase tracking-[0.15em] text-muted-foreground">Gallery</h2>
                   <GalleryPhotoGrid
                     photos={galleryPhotos}
                     dateSections={false}
@@ -229,7 +264,7 @@ export default async function EventPage({ params }: EventPageParams) {
 
               {event.contentLinks && event.contentLinks.length > 0 ? (
                 <div className="mt-10 pt-8 border-t border-border">
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-3">Content links</h2>
+                  <h2 className="mb-3 font-mono text-[11px] font-normal uppercase tracking-[0.15em] text-muted-foreground">Content links</h2>
                   <div className="flex flex-wrap gap-3">
                     {event.contentLinks.map((link) => (
                       <a

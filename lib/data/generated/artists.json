@@ -175,5 +175,41 @@
       "url": "https://open.spotify.com/track/4UJtVs2l4vszbUoVjrLEA5",
       "platform": "spotify"
     }
+  },
+  {
+    "id": 15,
+    "name": "GasMoney",
+    "genre": "Rock",
+    "image": "/artists/gasmoney.webp",
+    "bio": "Rock band bringing raw, live-wire energy to LUPFR nights — the act behind the GAS MONEY takeover at ERIA MARINA.",
+    "spotify": "https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m",
+      "platform": "spotify"
+    }
+  },
+  {
+    "id": 16,
+    "name": "Juggan",
+    "genre": "Electronic",
+    "image": "/artists/juggan.webp",
+    "bio": "Electronic duo bringing fresh, melodic energy to the LUPFR lineup.",
+    "spotify": "https://open.spotify.com/artist/4biIc0XyNLpvDgncxBFMnJ",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/04wrGyrkx7FjplBJEdsRnE",
+      "platform": "spotify"
+    }
+  },
+  {
+    "id": 17,
+    "name": "trillbot",
+    "genre": "House",
+    "image": "/artists/trillbot.webp",
+    "bio": "House artist bringing playful, high-voltage club energy to the LUPFR lineup — heard on VENTE with thatfranco.",
+    "spotify": "https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ",
+      "platform": "spotify"
+    }
   }
 ]

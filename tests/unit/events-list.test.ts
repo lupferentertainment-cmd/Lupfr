@@ -42,6 +42,11 @@ describe("events list ordering", () => {
       "devvy-dub-live-eria-sausalito",
       "marina-music-002-fromclay-thatfranco",
       "seaside-001-long-beach-harbor",
+      "bal-masque",
+      "zusebi-001-live-from-sf",
+      "zusebi-002-live-from-golden-gate",
+      "zusebi-003-live-from-la",
+      "seaside-002",
     ])
   })
 
@@ -49,6 +54,10 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
+      "zusebi-003-live-from-la",
+      "zusebi-002-live-from-golden-gate",
+      "zusebi-001-live-from-sf",
+      "bal-masque",
       "seaside-001-long-beach-harbor",
       "marina-music-002-fromclay-thatfranco",
       "devvy-dub-live-eria-sausalito",

@@ -26,6 +26,14 @@ function publicFileExists(urlPath: string): boolean {
 }
 
 describe("data integrity (gallery ↔ events, assets on disk)", () => {
+  it("every event brandTag matches a brand wordmark from data/brands.yml", () => {
+    const brandTitles = new Set(getBrands().map((brand) => brand.title))
+    for (const event of EVENTS) {
+      if (event.brandTag === undefined) continue
+      expect(brandTitles.has(event.brandTag), `event "${event.title}" brandTag "${event.brandTag}"`).toBe(true)
+    }
+  })
+
   it("default gallery folder dates reference exactly one event; breadcrumb matches event title", () => {
     const datesChecked = new Set<string>()
     for (const [folder, dateISO] of Object.entries(GALLERY_ALBUM_FOLDER_DEFAULT_DATES)) {

@@ -36,6 +36,9 @@ describe("featured artist data", () => {
       "MALEK",
       "Alex Rayne",
       "Midfield Avenue",
+      "GasMoney",
+      "Juggan",
+      "trillbot",
     ])
   })
 
@@ -192,6 +195,40 @@ describe("featured artist data", () => {
     expect(byName("Where's West?")?.featuredTrack).toEqual({
       url: "https://open.spotify.com/track/2Ov0AaJT7TBHtOv6VB5Gim",
       platform: "spotify",
+    })
+  })
+
+  it("loads the 2026-07-17 owner photo delivery (GasMoney, Juggan, trillbot) with their delivered tracks", () => {
+    const byName = (name: string) => getArtists().find((artist) => artist.name === name)
+
+    expect(byName("GasMoney")).toMatchObject({
+      genre: "Rock",
+      image: "/artists/gasmoney.webp",
+      spotify: "https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU",
+      featuredTrack: {
+        url: "https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m",
+        platform: "spotify",
+      },
+    })
+
+    expect(byName("Juggan")).toMatchObject({
+      genre: "Electronic",
+      image: "/artists/juggan.webp",
+      spotify: "https://open.spotify.com/artist/4biIc0XyNLpvDgncxBFMnJ",
+      featuredTrack: {
+        url: "https://open.spotify.com/track/04wrGyrkx7FjplBJEdsRnE",
+        platform: "spotify",
+      },
+    })
+
+    expect(byName("trillbot")).toMatchObject({
+      genre: "House",
+      image: "/artists/trillbot.webp",
+      spotify: "https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo",
+      featuredTrack: {
+        url: "https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ",
+        platform: "spotify",
+      },
     })
   })
 })

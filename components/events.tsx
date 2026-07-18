@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { useRef, useState, useEffect, useCallback, type ReactNode } from "react"
@@ -433,14 +434,13 @@ export function Events() {
             <p className="lupfr-section-kicker mb-[14px]">Upcoming</p>
             <h2 className="text-foreground">Events</h2>
           </div>
-          {past.length > 0 ? (
-            <a
-              href="#past-events"
-              className="text-gold-accent border-b border-[var(--gold)] pb-0.5 text-sm transition-colors hover:text-foreground"
-            >
-              View all events →
-            </a>
-          ) : null}
+          <Link
+            href="/events"
+            prefetch
+            className="text-gold-accent border-b border-[var(--gold)] pb-0.5 text-sm transition-colors hover:text-foreground"
+          >
+            View all events →
+          </Link>
         </m.div>
 
         <m.div
