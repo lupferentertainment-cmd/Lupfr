@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Added
 
+- **Grab-to-scroll partners marquee (owner request 2026-07-17):** the auto-scrolling corporate-partner row can now be dragged or swiped and released with momentum; plain logo clicks still navigate, drag-tail clicks are suppressed, and reduced-motion/no-JS fallbacks remain unchanged.
+
 - **All Events page + comp event-detail split (owner restructure 2026-07-17, ported from the comp's #/events and #/event pages):** new `/events` directory (`app/events/page.tsx` + client `components/events-directory.tsx`) — kicker "Upcoming & Past", gold-shine "All Events" h1, status pills (All/Upcoming/Past) and brand-wordmark filter pills, Upcoming card grid ("IN N DAYS"/TODAY/TOMORROW/DATE TBD + city pills, brand-accent mono tag, short date, condensed uppercase title, gold lineup line) and reduced-opacity Past grid ("N DAYS AGO"); all cards link to detail routes; day math uses `todayDateISOInEventTZ`. The event detail page moves to the comp's split layout: sticky `aspect-[4/5]` cover poster left (striped "Coming soon" tile when no poster), brand-accent kicker + condensed h1 + LINEUP/LOCATION/WHEN hairline spec rows + full-width gold ticket pill right, with description/gallery/content-links/share below (mono section labels); the old single-column `max-w-4xl` card and the now-unused `components/event-detail-hero-image.tsx` are removed. The home Events header's "View all events →" link now targets `/events`. `data/events.yml` gains comp `brandTag`/`city` on six existing events and the comp's five announced events (BAL MASQUE, Zusebi 001–003, SEA//SIDE 002; `ticketStatus: tbd`, no posters). Sitemap picks `/events` up automatically; asset crawl + new `events-directory` behavior test + `data-integrity` brandTag↔brands check added. `docs/ARCHITECTURE.md`, `docs/DESIGN.md`, `docs/TESTING.md` updated in the same change.
 
 
@@ -69,6 +71,8 @@ All notable project changes are recorded here.
 - **On-disk asset guardrails for artist + team portraits:** `tests/unit/data-integrity.test.ts` now asserts every featured-artist `image` and every team member `image` resolves to a real file under `public/` (mirrors the existing event-hero / gallery / partner checks), so a renamed or dropped owner portrait (e.g. Auguste, Devvy Dub, Nick Rosen, Admiral, Cianna) fails CI instead of shipping a broken image. `docs/TESTING.md` updated.
 
 ### Changed
+
+- **Featured Artists identity alignment (owner request 2026-07-17):** moved the GasMoney and trillbot genre, bio, Spotify profile, and featured-track player data onto their corrected display names while preserving both image paths and card positions.
 
 - **Featured Artists label correction (owner request 2026-07-17):** swapped the GasMoney and trillbot display names so each existing artist image carries the correct label; images and all other artist data are unchanged.
 

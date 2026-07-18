@@ -237,6 +237,10 @@
  * The track renders the partner list twice back-to-back and animates
  * translateX 0 -> -50%; since both halves are identical width, the loop
  * point is seamless. Hover/focus pauses the scroll so logos stay clickable.
+ * Once JS hydrates, `useMarqueeSpin` (components/partners-strip.tsx) sets
+ * data-spin on the track, disables the keyframe, and drives the same motion
+ * via rAF so the row can be grabbed and flung; the keyframe + hover-pause
+ * rules below remain the no-JS fallback.
  */
 .partner-marquee {
   overflow: hidden;
@@ -252,6 +256,21 @@
 .partner-marquee:hover .partner-marquee-track,
 .partner-marquee:focus-within .partner-marquee-track {
   animation-play-state: paused;
+}
+
+/* Grab-to-spin takeover: JS owns the transform, pointer drags spin the row */
+.partner-marquee-track[data-spin] {
+  animation: none;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+}
+
+.partner-marquee-track[data-dragging],
+.partner-marquee-track[data-dragging] a {
+  cursor: grabbing;
 }
 
 @keyframes partner-marquee-scroll {
