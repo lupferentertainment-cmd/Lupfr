@@ -36,9 +36,9 @@ describe("featured artist data", () => {
       "MALEK",
       "Alex Rayne",
       "Midfield Avenue",
-      "GasMoney",
-      "Juggan",
       "trillbot",
+      "Juggan",
+      "GasMoney",
     ])
   })
 
@@ -198,10 +198,10 @@ describe("featured artist data", () => {
     })
   })
 
-  it("loads the 2026-07-17 owner photo delivery (GasMoney, Juggan, trillbot) with their delivered tracks", () => {
+  it("keeps the corrected GasMoney and trillbot labels on their delivered images", () => {
     const byName = (name: string) => getArtists().find((artist) => artist.name === name)
 
-    expect(byName("GasMoney")).toMatchObject({
+    expect(byName("trillbot")).toMatchObject({
       genre: "Rock",
       image: "/artists/gasmoney.webp",
       spotify: "https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU",
@@ -221,7 +221,7 @@ describe("featured artist data", () => {
       },
     })
 
-    expect(byName("trillbot")).toMatchObject({
+    expect(byName("GasMoney")).toMatchObject({
       genre: "House",
       image: "/artists/trillbot.webp",
       spotify: "https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo",
