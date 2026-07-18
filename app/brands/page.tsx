@@ -4,6 +4,7 @@ import { BrandSlashText } from "@/components/brand-slash-text"
 import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { Navigation } from "@/components/navigation"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { brandPath, brandPlainTitle, getBrands, type BrandItem } from "@/lib/data/brands"
 import { eventDetailPath, getPastEvents, getUpcomingEvents } from "@/lib/events"
@@ -23,7 +24,12 @@ function BrandOverviewRow({ brand, index }: { brand: BrandItem; index: number })
   const past = brand.comingSoon ? [] : getPastEvents().filter((e) => e.brandTag === brand.title)
 
   return (
-    <section className="grid gap-8 border-b border-border py-10 sm:py-14 md:grid-cols-2 md:items-stretch md:gap-14">
+    <section className="border-b border-border py-10 sm:py-14">
+      <ScrollReveal
+        variant="up"
+        amountIn={0.1}
+        className="grid gap-8 md:grid-cols-2 md:items-stretch md:gap-14"
+      >
       <div
         className={`relative flex min-h-[260px] flex-col justify-center overflow-hidden rounded-sm border border-border p-8 sm:rounded-md sm:p-10 ${
           panelFirst ? "md:order-1" : "md:order-2"
@@ -130,6 +136,7 @@ function BrandOverviewRow({ brand, index }: { brand: BrandItem; index: number })
           </div>
         )}
       </div>
+      </ScrollReveal>
     </section>
   )
 }

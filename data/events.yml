@@ -152,8 +152,8 @@
   ticketLabel: Event Info
   description: SEA//SIDE debuts in Long Beach Harbor with Auguste and Nick Rosen — LUPFR's LA waterfront series, edition 001.
 
-# Comp-announced upcoming events (LUPFR Restructure comp, 2026-07-17). No
-# posters yet — cards render the striped COMING SOON placeholder; tickets TBD.
+# Comp-announced upcoming events (LUPFR Restructure comp, 2026-07-17).
+# Posterless rows render the striped COMING SOON placeholder; tickets TBD.
 - id: 15
   slug: bal-masque
   title: BAL MASQUE
@@ -164,6 +164,7 @@
   location: San Francisco, CA
   brandTag: IN//SIDE
   city: SF
+  image: /events/bal_masque.webp
   ticketStatus: tbd
   description: A masquerade night in San Francisco. Lineup and venue reveal to come.
 

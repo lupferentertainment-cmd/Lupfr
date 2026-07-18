@@ -151,6 +151,33 @@ describe("hero tagline corporate treatment", () => {
     expect(heroMobile).toMatch(/font-mono uppercase tracking-wide/)
     expect(heroMobile).toContain("heading-metallic-gold gold-shine-text")
   })
+
+  it("keeps the hero tagline and scroll cue legible over video in both themes", () => {
+    expect(heroDesktop).toContain("hero-tagline-contrast")
+    expect(heroMobile).toContain("hero-tagline-contrast")
+    expect(heroDesktop).toContain("hero-scroll-cue")
+    expect(heroMobile).toContain("hero-scroll-cue")
+    expect(css).toContain(".hero-tagline-contrast")
+    expect(css).toContain(".hero-scroll-cue")
+    expect(css).toMatch(/\.dark \.hero-tagline-contrast/)
+    expect(heroDesktop).toContain("hero-outline-cta")
+    expect(heroMobile).toContain("hero-outline-cta")
+    expect(css).toContain(".hero-outline-cta")
+  })
+})
+
+describe("navigation active indicator", () => {
+  it("exposes the visible underline for browser regression testing", () => {
+    expect(navigation).toContain("data-lupfr-nav-underline")
+  })
+})
+
+describe("footer return to top", () => {
+  it("uses the LUPFR wordmark inside the accessible return-to-top control", () => {
+    expect(footer).toContain('aria-label="Back to top"')
+    expect(footer).toContain('alt=""')
+    expect(footer).toContain("LupfrLogoImage")
+  })
 })
 
 // ── border-radius system ──────────────────────────────────────────────────────
@@ -362,13 +389,18 @@ describe("navigation structure", () => {
 // ── home page section structure ───────────────────────────────────────────────
 
 describe("home page section structure", () => {
-  it("uses the restructure comp's faded treatment for Brands photography", () => {
+  it("restores light-mode Brands photo contrast while keeping dark mode restrained", () => {
     expect(brandsComponent).toContain("object-cover")
-    expect(brandsComponent).toMatch(/opacity-\[0\.16\]|style=\{\{ opacity: 0\.16 \}\}/)
+    expect(brandsComponent).toContain("opacity-[0.34] dark:opacity-[0.16]")
     expect(brandsComponent).not.toContain("from-black/55 via-black/35 to-black/85")
     expect(brandsComponent).toContain("min-h-[460px]")
     expect(brandsComponent).toContain("sm:min-h-[340px]")
     expect(brandsComponent).toContain("lg:gap-8")
+  })
+
+  it("keeps the light hero wash restrained instead of milky", () => {
+    expect(css).toContain("color-mix(in oklch, var(--background) 16%, transparent) 0%")
+    expect(css).toContain("color-mix(in oklch, var(--background) 88%, transparent) 100%")
   })
 
   it("brands component owns the #brands section anchor", () => {
@@ -422,6 +454,13 @@ describe("home page section structure", () => {
     // come from ScrollReveal like its siblings (owner request 2026-07-11).
     expect(artistsComponent).toContain('import { ScrollReveal } from "@/components/scroll-reveal"')
     expect(artistsComponent).toMatch(/<ScrollReveal variant="up"/)
+  })
+
+  it("home event cards without a poster say Coming soon on the striped tile", () => {
+    // Owner request 2026-07-17: the no-poster tile must say "Coming soon" like
+    // the /events directory cards and the event detail hero — not stripes alone.
+    expect(eventsComponent).toContain("repeating-linear-gradient(135deg")
+    expect(eventsComponent).toContain("Coming soon")
   })
 
   it("keeps the archived Instagram reels block off the home Events section", () => {
@@ -504,6 +543,7 @@ describe("about structure", () => {
 
   it("carries the comp's restructured copy: heading, quote attribution, and the featured press card", () => {
     expect(about).toContain("Built From the Ground Up")
+    expect(about).toContain("exclusive partnership with Partiful")
     expect(about).toContain("— Will Lupfer, Founder &amp; CEO")
     expect(about).toContain("getPress()[0]")
     // Old split-section copy is gone: byline/address block and value cards.

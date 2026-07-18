@@ -5,6 +5,8 @@ import { describe, expect, it } from "vitest"
 
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const eventsSource = fs.readFileSync(path.join(rootDir, "components", "events.tsx"), "utf8")
+const eventsDirectorySource = fs.readFileSync(path.join(rootDir, "components", "events-directory.tsx"), "utf8")
+const css = fs.readFileSync(path.join(rootDir, "app", "globals.css"), "utf8")
 const artistsSource = fs.readFileSync(path.join(rootDir, "components", "artists.tsx"), "utf8")
 
 /**
@@ -45,13 +47,27 @@ describe("event card shape guardrails", () => {
         expect(eventsSource).toContain("View all events →")
     })
 
+    it("keeps the event rows drag/swipeable without dot controls", () => {
+        expect(eventsSource).toContain("<Carousel opts={CAROUSEL_OPTS}")
+        expect(eventsSource).toContain("<CarouselContent")
+        expect(eventsSource).not.toContain("CarouselDots")
+    })
+
     it("renders the comp's corner-bracket accent in the poster region (owner redesign 2026-07-16)", () => {
         expect(eventsSource).toMatch(/border-b border-l border-foreground\/50/)
+    })
+
+    it("shares restrained depth and metallic sheen across home and directory event cards", () => {
+        expect(eventsSource).toContain("event-card-depth")
+        expect(eventsDirectorySource.match(/event-card-depth event-card-depth--lift/g)).toHaveLength(2)
+        expect(css).toContain(".event-card-depth::after")
+        expect(css).toContain("@keyframes event-card-sheen")
+        expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*?\.event-card-depth::after/)
     })
 })
 
 describe("artist card shape guardrails", () => {
-    it("renders all artists in a static grid (phase 28, ported from the comp) — no carousel scaffolding", () => {
+    it("keeps the shared artist card grid static — no carousel scaffolding", () => {
         expect(artistsSource).toContain('"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"')
         // Owner alignment pass 2026-07-17: the home grid shares the standard
         // 1400px wrapper and 24px desktop gap — no wide-section gap override.

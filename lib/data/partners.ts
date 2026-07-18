@@ -7,8 +7,10 @@ export type PartnerLogoTreatment = "outline" | "solid" | "natural"
 
 export interface PartnerItem {
   name: string
-  url: string
-  image: string
+  /** External destination. Absent on label-only pending chips (no dead links). */
+  url?: string
+  /** Logo asset. Absent while a partner's logo is pending — chip renders the name as text. */
+  image?: string
   /** Dark-mode variant. Resolved at runtime via useTheme; falls back to `image` if absent. */
   imageDark?: string
   ariaLabel?: string
@@ -37,12 +39,14 @@ function partnerLogoClasses(treatment: PartnerLogoTreatment | undefined): string
 
 export const PARTNERS: PartnerItem[] = (partnersJson as PartnerItem[]).map((p) => ({
   ...p,
-  image: normalizeImage(p.image),
+  image: p.image ? normalizeImage(p.image) : undefined,
   imageDark: p.imageDark ? normalizeImage(p.imageDark) : undefined,
   ariaLabel: p.ariaLabel ?? p.name,
-  imageClassName: [partnerLogoClasses(p.logoTreatment), PARTNER_LAYOUT, p.imageClassName]
-    .filter(Boolean)
-    .join(" "),
+  imageClassName: p.image
+    ? [partnerLogoClasses(p.logoTreatment), PARTNER_LAYOUT, p.imageClassName]
+        .filter(Boolean)
+        .join(" ")
+    : undefined,
 }))
 
 export function getPartners(): PartnerItem[] {

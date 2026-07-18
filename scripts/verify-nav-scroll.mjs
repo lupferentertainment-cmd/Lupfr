@@ -157,6 +157,32 @@ async function _check(page, { label, sectionId, mobile }, sink) {
     })
     return
   }
+
+  if (mobile) await _open_mobile_menu(page)
+  const activeLabels = await linkScope.locator('a[aria-current="true"]').allTextContents()
+  if (activeLabels.length !== 1 || activeLabels[0]?.trim() !== label) {
+    sink.push({
+      where,
+      problem: `active navbar link is ${JSON.stringify(activeLabels.map((value) => value.trim()))}; expected only ${JSON.stringify(label)}`,
+    })
+    return
+  }
+  // Desktop links have the visual underline; the mobile drawer indicates active
+  // state with gold text only, so its rendered contract is aria-current above.
+  if (!mobile) {
+    const visibleUnderlines = linkScope.locator('[data-lupfr-nav-underline].w-full')
+    const visibleUnderlineCount = await visibleUnderlines.count()
+    const activeUnderlineClass = await linkScope
+      .locator('a[aria-current="true"] [data-lupfr-nav-underline]')
+      .getAttribute("class")
+    if (visibleUnderlineCount !== 1 || !activeUnderlineClass?.includes("w-full")) {
+      sink.push({
+        where,
+        problem: `visible underline count=${visibleUnderlineCount}, active underline class=${JSON.stringify(activeUnderlineClass)}; expected exactly the clicked link underline at full width`,
+      })
+      return
+    }
+  }
   console.log(`verify-nav-scroll: OK  ${where} top=${settledTop.toFixed(1)}px pad=${pad}px`)
 }
 

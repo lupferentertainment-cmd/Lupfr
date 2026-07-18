@@ -53,7 +53,7 @@ function pushHashAndScroll(hash: string): void {
  * but its top has not crossed the line yet (e.g. About in view, Gallery still "active").
  */
 function pickActiveSectionId(): string {
-  const y = SECTION_SPY_OFFSET_PX
+  const y = SECTION_SPY_OFFSET_PX + 1 // hash-scroll can land on a fractional pixel just below the nominal offset
   for (const id of SECTION_IDS) {
     const el = document.getElementById(id)
     if (!el) continue
@@ -214,6 +214,7 @@ export function Navigation() {
                   }`
                 const underline = (
                   <span
+                    data-lupfr-nav-underline
                     className={`absolute -bottom-1 left-0 h-px bg-accent transition-all duration-200 ease-snap ${isActive ? "w-full" : "w-0 group-hover:w-full"
                       }`}
                   />

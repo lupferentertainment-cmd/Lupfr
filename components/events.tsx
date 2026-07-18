@@ -15,7 +15,6 @@ import { EventDetailLink } from "@/components/event-detail-link"
 import {
   Carousel,
   CarouselContent,
-  CarouselDots,
   CarouselItem,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
@@ -128,7 +127,7 @@ function EventCard({
     ease: [0.22, 1, 0.36, 1],
   }
   const className =
-    "group relative w-full overflow-hidden rounded-sm bg-card border border-border hover:border-accent/50 transition-[border-color] duration-150 ease-out flex flex-col h-full"
+    "event-card-depth group relative w-full overflow-hidden rounded-sm bg-card border border-border hover:border-accent/50 flex flex-col h-full"
 
   const image = event.image ? (
     <Image
@@ -151,12 +150,16 @@ function EventCard({
     />
   ) : (
     <div
-      className="w-full h-full"
+      className="flex h-full w-full items-center justify-center"
       style={{
         backgroundImage:
           "repeating-linear-gradient(135deg, var(--muted) 0, var(--muted) 10px, var(--card) 10px, var(--card) 20px)",
       }}
-    />
+    >
+      <span className="font-mono text-xs uppercase tracking-[0.08em] text-foreground/40">
+        Coming soon
+      </span>
+    </div>
   )
 
   const tagPill = (
@@ -375,7 +378,6 @@ function EventsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselDots />
       </Carousel>
     </div>
   )

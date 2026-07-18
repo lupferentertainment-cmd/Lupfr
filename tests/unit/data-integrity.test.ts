@@ -94,6 +94,12 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
     }
   })
 
+  it("maps the delivered BAL MASQUE poster to the BAL MASQUE event", () => {
+    expect(EVENTS.find((event) => event.slug === "bal-masque")?.image).toBe(
+      "/events/bal_masque.webp",
+    )
+  })
+
   it("artist image paths exist under public/", () => {
     const missing = getArtists().filter(
       (artist) => artist.image?.startsWith("/") && !publicFileExists(artist.image)
@@ -123,7 +129,9 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
   })
 
   it("partner logo image paths exist under public/", () => {
-    const missing = PARTNERS.filter((partner) => !publicFileExists(partner.image))
+    const missing = PARTNERS.filter(
+      (partner) => partner.image && !publicFileExists(partner.image)
+    )
     expect(missing.map((partner) => partner.name)).toEqual([])
   })
 

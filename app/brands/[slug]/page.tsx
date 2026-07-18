@@ -5,7 +5,9 @@ import { ArrowLeft, ArrowRight } from "lucide-react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
+import { TextReveal } from "@/components/text-reveal"
 import { brandPath, brandPlainTitle, getBrandBySlug, getBrands } from "@/lib/data/brands"
 import { eventDetailPath, getPastEvents, getUpcomingEvents } from "@/lib/events"
 import { CONTACT_PAGE_PATH, SITE_URL } from "@/lib/site"
@@ -88,7 +90,7 @@ export default async function BrandDetailPage({ params }: BrandPageParams) {
             <BrandSlashText text={brand.title} color={brand.accent} />
           </h1>
 
-          <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-14">
+          <ScrollReveal variant="up" amountIn={0.05} className="grid gap-8 md:grid-cols-2 md:items-center md:gap-14">
             <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-muted sm:rounded-md">
               {brand.image ? (
                 <ShimmerImage
@@ -104,9 +106,11 @@ export default async function BrandDetailPage({ params }: BrandPageParams) {
             </div>
 
             <div>
-              <p className="mb-5 max-w-[480px] text-base leading-7 text-muted-foreground sm:text-[17px]">
-                {brand.description}
-              </p>
+              <TextReveal
+                text={brand.description}
+                amount={0.3}
+                className="mb-5 max-w-[480px] text-base leading-7 text-muted-foreground sm:text-[17px]"
+              />
               <p className="mb-6 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
                 {brand.format}
               </p>
@@ -193,7 +197,7 @@ export default async function BrandDetailPage({ params }: BrandPageParams) {
                 </Link>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
 
           <nav
             aria-label="More brands"

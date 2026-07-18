@@ -228,9 +228,18 @@ describe("artists static grid (no carousel)", () => {
         "utf8"
     )
 
-    it("renders all artists at once in a static responsive grid, not a carousel", () => {
-        expect(artists).toContain("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4")
-        expect(artists).toContain("artists.map((artist) =>")
+    it("renders only the first six artist cards on home and keeps the full roster in the directory", () => {
+        expect(artists).toContain("const HOME_FEATURED_ARTIST_COUNT = 6")
+        expect(artists).toContain("artists.slice(0, HOME_FEATURED_ARTIST_COUNT)")
+        expect(artists).toContain("items={featuredArtists}")
+        expect(artists).toContain("items={visibleArtists}")
+    })
+
+    it("shows an aligned all-name roster with the six featured names in metallic gold", () => {
+        expect(artists).toContain('aria-label="Artist roster"')
+        expect(artists).toContain("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6")
+        expect(artists).toContain('variant="static"')
+        expect(artists).toContain("featuredArtistIds.has(artist.id)")
     })
 
     it("carries no Embla carousel scaffolding — no arrows, dots, or slide arrays", () => {

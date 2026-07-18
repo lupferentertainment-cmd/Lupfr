@@ -6,7 +6,9 @@ import { BrandSlashText } from "@/components/brand-slash-text"
 import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { Navigation } from "@/components/navigation"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
+import { TextReveal } from "@/components/text-reveal"
 import { getServiceBySlug, getServices, servicePath, serviceSlug } from "@/lib/data/services"
 import { CONTACT_PAGE_PATH, SITE_URL } from "@/lib/site"
 
@@ -75,12 +77,20 @@ export default async function ServiceDetailPage({ params }: ServicePageParams) {
             All Services
           </Link>
 
-          <p className="lupfr-section-kicker mb-4">What We Do — Service {numeral}</p>
+          <div className="mb-4 flex items-center gap-3">
+            <span
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-sm border border-border bg-secondary text-accent"
+              aria-hidden
+            >
+              <service.icon size={18} />
+            </span>
+            <p className="lupfr-section-kicker">What We Do — Service {numeral}</p>
+          </div>
           <GoldShineText as="h1" className="mb-8 sm:mb-12">
             {service.title}
           </GoldShineText>
 
-          <div className="grid gap-8 md:grid-cols-2 md:items-center md:gap-14">
+          <ScrollReveal variant="up" amountIn={0.05} className="grid gap-8 md:grid-cols-2 md:items-center md:gap-14">
             <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-muted">
               {service.image ? (
                 <ShimmerImage
@@ -102,9 +112,11 @@ export default async function ServiceDetailPage({ params }: ServicePageParams) {
             </div>
 
             <div>
-              <p className="mb-5 max-w-[480px] text-base leading-7 text-muted-foreground sm:text-[17px]">
-                {service.description}
-              </p>
+              <TextReveal
+                text={service.description}
+                amount={0.3}
+                className="mb-5 max-w-[480px] text-base leading-7 text-muted-foreground sm:text-[17px]"
+              />
               <ul className="space-y-2">
                 {service.features.map((feature) => (
                   <li key={feature} className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -141,7 +153,7 @@ export default async function ServiceDetailPage({ params }: ServicePageParams) {
                 </Link>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
 
           <nav
             aria-label="More services"

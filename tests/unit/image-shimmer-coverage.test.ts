@@ -13,6 +13,7 @@ describe("image skeleton shimmer coverage", () => {
       "app/services/page.tsx",
       "components/brands.tsx",
       "components/drive-gallery-albums.tsx",
+      "components/events-directory.tsx",
     ]) {
       const source = read(file)
       expect(source, file).toContain('import { ShimmerImage } from "@/components/shimmer-image"')

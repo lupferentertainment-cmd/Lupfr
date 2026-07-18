@@ -25,22 +25,22 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(fs.existsSync(globalsPath), globalsPath).toBe(true)
   })
 
-  it("keeps :root (light) as the comp's warm cream/ink surface with bronzed luxe gold for headings/buttons (phase 23)", () => {
+  it("keeps :root (light) as a calm neutral-stone surface with bronzed luxe gold for headings/buttons", () => {
     const rootClose = css.indexOf("\n}\n\n.dark {")
     expect(rootClose).toBeGreaterThan(0)
     const rootBlock = css.slice(0, rootClose)
-    // Warm cream background/card, warm ink foreground — matches the comp's themes.B exactly
-    expect(rootBlock).toContain("  --background: #faf7f0;")
-    expect(rootBlock).toContain("  --foreground: #1c1710;")
-    expect(rootBlock).toContain("  --card: #ffffff;")
-    expect(rootBlock).toContain("  --card-foreground: #1c1710;")
-    expect(rootBlock).toContain("  --popover: #ffffff;")
-    expect(rootBlock).toContain("  --popover-foreground: #1c1710;")
-    expect(rootBlock).toContain("  --secondary: rgba(20,16,8,0.04);")
+    // Lower-glare neutral stone page + soft-white cards create hierarchy without cream.
+    expect(rootBlock).toContain("  --background: #f0f0ed;")
+    expect(rootBlock).toContain("  --foreground: #151515;")
+    expect(rootBlock).toContain("  --card: #fafaf8;")
+    expect(rootBlock).toContain("  --card-foreground: #151515;")
+    expect(rootBlock).toContain("  --popover: #fafaf8;")
+    expect(rootBlock).toContain("  --popover-foreground: #151515;")
+    expect(rootBlock).toContain("  --secondary: rgba(21,21,21,0.06);")
     expect(rootBlock).toContain("  --muted: oklch(0.942 0.006 255);")
-    expect(rootBlock).toContain("  --muted-foreground: #5a5346;")
-    // Comp's translucent ink-on-cream border overlay
-    expect(rootBlock).toContain("  --border: rgba(20,16,8,0.10);")
+    expect(rootBlock).toContain("  --muted-foreground: #55524d;")
+    expect(rootBlock).toContain("  --border: rgba(21,21,21,0.14);")
+    expect(rootBlock).not.toContain("#faf7f0")
     // Bronzed luxe gold (less bright/glary, keeps shine)
     expect(rootBlock).toContain("  --gold: oklch(0.55 0.13 76);")
     expect(rootBlock).toContain("  --gold-shadow: oklch(0.34 0.08 72);")

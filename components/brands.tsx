@@ -18,7 +18,8 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative flex min-h-[460px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-colors duration-150 ease-out hover:border-accent/50 sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
+      whileHover={{ y: -5, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
+      className="group relative flex min-h-[460px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-[border-color,box-shadow] duration-150 ease-out hover:border-accent/50 hover:shadow-lg sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
     >
       {brand.image && (
         <>
@@ -27,8 +28,7 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
-            className="object-cover"
-            style={{ opacity: 0.16 }}
+            className="object-cover opacity-[0.34] dark:opacity-[0.16]"
           />
         </>
       )}

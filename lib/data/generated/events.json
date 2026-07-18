@@ -181,6 +181,7 @@
     "location": "San Francisco, CA",
     "brandTag": "IN//SIDE",
     "city": "SF",
+    "image": "/events/bal_masque.webp",
     "ticketStatus": "tbd",
     "description": "A masquerade night in San Francisco. Lineup and venue reveal to come."
   },

@@ -75,6 +75,9 @@ export function About() {
                 <p>
                   Today, <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText> produces unique events across Los Angeles and San Francisco - floating concerts, corporate events infused with live music, and everything in between.
                 </p>
+                <p>
+                  That momentum is backed by an exclusive partnership with Partiful, pairing their community platform with LUPFR&apos;s on-the-ground production.
+                </p>
               </div>
 
               <blockquote className="mt-8 border-l-2 border-accent pl-5">

@@ -277,7 +277,7 @@ function HeroDesktopParallaxSection({
                 <GoldShineText
                   as="div"
                   scrollTargetRef={containerRef}
-                  className="text-xs sm:text-sm md:text-base font-medium font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased"
+                  className="hero-tagline-contrast text-xs sm:text-sm md:text-base font-semibold font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased"
                 >
                   {HERO_PHRASES[phraseIndex]}
                 </GoldShineText>
@@ -308,6 +308,7 @@ function HeroDesktopParallaxSection({
             <MotionScheduleCallCta
               tone="on-dark"
               size="md"
+              className="hero-outline-cta"
               whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(115, 98, 72, 0.2)" }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -317,7 +318,7 @@ function HeroDesktopParallaxSection({
               href={LINKS.watchReel}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-foreground/30 dark:border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug"
+              className="hero-outline-cta group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-colors max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug"
               whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(115, 98, 72, 0.25)" }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
@@ -334,7 +335,7 @@ function HeroDesktopParallaxSection({
           <div className="absolute bottom-8 sm:bottom-6 md:bottom-12 left-1/2 -translate-x-1/2">
             <a
               href="#events"
-              className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="hero-scroll-cue flex flex-col items-center gap-2 transition-colors"
               aria-label="Scroll to events"
             >
               <span className="text-xs tracking-normal">Scroll</span>
@@ -349,7 +350,7 @@ function HeroDesktopParallaxSection({
           >
             <motion.a
               href="#events"
-              className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="hero-scroll-cue flex flex-col items-center gap-2 transition-colors"
               aria-label="Scroll to events"
               whileHover={{ scale: 1.1 }}
             >

@@ -51,7 +51,7 @@ export function HeroMobileStaticSection({
             <div
               key={phraseIndex}
               className={
-                "heading-metallic-gold gold-shine-text gpu-accelerate max-w-2xl mx-auto w-full text-center text-xs sm:text-sm md:text-base font-medium font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased " +
+                "hero-tagline-contrast heading-metallic-gold gold-shine-text gpu-accelerate max-w-2xl mx-auto w-full text-center text-xs sm:text-sm md:text-base font-semibold font-mono uppercase tracking-wide leading-snug antialiased subpixel-antialiased " +
                 (reducePhraseMotion
                   ? ""
                   : "motion-safe:animate-[fade-up_600ms_cubic-bezier(0.22,1,0.36,1)_both]")
@@ -76,14 +76,14 @@ export function HeroMobileStaticSection({
             <ScheduleCallCta
               tone="on-dark"
               size="md"
-              className="transition-transform duration-150 ease-out hover:scale-[1.03] active:scale-[0.98]"
+              className="hero-outline-cta transition-transform duration-150 ease-out hover:scale-[1.03] active:scale-[0.98]"
             />
 
             <a
               href={LINKS.watchReel}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border border-foreground/30 dark:border-border text-foreground font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-[color,border-color,transform] duration-150 ease-out max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug hover:scale-[1.03] active:scale-[0.98]"
+              className="hero-outline-cta group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 border font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-[color,border-color,transform] duration-150 ease-out max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug hover:scale-[1.03] active:scale-[0.98]"
             >
               <span className="transition-transform duration-150 group-hover:rotate-90">
                 <Play size={18} className="group-hover:scale-110 transition-transform duration-200" />
@@ -96,7 +96,7 @@ export function HeroMobileStaticSection({
         <div className="absolute bottom-8 sm:bottom-6 md:bottom-12 left-1/2 -translate-x-1/2">
           <a
             href="#events"
-            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="hero-scroll-cue flex flex-col items-center gap-2 transition-colors"
             aria-label="Scroll to events"
           >
             <span className="text-xs tracking-normal">Scroll</span>

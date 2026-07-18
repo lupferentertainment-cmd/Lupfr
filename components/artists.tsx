@@ -8,13 +8,17 @@ import { useMemo, useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { ScrollReveal } from "@/components/scroll-reveal"
+import { TextReveal } from "@/components/text-reveal"
 import { getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
 const ARTIST_IMAGE_SIZE = 400
+const HOME_FEATURED_ARTIST_COUNT = 6
 
 const artists = getArtists()
+const featuredArtists = artists.slice(0, HOME_FEATURED_ARTIST_COUNT)
+const featuredArtistIds = new Set(featuredArtists.map((artist) => artist.id))
 
 /** Spotify track URL -> embed URL. */
 function spotifyEmbedUrl(trackUrl: string): string {
@@ -360,6 +364,25 @@ function ArtistGrid({
   )
 }
 
+function ArtistRoster() {
+  return (
+    <ul
+      aria-label="Artist roster"
+      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3 border-y border-border py-5 text-center text-sm font-medium"
+    >
+      {artists.map((artist) => (
+        <li key={artist.id} className="flex min-h-6 items-center justify-center">
+          {featuredArtistIds.has(artist.id) ? (
+            <GoldShineText variant="static">{artist.name}</GoldShineText>
+          ) : (
+            <span className="text-muted-foreground">{artist.name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 /**
  * Mobile black-screen regression guard: phones NEVER mount whileInView
  * opacity-0 wrappers here — fast scroll could leave the section invisible.
@@ -410,9 +433,10 @@ export function Artists() {
               <span className="lupfr-heading-subline">Artists</span>
             </h2>
             <div className="max-w-md md:text-right">
-              <p className="text-muted-foreground leading-relaxed">
-                We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences.
-              </p>
+              <TextReveal
+                text="We work with talented DJs, bands, and musicians who share our vision for creating unforgettable music experiences."
+                className="text-muted-foreground leading-relaxed"
+              />
               <Link
                 href="/artists"
                 className="mt-4 inline-block border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
@@ -425,12 +449,17 @@ export function Artists() {
 
         <ArtistsRevealShell isMobile={isMobile}>
           <ArtistGrid
-            items={artists}
+            items={featuredArtists}
+            className="lg:grid-cols-3"
             hoveredId={hoveredId}
             isMobile={isMobile}
             onHover={setHoveredId}
             onLeave={() => setHoveredId(null)}
           />
+        </ArtistsRevealShell>
+
+        <ArtistsRevealShell isMobile={isMobile} className="mt-8 sm:mt-10">
+          <ArtistRoster />
         </ArtistsRevealShell>
 
         {/* CTA */}

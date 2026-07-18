@@ -303,11 +303,18 @@ export function Footer() {
           <motion.button
             type="button"
             onClick={scrollToTop}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+            className="group flex min-h-11 items-center gap-3 rounded-full border border-border bg-secondary/60 px-3 py-1.5 text-muted-foreground shadow-sm transition-[color,border-color,box-shadow] hover:border-accent/40 hover:text-foreground hover:shadow-md"
             aria-label="Back to top"
             whileHover={{ y: -4 }}
             whileTap={{ scale: 0.95 }}
           >
+            <LupfrLogoImage
+              width={100}
+              height={34}
+              sizes="72px"
+              className="h-6 w-auto object-contain"
+              alt=""
+            />
             <span className="text-sm">Back to top</span>
             <motion.span
               className="grid size-8 place-items-center rounded-full border border-border bg-secondary/60 text-accent transition-colors group-hover:border-accent/40"

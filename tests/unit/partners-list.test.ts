@@ -6,10 +6,20 @@ describe("PARTNERS", () => {
     expect(PARTNERS.length).toBeGreaterThan(0)
   })
 
-  it("every image path starts with /", () => {
+  it("every image path starts with / when present", () => {
     for (const p of PARTNERS) {
-      expect(p.image.startsWith("/"), `${p.name} image missing leading /`).toBe(true)
+      if (p.image !== undefined) {
+        expect(p.image.startsWith("/"), `${p.name} image missing leading /`).toBe(true)
+      }
     }
+  })
+
+  it("Maison Noir renders as a label-only chip until its logo asset lands", () => {
+    const maison = PARTNERS.find((p) => /maison noir/i.test(p.name))
+    expect(maison).toBeDefined()
+    expect(maison!.image).toBeUndefined()
+    expect(maison!.imageClassName).toBeUndefined()
+    expect(maison!.ariaLabel).toBe(maison!.name)
   })
 
   it("imageDark normalized to start with / when present", () => {
@@ -46,9 +56,11 @@ describe("PARTNERS", () => {
     expect(partner.imageClassName).not.toContain("partner-logo--")
   })
 
-  it("imageClassName always includes layout utilities", () => {
+  it("imageClassName always includes layout utilities for logo partners", () => {
     for (const p of PARTNERS) {
-      expect(p.imageClassName).toContain("object-contain")
+      if (p.image !== undefined) {
+        expect(p.imageClassName).toContain("object-contain")
+      }
     }
   })
 
@@ -59,9 +71,19 @@ describe("PARTNERS", () => {
     }
   })
 
-  it("every partner logo links to an HTTPS destination", () => {
+  it("every partner destination is HTTPS when present", () => {
     for (const p of PARTNERS) {
-      expect(p.url, `${p.name} is missing a destination`).toMatch(/^https:\/\//)
+      if (p.url !== undefined) {
+        expect(p.url, `${p.name} destination must be https`).toMatch(/^https:\/\//)
+      }
+    }
+  })
+
+  it("only label-only pending chips may omit a destination", () => {
+    for (const p of PARTNERS) {
+      if (p.url === undefined) {
+        expect(p.image, `${p.name} has a logo but no destination`).toBeUndefined()
+      }
     }
   })
 })

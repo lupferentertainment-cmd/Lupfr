@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
-import { describe, it, expect } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { describe, it, expect, vi } from "vitest"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { PartnersStrip } from "@/components/partners-strip"
 import { getPartners } from "@/lib/data/partners"
 
@@ -29,16 +29,34 @@ describe("PartnersStrip", () => {
     expect(section?.className).not.toMatch(/bg-muted|bg-card|border-y/)
   })
 
-  it("renders every partner logo as a link to that partner's site", () => {
-    const partners = getPartners()
-    expect(partners.length).toBeGreaterThan(0)
+  it("renders every linked partner logo as a link to that partner's site", () => {
+    const linked = getPartners().filter((p) => p.url)
+    expect(linked.length).toBeGreaterThan(0)
     const { container } = render(<PartnersStrip />)
     const primaryRow = container.querySelector(
       ".partner-marquee-track > div:not([aria-hidden])"
     )
     expect(primaryRow).not.toBeNull()
     const links = Array.from(primaryRow!.querySelectorAll("a"))
-    expect(links.map((a) => a.getAttribute("href"))).toEqual(partners.map((p) => p.url))
+    expect(links.map((a) => a.getAttribute("href"))).toEqual(linked.map((p) => p.url))
+  })
+
+  it("renders logo-pending partners as label-only chips (comp: logo null → text label)", () => {
+    const pending = getPartners().filter((p) => !p.image)
+    expect(pending.map((p) => p.name)).toContain("Maison Noir")
+    const { container } = render(<PartnersStrip />)
+    const primaryRow = container.querySelector(
+      ".partner-marquee-track > div:not([aria-hidden])"
+    )!
+    for (const p of pending) {
+      const chip = Array.from(primaryRow.querySelectorAll(".partner-logo-chip")).find(
+        (el) => el.textContent?.trim().toLowerCase() === p.name.toLowerCase()
+      )
+      expect(chip, `${p.name} label chip missing from marquee`).toBeDefined()
+      // Label-only: no logo image inside the chip, and no dead link wrapper.
+      expect(chip!.querySelector("img")).toBeNull()
+      expect(chip!.closest("a")).toBeNull()
+    }
   })
 
   it("opens partner sites in a new tab without opener access", () => {
@@ -49,6 +67,117 @@ describe("PartnersStrip", () => {
       expect(link.getAttribute("target")).toBe("_blank")
       expect(link.getAttribute("rel")).toContain("noopener")
     }
+  })
+
+  it("activates grab-to-spin after hydration and swallows only the drag-tail click", () => {
+    const { container } = render(<PartnersStrip />)
+    const track = container.querySelector<HTMLElement>(".partner-marquee-track")
+    expect(track).not.toBeNull()
+    // useMarqueeSpin marks the track once the rAF engine owns the transform
+    expect(track!.getAttribute("data-spin")).toBe("true")
+
+    fireEvent.pointerDown(track!, { button: 0, clientX: 100, pointerId: 1 })
+    expect(track!.getAttribute("data-dragging")).toBe("true")
+    fireEvent.pointerMove(track!, { clientX: 60, pointerId: 1 })
+    fireEvent.pointerUp(track!, { clientX: 60, pointerId: 1 })
+    expect(track!.hasAttribute("data-dragging")).toBe(false)
+
+    const link = track!.querySelector("a")
+    expect(link).not.toBeNull()
+    const onLinkClick = vi.fn((e: Event) => e.preventDefault())
+    link!.addEventListener("click", onLinkClick)
+    // The click right after a real drag is suppressed so a fling never navigates...
+    fireEvent.click(link!)
+    expect(onLinkClick).not.toHaveBeenCalled()
+    // ...but suppression is one-shot: the next plain click reaches the link.
+    fireEvent.click(link!)
+    expect(onLinkClick).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not suppress clicks after a sub-threshold press (plain click on a logo)", () => {
+    const { container } = render(<PartnersStrip />)
+    const track = container.querySelector<HTMLElement>(".partner-marquee-track")!
+    fireEvent.pointerDown(track, { button: 0, clientX: 100, pointerId: 1 })
+    fireEvent.pointerMove(track, { clientX: 102, pointerId: 1 })
+    fireEvent.pointerUp(track, { clientX: 102, pointerId: 1 })
+
+    const link = track.querySelector("a")!
+    const onLinkClick = vi.fn((e: Event) => e.preventDefault())
+    link.addEventListener("click", onLinkClick)
+    fireEvent.click(link)
+    expect(onLinkClick).toHaveBeenCalledTimes(1)
+  })
+
+  it("never activates the spin engine under prefers-reduced-motion (CSS fallback row)", () => {
+    const spy = vi.spyOn(window, "matchMedia").mockImplementation(
+      (query: string) =>
+        ({
+          matches: /prefers-reduced-motion/.test(query),
+          media: query,
+          onchange: null,
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          addListener: () => {},
+          removeListener: () => {},
+          dispatchEvent: () => false,
+        }) as unknown as MediaQueryList
+    )
+    try {
+      const { container } = render(<PartnersStrip />)
+      const track = container.querySelector<HTMLElement>(".partner-marquee-track")!
+      expect(track.hasAttribute("data-spin")).toBe(false)
+      // With the engine off, pointer presses never enter drag mode either.
+      fireEvent.pointerDown(track, { button: 0, clientX: 100, pointerId: 1 })
+      expect(track.hasAttribute("data-dragging")).toBe(false)
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
+  it("ignores non-primary buttons and stray pointer events outside a drag", () => {
+    const { container } = render(<PartnersStrip />)
+    const track = container.querySelector<HTMLElement>(".partner-marquee-track")!
+    fireEvent.pointerDown(track, { button: 2, clientX: 100, pointerId: 1 })
+    expect(track.hasAttribute("data-dragging")).toBe(false)
+    // Moves/releases with no active drag are no-ops rather than crashes.
+    fireEvent.pointerMove(track, { clientX: 200, pointerId: 1 })
+    fireEvent.pointerUp(track, { clientX: 200, pointerId: 1 })
+    expect(track.hasAttribute("data-dragging")).toBe(false)
+  })
+
+  it("auto-advances leftward via the rAF engine and wraps drags past the loop point", async () => {
+    const { container } = render(<PartnersStrip />)
+    const track = container.querySelector<HTMLElement>(".partner-marquee-track")!
+    // happy-dom has no layout, so give the track a measurable width and
+    // re-measure through the resize path the hook already listens on.
+    Object.defineProperty(track, "scrollWidth", { value: 1000, configurable: true })
+    fireEvent(window, new Event("resize"))
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    const advanced = track.style.transform.match(/translate3d\((-?[\d.]+)px/)
+    expect(advanced).not.toBeNull()
+    expect(Number(advanced![1])).toBeLessThan(0)
+
+    // Hover/focus pause paths (JS replacement for the CSS :hover pause).
+    fireEvent.mouseEnter(track)
+    fireEvent.mouseOver(track)
+    fireEvent.focus(track)
+    fireEvent.blur(track, { relatedTarget: track.querySelector("a") })
+    fireEvent.blur(track)
+    fireEvent.mouseLeave(track)
+    fireEvent.mouseOut(track)
+
+    // Drag far rightward past the seam: the offset must wrap back into
+    // (-half, 0] so the loop stays seamless, then the fling decays.
+    fireEvent.pointerDown(track, { button: 0, clientX: 0, pointerId: 1 })
+    fireEvent.pointerMove(track, { clientX: 450, pointerId: 1 })
+    fireEvent.pointerMove(track, { clientX: 900, pointerId: 1 })
+    fireEvent.pointerUp(track, { clientX: 900, pointerId: 1 })
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    const wrapped = track.style.transform.match(/translate3d\((-?[\d.]+)px/)
+    expect(wrapped).not.toBeNull()
+    const x = Number(wrapped![1])
+    expect(x).toBeLessThanOrEqual(0)
+    expect(x).toBeGreaterThan(-500)
   })
 
   it("keeps the duplicate marquee copy hidden and inert for assistive tech", () => {

@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { cache } from "react"
-import { Calendar, MapPin, Clock, ArrowLeft, Ticket, ExternalLink } from "lucide-react"
+import { Calendar, MapPin, Clock, ArrowLeft, Mic2, Ticket, ExternalLink } from "lucide-react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import {
   EVENTS,
@@ -22,6 +22,7 @@ import {
 } from "@/lib/partiful"
 import { EventBreadcrumb } from "@/components/event-breadcrumb"
 import { EventTagBadge } from "@/components/event-tag-badge"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { getBrands } from "@/lib/data/brands"
 import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
@@ -203,7 +204,7 @@ export default async function EventPage({ params }: EventPageParams) {
               />
             </div>
 
-            <div className="lg:pt-2">
+            <ScrollReveal variant="up" amountIn={0.05} className="lg:pt-2">
               <p
                 className={`mb-3 font-mono text-[11px] uppercase tracking-[0.1em] ${brandAccent ? "" : "text-accent"}`}
                 style={brandAccent ? { color: brandAccent } : undefined}
@@ -219,7 +220,10 @@ export default async function EventPage({ params }: EventPageParams) {
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
                     Lineup
                   </span>
-                  <span className="text-right text-[15px] text-gold-accent">{event.subtitle || "TBD"}</span>
+                  <span className="inline-flex items-center gap-2 text-right text-[15px] text-gold-accent">
+                    <Mic2 size={14} className="text-accent shrink-0" aria-hidden />
+                    {event.subtitle || "TBD"}
+                  </span>
                 </div>
                 <div className="flex items-start justify-between gap-4">
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
@@ -293,7 +297,7 @@ export default async function EventPage({ params }: EventPageParams) {
                   groupAriaLabel="Share this event"
                 />
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </div>
