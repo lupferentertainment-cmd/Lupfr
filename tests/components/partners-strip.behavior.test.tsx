@@ -6,14 +6,16 @@ import { PartnersStrip } from "@/components/partners-strip"
 import { getPartners } from "@/lib/data/partners"
 
 /**
- * PartnersStrip contract: logo marquee with no visible section text — the
- * "Corporate partners" eyebrow was removed (owner request 2026-07-11); the
- * section stays labelled for assistive tech via aria-label only.
+ * PartnersStrip contract: logo marquee with a restrained visible eyebrow and
+ * an explicit accessible section label.
  */
 describe("PartnersStrip", () => {
-  it("renders the marquee without a visible 'Corporate partners' eyebrow", () => {
+  it("renders a visible 'Corporate Partners' eyebrow above the marquee", () => {
     const { container } = render(<PartnersStrip />)
-    expect(screen.queryByText(/corporate partners/i)).toBeNull()
+    const eyebrow = screen.getByText("Corporate Partners")
+    expect(eyebrow.className).toContain("lupfr-section-kicker")
+    expect(eyebrow.compareDocumentPosition(container.querySelector(".partner-marquee-track")!))
+      .toBe(Node.DOCUMENT_POSITION_FOLLOWING)
     expect(container.querySelector(".partner-marquee-track")).not.toBeNull()
   })
 

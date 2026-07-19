@@ -117,8 +117,8 @@ describe("corporate section eyebrows", () => {
     expect(contact).toContain('className="mb-2 text-xs tracking-tight text-gold-accent"')
   })
 
-  it("does not touch the partners strip (owner contract: no visible section text at all)", () => {
-    expect(partnersStrip).not.toContain("lupfr-section-kicker")
+  it("uses the shared corporate eyebrow treatment on the partners strip", () => {
+    expect(partnersStrip).toMatch(/className="lupfr-section-kicker[^\"]*"[\s\S]{0,100}>\s*Corporate Partners/)
   })
 })
 
@@ -441,10 +441,9 @@ describe("home page section structure", () => {
     expect(servicesComponent).not.toContain("getPartners")
   })
 
-  it("partners marquee row is full-bleed with no visible section text (owner requests 2026-07-08 / 2026-07-11)", () => {
-    // No eyebrow paragraph at all — the section is named via aria-label only,
-    // and the logo row spans the full viewport on desktop and mobile.
-    expect(partnersStrip).not.toMatch(/Corporate partners\s*<\/p>/)
+  it("partners marquee row is full-bleed with a restrained visible eyebrow", () => {
+    // The label sits above the logo row; the marquee itself remains full-bleed.
+    expect(partnersStrip).toMatch(/Corporate Partners\s*<\/p>/)
     expect(partnersStrip).toContain('aria-label="Corporate partners"')
     expect(partnersStrip).toMatch(/className="partner-marquee[^"]*"/)
   })

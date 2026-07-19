@@ -289,8 +289,8 @@ function PartnerLogoShell({
 }
 
 /**
- * Slim corporate-partners marquee mounted directly under the hero — an eyebrow
- * line only, no big stacked section header (owner request, 2026-07-02).
+ * Slim corporate-partners marquee mounted directly under the hero — a restrained
+ * eyebrow only, no big stacked section header.
  */
 export function PartnersStrip() {
   const spinTrackProps = useMarqueeSpin()
@@ -301,8 +301,9 @@ export function PartnersStrip() {
       aria-label="Corporate partners"
       className="relative py-6 sm:py-8"
     >
-      {/* No visible section text — the "Corporate partners" eyebrow was removed
-          (owner request 2026-07-11); the aria-label above keeps the section named. */}
+      <p className="lupfr-section-kicker mb-3 text-center sm:mb-4">
+        Corporate Partners
+      </p>
       {/* Full-bleed: the logo row deliberately escapes the max-w container so the
           marquee runs edge-to-edge on all viewports (owner request 2026-07-08). */}
       <ScrollReveal variant="up" className="partner-marquee w-full py-2 sm:py-3">

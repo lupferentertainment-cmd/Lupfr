@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Added
 
+- **Visible Corporate Partners label (owner request 2026-07-17):** restored a restrained centered “Corporate Partners” eyebrow above the full-bleed logo marquee, using the shared small mono-uppercase gold kicker treatment. Partner order, links, circular chips, grab-to-spin behavior, inherited page background, and accessible section label remain unchanged; `docs/DESIGN.md` and `docs/ARCHITECTURE.md` now supersede the July 11 no-visible-text rule.
+
 - **Hero legibility + LUPFR return-to-top (owner request 2026-07-17):** the existing metallic mono “Redefining the Music Experience” line now has a stable video-safe contrast edge in both themes, and the Scroll cue uses high-contrast white/shadow with gold hover/focus while preserving layout and motion. The footer's accessible Back to top button now includes the LUPFR wordmark in its compact pill.
 
 - **Restrained 3D event-card system (owner request 2026-07-17):** home and `/events` cards share CSS-only layered depth and a subtle hover/focus sheen; directory cards gain a fine-pointer perspective lift. Reduced motion disables the sheen, touch keeps the static baseline, and no shader/effect dependency was added.
