@@ -301,7 +301,10 @@ export function PartnersStrip() {
       aria-label="Corporate partners"
       className="relative py-6 sm:py-8"
     >
-      <p className="lupfr-section-kicker mb-3 text-center sm:mb-4">
+      {/* leading-none: the kicker's inherited 1.5 line-height is fractional at
+          11px (16.5px box) and shifts every downstream section anchor onto a
+          fractional boundary, tripping the nav scroll-spy gate. */}
+      <p className="lupfr-section-kicker mb-3 text-center leading-none sm:mb-4">
         Corporate Partners
       </p>
       {/* Full-bleed: the logo row deliberately escapes the max-w container so the
