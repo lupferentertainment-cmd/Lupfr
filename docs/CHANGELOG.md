@@ -90,6 +90,8 @@ All notable project changes are recorded here.
 
 - **Swipe-first events + focused home artist roster (owner request 2026-07-17):** Upcoming/Past event rows keep their existing Embla drag/swipe and keyboard navigation but drop the small dot controls. The home Featured Artists section now shows only the first six ordered cards in an aligned three-column desktop grid; **View all artists →** opens the unchanged complete directory. A responsive all-name roster sits beneath the cards, with those six featured names rendered in the existing metallic gold and all remaining names in muted text — no bright-yellow filled chips. TDD source contracts cover the six-card slice, complete roster/directory, metallic featured treatment, aligned grid, and swipe-without-dots event behavior; DESIGN/ARCHITECTURE updated in the same change.
 
+- **Featured Artists identity alignment (owner request 2026-07-17):** moved the GasMoney and trillbot genre, bio, Spotify profile, and featured-track player data onto their corrected display names while preserving both image paths and card positions.
+
 - **Featured Artists label correction (owner request 2026-07-17):** swapped the GasMoney and trillbot display names so each existing artist image carries the correct label; images and all other artist data are unchanged.
 
 - **Home event cards' no-poster tile now says "Coming soon" (owner request 2026-07-17):** the striped placeholder in the home Upcoming/Past carousels (`components/events.tsx`) previously rendered stripes alone; it now carries the same centered mono-uppercase "Coming soon" label as the `/events` directory cards and the event-detail hero. `tests/unit/look-and-feel.test.ts` locks the label; `docs/DESIGN.md` updated in the same change.

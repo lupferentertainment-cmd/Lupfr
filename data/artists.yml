@@ -162,12 +162,12 @@
 # the delivered tracks' artist credits.
 - id: 15
   name: trillbot
-  genre: Rock
+  genre: House
   image: /artists/gasmoney.webp
-  bio: Rock band bringing raw, live-wire energy to LUPFR nights — the act behind the GAS MONEY takeover at ERIA MARINA.
-  spotify: https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU
+  bio: House artist bringing playful, high-voltage club energy to the LUPFR lineup — heard on VENTE with thatfranco.
+  spotify: https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo
   featuredTrack:
-    url: https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m
+    url: https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ
     platform: spotify
 
 - id: 16
@@ -182,10 +182,10 @@
 
 - id: 17
   name: GasMoney
-  genre: House
+  genre: Rock
   image: /artists/trillbot.webp
-  bio: House artist bringing playful, high-voltage club energy to the LUPFR lineup — heard on VENTE with thatfranco.
-  spotify: https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo
+  bio: Rock band bringing raw, live-wire energy to LUPFR nights — the act behind the GAS MONEY takeover at ERIA MARINA.
+  spotify: https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU
   featuredTrack:
-    url: https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ
+    url: https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m
     platform: spotify

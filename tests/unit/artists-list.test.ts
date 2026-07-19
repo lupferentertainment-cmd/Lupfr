@@ -202,11 +202,11 @@ describe("featured artist data", () => {
     const byName = (name: string) => getArtists().find((artist) => artist.name === name)
 
     expect(byName("trillbot")).toMatchObject({
-      genre: "Rock",
+      genre: "House",
       image: "/artists/gasmoney.webp",
-      spotify: "https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU",
+      spotify: "https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo",
       featuredTrack: {
-        url: "https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m",
+        url: "https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ",
         platform: "spotify",
       },
     })
@@ -222,11 +222,11 @@ describe("featured artist data", () => {
     })
 
     expect(byName("GasMoney")).toMatchObject({
-      genre: "House",
+      genre: "Rock",
       image: "/artists/trillbot.webp",
-      spotify: "https://open.spotify.com/artist/3z8v2wZRmBnkEBG3wCMKSo",
+      spotify: "https://open.spotify.com/artist/406Ti9mTyZ8uC8nuekyAXU",
       featuredTrack: {
-        url: "https://open.spotify.com/track/3K0YIgu9mzv11RI2ZyxoWQ",
+        url: "https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m",
         platform: "spotify",
       },
     })
