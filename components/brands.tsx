@@ -5,7 +5,6 @@ import { m, useInView } from "framer-motion"
 import { useRef } from "react"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { ScrollReveal } from "@/components/scroll-reveal"
-import { TextReveal } from "@/components/text-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { brandPath, brandPlainTitle, getBrands, type BrandItem } from "@/lib/data/brands"
@@ -94,7 +93,7 @@ export function Brands() {
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
 
   return (
-    <section id="brands" ref={ref} className="py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-12">
+    <section id="brands" ref={ref} className="lupfr-section-pad px-4 sm:px-6 lg:px-12">
       <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px]">
         <div className="mb-10 sm:mb-12 md:mb-14">
           <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
@@ -102,11 +101,6 @@ export function Brands() {
             <h2>
               <GoldShineText scrollTargetRef={ref}>Our Brands</GoldShineText>
             </h2>
-            <TextReveal
-              text="Five brands, one company — LUPFR Entertainment spans live music events and private corporate programming."
-              className="text-muted-foreground max-w-md leading-relaxed"
-              delay={0.2}
-            />
           </div>
         </div>
 

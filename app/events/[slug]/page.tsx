@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { cache } from "react"
-import { Calendar, MapPin, Clock, ArrowLeft, Mic2, Ticket, ExternalLink } from "lucide-react"
+import { Calendar, MapPin, Clock, ArrowLeft, ArrowRight, Mic2, Ticket, ExternalLink } from "lucide-react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import {
   EVENTS,
@@ -24,7 +24,7 @@ import { EventBreadcrumb } from "@/components/event-breadcrumb"
 import { EventTagBadge } from "@/components/event-tag-badge"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
-import { getBrands } from "@/lib/data/brands"
+import { brandPath, brandPlainTitle, getBrands } from "@/lib/data/brands"
 import { GalleryPhotoGrid } from "@/components/gallery-photo-grid"
 import { GalleryShareRow } from "@/components/gallery-share-row"
 import { getGalleryPhotosByDateISO } from "@/lib/data/gallery"
@@ -150,9 +150,16 @@ export default async function EventPage({ params }: EventPageParams) {
   const shareTitle = eventShareTitle(event)
   const galleryPhotos = getGalleryPhotosByDateISO(event.dateISO)
 
-  const brandAccent = event.brandTag
-    ? getBrands().find((brand) => brand.title === event.brandTag)?.accent
+  const brand = event.brandTag
+    ? getBrands().find((b) => b.title === event.brandTag)
     : undefined
+  const brandAccent = brand?.accent
+
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`
+
+  const eventIndex = EVENTS.findIndex((e) => e.slug === event.slug)
+  const prevEvent = EVENTS[(eventIndex + EVENTS.length - 1) % EVENTS.length]
+  const nextEvent = EVENTS[(eventIndex + 1) % EVENTS.length]
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
@@ -209,13 +216,25 @@ export default async function EventPage({ params }: EventPageParams) {
                 className={`mb-3 font-mono text-[11px] uppercase tracking-[0.1em] ${brandAccent ? "" : "text-accent"}`}
                 style={brandAccent ? { color: brandAccent } : undefined}
               >
-                {event.brandTag ? <BrandSlashText text={event.brandTag} color={brandAccent} /> : "LUPFR Event"}
+                {brand ? (
+                  <Link
+                    href={brandPath(brand)}
+                    aria-label={`More about ${brandPlainTitle(brand)}`}
+                    className="transition-opacity hover:opacity-75"
+                  >
+                    <BrandSlashText text={event.brandTag!} color={brandAccent} />
+                  </Link>
+                ) : event.brandTag ? (
+                  <BrandSlashText text={event.brandTag} color={brandAccent} />
+                ) : (
+                  "LUPFR Event"
+                )}
               </p>
               <h1 className="mb-7 text-4xl sm:text-5xl leading-[1.02]">
                 <BrandSlashText text={event.title} />
               </h1>
 
-              <div className="mb-8 flex flex-col gap-4 border-y border-border py-6">
+              <div className="mb-8 flex flex-col gap-4 border-y border-accent/20 py-6">
                 <div className="flex items-start justify-between gap-4">
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
                     Lineup
@@ -229,10 +248,16 @@ export default async function EventPage({ params }: EventPageParams) {
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
                     Location
                   </span>
-                  <span className="inline-flex items-center gap-2 text-right text-[15px] text-foreground">
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-right text-[15px] text-foreground transition-colors hover:text-accent"
+                    aria-label={`Open ${event.location} in Google Maps (opens in new tab)`}
+                  >
                     <MapPin size={14} className="text-accent shrink-0" aria-hidden />
-                    {event.location}
-                  </span>
+                    <span className="underline-offset-4 hover:underline">{event.location}</span>
+                  </a>
                 </div>
                 <div className="flex items-start justify-between gap-4">
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
@@ -299,6 +324,35 @@ export default async function EventPage({ params }: EventPageParams) {
               </div>
             </ScrollReveal>
           </div>
+
+          {/* Prev/next event nav — services-detail parity (owner request 2026-07-19). */}
+          <nav
+            aria-label="More events"
+            className="mt-14 flex items-center justify-between gap-4 border-t border-border pt-8"
+          >
+            <Link
+              href={eventDetailPath(prevEvent.slug)}
+              aria-label={`Previous event: ${prevEvent.title}`}
+              className="inline-flex min-w-0 items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-accent"
+            >
+              <ArrowLeft size={16} className="shrink-0" aria-hidden />
+              <span className="truncate">{prevEvent.title}</span>
+            </Link>
+            <Link
+              href="/events"
+              className="hidden shrink-0 text-sm text-muted-foreground transition-colors hover:text-accent sm:inline-flex"
+            >
+              All Events
+            </Link>
+            <Link
+              href={eventDetailPath(nextEvent.slug)}
+              aria-label={`Next event: ${nextEvent.title}`}
+              className="inline-flex min-w-0 items-center justify-end gap-2 text-right text-sm text-muted-foreground transition-colors hover:text-accent"
+            >
+              <span className="truncate">{nextEvent.title}</span>
+              <ArrowRight size={16} className="shrink-0" aria-hidden />
+            </Link>
+          </nav>
         </div>
       </div>
       <Footer />

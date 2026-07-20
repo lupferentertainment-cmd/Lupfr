@@ -1,6 +1,7 @@
 "use client"
 
 import { LupfrLogoImage } from "@/components/lupfr-logo-image"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, useInView } from "framer-motion"
@@ -21,6 +22,14 @@ import {
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BLOG_PUBLIC_ACCESS_ENABLED } from "@/lib/site"
+import { getPartners, type PartnerLogoTreatment } from "@/lib/data/partners"
+
+const partners = getPartners()
+
+/** Mono/theme normalization classes for the footer logo band (see globals.css `.partner-logo*`). */
+function partnerBandLogoClasses(treatment: PartnerLogoTreatment | undefined): string {
+  return treatment ? `partner-logo partner-logo--${treatment}` : "partner-logo"
+}
 
 const companyLinksBase = [
     { name: "About", href: "#about" },
@@ -125,16 +134,25 @@ export function Footer() {
 
       <ScrollReveal variant="up" amountOut={0.9} exitY={-40} className="relative container mx-auto max-w-[1400px]">
         {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-x-8 gap-y-12 sm:gap-y-14 mb-14 sm:mb-16">
+        {/* Vertical gold rules split the three columns on desktop (owner request
+            2026-07-19, Eria-footer treatment); columns carry their own lg padding
+            since the divide replaces the gap. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-x-8 lg:gap-x-0 gap-y-12 sm:gap-y-14 mb-12 sm:mb-14 lg:divide-x lg:divide-accent/15">
           {/* Brand */}
           <motion.div
-            className="md:col-span-2 lg:col-span-5"
+            className="md:col-span-2 lg:col-span-5 lg:pr-10"
             initial={{ opacity: 0, y: 32 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease }}
           >
+            {/* Spelled-out LUPFR wordmark — the condensed display face the section
+                titles use, one step smaller, over a short gold hairline (owner
+                request 2026-07-19, Eria-footer treatment). */}
             <Link href={isHome ? "#" : "/"} className="inline-block mb-6" aria-label="LUPFR home">
-              <LupfrLogoImage width={400} height={132} sizes="280px" className="h-24 sm:h-28 w-auto object-contain" />
+              <span className="block font-condensed font-extrabold uppercase leading-none tracking-tight text-5xl sm:text-6xl">
+                <GoldShineText scrollTargetRef={ref}>LUPFR</GoldShineText>
+              </span>
+              <span className="mt-4 block h-px w-40 max-w-full bg-accent/45" aria-hidden />
             </Link>
             <p className="text-muted-foreground max-w-sm leading-relaxed mb-8">
               California&apos;s premier music event production company. Creating unforgettable experiences across SF, LA, and beyond.
@@ -191,12 +209,13 @@ export function Footer() {
 
           {/* Links */}
           <motion.div
-            className="lg:col-span-3"
+            className="lg:col-span-3 lg:px-10"
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.08, ease }}
           >
-            <h4 className="lupfr-heading-eyebrow mb-6">Company</h4>
+            <h4 className="lupfr-heading-eyebrow">Company</h4>
+            <span className="mt-2.5 mb-6 block h-px w-10 bg-accent/50" aria-hidden />
             <ul className="space-y-3.5">
               {footerLinks.company.map((link, i) => (
                 <li key={link.name}>
@@ -218,13 +237,14 @@ export function Footer() {
 
           {/* Newsletter */}
           <motion.div
-            className="lg:col-span-4"
+            className="lg:col-span-4 lg:pl-10"
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.12, ease }}
           >
             <div className="rounded-sm border border-border bg-secondary/40 p-6 backdrop-blur-sm">
-              <h4 className="lupfr-heading-eyebrow mb-2">Stay in the loop</h4>
+              <h4 className="lupfr-heading-eyebrow">Stay in the loop</h4>
+              <span className="mt-2 mb-3 block h-px w-10 bg-accent/50" aria-hidden />
               <p className="text-muted-foreground text-sm mb-5">
                 Get notified about upcoming events and exclusive presales.
               </p>
@@ -275,6 +295,71 @@ export function Footer() {
               </form>
             </div>
           </motion.div>
+        </div>
+
+        {/* Partner logos band — Eria-footer "as seen in" treatment with LUPFR's
+            corporate partner marks (owner request 2026-07-19). Label-only
+            partners (logo pending) render their name in mono. */}
+        <div className="mb-12 sm:mb-14">
+          <div className="mb-8 flex items-center gap-4">
+            <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-transparent to-accent/30" />
+            <p className="lupfr-heading-eyebrow shrink-0">Trusted by our partners</p>
+            <span aria-hidden className="h-px flex-1 bg-gradient-to-l from-transparent to-accent/30" />
+          </div>
+          <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-6 sm:gap-x-10">
+            {partners.map((partner) => {
+              // Baked-background tiles (natural treatment) get a hairline ring so
+              // dark tiles stay legible on the dark footer.
+              const naturalRing =
+                partner.logoTreatment === "natural" ? "rounded-[3px] ring-1 ring-border/70" : ""
+              const logo = partner.image ? (
+                <>
+                  <Image
+                    src={partner.image}
+                    alt={partner.name}
+                    width={120}
+                    height={48}
+                    sizes="120px"
+                    className={`h-7 w-auto rounded-[2px] object-contain sm:h-8 ${partnerBandLogoClasses(partner.logoTreatment)} ${naturalRing} ${partner.imageDark ? "dark:hidden" : ""}`}
+                  />
+                  {partner.imageDark ? (
+                    <Image
+                      src={partner.imageDark}
+                      alt={partner.name}
+                      width={120}
+                      height={48}
+                      sizes="120px"
+                      className={`hidden h-7 w-auto rounded-[2px] object-contain sm:h-8 dark:block ${partnerBandLogoClasses(partner.logoTreatment)} ${naturalRing}`}
+                    />
+                  ) : null}
+                </>
+              ) : (
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-foreground/70">
+                  {partner.name}
+                </span>
+              )
+              return (
+                <li key={partner.name}>
+                  {partner.url ? (
+                    <a
+                      href={partner.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={partner.ariaLabel ?? partner.name}
+                      className="inline-flex items-center opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100"
+                    >
+                      {logo}
+                      <span className="sr-only">(opens in new tab)</span>
+                    </a>
+                  ) : (
+                    <span className="inline-flex items-center opacity-70" aria-label={partner.ariaLabel ?? partner.name}>
+                      {logo}
+                    </span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
         </div>
 
         {/* Divider */}

@@ -53,7 +53,7 @@ export function About() {
   }, [isInView])
 
   return (
-    <section id="about" ref={ref} className="pt-8 sm:pt-9 md:pt-11 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+    <section id="about" ref={ref} className="pt-8 sm:pt-9 md:pt-11 pb-(--lupfr-section-pad) px-4 sm:px-6 lg:px-12 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
         <div className="container mx-auto max-w-[1400px] relative z-10">
           <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16 items-start">

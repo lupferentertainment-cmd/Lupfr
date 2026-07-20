@@ -977,6 +977,23 @@
 }
 
 /**
+ * Global home-section vertical rhythm (owner request 2026-07-19: section gaps
+ * were "a little too much", e.g. Brands↔Events; fix must be one global knob,
+ * not per-section tweaks). One token drives every standard home section's
+ * block padding — change it here and the whole page's rhythm follows.
+ * 40px on phones → 64px on desktop (was 56px → 112–120px ladders).
+ * Sections with a deliberately tight custom top (About, Artists) keep their
+ * own `pt-*` and take only the bottom half via `pb-(--lupfr-section-pad)`.
+ */
+:root {
+  --lupfr-section-pad: clamp(2.5rem, 1.75rem + 2.5vw, 4rem);
+}
+
+.lupfr-section-pad {
+  padding-block: var(--lupfr-section-pad);
+}
+
+/**
  * Corporate brand-slash divider (owner redesign 2026-07-16, ported from the
  * LUPFR Website Restructure comp): the "//" in brand names like "SEA//SIDE"
  * renders as a skewed gold accent. See `components/brand-slash-text.tsx`.

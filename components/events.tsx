@@ -12,10 +12,12 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { EventDetailLink } from "@/components/event-detail-link"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  type CarouselApi,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
 
@@ -293,8 +295,14 @@ function EventCard({
 const CAROUSEL_OPTS = {
   align: "start" as const,
   containScroll: "trimSnaps" as const,
-  dragFree: false,
+  // Free momentum drag: the hard snap rebound fought the compact 300px cards.
+  dragFree: true,
+  // Arrows page by the visible group, not one card at a time.
+  slidesToScroll: "auto" as const,
 }
+
+const CAROUSEL_ARROW_CLASS =
+  "absolute top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 text-foreground shadow backdrop-blur transition-all duration-200 hover:border-accent/50 hover:bg-accent/20 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 disabled:pointer-events-none disabled:opacity-0"
 
 function EventsCarousel({
   events,
@@ -321,6 +329,26 @@ function EventsCarousel({
 }) {
   const router = useRouter()
   const eventSlugs = events.map((event) => event.slug).join("|")
+  const [api, setApi] = useState<CarouselApi>()
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
+
+  useEffect(() => {
+    if (!api) return
+    const update = () => {
+      setCanScrollPrev(api.canScrollPrev())
+      setCanScrollNext(api.canScrollNext())
+    }
+    update()
+    api.on("reInit", update)
+    api.on("select", update)
+    api.on("scroll", update)
+    return () => {
+      api.off("reInit", update)
+      api.off("select", update)
+      api.off("scroll", update)
+    }
+  }, [api])
 
   useEffect(() => {
     if (!prefetchDetails) return
@@ -351,7 +379,7 @@ function EventsCarousel({
   if (events.length === 0) return null
   return (
     <div className="w-full">
-      <Carousel opts={CAROUSEL_OPTS} className="w-full">
+      <Carousel opts={CAROUSEL_OPTS} setApi={setApi} className="w-full">
         <CarouselContent
           className="-ml-4 md:-ml-6"
           viewportClassName="pb-3"
@@ -378,6 +406,28 @@ function EventsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
+        {canScrollPrev || canScrollNext ? (
+          <>
+            <button
+              type="button"
+              onClick={() => api?.scrollPrev()}
+              disabled={!canScrollPrev}
+              aria-label="Scroll to previous events"
+              className={cn(CAROUSEL_ARROW_CLASS, "left-2 lg:-left-5")}
+            >
+              <ArrowLeft className="size-5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              onClick={() => api?.scrollNext()}
+              disabled={!canScrollNext}
+              aria-label="Scroll to next events"
+              className={cn(CAROUSEL_ARROW_CLASS, "right-2 lg:-right-5")}
+            >
+              <ArrowRight className="size-5" aria-hidden />
+            </button>
+          </>
+        ) : null}
       </Carousel>
     </div>
   )
@@ -423,7 +473,7 @@ export function Events() {
     <section
       id="events"
       ref={ref}
-      className="relative overflow-visible border-b border-border px-4 py-20 sm:px-6 md:py-24 lg:px-12 lg:py-[120px]"
+      className="lupfr-section-pad relative overflow-visible border-b border-border px-4 sm:px-6 lg:px-12"
     >
       <ScrollReveal variant="up" freezeAfterReveal className="container mx-auto relative z-10 max-w-[1400px]">
         <m.div

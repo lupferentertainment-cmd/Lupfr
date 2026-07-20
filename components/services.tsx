@@ -336,7 +336,7 @@ export function Services() {
     <section
       id="services"
       ref={ref}
-      className="relative [overflow-x:clip] py-14 sm:py-16 md:py-20 lg:py-24 xl:py-28 px-4 sm:px-6 lg:px-12"
+      className="lupfr-section-pad relative [overflow-x:clip] px-4 sm:px-6 lg:px-12"
     >
       {/* Background orbs — infinite pulse on desktop only */}
       {animateOrbs ? (

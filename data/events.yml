@@ -161,12 +161,12 @@
   date: August 29th, 2026
   dateISO: "2026-08-29"
   time: TBD
-  location: San Francisco, CA
+  location: The Hibernia, San Francisco, CA
   brandTag: IN//SIDE
   city: SF
   image: /events/bal_masque.webp
   ticketStatus: tbd
-  description: A masquerade night in San Francisco. Lineup and venue reveal to come.
+  description: A masquerade night at The Hibernia in San Francisco. Lineup reveal to come.
 
 - id: 16
   slug: zusebi-001-live-from-sf

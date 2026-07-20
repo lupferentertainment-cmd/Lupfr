@@ -1,9 +1,9 @@
 /** @vitest-environment happy-dom */
 
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
 import { Artists, ArtistsDirectory } from "@/components/artists"
-import { getArtists } from "@/lib/data/artists"
+import { artistSlug, getArtists } from "@/lib/data/artists"
 
 describe("Artists home section", () => {
   it("shows six featured cards and keeps every artist in the aligned name roster", () => {
@@ -25,6 +25,20 @@ describe("Artists home section", () => {
     expect(container.querySelector('a[href="/artists"]')).toHaveTextContent("View all artists")
   })
 
+  it("links every roster name to its artist in the /artists directory", () => {
+    const artists = getArtists()
+    render(<Artists />)
+
+    const roster = screen.getByRole("list", { name: "Artist roster" })
+    const links = within(roster).getAllByRole("link")
+    expect(links).toHaveLength(artists.length)
+    for (const artist of artists) {
+      expect(
+        within(roster).getByRole("link", { name: `View ${artist.name} in the artists directory` }),
+      ).toHaveAttribute("href", `/artists?artist=${artistSlug(artist.name)}`)
+    }
+  })
+
   it("keeps the full directory sortable and filterable with an empty-state fallback", () => {
     const artists = getArtists()
     render(<ArtistsDirectory />)
@@ -43,5 +57,27 @@ describe("Artists home section", () => {
 
     fireEvent.change(genre, { target: { value: "missing" } })
     expect(screen.getByText("No artists match this genre.")).toBeInTheDocument()
+  })
+
+  describe("roster deep link", () => {
+    afterEach(() => {
+      window.history.replaceState(null, "", "/artists")
+    })
+
+    it("highlights the artist named by ?artist=<slug>", () => {
+      const slug = artistSlug("BAUM")
+      window.history.replaceState(null, "", `/artists?artist=${slug}`)
+      render(<ArtistsDirectory />)
+
+      const anchor = document.getElementById(`artist-${slug}`)
+      expect(anchor).toHaveAttribute("aria-current", "true")
+      expect(document.querySelectorAll('[aria-current="true"]')).toHaveLength(1)
+    })
+
+    it("ignores unknown slugs", () => {
+      window.history.replaceState(null, "", "/artists?artist=not-a-real-artist")
+      render(<ArtistsDirectory />)
+      expect(document.querySelector('[aria-current="true"]')).toBeNull()
+    })
   })
 })

@@ -34,3 +34,11 @@ export const ARTISTS: ArtistItem[] = (artistsJson as ArtistItem[]).map((a) => ({
 export function getArtists(): ArtistItem[] {
   return ARTISTS
 }
+
+/** URL-safe slug for `/artists?artist=<slug>` roster deep links. */
+export function artistSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+}

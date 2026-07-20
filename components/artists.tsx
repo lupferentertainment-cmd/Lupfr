@@ -4,12 +4,12 @@ import { memo, type ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Instagram, Music, ExternalLink, Youtube } from "lucide-react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { TextReveal } from "@/components/text-reveal"
-import { getArtists, type ArtistItem } from "@/lib/data/artists"
+import { artistSlug, getArtists, type ArtistItem } from "@/lib/data/artists"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
@@ -337,6 +337,7 @@ function ArtistGrid({
   items,
   className,
   hoveredId,
+  selectedId = null,
   isMobile,
   onHover,
   onLeave,
@@ -344,6 +345,7 @@ function ArtistGrid({
   items: ArtistItem[]
   className?: string
   hoveredId: number | null
+  selectedId?: number | null
   isMobile: boolean
   onHover: (id: number) => void
   onLeave: () => void
@@ -351,14 +353,20 @@ function ArtistGrid({
   return (
     <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6", className)}>
       {items.map((artist) => (
-        <ArtistCard
+        <div
           key={artist.id}
-          artist={artist}
-          isHovered={hoveredId === artist.id}
-          isMobile={isMobile}
-          onHover={() => onHover(artist.id)}
-          onLeave={onLeave}
-        />
+          id={`artist-${artistSlug(artist.name)}`}
+          aria-current={selectedId === artist.id ? "true" : undefined}
+          className={cn("h-full rounded-sm", selectedId === artist.id && "ring-1 ring-accent")}
+        >
+          <ArtistCard
+            artist={artist}
+            isHovered={hoveredId === artist.id}
+            isMobile={isMobile}
+            onHover={() => onHover(artist.id)}
+            onLeave={onLeave}
+          />
+        </div>
       ))}
     </div>
   )
@@ -372,11 +380,17 @@ function ArtistRoster() {
     >
       {artists.map((artist) => (
         <li key={artist.id} className="flex min-h-6 items-center justify-center">
-          {featuredArtistIds.has(artist.id) ? (
-            <GoldShineText variant="static">{artist.name}</GoldShineText>
-          ) : (
-            <span className="text-muted-foreground">{artist.name}</span>
-          )}
+          <Link
+            href={`/artists?artist=${artistSlug(artist.name)}`}
+            aria-label={`View ${artist.name} in the artists directory`}
+            className="rounded-sm px-1 decoration-accent underline-offset-4 transition-colors hover:underline focus-visible:underline focus-visible:outline-none"
+          >
+            {featuredArtistIds.has(artist.id) ? (
+              <GoldShineText variant="static">{artist.name}</GoldShineText>
+            ) : (
+              <span className="text-muted-foreground transition-colors hover:text-accent">{artist.name}</span>
+            )}
+          </Link>
         </li>
       ))}
     </ul>
@@ -415,7 +429,7 @@ export function Artists() {
     <section
       id="artists"
       ref={ref}
-      className="pt-4 sm:pt-5 md:pt-6 pb-14 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-12 relative overflow-hidden bg-card/50"
+      className="pt-4 sm:pt-5 md:pt-6 pb-(--lupfr-section-pad) px-4 sm:px-6 lg:px-12 relative overflow-hidden bg-card/50"
       aria-labelledby="artists-section-title"
     >
       <div className="container mx-auto max-w-[1400px] relative z-10">
@@ -490,7 +504,26 @@ export function ArtistsDirectory() {
   const [sort, setSort] = useState<"featured" | "az">("featured")
   const [genre, setGenre] = useState("all")
   const [hoveredId, setHoveredId] = useState<number | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
   const isMobile = useIsMobile() ?? true
+
+  /* Roster deep link (`/artists?artist=<slug>`): highlight + scroll to the card.
+     Read once on mount instead of useSearchParams so the page stays a static
+     prerender without a Suspense boundary; roster links always arrive cross-route. */
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("artist")
+    if (!slug) return
+    const match = artists.find((artist) => artistSlug(artist.name) === slug)
+    if (!match) return
+    setSelectedId(match.id)
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    requestAnimationFrame(() => {
+      document.getElementById(`artist-${slug}`)?.scrollIntoView?.({
+        block: "center",
+        behavior: reduceMotion ? "auto" : "smooth",
+      })
+    })
+  }, [])
   const genres = useMemo(
     () => [...new Set(artists.map((artist) => artist.genre))].sort((a, b) => a.localeCompare(b)),
     []
@@ -536,6 +569,7 @@ export function ArtistsDirectory() {
       <ArtistGrid
         items={visibleArtists}
         hoveredId={hoveredId}
+        selectedId={selectedId}
         isMobile={isMobile}
         onHover={setHoveredId}
         onLeave={() => setHoveredId(null)}
