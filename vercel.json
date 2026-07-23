@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "bun install",
-  "buildCommand": "LUPFR_SKIP_BROWSER_CHECK=1 LUPFR_SKIP_ROUTE_CHECK=1 LUPFR_SKIP_ASSET_CRAWL=1 bun run test && bun run _build",
+  "installCommand": "bun install && bash scripts/install-playwright-chromium.sh",
+  "buildCommand": "bun run test && bun run _build",
   "bunVersion": "1.x"
 }

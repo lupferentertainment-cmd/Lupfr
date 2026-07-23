@@ -10,6 +10,7 @@ const VERCEL_SCRIPTS = [
   "vercel-env-check.sh",
   "vercel-preview-deploy.sh",
   "vercel-deploy-prod-from-tag.sh",
+  "install-playwright-chromium.sh",
 ] as const
 
 describe("Vercel helper shell scripts", () => {

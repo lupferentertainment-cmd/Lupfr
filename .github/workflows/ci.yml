@@ -18,7 +18,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Install Chromium for browser crawl
-        run: bunx playwright install --with-deps chromium
+        run: bash scripts/install-playwright-chromium.sh
 
       - name: Canonical full gate
         run: bun run test

@@ -24,7 +24,10 @@ const shipDevScript = fs.readFileSync(shipDevPath, "utf8")
 const promoteProdScript = fs.readFileSync(promoteProdPath, "utf8")
 const verifyRoutesScript = fs.readFileSync(verifyRoutesPath, "utf8")
 const verifyConsoleScript = fs.readFileSync(verifyConsolePath, "utf8")
-const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, "utf8")) as { buildCommand: string }
+const vercelConfig = JSON.parse(fs.readFileSync(vercelConfigPath, "utf8")) as {
+    buildCommand: string
+    installCommand: string
+}
 const vitestConfig = fs.readFileSync(vitestConfigPath, "utf8")
 
 describe("canonical package workflow gate", () => {
@@ -64,10 +67,13 @@ describe("canonical package workflow gate", () => {
         expect(shipDevScript).toContain("SEO/Lighthouse audits on protected previews")
     })
 
-    it("runs the sandbox-safe gate subset before the Vercel deploy build", () => {
-        expect(vercelConfig.buildCommand).toBe(
-            "LUPFR_SKIP_BROWSER_CHECK=1 LUPFR_SKIP_ROUTE_CHECK=1 LUPFR_SKIP_ASSET_CRAWL=1 bun run test && bun run _build"
-        )
+    it("runs the same full local gate on Vercel before the deploy build", () => {
+        // Owner request 2026-07-22: no LUPFR_SKIP_* on Vercel — same bun run test
+        // as local / pre-commit / GitHub Actions (incl. Playwright crawls).
+        expect(vercelConfig.buildCommand).toBe("bun run test && bun run _build")
+        expect(vercelConfig.buildCommand).not.toContain("LUPFR_SKIP_")
+        expect(vercelConfig.installCommand).toContain("install-playwright-chromium.sh")
+        expect(fs.existsSync(path.join(rootDir, "scripts", "install-playwright-chromium.sh"))).toBe(true)
     })
 
     it("runs all Vitest tests through coverage", () => {
