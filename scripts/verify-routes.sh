@@ -123,12 +123,17 @@ EXTERNAL_LINKS_FILE="${SERVER_TMP_DIR}/external-links.txt"
 record_external_links() {
   local html_path="$1"
   local ext_url
+  # Temp file instead of process substitution — Vercel build sandboxes lack /dev/fd.
+  local list_file
+  list_file="$(mktemp "${SERVER_TMP_DIR}/ext.XXXXXX")"
+  extract_external_links "$html_path" > "$list_file"
   while IFS= read -r ext_url; do
     [[ -z "$ext_url" ]] && continue
     if ! grep -Fqx "$ext_url" "$EXTERNAL_LINKS_FILE"; then
       echo "$ext_url" >> "$EXTERNAL_LINKS_FILE"
     fi
-  done < <(extract_external_links "$html_path")
+  done < "$list_file"
+  rm -f "$list_file"
 }
 
 curl_external_status() {
@@ -205,15 +210,17 @@ while ((${#queue[@]})); do
   fetch_html_200 "$current_path" "$html_file"
   record_external_links "$html_file"
 
+  # Temp file instead of process substitution — Vercel build sandboxes lack /dev/fd.
+  routes_file="$(mktemp "${SERVER_TMP_DIR}/routes.XXXXXX")"
+  extract_internal_routes "$current_path" "$html_file" > "$routes_file"
   while IFS= read -r discovered_path; do
     [[ -z "$discovered_path" ]] && continue
     if ! grep -Fqx "$discovered_path" "$seen_file"; then
       echo "$discovered_path" >> "$seen_file"
       queue+=("$discovered_path")
     fi
-  done < <(extract_internal_routes "$current_path" "$html_file")
-
-  rm -f "$html_file"
+  done < "$routes_file"
+  rm -f "$routes_file" "$html_file"
 done
 
 echo "verify-routes: crawled $(wc -l < "$seen_file" | tr -d ' ') internal route(s)."
