@@ -20,10 +20,9 @@ describe("event card shape guardrails", () => {
     it("lets carousel items stretch to equal height (no explicit h-full on CarouselItem)", () => {
         // height:100% on a flex child of an auto-height row disables
         // align-items:stretch, so cards collapse to their content height.
-        const carouselItemClass = eventsSource.match(/CarouselItem\s+key=\{event\.id\}\s+className="([^"]+)"/)
-        expect(carouselItemClass).not.toBeNull()
-        expect(carouselItemClass?.[1]).not.toContain("h-full")
-        expect(carouselItemClass?.[1]).toContain("flex")
+        expect(eventsSource).toMatch(/CarouselItem[\s\S]{0,200}className=\{cn\(/)
+        expect(eventsSource).toMatch(/CarouselItem[\s\S]{0,400}\bflex\b/)
+        expect(eventsSource).not.toMatch(/CarouselItem[\s\S]{0,400}h-full/)
     })
 
     it("keeps the card article filling the stretched item", () => {
@@ -35,10 +34,12 @@ describe("event card shape guardrails", () => {
         expect(eventsSource).toMatch(/text-gold-accent mt-auto text-\[13px\]/)
     })
 
-    it("matches the comp's square poster and 300px desktop card width", () => {
-        expect(eventsSource).toContain("relative aspect-square w-full")
+    it("matches the comp's square poster and 300px desktop card width for Upcoming", () => {
+        // Upcoming keeps square posters; Past uses compact aspect-[5/4].
+        expect(eventsSource).toMatch(/compact \? "aspect-\[5\/4\]" : "aspect-square"/)
         // 324px slide minus the 24px left gutter = a 300px visible card.
         expect(eventsSource).toContain("md:basis-[324px]")
+        expect(eventsSource).toContain("md:basis-[196px]")
     })
 
     it("matches the comp's Upcoming/Events header and all-events page link", () => {

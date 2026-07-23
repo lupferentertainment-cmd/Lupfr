@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   DRIVE_FOLDER_TO_ALBUM_FOLDER,
   albumFolderForDriveSlug,
@@ -6,6 +6,7 @@ import {
   driveImageSrc,
   driveVideoEmbedSrc,
   embeddedFolderViewUrl,
+  fetchDriveGalleryAlbums,
   humanizeDriveSlug,
   mediaItemsFromEntry,
   mediaKindForName,
@@ -91,5 +92,64 @@ describe("drive gallery URLs", () => {
     expect(embeddedFolderViewUrl("f1")).toBe("https://drive.google.com/embeddedfolderview?id=f1")
     expect(driveImageSrc("a", 800)).toBe("https://lh3.googleusercontent.com/d/a=w800")
     expect(driveVideoEmbedSrc("a")).toBe("https://drive.google.com/file/d/a/preview")
+  })
+
+  it("decodes numeric HTML entities in entry titles", () => {
+    const html = `
+<div class="flip-entry" id="entry-num1" tabindex="0" role="link"><div class="flip-entry-info"><a href="https://drive.google.com/file/d/num1/view"><div class="flip-entry-title">shot&#38;cut.jpg</div></a></div></div>`
+    expect(parseDriveFolderEntries(html)[0]?.name).toBe("shot&cut.jpg")
+  })
+})
+
+describe("fetchDriveGalleryAlbums", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+  })
+
+  it("returns nested folder media and drops empty albums", async () => {
+    const rootHtml = `
+<div class="flip-entry" id="entry-rootfolder" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/drive/folders/rootfolder"><div class="flip-entry-title">boiler_boat_003</div></a></div></div>
+<div class="flip-entry" id="entry-emptyalbum" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/drive/folders/emptyalbum"><div class="flip-entry-title">empty_set</div></a></div></div>`
+    const albumHtml = `
+<div class="flip-entry" id="entry-photo1" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/file/d/photo1/view"><div class="flip-entry-title">a.jpg</div></a></div></div>
+<div class="flip-entry" id="entry-sub" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/drive/folders/sub"><div class="flip-entry-title">PHOTOS</div></a></div></div>`
+    const nestedHtml = `
+<div class="flip-entry" id="entry-photo2" tabindex="0"><div class="flip-entry-info"><a href="https://drive.google.com/file/d/photo2/view"><div class="flip-entry-title">b.jpg</div></a></div></div>`
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        const href = String(url)
+        let body = rootHtml
+        if (href.includes("id=rootfolder")) body = albumHtml
+        else if (href.includes("id=sub")) body = nestedHtml
+        else if (href.includes("id=emptyalbum")) body = `<div class="flip-entries"></div>`
+        return {
+          ok: true,
+          status: 200,
+          text: async () => body,
+        }
+      }),
+    )
+
+    const albums = await fetchDriveGalleryAlbums()
+    expect(albums).toHaveLength(1)
+    expect(albums[0]?.driveSlug).toBe("boiler_boat_003")
+    expect(albums[0]?.items.map((i) => i.fileId)).toEqual(["photo1", "photo2"])
+  })
+
+  it("returns [] and logs when Drive listing fails", async () => {
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {})
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        status: 503,
+        text: async () => "down",
+      })),
+    )
+    await expect(fetchDriveGalleryAlbums()).resolves.toEqual([])
+    expect(errSpy).toHaveBeenCalled()
   })
 })

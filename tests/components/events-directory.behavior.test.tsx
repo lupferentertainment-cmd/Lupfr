@@ -38,4 +38,19 @@ describe("EventsDirectory (/events, comp All Events page)", () => {
     expect(screen.getAllByRole("link", { name: /^View event: / }).length).toBe(getUpcomingEvents().length)
     expect(screen.queryByRole("link", { name: /^View past event: / })).toBeNull()
   })
+
+  it("Past status pill hides Upcoming and All Brands resets the brand filter", () => {
+    render(<EventsDirectory />)
+    fireEvent.click(screen.getByRole("button", { name: "Past" }))
+    expect(screen.getAllByRole("link", { name: /^View past event: / }).length).toBe(getPastEvents().length)
+    expect(screen.queryByRole("link", { name: /^View event: / })).toBeNull()
+
+    fireEvent.click(screen.getByRole("button", { name: /SEA\s*\/\/\s*SIDE/ }))
+    const filtered = screen.queryAllByRole("link", { name: /^View (past )?event: / })
+    fireEvent.click(screen.getByRole("button", { name: "All Brands" }))
+    fireEvent.click(screen.getByRole("button", { name: "All" }))
+    expect(screen.getAllByRole("link", { name: /^View (past )?event: / }).length).toBeGreaterThanOrEqual(
+      filtered.length,
+    )
+  })
 })

@@ -1,5 +1,13 @@
 [
   {
+    "name": "Partiful",
+    "url": "https://partiful.com",
+    "image": "/corporate_partners/partiful.webp",
+    "imageDark": "/corporate_partners/partiful_light.webp",
+    "logoTreatment": "natural",
+    "imageClassName": "scale-[0.92]"
+  },
+  {
     "name": "Vybes",
     "url": "https://www.vybes.co/",
     "image": "/corporate_partners/vybes.webp",
@@ -10,7 +18,7 @@
     "url": "https://umbrellalive.com",
     "image": "/corporate_partners/umbrella.webp",
     "logoTreatment": "outline",
-    "imageClassName": "scale-[1.38]"
+    "imageClassName": "scale-[1.15]"
   },
   {
     "name": "Eria",
@@ -19,25 +27,25 @@
     "imageClassName": "scale-[0.88]"
   },
   {
-    "name": "Venn Social",
-    "url": "https://vennsocial.co",
-    "image": "/corporate_partners/venn_social.webp",
+    "name": "FredEx Entertainment",
+    "url": "https://www.fredexentertainment.com/",
+    "image": "/corporate_partners/fredex.webp",
     "logoTreatment": "natural",
-    "imageClassName": "scale-[0.92]"
+    "imageClassName": "scale-[1.05]"
   },
   {
     "name": "Nazarian Law",
     "url": "https://nazarianfirm.com",
     "image": "/corporate_partners/nazarian_law.webp",
     "logoTreatment": "natural",
-    "imageClassName": "scale-[0.92]"
+    "imageClassName": "scale-[1.55]"
   },
   {
     "name": "SEA//SIDE",
     "url": "https://www.instagram.com/seaside.la/",
     "image": "/corporate_partners/seaside.webp",
     "logoTreatment": "natural",
-    "imageClassName": "scale-[1.6]"
+    "imageClassName": "scale-[1.05]"
   },
   {
     "name": "City Cruises",
@@ -50,7 +58,7 @@
     "url": "https://apps.apple.com/us/app/mutuals-experiences-plans/id6760976464",
     "image": "/corporate_partners/mutuals.webp",
     "logoTreatment": "natural",
-    "imageClassName": "scale-[1.6]"
+    "imageClassName": "scale-[1.05]"
   },
   {
     "name": "Empress Yachts",
@@ -58,13 +66,6 @@
     "image": "/corporate_partners/empress_events.webp",
     "logoTreatment": "natural",
     "imageClassName": "scale-[0.9]"
-  },
-  {
-    "name": "Soundcheck",
-    "url": "https://lupfr.com/#brands",
-    "image": "/corporate_partners/soundcheck.webp",
-    "logoTreatment": "natural",
-    "imageClassName": "scale-[1.6]"
   },
   {
     "name": "Brixton Bar SF",

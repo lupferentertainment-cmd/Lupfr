@@ -182,13 +182,13 @@ function useMarqueeSpin() {
 }
 
 /** Comp parity: partners whose logo asset is still pending (`logo: null` in the
- * comp) render the same circular chip with the partner name as a text label. */
+ * comp) render the same rectangular tile with the partner name as a text label. */
 function PartnerLabelChip({ name, ariaLabel, href }: { name: string; ariaLabel: string; href?: string }) {
   return (
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
       <div
         className={cn(
-          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-card p-3 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
+          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-sm border border-border bg-card px-3 py-2 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:px-4 sm:py-3",
           "dark:border-border/90 dark:bg-card dark:shadow-none group-hover:scale-[1.03]"
         )}
       >
@@ -226,13 +226,13 @@ function PartnerLogoChip({
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
       <div
         className={cn(
-          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-card p-3 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:p-4 md:p-4 lg:p-5",
+          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-sm border border-border bg-card px-3 py-2 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:px-4 sm:py-3",
           "dark:border-border/90 dark:bg-card dark:shadow-none group-hover:scale-[1.03]"
         )}
       >
         <div
           className={cn(
-            "skeleton-shimmer pointer-events-none absolute inset-0 z-0 rounded-full",
+            "skeleton-shimmer pointer-events-none absolute inset-0 z-0 rounded-sm",
             "motion-safe:transition-opacity motion-safe:duration-300",
             "motion-reduce:transition-none",
             ready ? "opacity-0" : "opacity-100"
@@ -243,9 +243,9 @@ function PartnerLogoChip({
           key={activeSrc}
           src={activeSrc}
           alt={name}
-          width={512}
-          height={512}
-          sizes="(max-width: 640px) 7rem, (max-width: 1024px) 8rem, 10rem"
+          width={640}
+          height={320}
+          sizes="(max-width: 640px) 7.5rem, (max-width: 1024px) 9rem, 11rem"
           draggable={false}
           onLoad={() => setReady(true)}
           className={cn(
@@ -271,8 +271,9 @@ function PartnerLogoShell({
   children: ReactNode
 }) {
   const className = cn(
-    "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-full",
-    "size-24 sm:size-28 md:size-32 lg:size-36"
+    "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
+    // Rectangular logo tiles (owner request 2026-07-21) — no circular crop on marks.
+    "h-14 w-[7.5rem] sm:h-16 sm:w-36 md:h-[4.5rem] md:w-40 lg:h-20 lg:w-44"
   )
   if (!href) return <div className={className} aria-label={ariaLabel}>{children}</div>
   return (

@@ -130,9 +130,17 @@ function EventBrandTag({ event }: { event: EventItem }) {
   const accent = event.brandTag ? brandAccentByTitle.get(event.brandTag) : undefined
   return (
     <span
-      className={cn("font-mono text-[10px] uppercase tracking-[0.1em]", accent ? undefined : "text-accent")}
-      style={accent ? { color: accent } : undefined}
+      className={cn(
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs border px-2 py-1 font-mono text-[9px] uppercase tracking-wider",
+        accent ? undefined : "border-border text-accent"
+      )}
+      style={accent ? { borderColor: accent, color: accent } : undefined}
     >
+      <span
+        className="h-[7px] w-[7px] shrink-0 rounded-full"
+        style={{ backgroundColor: accent ?? "currentColor" }}
+        aria-hidden
+      />
       {event.brandTag ? <BrandSlashText text={event.brandTag} color={accent} /> : "LUPFR"}
     </span>
   )

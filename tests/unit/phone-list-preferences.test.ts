@@ -58,4 +58,47 @@ describe("phone-list-preferences", () => {
 
     expect(hasPhoneListCookie(PHONE_LIST_SUBMITTED_COOKIE)).toBe(true)
   })
+
+  it("describes non-Error storage failures when warning", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw "string-fail"
+    })
+    expect(hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)).toBe(false)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("string-fail"))
+  })
+
+  it("falls back to a generic warning when Error.message is empty", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("")
+    })
+    expect(hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)).toBe(false)
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("browser storage is unavailable"))
+  })
+
+  it("treats cookie read throws as missing and cookie write throws as no-ops", () => {
+    acceptCookieConsent()
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    const cookieDesc =
+      Object.getOwnPropertyDescriptor(document, "cookie") ??
+      Object.getOwnPropertyDescriptor(Document.prototype, "cookie")
+    Object.defineProperty(document, "cookie", {
+      configurable: true,
+      get() {
+        throw new Error("cookie-blocked")
+      },
+      set() {
+        throw new Error("cookie-write-blocked")
+      },
+    })
+    try {
+      expect(hasPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)).toBe(false)
+      expect(() => setPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)).not.toThrow()
+      expect(warn).toHaveBeenCalled()
+    } finally {
+      if (cookieDesc) Object.defineProperty(document, "cookie", cookieDesc)
+      else Reflect.deleteProperty(document, "cookie")
+    }
+  })
 })

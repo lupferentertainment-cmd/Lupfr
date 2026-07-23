@@ -49,4 +49,5 @@ describe("cookie-consent", () => {
     expect(getCookieConsentAccepted()).toBe(true)
     expect(fired).toBe(true)
   })
+
 })

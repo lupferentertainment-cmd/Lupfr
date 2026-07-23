@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { fireEvent, render, screen, within } from "@testing-library/react"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { Artists, ArtistsDirectory } from "@/components/artists"
 import { artistSlug, getArtists } from "@/lib/data/artists"
 
@@ -78,6 +78,36 @@ describe("Artists home section", () => {
       window.history.replaceState(null, "", "/artists?artist=not-a-real-artist")
       render(<ArtistsDirectory />)
       expect(document.querySelector('[aria-current="true"]')).toBeNull()
+    })
+
+    it("uses auto scroll behavior under prefers-reduced-motion", () => {
+      const slug = artistSlug("BAUM")
+      window.history.replaceState(null, "", `/artists?artist=${slug}`)
+      const scrollIntoView = vi.fn()
+      const mql = {
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+        onchange: null,
+      } as unknown as MediaQueryList
+      const mediaSpy = vi.spyOn(window, "matchMedia").mockReturnValue(mql)
+      const { container } = render(<ArtistsDirectory />)
+      const el = container.querySelector(`#artist-${slug}`) as HTMLElement | null
+      if (el) el.scrollIntoView = scrollIntoView
+      // Allow the requestAnimationFrame callback to run.
+      return new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          expect(scrollIntoView).toHaveBeenCalledWith(
+            expect.objectContaining({ behavior: "auto" }),
+          )
+          mediaSpy.mockRestore()
+          resolve()
+        })
+      })
     })
   })
 })

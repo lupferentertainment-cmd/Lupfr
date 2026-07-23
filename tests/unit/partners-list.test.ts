@@ -6,6 +6,14 @@ describe("PARTNERS", () => {
     expect(PARTNERS.length).toBeGreaterThan(0)
   })
 
+  it("includes Partiful and FredEx; drops Venn Social and Soundcheck (owner 2026-07-21)", () => {
+    const names = PARTNERS.map((p) => p.name)
+    expect(names).toContain("Partiful")
+    expect(names).toContain("FredEx Entertainment")
+    expect(names).not.toContain("Venn Social")
+    expect(names).not.toContain("Soundcheck")
+  })
+
   it("every image path starts with / when present", () => {
     for (const p of PARTNERS) {
       if (p.image !== undefined) {

@@ -236,6 +236,28 @@ describe("POST /api/contact", () => {
     expect(sendMock).toHaveBeenCalledTimes(1)
   })
 
+  it("ignores non-string optional company/budget fields", async () => {
+    const { POST } = await import("@/app/api/contact/route")
+
+    const res = await POST(new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        inquiryType: "Book an Event",
+        name: "Jane Doe",
+        email: "jane@example.com",
+        company: 12,
+        budget: null,
+        message: "Need a DJ for Friday night",
+      }),
+    }))
+
+    expect(res.status).toBe(200)
+  })
+
   it("rate limits repeated requests", async () => {
     const { POST } = await import("@/app/api/contact/route")
 

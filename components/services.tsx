@@ -121,13 +121,6 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
             {serviceNumeral(index)}
           </span>
 
-          <div className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap">
-            <service.icon
-              size={24}
-              className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
-            />
-          </div>
-
           <h3 className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors">
             {service.title}
           </h3>
@@ -135,17 +128,10 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
             {service.description}
           </p>
 
-          <ul className="relative z-10 space-y-1.5">
-            {service.features.map((feature) => (
-              <li
-                key={feature}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-accent shrink-0 opacity-[0.85]" />
-                {feature}
-              </li>
-            ))}
-          </ul>
+          {/* Card is already one big link (servicePath) — this is styled text, not a nested <a>. */}
+          <span className="relative z-10 inline-block border-b border-accent pb-1 text-sm font-medium text-accent">
+            Learn more →
+          </span>
         </div>
       </div>
     </>
@@ -203,19 +189,6 @@ function ServiceCardMotionBody({
             {serviceNumeral(index)}
           </span>
 
-          <m.div
-            className="w-12 h-12 rounded-sm bg-secondary/80 dark:bg-secondary/60 flex items-center justify-center mb-5 group-hover:bg-accent/90 dark:group-hover:bg-accent/85 transition-colors duration-200 ease-snap"
-            animate={{
-              scale: isActive ? 1.05 : 1,
-            }}
-            transition={SPRING_PUNCH}
-          >
-            <service.icon
-              size={24}
-              className="text-foreground group-hover:text-accent-foreground dark:group-hover:text-accent transition-colors duration-200 ease-snap"
-            />
-          </m.div>
-
           <m.h3
             className="relative z-10 pr-14 text-lg font-semibold tracking-tight mb-2.5 group-hover:text-accent dark:group-hover:text-accent transition-colors"
             animate={{ scale: isActive ? 1.01 : 1 }}
@@ -227,27 +200,14 @@ function ServiceCardMotionBody({
             {service.description}
           </p>
 
-          <ul className="relative z-10 space-y-1.5">
-            {service.features.map((feature, fi) => (
-              <m.li
-                key={feature}
-                className="flex items-center gap-2 text-sm text-muted-foreground"
-              >
-                <m.span
-                  className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                  animate={{
-                    scale: isActive ? 1.2 : 1,
-                    opacity: isActive ? 1 : 0.85,
-                  }}
-                  transition={{
-                    scale: { duration: 0.35, delay: fi * 0.04 },
-                    opacity: { duration: 0.2 },
-                  }}
-                />
-                {feature}
-              </m.li>
-            ))}
-          </ul>
+          {/* Card is already one big link (servicePath) — this is styled text, not a nested <a>. */}
+          <m.span
+            className="relative z-10 inline-block border-b border-accent pb-1 text-sm font-medium text-accent"
+            animate={{ x: isActive ? 4 : 0 }}
+            transition={SPRING_SNAPPY}
+          >
+            Learn more →
+          </m.span>
         </div>
 
         <m.div
@@ -388,11 +348,19 @@ export function Services() {
             >
               <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
             </m.h2>
-            <TextReveal
-              text="From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA."
-              className="text-muted-foreground max-w-md leading-relaxed"
-              delay={0.2}
-            />
+            <div className="max-w-md md:text-right">
+              <TextReveal
+                text="From intimate bar takeovers to large-scale productions, we bring the music culture to life across SF & LA."
+                className="text-muted-foreground leading-relaxed"
+                delay={0.2}
+              />
+              <Link
+                href="/services"
+                className="mt-4 inline-block border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
+              >
+                Explore all services →
+              </Link>
+            </div>
           </div>
         </m.div>
 

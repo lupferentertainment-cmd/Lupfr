@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url"
 import path from "node:path"
-import { defineConfig } from "vitest/config"
+import { defineConfig, coverageConfigDefaults } from "vitest/config"
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url))
 const coverageReportsDirectory = process.env.VITEST_COVERAGE_DIR ?? "coverage"
@@ -24,11 +24,18 @@ const testConfig = {
     provider: "v8" as const,
     reportsDirectory: coverageReportsDirectory,
     reporter: ["text", "lcov"],
+    // Retired SEA//SIDE landing redirects to seaside.la; keep it out of the
+    // global denominator so live LUPFR surfaces stay at the 90% bar.
+    exclude: [
+      ...coverageConfigDefaults.exclude,
+      "**/components/seaside/**",
+      "**/lib/data/generated/**",
+    ],
     thresholds: {
-      statements: 80,
-      branches: 80,
-      functions: 80,
-      lines: 80,
+      statements: 90,
+      branches: 90,
+      functions: 90,
+      lines: 90,
     },
   },
 }

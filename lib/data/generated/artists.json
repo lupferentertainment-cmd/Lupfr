@@ -211,5 +211,13 @@
       "url": "https://open.spotify.com/track/4bjMeDPwGLhSbQv3j6Uj2m",
       "platform": "spotify"
     }
+  },
+  {
+    "id": 18,
+    "name": "ASTRD",
+    "genre": "House",
+    "image": "/artists/astrd.webp",
+    "bio": "House DJ bringing sharp selections and late-night energy to the LUPFR lineup.",
+    "instagram": "https://www.instagram.com/astrdmusic/"
   }
 ]

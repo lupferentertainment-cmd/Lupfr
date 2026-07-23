@@ -4,8 +4,16 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { m, useInView, useMotionValue, useTransform, useSpring } from "framer-motion"
-import { useRef, useState, useEffect, useCallback, type ReactNode } from "react"
+import {
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  type CSSProperties,
+  type ReactNode,
+} from "react"
 import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
+import { getBrands } from "@/lib/data/brands"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { ScrollReveal } from "@/components/scroll-reveal"
@@ -20,6 +28,8 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 import { cn } from "@/lib/utils"
+
+const brandAccentByTitle = new Map(getBrands().map((brand) => [brand.title, brand.accent]))
 
 const EVENT_IMAGE_WIDTH = 1200
 const EVENT_IMAGE_HEIGHT = 800
@@ -44,6 +54,7 @@ function EventCardTiltShell({
   initial,
   animate,
   transition,
+  style,
 }: {
   children: ReactNode
   onHover: () => void
@@ -52,6 +63,7 @@ function EventCardTiltShell({
   initial: { opacity: number; y: number }
   animate: { opacity: number; y: number }
   transition: { duration: number; delay: number; ease: number[] }
+  style?: CSSProperties
 }) {
   const cardRef = useRef<HTMLElement>(null)
   const x = useMotionValue(0)
@@ -84,7 +96,7 @@ function EventCardTiltShell({
       onMouseEnter={onHover}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 800 }}
+      style={{ rotateX, rotateY, transformPerspective: 800, ...style }}
     >
       {children}
     </m.article>
@@ -102,6 +114,7 @@ function EventCard({
   onHover,
   onLeave,
   now,
+  compact = false,
 }: {
   event: EventItem
   index: number
@@ -114,9 +127,12 @@ function EventCard({
   onHover: () => void
   onLeave: () => void
   now: Date
+  /** Past archive: smaller footprint (owner request 2026-07-21). */
+  compact?: boolean
 }) {
   const [imageReady, setImageReady] = useState(false)
   const tag = getEventTag(event, now)
+  const brandAccent = event.brandTag ? brandAccentByTitle.get(event.brandTag) : undefined
 
   const isFirstCard = index === 0
   const initial = isFirstCard ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
@@ -128,8 +144,10 @@ function EventCard({
     delay: isFirstCard ? 0 : index * 0.08,
     ease: [0.22, 1, 0.36, 1],
   }
-  const className =
-    "event-card-depth group relative w-full overflow-hidden rounded-sm bg-card border border-border hover:border-accent/50 flex flex-col h-full"
+  const className = cn(
+    "event-card-depth group relative w-full overflow-hidden rounded-sm bg-card border flex flex-col h-full",
+    brandAccent ? "border-[color:var(--event-brand)] hover:border-[color:var(--event-brand)]" : "border-border hover:border-accent/50"
+  )
 
   const image = event.image ? (
     <Image
@@ -170,10 +188,19 @@ function EventCard({
     </h4>
   )
 
+  const cornerStyle = brandAccent ? { borderColor: brandAccent } : undefined
+  const brandStyle = brandAccent
+    ? ({ ["--event-brand" as string]: brandAccent } as CSSProperties)
+    : undefined
   const body = (
     <>
       <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
-        <div className="relative aspect-square w-full overflow-hidden bg-muted shrink-0">
+        <div
+          className={cn(
+            "relative w-full overflow-hidden bg-muted shrink-0",
+            compact ? "aspect-[5/4]" : "aspect-square"
+          )}
+        >
           <div
             className={cn(
               "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
@@ -196,6 +223,12 @@ function EventCard({
           )}
           <div
             className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
+            style={cornerStyle}
+            aria-hidden
+          />
+          <div
+            className="absolute bottom-[10px] right-[10px] z-[2] h-3 w-3 border-b border-r border-foreground/50 pointer-events-none"
+            style={cornerStyle}
             aria-hidden
           />
           {staticInner ? (
@@ -221,29 +254,56 @@ function EventCard({
           </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-[22px]">
-          <div className="mb-2 flex items-center justify-between gap-3 font-mono text-[10px] uppercase">
-            <span className={event.brandTag === "SEA//SIDE" ? "text-[#6fb8c9]" : "text-foreground"}>
-              <BrandSlashText text={event.brandTag ?? "IN//SIDE"} />
+        <div className={cn("flex flex-1 flex-col", compact ? "p-4" : "p-[22px]")}>
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs border font-mono uppercase tracking-wider",
+                compact ? "px-1.5 py-0.5 text-[8px]" : "px-2 py-1 text-[9px]",
+                brandAccent ? undefined : "border-border text-foreground"
+              )}
+              style={brandAccent ? { borderColor: brandAccent, color: brandAccent } : undefined}
+            >
+              <span
+                className="h-[7px] w-[7px] shrink-0 rounded-full"
+                style={{ backgroundColor: brandAccent ?? "currentColor" }}
+                aria-hidden
+              />
+              <BrandSlashText text={event.brandTag ?? "IN//SIDE"} color={brandAccent} />
             </span>
-            <span className="shrink-0 tracking-[0.06em] text-muted-foreground">
+            <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
               {eventShortDate(event)}
             </span>
           </div>
           {staticInner ? (
-            <h3 className="mb-[10px] font-condensed text-[26px] font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent">
+            <h3
+              className={cn(
+                "mb-[10px] font-condensed font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent",
+                compact ? "text-[20px]" : "text-[26px]"
+              )}
+            >
               <BrandSlashText text={event.title} />
             </h3>
           ) : (
             <m.h3
-              className="mb-[10px] font-condensed text-[26px] font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent"
+              className={cn(
+                "mb-[10px] font-condensed font-extrabold uppercase leading-none text-foreground transition-colors group-hover:text-accent",
+                compact ? "text-[20px]" : "text-[26px]"
+              )}
               whileHover={{ x: 4 }}
             >
               <BrandSlashText text={event.title} />
             </m.h3>
           )}
           {event.subtitle ? (
-            <p className="text-gold-accent mb-[14px] text-[13px] leading-snug">{event.subtitle}</p>
+            <p
+              className={cn(
+                "text-gold-accent mb-[14px] leading-snug",
+                compact ? "text-[12px] line-clamp-2" : "text-[13px]"
+              )}
+            >
+              {event.subtitle}
+            </p>
           ) : null}
           <span className="text-gold-accent mt-auto text-[13px] transition-colors group-hover:text-foreground">
             View details →
@@ -271,6 +331,7 @@ function EventCard({
         initial={initial}
         animate={animate}
         transition={transition}
+        style={brandStyle}
       >
         {body}
       </EventCardTiltShell>
@@ -285,7 +346,7 @@ function EventCard({
       className={className}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      style={{ rotateX: 0, rotateY: 0 }}
+      style={{ rotateX: 0, rotateY: 0, ...brandStyle }}
     >
       {body}
     </m.article>
@@ -315,6 +376,7 @@ function EventsCarousel({
   now,
   prefetchDetails,
   prioritizeFirstImage,
+  compact = false,
 }: {
   events: EventItem[]
   isRevealed: boolean
@@ -326,6 +388,7 @@ function EventsCarousel({
   now: Date
   prefetchDetails: boolean
   prioritizeFirstImage: boolean
+  compact?: boolean
 }) {
   const router = useRouter()
   const eventSlugs = events.map((event) => event.slug).join("|")
@@ -378,7 +441,7 @@ function EventsCarousel({
 
   if (events.length === 0) return null
   return (
-    <div className="w-full">
+    <div className="w-full" data-compact={compact ? "true" : undefined}>
       <Carousel opts={CAROUSEL_OPTS} setApi={setApi} className="w-full">
         <CarouselContent
           className="-ml-4 md:-ml-6"
@@ -389,7 +452,12 @@ function EventsCarousel({
                row disables align-items:stretch, so cards stop matching heights. */
             <CarouselItem
               key={event.id}
-              className="basis-[min(316px,89vw)] pl-4 md:basis-[324px] md:pl-6 flex"
+              className={cn(
+                "pl-4 md:pl-6 flex",
+                compact
+                  ? "basis-[min(180px,70vw)] md:basis-[196px]"
+                  : "basis-[min(316px,89vw)] md:basis-[324px]"
+              )}
             >
               <EventCard
                 event={event}
@@ -402,6 +470,7 @@ function EventsCarousel({
                 onHover={() => onHover(event.id)}
                 onLeave={onLeave}
                 now={now}
+                compact={compact}
               />
             </CarouselItem>
           ))}
@@ -546,7 +615,8 @@ export function Events() {
               onLeave={clearHover}
               now={now}
               prefetchDetails={isMobile === false}
-              prioritizeFirstImage={isMobile === false}
+              prioritizeFirstImage={false}
+              compact
             />
           </m.div>
         )}

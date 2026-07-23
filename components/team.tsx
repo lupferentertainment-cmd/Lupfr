@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { AnimatePresence, motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { MapPin } from "lucide-react"
@@ -9,6 +10,7 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
 import { getTeam, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
+import { LINKS } from "@/lib/links"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 
@@ -239,6 +241,57 @@ export function Team() {
             </div>
           ))}
         </div>
+
+        {/* Owner request 2026-07-21: surface the exclusive Partiful partnership under the team. */}
+        <aside
+          className="mt-12 sm:mt-14 grid gap-6 overflow-hidden rounded-sm border border-accent/25 bg-card sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:rounded-md"
+          aria-label="Partiful partnership announcement"
+        >
+          <div className="relative min-h-[200px] sm:min-h-[240px]">
+            <Image
+              src="/images/partiful-announcement.webp"
+              alt="LUPFR x Partiful partnership"
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="flex flex-col justify-center gap-4 px-6 py-7 sm:px-8 sm:py-8">
+            <p className="lupfr-section-kicker leading-none">Exclusive Partner</p>
+            <h3 className="font-condensed text-3xl font-extrabold uppercase tracking-tight text-foreground sm:text-4xl">
+              Backed by Partiful
+            </h3>
+            <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+              LUPFR is Partiful&apos;s exclusive entertainment partner — pairing their community
+              platform with our production across LA and SF.
+            </p>
+            <div className="flex flex-wrap items-center gap-4 pt-1">
+              <Image
+                src="/corporate_partners/partiful.webp"
+                alt="Partiful"
+                width={48}
+                height={48}
+                className="partner-logo partner-logo--natural size-12 object-contain"
+              />
+              <a
+                href={LINKS.partiful}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
+              >
+                Follow LUPFR on Partiful →
+              </a>
+              <Link
+                href={LINKS.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline"
+              >
+                LinkedIn announcement
+              </Link>
+            </div>
+          </div>
+        </aside>
       </ScrollReveal>
     </section>
   )

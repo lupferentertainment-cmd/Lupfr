@@ -110,17 +110,17 @@
 - id: 10
   slug: marina-music-002-fromclay-thatfranco
   title: fromclay + thatfranco
-  subtitle: Marina Music 002
+  subtitle: "Headliners: fromclay + thatfranco · Openers: Trillbot b2b Juggan, ASTRD"
   date: July 25th, 2026
   dateISO: "2026-07-25"
-  time: 9 PM - 1 AM
-  location: ERIA MARINA, 2300 Chestnut Street, Marina District
+  time: 8 PM - 2 AM
+  location: Paris 75, North Beach, SF
   brandTag: IN//SIDE
   city: SF
   image: /events/marina_music_002_fromclay_thatfranco.webp
-  ticketLink: https://www.eventbrite.com/e/fromclay-thatfranco-tickets-1990995712773?aff=oddtdtcreator
+  ticketLink: https://partiful.com/e/ofADe6R9PY4T4obW3aMa
   ticketLabel: Tickets
-  description: Marina Music returns with fromclay and thatfranco at ERIA MARINA.
+  description: "fromclay and thatfranco co-headline at Paris 75 in North Beach. Set times: 8–9 PM ASTRD · 9–10 PM Trillbot b2b Juggan · 10 PM–12 AM thatfranco · 12–2 AM fromclay."
 
 - id: 13
   slug: devvy-dub-live-eria-sausalito
@@ -165,7 +165,8 @@
   brandTag: IN//SIDE
   city: SF
   image: /events/bal_masque.webp
-  ticketStatus: tbd
+  ticketLink: https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH
+  ticketLabel: Tickets
   description: A masquerade night at The Hibernia in San Francisco. Lineup reveal to come.
 
 - id: 16

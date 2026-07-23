@@ -1,7 +1,10 @@
 /**
- * Mobile services cards must stay plain DOM (no per-feature m.li / card-shell
- * motion) so the section does not hydrate ~60 framer-motion nodes on phones.
- * Desktop keeps tilt + hover motion; section-level `m` import stays for LazyMotion.
+ * Mobile services cards must stay plain DOM (no card-shell motion) so the
+ * section does not hydrate framer-motion nodes on phones. Desktop keeps tilt
+ * + hover motion; section-level `m` import stays for LazyMotion. Home cards
+ * (both mobile/static and desktop/motion) drop the feature-bullet list and
+ * icon chip (redesign parity, 2026-07-22) — features stay on `/services`
+ * overview + detail pages; home cards get a gold "Learn more →" text link.
  */
 import fs from "node:fs"
 import path from "node:path"
@@ -32,15 +35,27 @@ describe("mobile services static cards", () => {
       services.indexOf("function ServiceCardStaticBody"),
       services.indexOf("function ServiceCardMotionBody"),
     )
-    expect(staticBody).toContain("<li")
     expect(staticBody).toContain("<h3")
     expect(staticBody).toContain("<span")
     expect(staticBody).not.toContain("<m.")
   })
 
-  it("keeps animated feature rows only on the desktop motion body", () => {
-    expect(services).toContain("function ServiceCardMotionBody")
-    expect(services).toContain("<m.li")
-    expect(services).toContain("<m.span")
+  it("drops the home-card feature list and icon chip (redesign parity — features stay on /services)", () => {
+    expect(services).not.toContain("service.features")
+    expect(services).not.toContain("<service.icon")
+  })
+
+  it("gives each card a gold 'Learn more →' text link at the bottom (styled text, not a nested <a>)", () => {
+    const staticBody = services.slice(
+      services.indexOf("function ServiceCardStaticBody"),
+      services.indexOf("function ServiceCardMotionBody"),
+    )
+    const motionBody = services.slice(
+      services.indexOf("function ServiceCardMotionBody"),
+      services.indexOf("function ServiceCard(", services.indexOf("function ServiceCardMotionBody")),
+    )
+    expect(staticBody).toContain("Learn more →")
+    expect(motionBody).toContain("Learn more →")
+    expect(motionBody).toContain("<m.span")
   })
 })

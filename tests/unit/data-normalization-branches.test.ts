@@ -12,6 +12,8 @@ afterEach(() => {
   vi.doUnmock("@/lib/data/generated/artists.json")
   vi.doUnmock("@/lib/data/generated/press.json")
   vi.doUnmock("@/lib/data/generated/services.json")
+  vi.doUnmock("@/lib/data/generated/gallery.json")
+  vi.doUnmock("@/lib/data/generated/brands.json")
   vi.resetModules()
 })
 
@@ -98,5 +100,85 @@ describe("data-layer normalization fallback branches", () => {
       ],
     }))
     await expect(import("@/lib/data/services")).rejects.toThrow(/Unknown related brand/)
+  })
+
+  it("brands: adds the leading slash to gallery paths when missing", async () => {
+    vi.resetModules()
+    vi.doMock("@/lib/data/generated/brands.json", () => ({
+      default: [
+        {
+          key: "fixture",
+          title: "FIX//TURE",
+          tag: "Fixture",
+          accent: "#abc",
+          description: "Fixture brand.",
+          format: "Series",
+          gallery: ["brands/fixture-1.webp", "/brands/fixture-2.webp"],
+        },
+      ],
+    }))
+    const { BRANDS, brandPlainTitle } = await import("@/lib/data/brands")
+    expect(BRANDS[0].gallery).toEqual(["/brands/fixture-1.webp", "/brands/fixture-2.webp"])
+    expect(brandPlainTitle(BRANDS[0])).toBe("FIX TURE")
+  })
+
+  it("gallery: covers album override, invalid date, nested src, and showOnHome=false", async () => {
+    vi.resetModules()
+    vi.doMock("@/lib/data/generated/gallery.json", () => ({
+      default: [
+        {
+          id: 9001,
+          image: "gallery/boiler_boat_003/nested/photo.webp",
+          title: "Nested photo",
+          alt: "Nested",
+          album: "Custom Album Label",
+          date: "not-a-date",
+          showOnHome: false,
+        },
+        {
+          id: 9002,
+          image: "/media/outside/gallery/where_is_west/x.webp",
+          title: "Path with gallery mid-segment",
+          alt: "Mid",
+          caption: 123,
+        },
+        {
+          id: "skip-me",
+          image: "/gallery/x.webp",
+          title: "Bad id",
+          alt: "Bad",
+        },
+        null,
+        {
+          id: 9003,
+          image: "   ",
+          title: "Empty src",
+          alt: "Empty",
+        },
+      ],
+    }))
+    const {
+      GALLERY_PHOTOS,
+      GALLERY_CAROUSEL_PHOTOS,
+      galleryPathFolderSegmentsFromSrc,
+    } = await import("@/lib/data/gallery")
+
+    expect(galleryPathFolderSegmentsFromSrc("/no-gallery/x.webp")).toEqual([])
+    expect(galleryPathFolderSegmentsFromSrc("/gallery/only.webp")).toEqual([])
+
+    const nested = GALLERY_PHOTOS.find((p) => p.id === 9001)
+    expect(nested?.albumBreadcrumb).toBe("Custom Album Label")
+    expect(nested?.albumFolder).toBe("boiler_boat_003")
+    expect(nested?.albumPathSegments).toEqual(["boiler_boat_003", "nested"])
+    expect(nested?.showOnHome).toBe(false)
+    expect(nested?.dateISO).toBe("2026-04-04")
+
+    const mid = GALLERY_PHOTOS.find((p) => p.id === 9002)
+    expect(mid?.albumFolder).toBe("where_is_west")
+    expect(mid?.caption).toBe("")
+
+    expect(GALLERY_PHOTOS.some((p) => p.id === 9003)).toBe(true)
+    expect(GALLERY_CAROUSEL_PHOTOS.every((p) => p.id !== 9001)).toBe(true)
+    expect(GALLERY_PHOTOS.every((p) => typeof p.id === "number")).toBe(true)
   })
 })

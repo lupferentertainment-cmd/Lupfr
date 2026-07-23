@@ -560,10 +560,10 @@ describe("about structure", () => {
 // ── event card desktop sizing ────────────────────────────────────────────────
 
 describe("event card desktop sizing", () => {
-  it("uses the reference comp's square poster", () => {
+  it("uses the reference comp's square poster for Upcoming cards", () => {
     expect(eventsComponent).not.toContain("lg:h-[400px]")
     expect(eventsComponent).not.toContain("md:h-[340px]")
-    expect(eventsComponent).toContain("relative aspect-square w-full")
+    expect(eventsComponent).toMatch(/compact \? "aspect-\[5\/4\]" : "aspect-square"/)
   })
 
   it("uses the reference comp's 300px desktop card", () => {

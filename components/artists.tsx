@@ -373,12 +373,14 @@ function ArtistGrid({
 }
 
 function ArtistRoster() {
+  // Owner request 2026-07-21: home roster is A–Z; featured-card names stay gold + bold.
+  const rosterArtists = [...artists].sort((a, b) => a.name.localeCompare(b.name))
   return (
     <ul
       aria-label="Artist roster"
       className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3 border-y border-border py-5 text-center text-sm font-medium"
     >
-      {artists.map((artist) => (
+      {rosterArtists.map((artist) => (
         <li key={artist.id} className="flex min-h-6 items-center justify-center">
           <Link
             href={`/artists?artist=${artistSlug(artist.name)}`}
@@ -386,7 +388,9 @@ function ArtistRoster() {
             className="rounded-sm px-1 decoration-accent underline-offset-4 transition-colors hover:underline focus-visible:underline focus-visible:outline-none"
           >
             {featuredArtistIds.has(artist.id) ? (
-              <GoldShineText variant="static">{artist.name}</GoldShineText>
+              <span className="font-bold">
+                <GoldShineText variant="static">{artist.name}</GoldShineText>
+              </span>
             ) : (
               <span className="text-muted-foreground transition-colors hover:text-accent">{artist.name}</span>
             )}

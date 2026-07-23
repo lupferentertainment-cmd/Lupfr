@@ -151,8 +151,18 @@ describe("event routes and lookup", () => {
 
     expect({ fifaLink: fifa?.ticketLink, marinaLink: marina?.ticketLink }).toEqual({
       fifaLink: "https://partiful.com/e/qzqeUgwc3iMmBrt6A0MC",
-      marinaLink: "https://www.eventbrite.com/e/fromclay-thatfranco-tickets-1990995712773?aff=oddtdtcreator",
+      marinaLink: "https://partiful.com/e/ofADe6R9PY4T4obW3aMa",
     })
+
+    const marinaEvent = getEventBySlug("marina-music-002-fromclay-thatfranco")
+    expect(marinaEvent).toMatchObject({
+      time: "8 PM - 2 AM",
+      location: "Paris 75, North Beach, SF",
+    })
+
+    const balMasque = getEventBySlug("bal-masque")
+    expect(balMasque?.ticketLink).toBe("https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH")
+    expect(balMasque?.ticketStatus).toBeUndefined()
   })
 })
 

@@ -101,6 +101,12 @@ export function Brands() {
             <h2>
               <GoldShineText scrollTargetRef={ref}>Our Brands</GoldShineText>
             </h2>
+            <Link
+              href="/brands"
+              className="inline-block border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
+            >
+              View all brands →
+            </Link>
           </div>
         </div>
 

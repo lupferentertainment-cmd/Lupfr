@@ -120,6 +120,20 @@ describe("canonical package workflow gate", () => {
         )
     })
 
+    it("keeps the Will homepage Playwright edge-case gate inside browser checks", () => {
+        expect(ciScript).toContain("bun run _verify:will-home")
+        expect(packageJson.scripts["_verify:will-home"]).toBe(
+            "bun scripts/verify-will-home.mjs"
+        )
+    })
+
+    it("enforces 90% Vitest coverage thresholds", () => {
+        expect(vitestConfig).toMatch(/statements:\s*90/)
+        expect(vitestConfig).toMatch(/branches:\s*90/)
+        expect(vitestConfig).toMatch(/functions:\s*90/)
+        expect(vitestConfig).toMatch(/lines:\s*90/)
+    })
+
     it("keeps mobile performance budgets on disk", () => {
         expect(fs.existsSync(mobileBudgetsPath)).toBe(true)
     })

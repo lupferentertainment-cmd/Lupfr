@@ -148,6 +148,13 @@ describe("proxy() — disabled blog access", () => {
     expect(res.status).toBe(404)
   })
 
+  it("returns 404 for /docs and other blocked root paths", async () => {
+    const { proxy } = await import("@/proxy")
+    expect(proxy(buildRequest("/docs", "lupfr.com") as never).status).toBe(404)
+    expect(proxy(buildRequest("/docs/overview", "lupfr.com") as never).status).toBe(404)
+    expect(proxy(buildRequest("/readme.md", "lupfr.com") as never).status).toBe(404)
+  })
+
   it("skips rewrite for /favicon.ico on blog host", async () => {
     const { proxy } = await import("@/proxy")
     proxy(buildRequest("/favicon.ico", "blog.lupfr.com") as never)
@@ -158,6 +165,27 @@ describe("proxy() — disabled blog access", () => {
     const { proxy } = await import("@/proxy")
     proxy(buildRequest("/robots.txt", "blog.lupfr.com") as never)
     expect(nextMock.NextResponse.rewrite).not.toHaveBeenCalled()
+  })
+})
+
+describe("proxy() — blog rewrite when public access is enabled", () => {
+  beforeEach(() => {
+    nextMock.NextResponse.next.mockClear()
+    nextMock.NextResponse.rewrite.mockClear()
+    vi.resetModules()
+  })
+
+  it("rewrites blog host paths onto /blog when BLOG_PUBLIC_ACCESS_ENABLED is true", async () => {
+    vi.doMock("@/lib/site", async () => {
+      const actual = await vi.importActual<typeof import("@/lib/site")>("@/lib/site")
+      return { ...actual, BLOG_PUBLIC_ACCESS_ENABLED: true }
+    })
+    const { proxy } = await import("@/proxy")
+    proxy(buildRequest("/", "blog.lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).toHaveBeenCalled()
+    proxy(buildRequest("/hello", "blog.lupfr.com") as never)
+    expect(nextMock.NextResponse.rewrite).toHaveBeenCalledTimes(2)
+    vi.doUnmock("@/lib/site")
   })
 })
 

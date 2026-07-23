@@ -77,6 +77,8 @@ run_browser_checks() {
   restore_next_snapshots
   bun run _verify:nav-scroll
   restore_next_snapshots
+  bun run _verify:will-home
+  restore_next_snapshots
   bun run _verify:mobile-perf
   restore_next_snapshots
 }

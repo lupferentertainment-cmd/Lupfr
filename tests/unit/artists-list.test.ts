@@ -39,7 +39,19 @@ describe("featured artist data", () => {
       "trillbot",
       "Juggan",
       "GasMoney",
+      "ASTRD",
     ])
+  })
+
+  it("includes ASTRD with Instagram-only socials (owner request 2026-07-21)", () => {
+    const astrd = getArtists().find((artist) => artist.name === "ASTRD")
+    expect(astrd).toMatchObject({
+      genre: "House",
+      image: "/artists/astrd.webp",
+      instagram: "https://www.instagram.com/astrdmusic/",
+    })
+    expect(astrd?.spotify).toBeUndefined()
+    expect(astrd?.soundcloud).toBeUndefined()
   })
 
   it("loads the phase 20 roster completion with copy sourced verbatim from the comp's embedded artist data", () => {

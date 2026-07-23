@@ -28,7 +28,11 @@ beforeAll(() => {
 })
 
 function visibleNames(): string[] {
-  return screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent?.trim() ?? "")
+  // Only member-card h3s (filter out the Partiful announcement band heading).
+  return screen
+    .getAllByRole("heading", { level: 3 })
+    .filter((h) => h.closest("button") !== null)
+    .map((h) => h.textContent?.trim() ?? "")
 }
 
 describe("Team — LA / SF / Exec filter boxes", () => {

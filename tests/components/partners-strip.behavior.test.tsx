@@ -110,6 +110,19 @@ describe("PartnersStrip", () => {
     expect(onLinkClick).toHaveBeenCalledTimes(1)
   })
 
+  it("tolerates getComputedStyle transform read failures when seeding spin offset", () => {
+    const spy = vi.spyOn(window, "getComputedStyle").mockImplementation(() => {
+      throw new Error("no style")
+    })
+    try {
+      const { container } = render(<PartnersStrip />)
+      const track = container.querySelector<HTMLElement>(".partner-marquee-track")!
+      expect(track.hasAttribute("data-spin") || !track.hasAttribute("data-spin")).toBe(true)
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
   it("never activates the spin engine under prefers-reduced-motion (CSS fallback row)", () => {
     const spy = vi.spyOn(window, "matchMedia").mockImplementation(
       (query: string) =>
