@@ -9,7 +9,7 @@ export interface PartnerItem {
   name: string
   /** External destination. Absent on label-only pending chips (no dead links). */
   url?: string
-  /** Logo asset. Absent while a partner's logo is pending — chip renders the name as text. */
+  /** Logo asset. Absent while a partner's logo is pending — strip renders the name as text. */
   image?: string
   /** Dark-mode variant. Resolved at runtime via useTheme; falls back to `image` if absent. */
   imageDark?: string
@@ -25,7 +25,7 @@ function normalizeImage(path: string): string {
 }
 
 const PARTNER_LAYOUT =
-  "block max-h-full max-w-full min-h-0 min-w-0 h-auto w-auto shrink-0 object-contain object-center"
+  "block shrink-0 object-contain object-center"
 
 const LOGO_TREATMENTS: Record<PartnerLogoTreatment, string> = {
   outline: "partner-logo partner-logo--outline",

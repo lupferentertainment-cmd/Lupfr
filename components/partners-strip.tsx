@@ -182,25 +182,18 @@ function useMarqueeSpin() {
 }
 
 /** Comp parity: partners whose logo asset is still pending (`logo: null` in the
- * comp) render the same rectangular tile with the partner name as a text label. */
-function PartnerLabelChip({ name, ariaLabel, href }: { name: string; ariaLabel: string; href?: string }) {
+ * comp) render the partner name as freeform mono text — no tile/box chrome. */
+function PartnerLabelMark({ name, ariaLabel, href }: { name: string; ariaLabel: string; href?: string }) {
   return (
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
-      <div
-        className={cn(
-          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-sm border border-border bg-card px-3 py-2 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:px-4 sm:py-3",
-          "dark:border-border/90 dark:bg-card dark:shadow-none group-hover:scale-[1.03]"
-        )}
-      >
-        <span className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-foreground/80 sm:text-[11px]">
-          {name}
-        </span>
-      </div>
+      <span className="partner-logo-label whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/75 sm:text-[11px]">
+        {name}
+      </span>
     </PartnerLogoShell>
   )
 }
 
-function PartnerLogoChip({
+function PartnerLogoMark({
   name,
   image,
   imageDark,
@@ -224,15 +217,10 @@ function PartnerLogoChip({
 
   return (
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
-      <div
-        className={cn(
-          "partner-logo-chip relative flex size-full min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-sm border border-border bg-card px-3 py-2 shadow-md shadow-black/10 transition-transform duration-200 ease-snap sm:px-4 sm:py-3",
-          "dark:border-border/90 dark:bg-card dark:shadow-none group-hover:scale-[1.03]"
-        )}
-      >
-        <div
+      <span className="relative inline-flex h-full items-center">
+        <span
           className={cn(
-            "skeleton-shimmer pointer-events-none absolute inset-0 z-0 rounded-sm",
+            "skeleton-shimmer pointer-events-none absolute inset-y-1 left-0 right-0 z-0 rounded-sm",
             "motion-safe:transition-opacity motion-safe:duration-300",
             "motion-reduce:transition-none",
             ready ? "opacity-0" : "opacity-100"
@@ -243,20 +231,22 @@ function PartnerLogoChip({
           key={activeSrc}
           src={activeSrc}
           alt={name}
-          width={640}
-          height={320}
-          sizes="(max-width: 640px) 7.5rem, (max-width: 1024px) 9rem, 11rem"
+          width={240}
+          height={80}
+          sizes="(max-width: 640px) 5.5rem, (max-width: 1024px) 7rem, 8.5rem"
           draggable={false}
           onLoad={() => setReady(true)}
           className={cn(
-            "relative z-[1]",
+            "partner-logo-mark relative z-[1] object-contain object-center",
+            imageClassName,
+            // Height after YAML layout classes so freeform strip sizing wins twMerge.
+            "h-7 w-auto max-w-[9rem] sm:h-8 md:h-9",
             "motion-safe:transition-opacity motion-safe:duration-300",
             "motion-reduce:transition-none",
-            ready ? "opacity-100" : "opacity-0",
-            imageClassName
+            ready ? "opacity-100" : "opacity-0"
           )}
         />
-      </div>
+      </span>
     </PartnerLogoShell>
   )
 }
@@ -270,10 +260,12 @@ function PartnerLogoShell({
   ariaLabel: string
   children: ReactNode
 }) {
+  // Freeform corporate strip: marks sit on the page background with no
+  // bordered/card tiles — natural logo aspect, muted until hover/focus.
   const className = cn(
-    "group flex opacity-90 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
-    // Rectangular logo tiles (owner request 2026-07-21) — no circular crop on marks.
-    "h-14 w-[7.5rem] sm:h-16 sm:w-36 md:h-[4.5rem] md:w-40 lg:h-20 lg:w-44"
+    "group inline-flex h-8 shrink-0 items-center sm:h-9 md:h-10",
+    "opacity-70 transition-opacity duration-200 ease-snap hover:opacity-100",
+    "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
   )
   if (!href) return <div className={className} aria-label={ariaLabel}>{children}</div>
   return (
@@ -310,12 +302,12 @@ export function PartnersStrip() {
       </p>
       {/* Full-bleed: the logo row deliberately escapes the max-w container so the
           marquee runs edge-to-edge on all viewports (owner request 2026-07-08). */}
-      <ScrollReveal variant="up" className="partner-marquee w-full py-2 sm:py-3">
+      <ScrollReveal variant="up" className="partner-marquee w-full py-1 sm:py-2">
         <div
           {...spinTrackProps}
           className={cn(
-            "partner-marquee-track flex items-center gap-x-8",
-            "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+            "partner-marquee-track flex items-center gap-x-10",
+            "sm:gap-x-12 md:gap-x-14 lg:gap-x-16"
           )}
         >
           {[false, true].map((isDuplicate) => (
@@ -324,13 +316,13 @@ export function PartnersStrip() {
               aria-hidden={isDuplicate || undefined}
               inert={isDuplicate || undefined}
               className={cn(
-                "flex shrink-0 items-center gap-x-8",
-                "sm:gap-x-6 md:gap-x-8 lg:gap-x-10"
+                "flex shrink-0 items-center gap-x-10",
+                "sm:gap-x-12 md:gap-x-14 lg:gap-x-16"
               )}
             >
               {partners.map((p) =>
                 p.image ? (
-                  <PartnerLogoChip
+                  <PartnerLogoMark
                     key={p.name}
                     name={p.name}
                     image={p.image}
@@ -340,7 +332,7 @@ export function PartnersStrip() {
                     href={p.url}
                   />
                 ) : (
-                  <PartnerLabelChip key={p.name} name={p.name} ariaLabel={p.ariaLabel ?? p.name} href={p.url} />
+                  <PartnerLabelMark key={p.name} name={p.name} ariaLabel={p.ariaLabel ?? p.name} href={p.url} />
                 )
               )}
             </div>

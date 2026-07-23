@@ -337,8 +337,10 @@ describe("partner logo CSS system", () => {
     expect(css).toContain(".dark .partner-logo.partner-logo--natural {")
   })
 
-  it("chip variant is defined for compact partner display", () => {
-    expect(css).toContain(".partner-logo-chip {")
+  it("freeform mark helpers are defined for the partners marquee", () => {
+    expect(css).toContain(".partner-logo-mark {")
+    expect(css).toContain(".partner-logo-label {")
+    expect(css).not.toContain(".partner-logo-chip {")
   })
 })
 

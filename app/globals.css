@@ -181,7 +181,8 @@
 }
 
 /*
- * Corporate partner PNGs (transparent, cropped) on theme-aware chips:
+ * Corporate partner marks (transparent, cropped) on the freeform marquee /
+ * footer band — no card tiles:
  * Light: near-black ink (matches readable foreground on light surfaces).
  * Dark: softened white (~foreground) after invert — not pure 1/1/1.
  * .partner-logo--natural keeps brand color; tuned per theme for muted vs page bg.
@@ -293,18 +294,13 @@
   }
 }
 
-/* Circular partner tiles: card surface tracks theme so mono marks stay legible */
-.partner-logo-chip {
-  box-shadow:
-    0 1px 3px oklch(0.2 0.02 280 / 0.08),
-    0 4px 12px oklch(0.2 0.02 280 / 0.07),
-    inset 0 1px 0 oklch(1 0 0 / 0.6);
+/* Freeform partner marks — height-capped wordmarks, no tile chrome */
+.partner-logo-mark {
+  display: block;
 }
 
-.dark .partner-logo-chip {
-  box-shadow:
-    0 2px 8px oklch(0 0 0 / 0.35),
-    inset 0 1px 0 oklch(1 0 0 / 0.06);
+.partner-logo-label {
+  display: inline-block;
 }
 
 @theme inline {

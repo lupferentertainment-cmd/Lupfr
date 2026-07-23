@@ -27,13 +27,14 @@ describe("Will homepage update edge cases", () => {
     vi.clearAllMocks()
   })
 
-  it("partners strip uses rectangular logo tiles (no circle clip)", () => {
+  it("partners strip uses freeform logos (no card tiles or circle clip)", () => {
     const { container } = render(<PartnersStrip />)
-    const chips = container.querySelectorAll(".partner-logo-chip")
-    expect(chips.length).toBeGreaterThan(0)
-    for (const chip of chips) {
-      expect(chip.className).toMatch(/rounded-sm/)
-      expect(chip.className).not.toMatch(/rounded-full/)
+    expect(container.querySelectorAll(".partner-logo-chip").length).toBe(0)
+    const marks = container.querySelectorAll(".partner-logo-mark")
+    expect(marks.length).toBeGreaterThan(0)
+    for (const mark of marks) {
+      expect(mark.className).not.toMatch(/rounded-full/)
+      expect(mark.className).not.toMatch(/border-border|bg-card/)
     }
     const names = getPartners().map((p) => p.name)
     expect(names).toContain("Partiful")

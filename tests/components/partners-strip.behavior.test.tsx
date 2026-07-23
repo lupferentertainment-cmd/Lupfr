@@ -43,7 +43,7 @@ describe("PartnersStrip", () => {
     expect(links.map((a) => a.getAttribute("href"))).toEqual(linked.map((p) => p.url))
   })
 
-  it("renders logo-pending partners as label-only chips (comp: logo null → text label)", () => {
+  it("renders logo-pending partners as freeform text labels (comp: logo null → text)", () => {
     const pending = getPartners().filter((p) => !p.image)
     expect(pending.map((p) => p.name)).toContain("Maison Noir")
     const { container } = render(<PartnersStrip />)
@@ -51,13 +51,26 @@ describe("PartnersStrip", () => {
       ".partner-marquee-track > div:not([aria-hidden])"
     )!
     for (const p of pending) {
-      const chip = Array.from(primaryRow.querySelectorAll(".partner-logo-chip")).find(
+      const label = Array.from(primaryRow.querySelectorAll(".partner-logo-label")).find(
         (el) => el.textContent?.trim().toLowerCase() === p.name.toLowerCase()
       )
-      expect(chip, `${p.name} label chip missing from marquee`).toBeDefined()
-      // Label-only: no logo image inside the chip, and no dead link wrapper.
-      expect(chip!.querySelector("img")).toBeNull()
-      expect(chip!.closest("a")).toBeNull()
+      expect(label, `${p.name} label missing from marquee`).toBeDefined()
+      // Label-only: no logo image, no dead link wrapper, no tile chrome.
+      expect(label!.querySelector("img")).toBeNull()
+      expect(label!.closest("a")).toBeNull()
+      expect(label!.closest(".partner-logo-chip")).toBeNull()
+    }
+  })
+
+  it("renders freeform logos without rectangular card tiles", () => {
+    const { container } = render(<PartnersStrip />)
+    expect(container.querySelectorAll(".partner-logo-chip").length).toBe(0)
+    const marks = container.querySelectorAll(
+      ".partner-marquee-track > div:not([aria-hidden]) .partner-logo-mark"
+    )
+    expect(marks.length).toBeGreaterThan(0)
+    for (const mark of marks) {
+      expect(mark.className).not.toMatch(/border-border|bg-card|shadow-md/)
     }
   })
 

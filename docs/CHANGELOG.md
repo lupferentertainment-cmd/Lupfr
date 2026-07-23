@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Changed
+
+- **Freeform Corporate Partners marquee (owner request 2026-07-23):** the under-hero logo strip drops rectangular bordered/card tiles — logos and pending name labels render freeform on the page background (height-capped marks, muted→full opacity on hover, wider gaps). Grab-to-spin, eyebrow, and roster unchanged. `docs/DESIGN.md` + partners strip tests updated in the same change.
+
 ### Fixed
 
 - **Vercel Playwright OS libs (2026-07-22):** Vercel `buildCommand` sets `LUPFR_SKIP_BROWSER_CHECK=1` and drops Playwright from `installCommand` — the sandbox cannot install Chromium system libraries (`libnspr4.so`), which blocked Production after Vitest/routes went green. Local/GHA still run the full browser gate. `docs/DEPLOYMENT.md` + `docs/TESTING.md` updated in the same change.
