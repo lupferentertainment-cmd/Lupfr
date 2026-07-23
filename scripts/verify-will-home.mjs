@@ -92,7 +92,10 @@ async function main() {
     }
 
     await _scrollUntil(page, "#team")
-    if ((await page.getByText(/Backed by Partiful/i).count()) === 0) {
+    // Team body (incl. Partiful band) is client-deferred — wait after #team mounts.
+    try {
+      await page.getByText(/Backed by Partiful/i).first().waitFor({ state: "visible", timeout: 15000 })
+    } catch {
       failures.push("Partiful announcement missing under Team")
     }
 
