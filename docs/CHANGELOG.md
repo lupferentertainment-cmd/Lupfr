@@ -6,7 +6,13 @@ All notable project changes are recorded here.
 
 ### Changed
 
-- **Freeform Corporate Partners marquee (owner request 2026-07-23):** the under-hero logo strip drops rectangular bordered/card tiles — logos and pending name labels render freeform on the page background (height-capped marks, muted→full opacity on hover, wider gaps). Grab-to-spin, eyebrow, and roster unchanged. `docs/DESIGN.md` + partners strip tests updated in the same change.
+- **Partiful team-band art (owner request 2026-07-23):** `/images/partiful-announcement.webp` no longer uses the fromclay event flyer — swapped to a Partiful P mark on a dark gold stage so the “Backed by Partiful” band reads as partnership, not a show poster. `docs/DESIGN.md` updated in the same change.
+
+- **Partiful visibility + HD mobile hero (owner request 2026-07-23):** Partiful partner marks punch out baked black backgrounds (transparent freeform) and scale up in the strip; mobile hero uses a sharper yacht still (`hero-poster-yacht-mobile.webp` ~1600px) then fades in the same full-quality yacht MP4 after `window` load + idle (skipped for `prefers-reduced-motion` so the mobile perf gate stays poster-only). Team “Backed by Partiful” band unchanged. `docs/DESIGN.md` updated in the same change.
+
+- **Softer event-card depth (owner request 2026-07-23):** `.event-card-depth` resting/hover shadows use restrained black elevation instead of light/`--foreground` mixes that read as a white halo around home Past/Upcoming and `/events` cards. `docs/DESIGN.md` updated in the same change.
+
+- **Freeform Corporate Partners marquee (owner request 2026-07-23):** the under-hero logo strip drops rectangular bordered/card tiles — logos and pending name labels render freeform on the page background (height-capped marks, muted→full opacity on hover, wider gaps; no skeleton tile behind marks). Section marked `data-partners-chrome="freeform"`. Enforced by Playwright `verify-will-home` (computed shell bg/border/shadow + no `.partner-logo-chip`), RTL partners/will-home tests, and `look-and-feel` / `test-suite-gate` contracts. Grab-to-spin, eyebrow, and roster unchanged. `docs/DESIGN.md` + `docs/TESTING.md` updated in the same change.
 
 ### Fixed
 

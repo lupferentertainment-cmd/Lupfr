@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { ArrowDown, Play } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
 import { ScheduleCallCta } from "@/components/schedule-call-cta"
 import { LINKS } from "@/lib/links"
@@ -12,6 +13,8 @@ import {
   HERO_PHRASES,
   HERO_POSTER_DARK_MOBILE,
   HERO_POSTER_LIGHT_MOBILE,
+  HERO_VIDEO_DARK,
+  HERO_VIDEO_LIGHT,
   useHeroTheme,
 } from "@/components/hero-shared"
 
@@ -21,7 +24,11 @@ type HeroMobileStaticSectionProps = {
   reducePhraseMotion: boolean
 }
 
-/** Mobile (& SSR pre-breakpoint): poster image only, no hero videos, no `useScroll` / parallax. */
+/**
+ * Mobile (& SSR pre-breakpoint): HD poster for LCP, then the same yacht MP4
+ * fades in after `window` load + idle (skipped for prefers-reduced-motion so
+ * the mobile perf gate stays poster-only). No Framer / parallax on this path.
+ */
 export function HeroMobileStaticSection({
   prefersReducedMotion,
   phraseIndex,
@@ -30,11 +37,119 @@ export function HeroMobileStaticSection({
   const heroTheme = useHeroTheme()
   const activePosterSrc =
     heroTheme === "light" ? HERO_POSTER_LIGHT_MOBILE : HERO_POSTER_DARK_MOBILE
+  const activeVideoSrc = heroTheme === "light" ? HERO_VIDEO_LIGHT : HERO_VIDEO_DARK
+  const allowDeferredVideo = prefersReducedMotion === false
+
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const [mountVideo, setMountVideo] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
+
+  useEffect(() => {
+    if (!allowDeferredVideo) return
+
+    let cancelled = false
+    let idleId: number | undefined
+    let timeoutId: number | undefined
+
+    const armVideo = () => {
+      if (cancelled) return
+      const start = () => {
+        if (!cancelled) setMountVideo(true)
+      }
+      if (typeof window.requestIdleCallback === "function") {
+        idleId = window.requestIdleCallback(start, { timeout: 1800 })
+      } else {
+        timeoutId = window.setTimeout(start, 400)
+      }
+    }
+
+    if (document.readyState === "complete") {
+      armVideo()
+    } else {
+      window.addEventListener("load", armVideo, { once: true })
+    }
+
+    return () => {
+      cancelled = true
+      window.removeEventListener("load", armVideo)
+      if (idleId !== undefined && typeof window.cancelIdleCallback === "function") {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
+  }, [allowDeferredVideo])
+
+  useEffect(() => {
+    if (!mountVideo) return
+    const video = videoRef.current
+    if (!video) return
+
+    video.muted = true
+    video.defaultMuted = true
+    video.playsInline = true
+    video.loop = true
+    video.setAttribute("muted", "")
+    video.setAttribute("playsinline", "")
+
+    const markReady = () => setVideoReady(true)
+    const ensurePlaying = () => {
+      if (!video.paused && !video.ended) {
+        markReady()
+        return
+      }
+      if (video.ended) video.currentTime = 0
+      void video.play().then(markReady).catch(() => {
+        /* Autoplay blocked — keep HD poster. */
+      })
+    }
+
+    const onReady = () => {
+      markReady()
+      ensurePlaying()
+    }
+
+    video.addEventListener("loadeddata", onReady)
+    video.addEventListener("canplay", onReady)
+    video.addEventListener("playing", markReady)
+
+    if (video.readyState >= 2) onReady()
+    else {
+      video.load()
+      ensurePlaying()
+    }
+
+    return () => {
+      video.removeEventListener("loadeddata", onReady)
+      video.removeEventListener("canplay", onReady)
+      video.removeEventListener("playing", markReady)
+    }
+  }, [mountVideo, activeVideoSrc])
 
   return (
     <>
       <div className="absolute inset-0 bg-black">
         <HeroFallbackPoster posterSrc={activePosterSrc} />
+        {mountVideo && (
+          <video
+            key={activeVideoSrc}
+            ref={videoRef}
+            muted
+            loop
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            disableRemotePlayback
+            poster={activePosterSrc}
+            className={
+              "absolute inset-0 z-[2] h-full w-full object-cover object-center [image-rendering:auto] " +
+              "motion-safe:transition-opacity motion-safe:duration-700 motion-reduce:transition-none " +
+              (videoReady ? "opacity-100" : "opacity-0")
+            }
+            aria-hidden
+          >
+            <source src={activeVideoSrc} type="video/mp4" />
+          </video>
+        )}
         <div className="absolute inset-0 bg-black/25 z-[5]" aria-hidden />
         <div className="absolute inset-0 lupfr-hero-media-wash z-10" aria-hidden />
       </div>

@@ -64,9 +64,22 @@ describe("PartnersStrip", () => {
 
   it("renders freeform logos without rectangular card tiles", () => {
     const { container } = render(<PartnersStrip />)
+    const section = container.querySelector("section")
+    expect(section?.getAttribute("data-partners-chrome")).toBe("freeform")
     expect(container.querySelectorAll(".partner-logo-chip").length).toBe(0)
+    expect(container.querySelectorAll(".skeleton-shimmer").length).toBe(0)
+    const shells = container.querySelectorAll(
+      ".partner-marquee-track > div:not([aria-hidden]) .partner-logo-shell",
+    )
+    expect(shells.length).toBeGreaterThan(0)
+    for (const shell of shells) {
+      expect(shell.className).toMatch(/bg-transparent/)
+      expect(shell.className).toMatch(/border-0/)
+      expect(shell.className).toMatch(/shadow-none/)
+      expect(shell.className).not.toMatch(/bg-card|border-border|shadow-md|partner-logo-chip/)
+    }
     const marks = container.querySelectorAll(
-      ".partner-marquee-track > div:not([aria-hidden]) .partner-logo-mark"
+      ".partner-marquee-track > div:not([aria-hidden]) .partner-logo-mark",
     )
     expect(marks.length).toBeGreaterThan(0)
     for (const mark of marks) {

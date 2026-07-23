@@ -132,6 +132,15 @@ describe("canonical package workflow gate", () => {
         expect(packageJson.scripts["_verify:will-home"]).toBe(
             "bun scripts/verify-will-home.mjs"
         )
+        const willHome = fs.readFileSync(
+            path.join(rootDir, "scripts", "verify-will-home.mjs"),
+            "utf8",
+        )
+        // Canonical freeform partners contract — no card tiles on the marquee.
+        expect(willHome).toContain('data-partners-chrome')
+        expect(willHome).toContain("partner-logo-chip")
+        expect(willHome).toContain("partner-logo-shell")
+        expect(willHome).toContain("bgAlpha")
     })
 
     it("enforces 90% Vitest coverage thresholds", () => {

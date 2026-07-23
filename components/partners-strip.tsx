@@ -217,36 +217,26 @@ function PartnerLogoMark({
 
   return (
     <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
-      <span className="relative inline-flex h-full items-center">
-        <span
-          className={cn(
-            "skeleton-shimmer pointer-events-none absolute inset-y-1 left-0 right-0 z-0 rounded-sm",
-            "motion-safe:transition-opacity motion-safe:duration-300",
-            "motion-reduce:transition-none",
-            ready ? "opacity-0" : "opacity-100"
-          )}
-          aria-hidden
-        />
-        <Image
-          key={activeSrc}
-          src={activeSrc}
-          alt={name}
-          width={240}
-          height={80}
-          sizes="(max-width: 640px) 5.5rem, (max-width: 1024px) 7rem, 8.5rem"
-          draggable={false}
-          onLoad={() => setReady(true)}
-          className={cn(
-            "partner-logo-mark relative z-[1] object-contain object-center",
-            imageClassName,
-            // Height after YAML layout classes so freeform strip sizing wins twMerge.
-            "h-7 w-auto max-w-[9rem] sm:h-8 md:h-9",
-            "motion-safe:transition-opacity motion-safe:duration-300",
-            "motion-reduce:transition-none",
-            ready ? "opacity-100" : "opacity-0"
-          )}
-        />
-      </span>
+      {/* No skeleton tile — a shimmer box reads as a card around the mark. */}
+      <Image
+        key={activeSrc}
+        src={activeSrc}
+        alt={name}
+        width={240}
+        height={80}
+        sizes="(max-width: 640px) 5.5rem, (max-width: 1024px) 7rem, 8.5rem"
+        draggable={false}
+        onLoad={() => setReady(true)}
+        className={cn(
+          "partner-logo-mark object-contain object-center",
+          imageClassName,
+          // Height after YAML layout classes so freeform strip sizing wins twMerge.
+          "h-7 w-auto max-w-[9rem] sm:h-8 md:h-9",
+          "motion-safe:transition-opacity motion-safe:duration-300",
+          "motion-reduce:transition-none",
+          ready ? "opacity-100" : "opacity-0"
+        )}
+      />
     </PartnerLogoShell>
   )
 }
@@ -263,9 +253,10 @@ function PartnerLogoShell({
   // Freeform corporate strip: marks sit on the page background with no
   // bordered/card tiles — natural logo aspect, muted until hover/focus.
   const className = cn(
-    "group inline-flex h-8 shrink-0 items-center sm:h-9 md:h-10",
+    "partner-logo-shell group inline-flex h-8 shrink-0 items-center bg-transparent sm:h-9 md:h-10",
+    "border-0 shadow-none ring-0",
     "opacity-70 transition-opacity duration-200 ease-snap hover:opacity-100",
-    "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm"
+    "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
   )
   if (!href) return <div className={className} aria-label={ariaLabel}>{children}</div>
   return (
@@ -292,6 +283,7 @@ export function PartnersStrip() {
     // white in light, pure dark in dark (owner request 2026-07-11).
     <section
       aria-label="Corporate partners"
+      data-partners-chrome="freeform"
       className="relative py-6 sm:py-8"
     >
       {/* leading-none: the kicker's inherited 1.5 line-height is fractional at

@@ -341,6 +341,12 @@ describe("partner logo CSS system", () => {
     expect(css).toContain(".partner-logo-mark {")
     expect(css).toContain(".partner-logo-label {")
     expect(css).not.toContain(".partner-logo-chip {")
+    expect(partnersStrip).toContain('data-partners-chrome="freeform"')
+    expect(partnersStrip).toContain("partner-logo-shell")
+    expect(partnersStrip).toContain("bg-transparent")
+    expect(partnersStrip).toContain("border-0")
+    expect(partnersStrip).not.toContain("partner-logo-chip")
+    expect(partnersStrip).not.toContain("skeleton-shimmer")
   })
 })
 

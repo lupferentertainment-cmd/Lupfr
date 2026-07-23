@@ -5,10 +5,12 @@ import { describe, expect, it } from "vitest"
 
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const heroDesktopPath = path.join(rootDir, "components", "hero-desktop.tsx")
+const heroSharedPath = path.join(rootDir, "components", "hero-shared.tsx")
 const nextConfigPath = path.join(rootDir, "next.config.mjs")
 
 describe("hero video performance guardrails", () => {
     const heroDesktop = fs.readFileSync(heroDesktopPath, "utf8")
+    const heroShared = fs.readFileSync(heroSharedPath, "utf8")
     const nextConfig = fs.readFileSync(nextConfigPath, "utf8")
 
     it("uses real event video media with a poster fallback", () => {
@@ -16,8 +18,10 @@ describe("hero video performance guardrails", () => {
         expect(heroDesktop).toContain("activeVideoSrc")
         expect(heroDesktop).toContain("<HeroFallbackPoster posterSrc={activePosterSrc} />")
         expect(heroDesktop).toContain("activePosterSrc")
-        expect(heroDesktop).toContain('const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"')
-        expect(heroDesktop).toContain('const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"')
+        expect(heroShared).toContain('export const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"')
+        expect(heroShared).toContain('export const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"')
+        expect(heroDesktop).toContain("HERO_VIDEO_DARK")
+        expect(heroDesktop).toContain("HERO_VIDEO_LIGHT")
         expect(heroDesktop).toContain("hasHeroVideo")
         expect(heroDesktop).toContain("key={activeVideoSrc}")
         expect(heroDesktop).toContain("src={activeVideoSrc}")

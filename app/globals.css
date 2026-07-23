@@ -495,13 +495,15 @@
 }
 
 @layer components {
+  /* Depth via dark elevation only — never light/--foreground shadows (those
+   * read as a white halo around every card on the dark stage). */
   .event-card-depth {
     isolation: isolate;
     transform-style: preserve-3d;
     box-shadow:
-      0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent),
-      0 10px 24px color-mix(in oklch, var(--foreground) 9%, transparent),
-      0 24px 54px color-mix(in oklch, var(--foreground) 5%, transparent);
+      0 1px 0 rgb(0 0 0 / 0.18),
+      0 4px 12px rgb(0 0 0 / 0.16),
+      0 10px 22px rgb(0 0 0 / 0.1);
     transition:
       border-color var(--transition-snap) var(--ease-snap),
       box-shadow var(--transition-smooth) var(--ease-snap),
@@ -527,9 +529,9 @@
   .event-card-depth:hover,
   .event-card-depth:focus-within {
     box-shadow:
-      0 1px 0 color-mix(in oklch, var(--gold-specular) 20%, transparent),
-      0 14px 34px color-mix(in oklch, var(--foreground) 13%, transparent),
-      0 32px 72px color-mix(in oklch, var(--gold-shadow) 11%, transparent);
+      0 1px 0 rgb(0 0 0 / 0.22),
+      0 8px 20px rgb(0 0 0 / 0.22),
+      0 18px 36px rgb(0 0 0 / 0.14);
   }
 
   .event-card-depth:hover::after,

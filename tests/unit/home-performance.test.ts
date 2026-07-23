@@ -160,11 +160,19 @@ describe("home page mobile transfer guardrails", () => {
         expect(events).toContain("priority={prioritizeImage}")
     })
 
-    it("serves the tiny mobile-only hero posters (not the 2560px desktop posters) so the phone LCP source stays small", () => {
+    it("serves dedicated mobile hero posters for LCP (not the desktop poster constants)", () => {
         expect(heroMobile).toContain("HERO_POSTER_DARK_MOBILE")
         expect(heroMobile).toContain("HERO_POSTER_LIGHT_MOBILE")
         // Must not fall back to the heavy desktop posters on the mobile path.
         expect(heroMobile).not.toMatch(/HERO_POSTER_(DARK|LIGHT)\b/)
+    })
+
+    it("defers the yacht hero MP4 on mobile until after load (skipped for reduced-motion)", () => {
+        expect(heroMobile).toContain("HERO_VIDEO_DARK")
+        expect(heroMobile).toContain("allowDeferredVideo")
+        expect(heroMobile).toContain('prefersReducedMotion === false')
+        expect(heroMobile).toContain("requestIdleCallback")
+        expect(heroMobile).toContain('addEventListener("load"')
     })
 
     it("keeps the base schedule CTA free of Framer Motion", () => {

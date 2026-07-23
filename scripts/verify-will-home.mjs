@@ -102,6 +102,58 @@ async function main() {
     // Partner strip is above the fold — check after returning near top.
     await page.evaluate(() => window.scrollTo(0, 0))
     await _sleep(200)
+    const partnersSection = page.locator('[aria-label="Corporate partners"]')
+    if ((await partnersSection.count()) === 0) {
+      failures.push("Corporate partners section missing")
+    } else if ((await partnersSection.getAttribute("data-partners-chrome")) !== "freeform") {
+      failures.push('partners strip missing data-partners-chrome="freeform"')
+    }
+    if ((await partnersSection.locator(".partner-logo-chip").count()) > 0) {
+      failures.push("partners strip still renders .partner-logo-chip card tiles")
+    }
+    const partnerShells = partnersSection.locator(
+      ".partner-marquee-track > div:not([aria-hidden]) .partner-logo-shell",
+    )
+    const shellCount = await partnerShells.count()
+    if (shellCount === 0) {
+      failures.push("partners strip has no .partner-logo-shell marks")
+    }
+    // Focus rings also use box-shadow — only fail on card fill + borders.
+    for (let i = 0; i < shellCount; i++) {
+      const chrome = await partnerShells.nth(i).evaluate((el) => {
+        const s = getComputedStyle(el)
+        const parseAlpha = (color) => {
+          if (!color || color === "transparent") return 0
+          const m = String(color).match(/rgba?\(([^)]+)\)/i)
+          if (!m) return 1
+          const parts = m[1].split(",").map((p) => p.trim())
+          if (parts.length < 4) return 1
+          return Number(parts[3])
+        }
+        return {
+          className: el.className,
+          bgAlpha: parseAlpha(s.backgroundColor),
+          borderTop: Number.parseFloat(s.borderTopWidth) || 0,
+          borderRight: Number.parseFloat(s.borderRightWidth) || 0,
+          borderBottom: Number.parseFloat(s.borderBottomWidth) || 0,
+          borderLeft: Number.parseFloat(s.borderLeftWidth) || 0,
+        }
+      })
+      const hasBorder =
+        chrome.borderTop > 0 ||
+        chrome.borderRight > 0 ||
+        chrome.borderBottom > 0 ||
+        chrome.borderLeft > 0
+      const classLooksLikeCard = /bg-card|border-border|shadow-md|partner-logo-chip/.test(
+        chrome.className,
+      )
+      if (chrome.bgAlpha > 0.02 || hasBorder || classLooksLikeCard) {
+        failures.push(
+          `partner shell ${i} has card chrome (bgAlpha=${chrome.bgAlpha}, border=${hasBorder}, classCard=${classLooksLikeCard})`,
+        )
+        break
+      }
+    }
     const partners = page.locator('a[href*="partiful.com"], img[alt*="Partiful" i]')
     if ((await partners.count()) === 0) {
       failures.push("Partiful partner mark missing from home")

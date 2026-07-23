@@ -250,7 +250,7 @@ export function Team() {
           <div className="relative min-h-[200px] sm:min-h-[240px]">
             <Image
               src="/images/partiful-announcement.webp"
-              alt="LUPFR x Partiful partnership"
+              alt="Partiful partnership mark"
               fill
               sizes="(max-width: 640px) 100vw, 50vw"
               className="object-cover"

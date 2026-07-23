@@ -14,6 +14,14 @@ describe("PARTNERS", () => {
     expect(names).not.toContain("Soundcheck")
   })
 
+  it("keeps Partiful larger with dark-mode mark for freeform strip (owner 2026-07-23)", () => {
+    const partiful = PARTNERS.find((p) => p.name === "Partiful")
+    expect(partiful?.image).toBe("/corporate_partners/partiful.webp")
+    expect(partiful?.imageDark).toBe("/corporate_partners/partiful_light.webp")
+    expect(partiful?.logoTreatment).toBe("natural")
+    expect(partiful?.imageClassName).toContain("scale-[1.35]")
+  })
+
   it("every image path starts with / when present", () => {
     for (const p of PARTNERS) {
       if (p.image !== undefined) {

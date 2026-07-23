@@ -31,12 +31,16 @@ export const HERO_POSTER_LIGHT = "/hero/hero-poster-yacht.webp"
 export const HERO_POSTER = HERO_POSTER_DARK
 
 /**
- * Mobile-only hero poster: purpose-built 3:4 center crop, aggressively
- * compressed (<90KB) so the phone LCP loads a tiny source instead of the
- * full desktop poster. Desktop keeps the full poster + video.
+ * Mobile-only hero poster: purpose-built 3:4 center crop from the yacht still,
+ * sized for retina phones so LCP stays sharp. Desktop keeps the full poster +
+ * immediate video; mobile may fade the same yacht MP4 in after window load.
  */
 export const HERO_POSTER_DARK_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
 export const HERO_POSTER_LIGHT_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
+
+/** Same yacht clip for desktop + deferred mobile playback (no quality cut). */
+export const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"
+export const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"
 
 /**
  * Theme for hero media src selection. SSR cannot know the stored theme, so the

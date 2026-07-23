@@ -29,7 +29,17 @@ describe("Will homepage update edge cases", () => {
 
   it("partners strip uses freeform logos (no card tiles or circle clip)", () => {
     const { container } = render(<PartnersStrip />)
+    expect(container.querySelector("section")?.getAttribute("data-partners-chrome")).toBe(
+      "freeform",
+    )
     expect(container.querySelectorAll(".partner-logo-chip").length).toBe(0)
+    const shells = container.querySelectorAll(".partner-logo-shell")
+    expect(shells.length).toBeGreaterThan(0)
+    for (const shell of shells) {
+      expect(shell.className).toMatch(/bg-transparent/)
+      expect(shell.className).toMatch(/border-0/)
+      expect(shell.className).not.toMatch(/bg-card|border-border|shadow-md/)
+    }
     const marks = container.querySelectorAll(".partner-logo-mark")
     expect(marks.length).toBeGreaterThan(0)
     for (const mark of marks) {

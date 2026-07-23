@@ -18,12 +18,12 @@ const HeroDesktopViewport = dynamic(() => import("@/components/hero-desktop"), {
 })
 
 /**
- * Mobile/small-tablet (`useIsMobile() !== false`): poster hero + static lite orbs (`HeroLiteOrbs` variant
- * mobile does not load the heavier desktop `<HeroDesktopViewport>` chunk (dual MP4s, Motion orb loops,
- * `useScroll` parallax, scroll-linked line shine).
+ * Mobile/small-tablet (`useIsMobile() !== false`): HD poster + deferred yacht MP4 (after load/idle;
+ * skipped for reduced-motion) + static lite orbs. Does not load the heavier desktop
+ * `<HeroDesktopViewport>` chunk (Motion orb loops, `useScroll` parallax, scroll-linked shine).
  *
  * Laptop/desktop (`useIsMobile() === false`): loads `HeroDesktopViewport` asynchronously after the client
- * knows viewport width — mobile visitors avoid parsing/downloading desktop-only hero code paths.
+ * knows viewport width — mobile visitors avoid desktop-only parallax code paths.
  */
 export function Hero() {
   const containerRef = useRef<HTMLElement>(null)

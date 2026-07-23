@@ -64,6 +64,10 @@ describe("event card shape guardrails", () => {
         expect(css).toContain(".event-card-depth::after")
         expect(css).toContain("@keyframes event-card-sheen")
         expect(css).toMatch(/prefers-reduced-motion: reduce[\s\S]*?\.event-card-depth::after/)
+        // Dark-stage halo guard: depth must not mix light/--foreground into box-shadow.
+        const depthBlock = css.match(/\.event-card-depth\s*\{[\s\S]*?\n  \}/)?.[0] ?? ""
+        expect(depthBlock).toContain("rgb(0 0 0 /")
+        expect(depthBlock).not.toMatch(/box-shadow:[\s\S]*var\(--foreground\)/)
     })
 })
 
