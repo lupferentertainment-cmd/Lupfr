@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- **Cookie consent honors cookie fallback (2026-07-22):** `getCookieConsentAccepted()` now returns true when the `lupfr_cookie_consent` cookie is set even if `localStorage` writes failed (private mode / quota), matching `acceptCookieConsent`. Cookie-consent RTL tests expire that cookie with `Max-Age=0` (happy-dom ignores `document.cookie = ""`). Unblocks Vercel Vitest (`phone-list-preferences` contact-list cookie case) and Production deploys that ship Partiful partners.
+
 - **Vercel Vitest localStorage spies (2026-07-22):** phone-list preference and cookie-consent tests spy `localStorage` instance methods instead of `Storage.prototype`, so the full Vercel build gate does not fail when happy-dom’s storage object is not on that prototype chain (unblocked Production deploys that ship Partiful partners).
 
 ### Added

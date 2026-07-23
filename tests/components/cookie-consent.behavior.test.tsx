@@ -35,7 +35,8 @@ describe("CookieConsent", () => {
   beforeEach(() => {
     vi.useRealTimers()
     localStorage.clear()
-    document.cookie = ""
+    // happy-dom ignores `document.cookie = ""` — expire the consent cookie explicitly.
+    document.cookie = "lupfr_cookie_consent=; Max-Age=0; Path=/"
   })
 
   it("shows the cookie notice for a new visitor and removes it after Accept", async () => {

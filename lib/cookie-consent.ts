@@ -16,9 +16,20 @@ function readStorage(): string | null {
     }
 }
 
+function hasConsentCookie(): boolean {
+    if (typeof document === "undefined") return false
+    try {
+        return document.cookie.split(";").some((chunk) => chunk.trim() === `${CONSENT_COOKIE}=accepted`)
+    } catch {
+        return false
+    }
+}
+
 /** Whether the user has accepted cookies / storage notice (client-only). */
 export function getCookieConsentAccepted(): boolean {
-    return readStorage() === "accepted"
+    // Prefer localStorage; fall back to the consent cookie when storage writes fail
+    // (private mode / quota) — acceptCookieConsent still sets the cookie in that case.
+    return readStorage() === "accepted" || hasConsentCookie()
 }
 
 function setConsentCookie(): void {

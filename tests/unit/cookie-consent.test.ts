@@ -37,6 +37,8 @@ describe("cookie-consent", () => {
     acceptCookieConsent()
     expect(fired).toBe(true)
     expect(document.cookie).toContain("lupfr_cookie_consent")
+    // Cookie-only consent must still count as accepted (private mode / Vercel happy-dom).
+    expect(getCookieConsentAccepted()).toBe(true)
     spy.mockRestore()
   })
 
