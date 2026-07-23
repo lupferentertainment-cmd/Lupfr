@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- **Vercel Playwright OS libs (2026-07-22):** Vercel `buildCommand` sets `LUPFR_SKIP_BROWSER_CHECK=1` and drops Playwright from `installCommand` — the sandbox cannot install Chromium system libraries (`libnspr4.so`), which blocked Production after Vitest/routes went green. Local/GHA still run the full browser gate. `docs/DEPLOYMENT.md` + `docs/TESTING.md` updated in the same change.
+
 - **Vercel verify-routes /dev/fd (2026-07-22):** `scripts/verify-routes.sh` no longer uses bash process substitution (`< <(...)`) for link extraction — Vercel’s build sandbox lacks `/dev/fd`, which aborted the crawl after `/` and failed Production. Uses temp files under the existing mktemp dir instead.
 
 - **Cookie consent honors cookie fallback (2026-07-22):** `getCookieConsentAccepted()` now returns true when the `lupfr_cookie_consent` cookie is set even if `localStorage` writes failed (private mode / quota), matching `acceptCookieConsent`. Cookie-consent RTL tests expire that cookie with `Max-Age=0` (happy-dom ignores `document.cookie = ""`). Unblocks Vercel Vitest (`phone-list-preferences` contact-list cookie case) and Production deploys that ship Partiful partners.
@@ -14,7 +16,7 @@ All notable project changes are recorded here.
 
 ### Added
 
-- **Full local test suite on Vercel (owner request 2026-07-22):** `vercel.json` drops the `LUPFR_SKIP_*` sandbox subset — `buildCommand` is now `bun run test && bun run _build` (same gate as local/pre-commit/GHA, including Playwright crawls). `installCommand` runs `scripts/install-playwright-chromium.sh` (`--with-deps` with chromium-only fallback). `docs/TESTING.md` + `docs/DEPLOYMENT.md` updated in the same change.
+- **Full local test suite on Vercel (owner request 2026-07-22):** Vercel build runs Vitest coverage + route/asset crawls + `_build` before deploy. Playwright browser crawls remain local/GHA-only (see Fixed: Vercel Playwright OS libs). `docs/TESTING.md` + `docs/DEPLOYMENT.md` updated in the same change.
 
 - **90% Vitest coverage + Will Playwright edge gate (2026-07-22):** raised global coverage thresholds to **90%** (statements/branches/functions/lines); excluded retired `components/seaside/**` and generated JSON from the denominator; added RTL/edge-case tests (partners rect tiles, past compact, services Explore/Learn more, ASTRD, Partiful team band, drive-gallery fetch, data-normalization branches) and Playwright `scripts/verify-will-home.mjs` wired into `bun run test` browser checks. Past home cards shrink further to ~180–196px (`data-compact`). `docs/TESTING.md` + `docs/DESIGN.md` updated in the same change.
 

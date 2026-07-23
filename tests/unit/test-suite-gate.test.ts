@@ -67,12 +67,13 @@ describe("canonical package workflow gate", () => {
         expect(shipDevScript).toContain("SEO/Lighthouse audits on protected previews")
     })
 
-    it("runs the same full local gate on Vercel before the deploy build", () => {
-        // Owner request 2026-07-22: no LUPFR_SKIP_* on Vercel — same bun run test
-        // as local / pre-commit / GitHub Actions (incl. Playwright crawls).
-        expect(vercelConfig.buildCommand).toBe("bun run test && bun run _build")
-        expect(vercelConfig.buildCommand).not.toContain("LUPFR_SKIP_")
-        expect(vercelConfig.installCommand).toContain("install-playwright-chromium.sh")
+    it("runs the Vitest + route/asset gate on Vercel before the deploy build", () => {
+        // Vercel cannot install Chromium OS libs (libnspr4) — skip Playwright there only.
+        // Local / pre-commit / GitHub Actions still run the full browser suite.
+        expect(vercelConfig.buildCommand).toBe("LUPFR_SKIP_BROWSER_CHECK=1 bun run test && bun run _build")
+        expect(vercelConfig.buildCommand).toContain("LUPFR_SKIP_BROWSER_CHECK=1")
+        expect(vercelConfig.buildCommand).not.toContain("LUPFR_SKIP_ROUTE_CHECK")
+        expect(vercelConfig.installCommand).toBe("bun install")
         expect(fs.existsSync(path.join(rootDir, "scripts", "install-playwright-chromium.sh"))).toBe(true)
     })
 
