@@ -34,7 +34,8 @@ describe("phone-list-preferences", () => {
   })
 
   it("treats blocked localStorage reads as missing preferences", () => {
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    // Spy the instance (not Storage.prototype): Vercel/happy-dom may not share the same proto chain.
+    vi.spyOn(localStorage, "getItem").mockImplementation(() => {
       throw new Error("blocked")
     })
 
@@ -42,7 +43,7 @@ describe("phone-list-preferences", () => {
   })
 
   it("does not throw when localStorage writes are blocked", () => {
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    vi.spyOn(localStorage, "setItem").mockImplementation(() => {
       throw new Error("quota")
     })
 
@@ -61,7 +62,7 @@ describe("phone-list-preferences", () => {
 
   it("describes non-Error storage failures when warning", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    vi.spyOn(localStorage, "getItem").mockImplementation(() => {
       throw "string-fail"
     })
     expect(hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)).toBe(false)
@@ -70,7 +71,7 @@ describe("phone-list-preferences", () => {
 
   it("falls back to a generic warning when Error.message is empty", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    vi.spyOn(localStorage, "getItem").mockImplementation(() => {
       throw new Error("")
     })
     expect(hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)).toBe(false)

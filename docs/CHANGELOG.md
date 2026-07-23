@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Vercel Vitest localStorage spies (2026-07-22):** phone-list preference and cookie-consent tests spy `localStorage` instance methods instead of `Storage.prototype`, so the full Vercel build gate does not fail when happy-dom’s storage object is not on that prototype chain (unblocked Production deploys that ship Partiful partners).
+
 ### Added
 
 - **Full local test suite on Vercel (owner request 2026-07-22):** `vercel.json` drops the `LUPFR_SKIP_*` sandbox subset — `buildCommand` is now `bun run test && bun run _build` (same gate as local/pre-commit/GHA, including Playwright crawls). `installCommand` runs `scripts/install-playwright-chromium.sh` (`--with-deps` with chromium-only fallback). `docs/TESTING.md` + `docs/DEPLOYMENT.md` updated in the same change.

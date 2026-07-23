@@ -18,7 +18,8 @@ describe("cookie-consent", () => {
   })
 
   it("treats read errors as not accepted", () => {
-    const spy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    // Spy the instance (not Storage.prototype): Vercel/happy-dom may not share the same proto chain.
+    const spy = vi.spyOn(localStorage, "getItem").mockImplementation(() => {
       throw new Error("blocked")
     })
     expect(getCookieConsentAccepted()).toBe(false)
@@ -26,7 +27,7 @@ describe("cookie-consent", () => {
   })
 
   it("acceptCookieConsent still sets cookie and fires event when localStorage.setItem throws", () => {
-    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    const spy = vi.spyOn(localStorage, "setItem").mockImplementation(() => {
       throw new Error("quota")
     })
     let fired = false
