@@ -146,6 +146,6 @@ export function eventStatusBreakdown(): { name: string; count: number }[] {
 
 /** Optional browser URL for the contacts / phone-list Google Sheet (SoR). */
 export function getAdminContactsSheetUrl(): string | null {
-  const value = process.env.ADMIN_CONTACTS_SHEET_URL?.trim()
+  const value = process.env["ADMIN_CONTACTS_SHEET_URL"]?.trim()
   return value || null
 }

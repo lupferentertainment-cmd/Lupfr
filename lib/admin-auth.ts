@@ -17,19 +17,27 @@ export type AdminSession = {
   username: string
 }
 
-function getAdminPassword(): string | null {
-  const value = process.env.ADMIN_PASSWORD?.trim()
+/** Dynamic lookup so Next does not inline empty values from the build env. */
+function readEnv(name: string): string | null {
+  const value = process.env[name]?.trim()
   return value ? value : null
 }
 
+function getAdminPassword(): string | null {
+  return readEnv("ADMIN_PASSWORD")
+}
+
+const MIN_SESSION_SECRET_BYTES = 32
+
 function getSessionSecret(): string | null {
-  const value = process.env.ADMIN_SESSION_SECRET?.trim()
-  return value ? value : null
+  const value = readEnv("ADMIN_SESSION_SECRET")
+  if (!value) return null
+  if (Buffer.byteLength(value, "utf8") < MIN_SESSION_SECRET_BYTES) return null
+  return value
 }
 
 export function getAdminUsername(): string {
-  const value = process.env.ADMIN_USERNAME?.trim()
-  return value || DEFAULT_ADMIN_USERNAME
+  return readEnv("ADMIN_USERNAME") || DEFAULT_ADMIN_USERNAME
 }
 
 export function isAdminConfigured(): boolean {
@@ -146,8 +154,12 @@ export function getAdminSessionFromCookieHeader(
     .map((part) => part.trim())
     .find((part) => part.startsWith(`${ADMIN_SESSION_COOKIE}=`))
   if (!match) return null
-  const token = decodeURIComponent(match.slice(ADMIN_SESSION_COOKIE.length + 1))
-  return verifyAdminSessionToken(token)
+  try {
+    const token = decodeURIComponent(match.slice(ADMIN_SESSION_COOKIE.length + 1))
+    return verifyAdminSessionToken(token)
+  } catch {
+    return null
+  }
 }
 
 export async function requireAdminSession(): Promise<AdminSession | null> {

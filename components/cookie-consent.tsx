@@ -17,22 +17,34 @@ const COOKIE_NOTICE_DELAY_MS = 4500
  * First-visit notice for cookies / local storage. Vercel Analytics and
  * contact-list preference cookies are enabled only after Accept.
  */
+function isAdminChromeContext(pathname: string | null): boolean {
+    if (
+        typeof window !== "undefined" &&
+        (window.location.hostname.startsWith("admin.") ||
+            window.location.hostname === "admin.localhost")
+    ) {
+        return true
+    }
+    return (
+        typeof pathname === "string" &&
+        (pathname === "/admin" || pathname.startsWith("/admin/"))
+    )
+}
+
 export function CookieConsent() {
     const pathname = usePathname()
     const [visible, setVisible] = useState(false)
-    const isAdminRoute =
-        typeof pathname === "string" &&
-        (pathname === "/admin" || pathname.startsWith("/admin/"))
+    const isAdminRoute = isAdminChromeContext(pathname)
 
     useEffect(() => {
-        if (isAdminRoute) return
+        if (isAdminChromeContext(pathname)) return
         if (getCookieConsentAccepted()) return
         const timeoutId = window.setTimeout(
             () => setVisible(true),
             COOKIE_NOTICE_DELAY_MS
         )
         return () => window.clearTimeout(timeoutId)
-    }, [isAdminRoute])
+    }, [pathname])
 
     useEffect(() => {
         const onConsent = () => setVisible(false)

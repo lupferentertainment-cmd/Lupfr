@@ -12,11 +12,28 @@ NEXT_ENV_SNAPSHOT="${CI_TMP_ROOT}/next-env.d.ts"
 
 export NEXT_DIST_DIR=".next-ci/${RUN_ID}"
 export VITEST_COVERAGE_DIR="${CI_TMP_ROOT}/coverage"
-export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$((4310 + RANDOM % 20000))}"
-export VERIFY_ASSETS_PORT="${VERIFY_ASSETS_PORT:-$((14310 + RANDOM % 5000))}"
-export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$((24310 + RANDOM % 20000))}"
-export VERIFY_NAV_SCROLL_PORT="${VERIFY_NAV_SCROLL_PORT:-$((5310 + RANDOM % 8000))}"
-export VERIFY_MOBILE_PERF_PORT="${VERIFY_MOBILE_PERF_PORT:-$((6310 + RANDOM % 8000))}"
+
+# Next.js rejects several IANA-reserved ports (e.g. 6669/ircu). Pick until safe.
+_lupfr_pick_port() {
+  local base="$1" span="$2" candidate=""
+  for _ in $(seq 1 40); do
+    candidate=$((base + RANDOM % span))
+    case "$candidate" in
+      6000|6665|6666|6667|6668|6669|6697) continue ;;
+    esac
+    echo "$candidate"
+    return 0
+  done
+  echo $((base + 111))
+}
+
+export VERIFY_ROUTES_PORT="${VERIFY_ROUTES_PORT:-$(_lupfr_pick_port 4310 20000)}"
+export VERIFY_ASSETS_PORT="${VERIFY_ASSETS_PORT:-$(_lupfr_pick_port 14310 5000)}"
+export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$(_lupfr_pick_port 24310 20000)}"
+export VERIFY_NAV_SCROLL_PORT="${VERIFY_NAV_SCROLL_PORT:-$(_lupfr_pick_port 5310 8000)}"
+export VERIFY_WILL_HOME_PORT="${VERIFY_WILL_HOME_PORT:-$(_lupfr_pick_port 4395 8000)}"
+export VERIFY_ADMIN_PORT="${VERIFY_ADMIN_PORT:-$(_lupfr_pick_port 4396 8000)}"
+export VERIFY_MOBILE_PERF_PORT="${VERIFY_MOBILE_PERF_PORT:-$(_lupfr_pick_port 6310 8000)}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
 
@@ -78,6 +95,8 @@ run_browser_checks() {
   bun run _verify:nav-scroll
   restore_next_snapshots
   bun run _verify:will-home
+  restore_next_snapshots
+  bun run _verify:admin
   restore_next_snapshots
   bun run _verify:mobile-perf
   restore_next_snapshots

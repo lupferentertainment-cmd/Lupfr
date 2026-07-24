@@ -104,7 +104,7 @@ Phone numbers are validated with a permissive phone pattern. Emails, when presen
 - `429`: More than 5 attempts / 15 minutes / IP → rate-limit error body
 - `503`: Missing `ADMIN_PASSWORD` or `ADMIN_SESSION_SECRET` (fail-closed) → `{ "error": "Admin portal is unavailable." }`
 
-**Internal.** Credential check + HMAC session in `lib/admin-auth.ts`. Rate limit via `lib/rate-limit.ts` scope `admin-login`.
+**Internal.** Credential check + HMAC session in `lib/admin-auth.ts`. Rate limit via `lib/rate-limit.ts` scope `admin-login` — **best-effort on Vercel** (in-memory per isolate; not a global shared counter across instances).
 
 ---
 

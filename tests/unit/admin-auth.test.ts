@@ -40,6 +40,16 @@ describe("lib/admin-auth", () => {
     expect(() => createAdminSessionToken("will@lupfr.com")).toThrow(/ADMIN_SESSION_SECRET/)
   })
 
+  it("fail-closes when ADMIN_SESSION_SECRET is shorter than 32 UTF-8 bytes", async () => {
+    process.env.ADMIN_SESSION_SECRET = "too-short-secret"
+    const { isAdminConfigured, verifyAdminCredentials, createAdminSessionToken } =
+      await import("@/lib/admin-auth")
+    expect(Buffer.byteLength(process.env.ADMIN_SESSION_SECRET, "utf8")).toBeLessThan(32)
+    expect(isAdminConfigured()).toBe(false)
+    expect(verifyAdminCredentials("will@lupfr.com", FIXTURE_PASSWORD)).toBe(false)
+    expect(() => createAdminSessionToken("will@lupfr.com")).toThrow(/ADMIN_SESSION_SECRET/)
+  })
+
   it("defaults ADMIN_USERNAME to will@lupfr.com", async () => {
     delete process.env.ADMIN_USERNAME
     const { getAdminUsername, verifyAdminCredentials } = await import("@/lib/admin-auth")
@@ -108,6 +118,14 @@ describe("lib/admin-auth", () => {
     expect(getAdminSessionFromCookieHeader(header)).toEqual({ username: "will@lupfr.com" })
     expect(getAdminSessionFromCookieHeader(null)).toBeNull()
     expect(getAdminSessionFromCookieHeader("nope=1")).toBeNull()
+  })
+
+  it("returns null when the session cookie value is not valid URI-encoded", async () => {
+    const { ADMIN_SESSION_COOKIE, getAdminSessionFromCookieHeader } = await import(
+      "@/lib/admin-auth"
+    )
+    const header = `${ADMIN_SESSION_COOKIE}=%E0%A4%A`
+    expect(getAdminSessionFromCookieHeader(header)).toBeNull()
   })
 })
 

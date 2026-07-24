@@ -61,3 +61,5 @@ Use `bun run test` as the single full verification gate before shipping or promo
 ## Credential rotation
 
 Rotate Resend and Google Sheets webhook credentials in the deployment provider secret store. Do not commit secret values; only document environment variable names in repo docs.
+
+**Admin portal.** When rotating `ADMIN_PASSWORD`, also rotate `ADMIN_SESSION_SECRET` (≥32 random bytes) in the same change and redeploy Preview then production. Rotating the session secret immediately invalidates existing `lupfr_admin_session` cookies (operators must log in again). Login rate limiting (`admin-login`, 5/15min/IP) is in-memory and **best-effort on Vercel** (per isolate).

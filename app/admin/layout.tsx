@@ -1,6 +1,9 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 
+/** Admin auth depends on runtime ADMIN_* env — never bake “unavailable” at build. */
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: "Admin",
   robots: {

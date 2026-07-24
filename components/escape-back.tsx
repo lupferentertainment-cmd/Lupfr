@@ -18,7 +18,14 @@ export function EscapeBack() {
   const router = useRouter()
 
   useEffect(() => {
-    if (typeof pathname === "string" && (pathname === "/admin" || pathname.startsWith("/admin/"))) return
+    if (
+      window.location.hostname.startsWith("admin.") ||
+      window.location.hostname === "admin.localhost" ||
+      (typeof pathname === "string" &&
+        (pathname === "/admin" || pathname.startsWith("/admin/")))
+    ) {
+      return
+    }
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return
       if (e.defaultPrevented) return

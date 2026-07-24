@@ -143,6 +143,20 @@ describe("canonical package workflow gate", () => {
         expect(willHome).toContain("bgAlpha")
     })
 
+    it("keeps the admin portal Playwright edge-case gate inside browser checks", () => {
+        expect(ciScript).toContain("bun run _verify:admin")
+        expect(packageJson.scripts["_verify:admin"]).toBe("bun scripts/verify-admin.mjs")
+        const adminGate = fs.readFileSync(
+            path.join(rootDir, "scripts", "verify-admin.mjs"),
+            "utf8",
+        )
+        expect(adminGate).toContain("admin-login-form")
+        expect(adminGate).toContain("/admin/api/export/events")
+        expect(adminGate).toContain("TEST_SESSION_SECRET")
+        expect(adminGate).toContain("ADMIN_PASSWORD")
+        expect(ciScript).toContain("VERIFY_ADMIN_PORT")
+    })
+
     it("enforces 90% Vitest coverage thresholds", () => {
         expect(vitestConfig).toMatch(/statements:\s*90/)
         expect(vitestConfig).toMatch(/branches:\s*90/)
