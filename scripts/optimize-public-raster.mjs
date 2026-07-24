@@ -211,12 +211,12 @@ async function reencodeCardWebp(abs) {
     if (best.length <= CARD_MAX_BYTES) {
       break
     }
-    if (quality > 55) {
+    if (quality > 40) {
       quality -= 5
       continue
     }
-    if (maxWidth > 1200) {
-      maxWidth -= 200
+    if (maxWidth > 800) {
+      maxWidth -= 100
       quality = CARD_WEBP_QUALITY
       continue
     }

@@ -12,6 +12,8 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- **July 24 website asset refresh (owner zip):** refreshed curated WebPs from `LUPFR WEBSITE updates_july24` — artists, event posters, brand cards + SEA//SIDE gallery 1–6, team portraits, corporate partners (incl. Partiful/SEA//SIDE/Umbrella), Partiful announcement tile, and services imagery. Path-stable YAML. Optimize card re-encode can step quality/width further so dense posters (e.g. marina_music) stay ≤450KB. Deferred: VIEW DECK slides, raw hero MP4, uploads/screenshots.
+
 - **Partiful team-band art (owner request 2026-07-23):** `/images/partiful-announcement.webp` no longer uses the fromclay event flyer — swapped to a Partiful P mark on a dark gold stage so the “Backed by Partiful” band reads as partnership, not a show poster. `docs/DESIGN.md` updated in the same change.
 
 - **Partiful visibility + HD mobile hero (owner request 2026-07-23):** Partiful partner marks punch out baked black backgrounds (transparent freeform) and scale up in the strip; mobile hero uses a sharper yacht still (`hero-poster-yacht-mobile.webp` ~1600px) then fades in the same full-quality yacht MP4 after `window` load + idle (skipped for `prefers-reduced-motion` so the mobile perf gate stays poster-only). Team “Backed by Partiful” band unchanged. `docs/DESIGN.md` updated in the same change.
