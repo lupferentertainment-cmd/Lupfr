@@ -10,7 +10,8 @@
 
 **Constraints.**
 
-- No database; no multi-user account table. Email is the only persistent public “backend” action (send-only). A gated **operator shell** at `/admin` (and `admin.lupfr.com`) may use a single shared env credential + signed session cookie — not a CMS and not a user database.
+- No multi-user account table and no CMS. Public marketing actions remain send-only (Resend) plus the Google Sheets phone-list webhook. An optional **Supabase** project may store operator-facing copies of phone-list contacts and consent-gated first-party telemetry (`page_impression` / `cta_click`) for the `/admin` portal — Sheets stays source of record for leads; Supabase must not replace or break the webhook path.
+- A gated **operator shell** at `/admin` (and `admin.lupfr.com`) uses a single shared env credential + signed session cookie — not a CMS and not a user database. It may embed **real** Vercel Web Analytics API series (never invented traffic numbers).
 - Resend must be configured (`RESEND_API_KEY`); no silent degradation—API returns explicit error if missing.
 - Canonical documentation lives in `docs/` (OVERVIEW, ARCHITECTURE, DESIGN, API, DEPLOYMENT, TESTING, REQUIREMENTS); docs are repo-only and guarded from public route exposure.
 

@@ -1,6 +1,6 @@
 # API
 
-**Scope.** The app exposes public HTTP APIs used by the marketing front-end (`contact`, `newsletter`, `phone-list`) plus operator auth under `/admin/api/*`. No public API versioning or external contract.
+**Scope.** The app exposes public HTTP APIs used by the marketing front-end (`contact`, `newsletter`, `phone-list`, `telemetry`) plus operator auth / ops under `/admin/api/*`. No public API versioning or external contract.
 
 **External links.** Public CTA destinations live in `lib/links.ts`. `LINKS.scheduleCall` points to the current Google Calendar booking page (`https://calendar.app.google/85eJL1R8euGnsjbw9`), and the reusable Schedule a call button reads from that single source of truth.
 
@@ -81,7 +81,31 @@ Phone numbers are validated with a permissive phone pattern. Emails, when presen
 - `500`: Google Sheets webhook not configured (`GOOGLE_SHEETS_WEBHOOK_URL` missing) → `{ "error": "..." }`
 - `502`: Webhook network failure or non-OK webhook response → `{ "error": "...", "upstreamStatus"?: number }` (`upstreamStatus` is the Google endpoint’s HTTP status when the webhook returned a non-2xx response)
 
-**Internal.** Route forwards `{ name, email, phone, source, page, userAgent, submittedAt }` and, when `GOOGLE_SHEETS_SECRET` is configured, `secret` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST` and body JSON using `Content-Type: text/plain;charset=utf-8` (see `docs/DEPLOYMENT.md`).
+**Internal.** Route forwards `{ name, email, phone, source, page, userAgent, submittedAt }` and, when `GOOGLE_SHEETS_SECRET` is configured, `secret` to `GOOGLE_SHEETS_WEBHOOK_URL` with `POST` and body JSON using `Content-Type: text/plain;charset=utf-8` (see `docs/DEPLOYMENT.md`). After Sheets accepts the lead, the route **best-effort dual-writes** the same fields to Supabase `contacts` when `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` are set — Supabase failures never change the success response.
+
+---
+
+## POST /api/telemetry
+
+**Purpose.** Consent-gated first-party product analytics for the operator portal (page impressions + key CTA clicks). Public ingest — **not** under `/admin` (admin session cookies use `Path=/admin` on apex). Client `SiteTelemetry` only fires after cookie consent.
+
+**Request.** `Content-Type: application/json`. Body:
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| eventName | Yes | `page_impression` \| `cta_click` |
+| path | Yes | Pathname starting with `/` (max 500) |
+| href | No | Link target for CTA clicks |
+| label | No | CTA label |
+| meta | No | Flat string map (small keys/values) |
+
+**Responses.**
+
+- `200`: `{ "success": true }`
+- `400`: Invalid JSON / unsupported event / bad path
+- `429`: Rate limit (60/min/IP, best-effort)
+- `503`: Supabase not configured
+- `502`: Supabase insert failed
 
 ---
 
@@ -120,7 +144,7 @@ Phone numbers are validated with a permissive phone pattern. Emails, when presen
 
 ## GET /admin/api/export/:resource
 
-**Purpose.** Authenticated CSV download of read-only site content (events, artists, services, brands, partners). Built from generated JSON helpers in `lib/admin-export.ts` — not leads (those stay in Google Sheets).
+**Purpose.** Authenticated CSV download of read-only site content (events, artists, services, brands, partners). Built from generated JSON helpers in `lib/admin-export.ts`. Lead/contacts CSV is a separate route (`GET /admin/api/contacts/export`).
 
 **Auth.** Requires valid `lupfr_admin_session` cookie.
 
@@ -132,3 +156,43 @@ Phone numbers are validated with a permissive phone pattern. Emails, when presen
 - `401`: Missing/invalid session → `{ "error": "Unauthorized." }`
 - `404`: Unknown resource → `{ "error": "Unknown export resource." }`
 - `503`: Admin env not configured → `{ "error": "Admin portal is unavailable." }`
+
+---
+
+## GET /admin/api/analytics
+
+**Purpose.** Authenticated JSON for in-portal traffic charts from the **Vercel Web Analytics API** (`lib/vercel-web-analytics.ts`). Returns real series only; when token/project env is missing, `{ configured: false, daily: [], totals: { pageviews: 0, visitors: 0 } }` — never fabricated traffic.
+
+**Auth.** Requires valid `lupfr_admin_session` cookie.
+
+**Env.** `LUPFR_VERCEL_API_TOKEN`, `LUPFR_VERCEL_PROJECT_ID`, optional `LUPFR_VERCEL_TEAM_ID`.
+
+**Responses.** `200` JSON (`configured`, `daily`, `topPaths`, `totals`, `since`, `until`, optional `error`); `401` / `503` as other admin APIs.
+
+---
+
+## GET /admin/api/contacts
+
+**Purpose.** Authenticated JSON list of dual-written phone-list contacts from Supabase (newest first). Includes optional `sheetUrl` from `ADMIN_CONTACTS_SHEET_URL`.
+
+**Auth.** Requires valid `lupfr_admin_session` cookie.
+
+**Responses.** `200` `{ configured, contacts, sheetUrl, error? }`; `401` / `503` as other admin APIs.
+
+---
+
+## GET /admin/api/contacts/export
+
+**Purpose.** Authenticated CSV of Supabase contacts.
+
+**Responses.** `200` `text/csv`; `401`; `503` when Supabase unset / admin unset.
+
+---
+
+## GET /admin/api/telemetry
+
+**Purpose.** Authenticated recent first-party telemetry events + simple `byName` counts for Recharts.
+
+**Auth.** Requires valid `lupfr_admin_session` cookie.
+
+**Responses.** `200` `{ configured, events, byName, error? }`; `401` / `503` as other admin APIs.

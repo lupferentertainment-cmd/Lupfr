@@ -250,6 +250,7 @@ export function Navigation() {
             <Link
               href={bookHref}
               prefetch={false}
+              data-lupfr-track={bookLabel}
               className="flex h-9 min-h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap px-4 !text-sm font-medium leading-tight tracking-normal transition-[color,background-color,transform] duration-150 ease-out btn-metallic-gold rounded-full hover:scale-[1.03] active:scale-[0.98]"
             >
               {bookLabel}
@@ -330,6 +331,7 @@ export function Navigation() {
                 href={bookHref}
                 prefetch={false}
                 onClick={closeMenu}
+                data-lupfr-track={bookLabel}
                 className="mt-1 px-8 py-4 btn-metallic-gold font-bold tracking-normal rounded-full inline-block text-center max-w-[min(100%,22rem)]"
               >
                 {bookLabel}

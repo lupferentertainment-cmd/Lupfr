@@ -299,6 +299,7 @@ function HeroDesktopParallaxSection({
             >
               <Link
                 href={CONTACT_PAGE_PATH}
+                data-lupfr-track="Book an Event"
                 className="group flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 btn-metallic-gold font-semibold tracking-normal rounded-full overflow-hidden relative max-w-full min-w-0 justify-center"
               >
                 <span className="relative z-10">Book an Event</span>

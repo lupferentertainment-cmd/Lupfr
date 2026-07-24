@@ -42,6 +42,7 @@ export const ScheduleCallCta = forwardRef<HTMLAnchorElement, ScheduleCallCtaProp
       href={LINKS.scheduleCall}
       target="_blank"
       rel="noopener noreferrer"
+      data-lupfr-track="Schedule a call"
       className={cn(BASE, TONE[tone], SIZE[size], className)}
       {...rest}
     >

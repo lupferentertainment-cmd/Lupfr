@@ -7,12 +7,18 @@ function getFirstFetchCall(fetchMock: { mock: { calls: unknown[][] } }): Recorde
 }
 
 describe("POST /api/phone-list", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
+    vi.resetModules()
     process.env.GOOGLE_SHEETS_WEBHOOK_URL = "https://example.test/webhook"
     delete process.env.GOOGLE_SHEETS_SECRET
     delete process.env.GOOGLE_SHEETS_SECRET_FIELD
+    // Isolate from optional Supabase dual-write (may be present in local/agent shells).
+    delete process.env.SUPABASE_URL
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY
+    const { resetSupabaseAdminForTests } = await import("@/lib/supabase-server")
+    resetSupabaseAdminForTests()
   })
 
   it("rejects missing name", async () => {
@@ -86,6 +92,47 @@ describe("POST /api/phone-list", () => {
     expect(forwarded.name).toBe("Jane Doe")
     expect(forwarded.email).toBe("jane@example.com")
     expect(forwarded.phone).toBe("+1 (415) 555-0100")
+  })
+
+  it("dual-writes to Supabase after Sheets accepts without failing signup", async () => {
+    process.env.SUPABASE_URL = "https://example.supabase.co"
+    process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-key"
+    const { resetSupabaseAdminForTests } = await import("@/lib/supabase-server")
+    resetSupabaseAdminForTests()
+
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      if (url.includes("example.test/webhook")) {
+        return new Response("ok", { status: 200 })
+      }
+      return new Response(JSON.stringify([{ id: "1" }]), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      })
+    })
+    vi.stubGlobal("fetch", fetchMock)
+
+    const { POST } = await import("@/app/api/phone-list/route")
+    const res = await POST(
+      new Request("http://localhost/api/phone-list", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+        },
+        body: JSON.stringify({
+          name: "Dual Write",
+          email: "dual@example.com",
+        }),
+      })
+    )
+    expect(res.status).toBe(200)
+    expect(fetchMock.mock.calls.some((c) => String(c[0]).includes("example.test/webhook"))).toBe(
+      true
+    )
+    expect(
+      fetchMock.mock.calls.some((c) => String(c[0]).includes("example.supabase.co"))
+    ).toBe(true)
   })
 
   it("accepts email only and omits phone from webhook JSON", async () => {

@@ -7,6 +7,7 @@ import {
     sanitizePhone,
 } from "@/lib/contact-input"
 import { createRateLimitKey, enforceRateLimit } from "@/lib/rate-limit"
+import { insertContact, isSupabaseConfigured } from "@/lib/supabase-server"
 
 interface PhoneListBody {
     name?: string
@@ -145,6 +146,24 @@ export async function POST(request: Request) {
             { ...base },
             { status: 502 }
         )
+    }
+
+    // Dual-write to Supabase for in-admin contacts (Sheets remains source of record).
+    // Never fail the public signup if the optional store is down.
+    if (isSupabaseConfigured()) {
+        try {
+            await insertContact({
+                name,
+                email: email || undefined,
+                phone: phone || undefined,
+                source: payload.source,
+                page: payload.page,
+                userAgent: payload.userAgent,
+                submittedAt: payload.submittedAt,
+            })
+        } catch {
+            // intentional: Sheets already accepted the lead
+        }
     }
 
     return NextResponse.json({ success: true })

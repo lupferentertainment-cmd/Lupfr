@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Barlow_Condensed, Work_Sans, Space_Mono } from 'next/font/google'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
+import { SiteTelemetry } from '@/components/site-telemetry'
 import { EscapeBack } from '@/components/escape-back'
 import { MotionProvider } from '@/components/motion-provider'
 import { PrefetchHomeRoute } from '@/components/prefetch-home-route'
@@ -190,6 +191,7 @@ export default function RootLayout({
           </MotionProvider>
         </ThemeProvider>
         <DeferredAnalytics />
+        <SiteTelemetry />
       </body>
     </html>
   )

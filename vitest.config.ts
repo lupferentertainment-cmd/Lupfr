@@ -33,6 +33,8 @@ const testConfig = {
       // Thin admin UI shells; auth/API logic is covered in unit/integration tests.
       "**/app/admin/**",
       "**/components/admin/**",
+      // Consent-gated client beacon; covered via /api/telemetry contract tests.
+      "**/components/site-telemetry.tsx",
     ],
     thresholds: {
       statements: 90,

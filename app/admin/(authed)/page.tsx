@@ -1,5 +1,8 @@
 import Link from "next/link"
 import { AdminContentCharts } from "@/components/admin/content-charts"
+import { AdminContactsPanel } from "@/components/admin/contacts-panel"
+import { AdminTelemetryPanel } from "@/components/admin/telemetry-panel"
+import { AdminTrafficCharts } from "@/components/admin/traffic-charts"
 import {
   artistGenreBreakdown,
   eventStatusBreakdown,
@@ -43,9 +46,10 @@ export default function AdminDashboardPage() {
           Website traffic
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-          Daily and weekly traffic live in{" "}
-          <strong className="font-medium text-zinc-200">Vercel Analytics</strong> for the Lupfr
-          project. Charts below are site content stats only — not visitor traffic.
+          Live series from the{" "}
+          <strong className="font-medium text-zinc-200">Vercel Web Analytics API</strong> (real
+          pageviews / visitors — never invented). Deep-link remains available if you want the full
+          Vercel UI.
         </p>
         <a
           href={VERCEL_ANALYTICS_URL}
@@ -55,11 +59,23 @@ export default function AdminDashboardPage() {
         >
           Open Vercel Analytics →
         </a>
+        <AdminTrafficCharts />
         <p className="mt-4 text-xs leading-relaxed text-zinc-500">
           Public site loads <code className="text-zinc-400">@vercel/analytics</code> + Speed
           Insights via <code className="text-zinc-400">DeferredAnalytics</code> after cookie
-          consent. How-to: Vercel → project <strong>lupfr</strong> → Analytics → view daily/weekly.
+          consent. Admin fetch uses <code className="text-zinc-400">LUPFR_VERCEL_API_TOKEN</code>.
         </p>
+      </section>
+
+      <section aria-labelledby="telemetry-heading">
+        <h2 id="telemetry-heading" className="font-condensed text-2xl font-extrabold uppercase">
+          Impressions &amp; clicks
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-zinc-400">
+          First-party events from <code className="text-zinc-300">POST /api/telemetry</code> after
+          cookie consent (page impressions + key CTA clicks). Stored in Supabase for this portal.
+        </p>
+        <AdminTelemetryPanel />
       </section>
 
       <section aria-labelledby="contacts-heading">
@@ -67,25 +83,10 @@ export default function AdminDashboardPage() {
           Contacts / phone list
         </h2>
         <p className="mt-2 max-w-2xl text-sm text-zinc-400">
-          Leads from the site phone-list flow are stored in Google Sheets (source of record). The
-          app does not keep a contacts database — open the sheet to view or download.
+          Google Sheets remains the source of record via the webhook. New signups also dual-write to
+          Supabase so this table / CSV works in-portal.
         </p>
-        {contactsSheetUrl ? (
-          <a
-            href={contactsSheetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex rounded-sm border border-amber-500/50 bg-amber-500/10 px-5 py-3 font-condensed text-sm font-bold uppercase tracking-wider text-amber-400"
-          >
-            Open contacts / phone list Sheet →
-          </a>
-        ) : (
-          <p className="mt-4 rounded-sm border border-zinc-800 bg-zinc-950/60 px-4 py-3 text-sm text-zinc-400">
-            Set <code className="text-zinc-200">ADMIN_CONTACTS_SHEET_URL</code> in Vercel (Preview +
-            Production) to the Google Sheet URL Will uses for phone-list contacts. Webhook URL alone
-            is not a browser link.
-          </p>
-        )}
+        <AdminContactsPanel sheetUrl={contactsSheetUrl} />
       </section>
 
       <section aria-labelledby="counts-heading">
@@ -116,7 +117,8 @@ export default function AdminDashboardPage() {
           Downloads
         </h2>
         <p className="mt-2 text-sm text-zinc-400">
-          One-click CSV of site content (requires admin session). No Stripe / payments data.
+          One-click CSV of site content (requires admin session). Contacts CSV is under Contacts
+          above when Supabase is configured.
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           {ADMIN_EXPORT_RESOURCES.map((resource) => (
@@ -145,7 +147,7 @@ export default function AdminDashboardPage() {
             >
               Vercel Analytics
             </a>
-            <span className="ml-2 text-xs text-zinc-500">Daily / weekly traffic</span>
+            <span className="ml-2 text-xs text-zinc-500">Full dashboard UI</span>
           </li>
           <li>
             <a
@@ -168,6 +170,17 @@ export default function AdminDashboardPage() {
               Resend dashboard
             </a>
             <span className="ml-2 text-xs text-zinc-500">Contact + newsletter</span>
+          </li>
+          <li>
+            <a
+              href="https://supabase.com/dashboard/project/wteradopcqalpetjadkh"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-amber-400/90 underline-offset-4 hover:underline"
+            >
+              Supabase (contacts + telemetry)
+            </a>
+            <span className="ml-2 text-xs text-zinc-500">Ops data store</span>
           </li>
           <li>
             <a
@@ -199,7 +212,7 @@ export default function AdminDashboardPage() {
         <ul className="mt-3 list-inside list-disc text-sm text-zinc-600">
           <li>Content edit (CMS) — not in MVP</li>
           <li>Multi-user accounts</li>
-          <li>In-app lead CSV (use the Contacts Sheet above)</li>
+          <li>Historical Sheet import into Supabase</li>
         </ul>
       </section>
     </div>

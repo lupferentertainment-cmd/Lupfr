@@ -47,7 +47,9 @@ How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel aut
 - **Required for admin portal:** `ADMIN_PASSWORD` – shared operator password (env only; never commit). Without it (or without `ADMIN_SESSION_SECRET`), `/admin` fail-closes (login API **503**).
 - **Required for admin portal:** `ADMIN_SESSION_SECRET` – ≥32 UTF-8 bytes of random secret used to HMAC-sign `lupfr_admin_session`. Shorter values fail-closed (login **503**), same as missing.
 - **Optional:** `ADMIN_USERNAME` – defaults to `will@lupfr.com` when unset.
-- **Optional:** `ADMIN_CONTACTS_SHEET_URL` – browser URL for the Google Sheet that stores phone-list / contacts (source of record). Shown as a large “Open contacts / phone list Sheet” CTA on `/admin`. Distinct from `GOOGLE_SHEETS_WEBHOOK_URL` (Apps Script `/exec` webhook — not a spreadsheet link).
+- **Optional:** `ADMIN_CONTACTS_SHEET_URL` – browser URL for the Google Sheet that stores phone-list / contacts (source of record). Shown as CTA + iframe embed on `/admin`. Distinct from `GOOGLE_SHEETS_WEBHOOK_URL` (Apps Script `/exec` webhook — not a spreadsheet link).
+- **Optional (in-admin Vercel traffic):** `LUPFR_VERCEL_API_TOKEN` – Vercel access token that can query Web Analytics for the Lupfr project. Pair with `LUPFR_VERCEL_PROJECT_ID` and `LUPFR_VERCEL_TEAM_ID`. **Do not** name these `VERCEL_PROJECT_ID` / `VERCEL_ORG_ID` — those collide with the Vercel CLI.
+- **Optional (contacts + telemetry store):** `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` – server-only. Enables phone-list dual-write, `POST /api/telemetry`, and admin contacts/telemetry panels. Create project + tables (`contacts`, `telemetry_events`) once; RLS enabled with no public policies (service role only).
 
 **Operator entry.** Primary URL: **`https://admin.lupfr.com`** (attach the hostname in Vercel Domains after Preview OK). `proxy.ts` rewrites `admin.lupfr.com` / `admin.localhost` onto `/admin` (same pattern as the blog host). Apex path **`/admin`** also works on Preview and production. Cookie path strategy: **`Path=/admin` on apex hosts**; **`Path=/` on `admin.*` hosts** so the session is sent for rewritten paths like `/login` on the dedicated host.
 
@@ -66,6 +68,13 @@ If missing, add each variable interactively:
 5. `vercel env add ADMIN_PASSWORD preview` (and production)
 6. `vercel env add ADMIN_SESSION_SECRET preview` (and production)
 7. `vercel env add ADMIN_CONTACTS_SHEET_URL preview` (and production) — paste the Sheet URL Will opens for contacts
+8. `vercel env add LUPFR_VERCEL_API_TOKEN preview` (and production)
+9. `vercel env add LUPFR_VERCEL_PROJECT_ID preview` (and production)
+10. `vercel env add LUPFR_VERCEL_TEAM_ID preview` (and production)
+11. `vercel env add SUPABASE_URL preview` (and production)
+12. `vercel env add SUPABASE_SERVICE_ROLE_KEY preview` (and production)
+
+**Supabase one-time setup (if creating a new project).** Dashboard → New project → run SQL for `contacts` + `telemetry_events` (see `lib/supabase-server.ts` / ops notes in CHANGELOG). Copy Project URL + `service_role` key into Vercel Preview + Production. Historical Sheet rows are not auto-imported — paste `ADMIN_CONTACTS_SHEET_URL` for legacy viewing.
 
 **Preview-first flow (Git).**
 

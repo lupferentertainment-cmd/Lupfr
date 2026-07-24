@@ -6,6 +6,8 @@ All notable project changes are recorded here.
 
 ### Added
 
+- **Admin portal expansion (analytics + contacts + telemetry):** In-portal **Vercel Web Analytics** charts via `GET /admin/api/analytics` (`LUPFR_VERCEL_*` env; real series only). Optional **Supabase** dual-write from `/api/phone-list` + admin contacts table/CSV (`GET /admin/api/contacts`, `/admin/api/contacts/export`). Consent-gated **`POST /api/telemetry`** + admin impressions/clicks panel (`GET /admin/api/telemetry`). Sheet CTA/iframe still via `ADMIN_CONTACTS_SHEET_URL`. Password admin unchanged; no CMS.
+
 - **Operator admin portal (MVP):** password-gated shell at **`admin.lupfr.com`** (host rewrite) and **`/admin`**. Shared env credential (`ADMIN_USERNAME` default `will@lupfr.com`, `ADMIN_PASSWORD` + `ADMIN_SESSION_SECRET` ≥32 UTF-8 bytes), HMAC session cookie `lupfr_admin_session` (APIs at `/admin/api/*` so `Path=/admin` works on apex; `Path=/` on admin host). Auth in `app/admin/(authed)/layout.tsx` — proxy is rewrite/SEO only. Analytics-first dashboard (Vercel Analytics deep-link + note of in-app `DeferredAnalytics`); **Recharts** content charts (upcoming/past events, artist genres — not fake traffic); CSV downloads via `/admin/api/export/*`; contacts Sheet CTA via optional `ADMIN_CONTACTS_SHEET_URL`; ops links; no CMS/DB/Stripe. Robots Disallow + sitemap exclude + noindex. Marketing chrome suppressed on `admin.*` hosts. Playwright gate `scripts/verify-admin.mjs` (`bun run _verify:admin`) covers login + dashboard + export auth in local/GHA browser checks. Docs flipped in the same change.
 
 ### Changed

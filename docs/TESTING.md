@@ -56,6 +56,12 @@ The retired SEA//SIDE landing (`components/seaside/**`) and generated JSON under
 - `tests/unit/admin-sitemap-exclusion.test.ts` – sitemap helper excludes `/admin` routes.
 - `tests/unit/admin-export.test.ts` – CSV builders for events/artists/etc. (escaping, status column).
 - `tests/integration/admin-export-route.test.ts` – authenticated CSV export API (401/404/200).
+- `tests/unit/vercel-web-analytics.test.ts` – Web Analytics config gate + daily/top-path parse; API errors yield empty series (no invented numbers).
+- `tests/unit/telemetry.test.ts` – `parseTelemetryBody` allow-list + path rules.
+- `tests/unit/supabase-server.test.ts` – Supabase config gate + contacts CSV builder.
+- `tests/integration/admin-analytics-route.test.ts` – `/admin/api/analytics` auth + configured/unconfigured payloads.
+- `tests/integration/admin-contacts-route.test.ts` – `/admin/api/contacts` auth + Supabase list boundary.
+- `tests/integration/telemetry-route.test.ts` – `POST /api/telemetry` validation, 503 when unset, success path.
 - `tests/unit/artists-list.test.ts` – YAML-generated featured artist contract: requested front artist order, retired artist removal, and artist social / featured track links.
 - `tests/unit/events-list.test.ts` – `getUpcomingEvents` / `getPastEvents` sort order (`dateISO` ascending for upcoming with TBD last; newest-first for past); `getEventBySlug` / `eventDetailPath`; event `contentLinks` loaded from YAML-generated data; `todayDateISOInEventTZ`; `getEventTag` (TBD / past / today / upcoming); `eventShareTitle` / `eventHeroAbsoluteUrl` (including relative image paths) for event detail sharing and OG image URLs.
 - `tests/components/event-detail-link.behavior.test.tsx` – **RTL**: event card link wrapper renders canonical `/events/[slug]` hrefs, prefetches once on focus/hover, and sets `data-pending="true"` immediately on touch activation for mobile tap feedback.
