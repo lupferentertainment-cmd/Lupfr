@@ -3,9 +3,10 @@ import { BLOG_PUBLIC_ACCESS_ENABLED, SEASIDE_REDIRECT_URL } from "@/lib/site"
 
 const BLOCKED_PREFIXES = ["/docs", "/_docs"]
 const BLOG_HOSTS = ["blog.localhost", "blog.lupfr.com"]
+const ADMIN_HOSTS = ["admin.localhost", "admin.lupfr.com"]
 const SEASIDE_HOSTS = ["seaside.localhost", "seaside.lupfr.com"]
-const BLOG_SKIP_PREFIXES = ["/_next", "/api"]
-const BLOG_SKIP_EXACT = new Set([
+const HOST_SKIP_PREFIXES = ["/_next", "/api"]
+const HOST_SKIP_EXACT = new Set([
   "/favicon.ico",
   "/favicon.svg",
   "/site.webmanifest",
@@ -30,6 +31,7 @@ const BLOCKED_ROOT_PATHS = new Set([
 ])
 
 const BLOG_DISABLED_EXACT = new Set(["/blog"])
+const NOINDEX_ROBOTS = "noindex, nofollow, noarchive"
 
 function shouldBlock(pathname: string): boolean {
   const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
@@ -47,44 +49,82 @@ function notFoundResponse(): NextResponse {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
-      "X-Robots-Tag": "noindex, nofollow, noarchive",
+      "X-Robots-Tag": NOINDEX_ROBOTS,
     },
   })
+}
+
+function withNoindex(response: NextResponse): NextResponse {
+  response.headers.set("X-Robots-Tag", NOINDEX_ROBOTS)
+  return response
+}
+
+function isAdminPath(pathname: string): boolean {
+  const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  return normalized === "/admin" || normalized.startsWith("/admin/")
 }
 
 function shouldBlockBlogAccess(pathname: string, hostHeader: string | null): boolean {
   if (BLOG_PUBLIC_ACCESS_ENABLED) return false
   const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
   if (BLOG_DISABLED_EXACT.has(normalized) || normalized.startsWith("/blog/")) return true
-  return isBlogHost(hostHeader) && !shouldSkipBlogRewrite(pathname)
+  return isBlogHost(hostHeader) && !shouldSkipHostRewrite(pathname)
+}
+
+function hostFromHeader(hostHeader: string | null): string | null {
+  if (!hostHeader) return null
+  return hostHeader.toLowerCase().split(":")[0] ?? null
 }
 
 function isBlogHost(hostHeader: string | null): boolean {
-  if (!hostHeader) return false
-  const host = hostHeader.toLowerCase().split(":")[0]
-  return BLOG_HOSTS.includes(host)
+  const host = hostFromHeader(hostHeader)
+  return host !== null && BLOG_HOSTS.includes(host)
 }
 
-function shouldSkipBlogRewrite(pathname: string): boolean {
+function isAdminHost(hostHeader: string | null): boolean {
+  const host = hostFromHeader(hostHeader)
+  return host !== null && ADMIN_HOSTS.includes(host)
+}
+
+function shouldSkipHostRewrite(pathname: string): boolean {
   const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
-  if (BLOG_SKIP_EXACT.has(normalized)) return true
-  if (normalized === "/blog" || normalized.startsWith("/blog/")) return true
-  return BLOG_SKIP_PREFIXES.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`))
+  if (HOST_SKIP_EXACT.has(normalized)) return true
+  return HOST_SKIP_PREFIXES.some((prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`))
 }
 
 function rewriteBlogHost(request: NextRequest): NextResponse | null {
   if (!isBlogHost(request.headers.get("host"))) return null
-  if (shouldSkipBlogRewrite(request.nextUrl.pathname)) return null
+  if (shouldSkipHostRewrite(request.nextUrl.pathname)) return null
+  const normalized = request.nextUrl.pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  if (normalized === "/blog" || normalized.startsWith("/blog/")) return null
 
   const url = request.nextUrl.clone()
   url.pathname = request.nextUrl.pathname === "/" ? "/blog" : `/blog${request.nextUrl.pathname}`
   return NextResponse.rewrite(url)
 }
 
+/**
+ * Admin host rewrite (auth is enforced in app/admin layouts, not here).
+ * admin.lupfr.com / admin.localhost → /admin/* so Preview + dedicated DNS share one app path.
+ */
+function rewriteAdminHost(request: NextRequest): NextResponse | null {
+  if (!isAdminHost(request.headers.get("host"))) return null
+  if (shouldSkipHostRewrite(request.nextUrl.pathname)) return null
+
+  const pathname = request.nextUrl.pathname
+  const normalized = pathname.toLowerCase().replace(/\/+$/, "") || "/"
+  if (normalized === "/admin" || normalized.startsWith("/admin/")) {
+    return withNoindex(NextResponse.next())
+  }
+
+  const url = request.nextUrl.clone()
+  url.pathname = pathname === "/" ? "/admin" : `/admin${pathname}`
+  return withNoindex(NextResponse.rewrite(url))
+}
+
 function isSeasideHost(hostHeader: string | null): boolean {
-  if (!hostHeader) return false
-  const host = hostHeader.toLowerCase().split(":")[0]
-  return SEASIDE_HOSTS.includes(host)
+  const host = hostFromHeader(hostHeader)
+  return host !== null && SEASIDE_HOSTS.includes(host)
 }
 
 /**
@@ -114,8 +154,16 @@ export function proxy(request: NextRequest) {
   if (seasideRedirect) return seasideRedirect
 
   if (!shouldBlock(request.nextUrl.pathname)) {
+    const adminRewritten = rewriteAdminHost(request)
+    if (adminRewritten) return adminRewritten
+
     const rewritten = rewriteBlogHost(request)
     if (rewritten) return rewritten
+
+    if (isAdminPath(request.nextUrl.pathname)) {
+      return withNoindex(NextResponse.next())
+    }
+
     return NextResponse.next()
   }
 

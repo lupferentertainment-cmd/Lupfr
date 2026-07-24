@@ -21,4 +21,10 @@ describe("coverage thresholds", () => {
   it("excludes the retired seaside landing from the global coverage denominator", () => {
     expect(vitestConfig).toContain("**/components/seaside/**")
   })
+
+  it("excludes thin admin UI shells from the global coverage denominator", () => {
+    expect(vitestConfig).toContain("**/app/admin/**")
+    expect(vitestConfig).toContain("**/components/admin/**")
+  })
 })
+

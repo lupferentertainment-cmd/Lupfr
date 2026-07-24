@@ -25,6 +25,7 @@ describe("SEO discovery assets", () => {
 
     expect(robots).toContain("User-agent: *")
     expect(robots).toContain("Allow: /")
+    expect(robots).toContain("Disallow: /admin")
     expect(robots).toContain("Sitemap: https://lupfr.com/sitemap.xml")
 
     for (const bot of [

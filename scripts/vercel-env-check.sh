@@ -12,6 +12,8 @@ fi
 required_vars=(
   "GOOGLE_SHEETS_WEBHOOK_URL"
   "RESEND_API_KEY"
+  "ADMIN_PASSWORD"
+  "ADMIN_SESSION_SECRET"
 )
 
 environments=("preview" "production")

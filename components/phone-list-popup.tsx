@@ -27,6 +27,14 @@ export function PhoneListPopup() {
     useEffect(() => {
         // SEA//SIDE microsite (seaside.* hosts) has its own access flow — no LUPFR popup there.
         if (window.location.hostname.startsWith("seaside.")) return
+        // Operator portal — no marketing chrome.
+        if (
+            window.location.hostname.startsWith("admin.") ||
+            window.location.pathname === "/admin" ||
+            window.location.pathname.startsWith("/admin/")
+        ) {
+            return
+        }
         const dismissed = hasPhoneListPreference(PHONE_LIST_DISMISSED_KEY)
         const submitted = hasPhoneListPreference(PHONE_LIST_SUBMITTED_KEY)
         const dismissedByCookie = hasPhoneListCookie(PHONE_LIST_DISMISSED_COOKIE)

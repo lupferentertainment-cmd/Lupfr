@@ -30,6 +30,9 @@ const testConfig = {
       ...coverageConfigDefaults.exclude,
       "**/components/seaside/**",
       "**/lib/data/generated/**",
+      // Thin admin UI shells; auth/API logic is covered in unit/integration tests.
+      "**/app/admin/**",
+      "**/components/admin/**",
     ],
     thresholds: {
       statements: 90,

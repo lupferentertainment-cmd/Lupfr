@@ -10,13 +10,14 @@
 
 **Constraints.**
 
-- No database; no user accounts. Email is the only persistent “backend” action (send-only).
+- No database; no multi-user account table. Email is the only persistent public “backend” action (send-only). A gated **operator shell** at `/admin` (and `admin.lupfr.com`) may use a single shared env credential + signed session cookie — not a CMS and not a user database.
 - Resend must be configured (`RESEND_API_KEY`); no silent degradation—API returns explicit error if missing.
 - Canonical documentation lives in `docs/` (OVERVIEW, ARCHITECTURE, DESIGN, API, DEPLOYMENT, TESTING, REQUIREMENTS); docs are repo-only and guarded from public route exposure.
 
 **Non-goals (current scope).**
 
-- No CMS or admin UI.
+- No CMS / in-browser YAML or media editing; no mutating `data/*` from the operator UI.
+- No OAuth, magic links, SSO, or multi-user admin accounts (session cookie shape may grow later without a rewrite).
 
 **Quality gates.**
 

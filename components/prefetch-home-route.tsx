@@ -13,6 +13,7 @@ export function PrefetchHomeRoute() {
 
   useEffect(() => {
     if (pathname === "/") return
+    if (typeof pathname === "string" && (pathname === "/admin" || pathname.startsWith("/admin/"))) return
     router.prefetch("/")
   }, [pathname, router])
 

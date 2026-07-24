@@ -1,6 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /README
@@ -9,36 +10,42 @@ Disallow: /*.md$
 
 User-agent: GPTBot
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$
 
 User-agent: Claude-User
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /admin
 Disallow: /docs
 Disallow: /_docs
 Disallow: /*.md$

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
     acceptCookieConsent,
     getCookieConsentAccepted,
@@ -17,16 +18,21 @@ const COOKIE_NOTICE_DELAY_MS = 4500
  * contact-list preference cookies are enabled only after Accept.
  */
 export function CookieConsent() {
+    const pathname = usePathname()
     const [visible, setVisible] = useState(false)
+    const isAdminRoute =
+        typeof pathname === "string" &&
+        (pathname === "/admin" || pathname.startsWith("/admin/"))
 
     useEffect(() => {
+        if (isAdminRoute) return
         if (getCookieConsentAccepted()) return
         const timeoutId = window.setTimeout(
             () => setVisible(true),
             COOKIE_NOTICE_DELAY_MS
         )
         return () => window.clearTimeout(timeoutId)
-    }, [])
+    }, [isAdminRoute])
 
     useEffect(() => {
         const onConsent = () => setVisible(false)
@@ -34,7 +40,7 @@ export function CookieConsent() {
         return () => window.removeEventListener(LUPFR_CONSENT_EVENT, onConsent)
     }, [])
 
-    if (!visible) return null
+    if (isAdminRoute || !visible) return null
 
     return (
         <div

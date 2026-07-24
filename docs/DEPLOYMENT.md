@@ -44,8 +44,14 @@ How it works: `main` is the Vercel **Production Branch** (unchanged). Vercel aut
 - **Required:** `GOOGLE_SHEETS_WEBHOOK_URL` – full Google Apps **Web app** deployment URL (the string in **Deploy → Manage deployments →** copy **Web app** URL: `https://script.google.com/macros/s/…/exec` or the current Google URL for your deployment). Set this name in Vercel (not `GOOGLE_SCRIPT_URL`); the Next.js app reads `GOOGLE_SHEETS_WEBHOOK_URL` only. Without it, `/api/phone-list` returns 500.
 - **Optional:** `GOOGLE_SHEETS_SECRET` – If your Apps Script checks a shared key, set this; the app adds the secret to the webhook JSON (default key `secret`). Override the JSON property name with **`GOOGLE_SHEETS_SECRET_FIELD`** if your `doPost` reads a different key (e.g. `webhookToken`). If the script enforces a secret and the env is missing in the environment that `next dev` loads (see **`.env.local`**, not only `.env.production.local`), the script may return 401 and `/api/phone-list` will return 502 with `upstreamStatus: 401`.
 - **Optional:** `RESEND_TO_EMAIL` – Override recipient for **newsletter internal notifications** only (default: `will@lupfr.com`). Contact form submissions always go to `will@lupfr.com` via `CONTACT_FORM_TO_EMAIL`.
+- **Required for admin portal:** `ADMIN_PASSWORD` – shared operator password (env only; never commit). Without it (or without `ADMIN_SESSION_SECRET`), `/admin` fail-closes (login API **503**).
+- **Required for admin portal:** `ADMIN_SESSION_SECRET` – ≥32-byte random secret used to HMAC-sign `lupfr_admin_session`.
+- **Optional:** `ADMIN_USERNAME` – defaults to `will@lupfr.com` when unset.
+- **Optional:** `ADMIN_CONTACTS_SHEET_URL` – browser URL for the Google Sheet that stores phone-list / contacts (source of record). Shown as a large “Open contacts / phone list Sheet” CTA on `/admin`. Distinct from `GOOGLE_SHEETS_WEBHOOK_URL` (Apps Script `/exec` webhook — not a spreadsheet link).
 
-Set in Vercel: Project → Settings → Environment Variables. No other runtime secrets.
+**Operator entry.** Primary URL: **`https://admin.lupfr.com`** (attach the hostname in Vercel Domains after Preview OK). `proxy.ts` rewrites `admin.lupfr.com` / `admin.localhost` onto `/admin` (same pattern as the blog host). Apex path **`/admin`** also works on Preview and production. Cookie path strategy: **`Path=/admin` on apex hosts**; **`Path=/` on `admin.*` hosts** so the session is sent for rewritten paths like `/login` on the dedicated host.
+
+Set in Vercel: Project → Settings → Environment Variables.
 
 Verify required vars in Vercel with:
 
@@ -57,6 +63,9 @@ If missing, add each variable interactively:
 2. `vercel env add GOOGLE_SHEETS_WEBHOOK_URL production`
 3. `vercel env add RESEND_API_KEY preview`
 4. `vercel env add RESEND_API_KEY production`
+5. `vercel env add ADMIN_PASSWORD preview` (and production)
+6. `vercel env add ADMIN_SESSION_SECRET preview` (and production)
+7. `vercel env add ADMIN_CONTACTS_SHEET_URL preview` (and production) — paste the Sheet URL Will opens for contacts
 
 **Preview-first flow (Git).**
 

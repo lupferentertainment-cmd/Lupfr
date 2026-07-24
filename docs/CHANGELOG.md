@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Added
+
+- **Operator admin portal (MVP):** password-gated shell at **`admin.lupfr.com`** (host rewrite) and **`/admin`**. Shared env credential (`ADMIN_USERNAME` default `will@lupfr.com`, `ADMIN_PASSWORD` + `ADMIN_SESSION_SECRET`), HMAC session cookie `lupfr_admin_session` (APIs at `/admin/api/*` so `Path=/admin` works on apex; `Path=/` on admin host). Auth in `app/admin/(authed)/layout.tsx` — proxy is rewrite/SEO only. Analytics-first dashboard (Vercel Analytics deep-link + note of in-app `DeferredAnalytics`); **Recharts** content charts (upcoming/past events, artist genres — not fake traffic); CSV downloads via `/admin/api/export/*`; contacts Sheet CTA via optional `ADMIN_CONTACTS_SHEET_URL`; ops links; no CMS/DB/Stripe. Robots Disallow + sitemap exclude + noindex. Docs flipped in the same change.
+
 ### Changed
 
 - **Partiful team-band art (owner request 2026-07-23):** `/images/partiful-announcement.webp` no longer uses the fromclay event flyer — swapped to a Partiful P mark on a dark gold stage so the “Backed by Partiful” band reads as partnership, not a show poster. `docs/DESIGN.md` updated in the same change.
