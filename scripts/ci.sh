@@ -33,6 +33,7 @@ export VERIFY_CONSOLE_PORT="${VERIFY_CONSOLE_PORT:-$(_lupfr_pick_port 24310 2000
 export VERIFY_NAV_SCROLL_PORT="${VERIFY_NAV_SCROLL_PORT:-$(_lupfr_pick_port 5310 8000)}"
 export VERIFY_WILL_HOME_PORT="${VERIFY_WILL_HOME_PORT:-$(_lupfr_pick_port 4395 8000)}"
 export VERIFY_ADMIN_PORT="${VERIFY_ADMIN_PORT:-$(_lupfr_pick_port 4396 8000)}"
+export VERIFY_PARTNERS_MARQUEE_PORT="${VERIFY_PARTNERS_MARQUEE_PORT:-$(_lupfr_pick_port 4398 8000)}"
 export VERIFY_MOBILE_PERF_PORT="${VERIFY_MOBILE_PERF_PORT:-$(_lupfr_pick_port 6310 8000)}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
@@ -93,6 +94,8 @@ run_browser_checks() {
   bun run _verify:console
   restore_next_snapshots
   bun run _verify:nav-scroll
+  restore_next_snapshots
+  bun run _verify:partners-marquee
   restore_next_snapshots
   bun run _verify:will-home
   restore_next_snapshots

@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Partners-marquee hover-pause dropping mid-hover (logo clicks missed):** the grab-to-spin engine's JS pause listeners lived on the composited, continuously-translating marquee track; Chromium hit-tests a layer moving under a stationary cursor against stale geometry and fires a spurious `mouseleave` ~400ms after enter, un-pausing the row so logos slid out from under the click. Pause listeners moved to the static partners `<section>` (same host the CSS `:hover` fallback always used). New Playwright gate `scripts/verify-partners-marquee.mjs` (`bun run _verify:partners-marquee`, in `run_browser_checks`) locks the full interaction contract: hover-pause holds ≥1.2s, plain logo clicks navigate, drags spin the track with their click suppressed, touch swipes follow the finger. `docs/DESIGN.md` also corrected: drag-click threshold is 12px, not 6px.
+
 ### Added
 
 - **Admin portal expansion (analytics + contacts + telemetry):** In-portal **Vercel Web Analytics** charts via `GET /admin/api/analytics` (`LUPFR_VERCEL_*` env; real series only). Optional **Supabase** dual-write from `/api/phone-list` + admin contacts table/CSV (`GET /admin/api/contacts`, `/admin/api/contacts/export`). Consent-gated **`POST /api/telemetry`** + admin impressions/clicks panel (`GET /admin/api/telemetry`). Sheet CTA/iframe still via `ADMIN_CONTACTS_SHEET_URL`. Password admin unchanged; no CMS.

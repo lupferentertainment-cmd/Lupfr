@@ -143,6 +143,24 @@ describe("canonical package workflow gate", () => {
         expect(willHome).toContain("bgAlpha")
     })
 
+    it("keeps the partners-marquee Playwright behavior gate inside browser checks", () => {
+        expect(ciScript).toContain("bun run _verify:partners-marquee")
+        expect(packageJson.scripts["_verify:partners-marquee"]).toBe(
+            "bun scripts/verify-partners-marquee.mjs"
+        )
+        const marqueeGate = fs.readFileSync(
+            path.join(rootDir, "scripts", "verify-partners-marquee.mjs"),
+            "utf8",
+        )
+        // Canonical marquee interaction contract — hover-pause must hold, plain
+        // clicks navigate, a drag's own click is suppressed, touch swipe spins.
+        expect(marqueeGate).toContain("partner-marquee-track")
+        expect(marqueeGate).toContain("HOVER_HOLD_MS")
+        expect(marqueeGate).toContain("data-dragging")
+        expect(marqueeGate).toContain("dispatchTouchEvent")
+        expect(ciScript).toContain("VERIFY_PARTNERS_MARQUEE_PORT")
+    })
+
     it("keeps the admin portal Playwright edge-case gate inside browser checks", () => {
         expect(ciScript).toContain("bun run _verify:admin")
         expect(packageJson.scripts["_verify:admin"]).toBe("bun scripts/verify-admin.mjs")

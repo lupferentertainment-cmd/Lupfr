@@ -23,6 +23,7 @@
     "_verify:assets": "bunx vitest run tests/integration/asset-crawl.test.ts",
     "_verify:console": "bun scripts/verify-console.mjs",
     "_verify:nav-scroll": "bun scripts/verify-nav-scroll.mjs",
+    "_verify:partners-marquee": "bun scripts/verify-partners-marquee.mjs",
     "_verify:client-bundle": "bun scripts/verify-client-bundle.mjs",
     "_verify:bundle-budget": "bun scripts/verify-bundle-budget.mjs",
     "_verify:mobile-perf": "bun scripts/verify-mobile-perf.mjs",

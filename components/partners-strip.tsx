@@ -114,6 +114,10 @@ function useMarqueeSpin() {
     if (!active || e.button !== 0) return
     draggingRef.current = true
     capturedRef.current = false
+    // A new press starts a new gesture: drop any suppression left armed by a
+    // previous drag whose pointer sequence never produced a click (touch
+    // swipes often don't) — otherwise the NEXT legitimate tap gets eaten.
+    suppressClickRef.current = false
     setDragging(true)
     dragDistanceRef.current = 0
     velocityRef.current = 0
@@ -176,7 +180,15 @@ function useMarqueeSpin() {
     onPointerUp: onPointerEnd,
     onPointerCancel: onPointerEnd,
     onClickCapture,
-    // JS replaces the CSS :hover/:focus-within pause once data-spin is set.
+    onDragStart: (e: ReactDragEvent<HTMLDivElement>) => e.preventDefault(),
+  }
+
+  // JS replaces the CSS :hover/:focus-within pause once data-spin is set. The
+  // pause listeners MUST live on a static ancestor (the section), not the
+  // translating track: Chromium hit-tests a composited layer moving under a
+  // stationary cursor against stale geometry and fires a spurious mouseleave
+  // (~400ms after enter), un-pausing the row mid-hover so clicks miss the logo.
+  const pauseProps = {
     onMouseEnter: () => { pausedRef.current = true },
     onMouseLeave: () => { pausedRef.current = false },
     onFocus: () => { pausedRef.current = true },
@@ -185,10 +197,9 @@ function useMarqueeSpin() {
         pausedRef.current = false
       }
     },
-    onDragStart: (e: ReactDragEvent<HTMLDivElement>) => e.preventDefault(),
   }
 
-  return trackProps
+  return { trackProps, pauseProps }
 }
 
 /** Comp parity: partners whose logo asset is still pending (`logo: null` in the
@@ -302,7 +313,7 @@ function PartnerLogoShell({
  * eyebrow only, no big stacked section header.
  */
 export function PartnersStrip() {
-  const spinTrackProps = useMarqueeSpin()
+  const { trackProps: spinTrackProps, pauseProps } = useMarqueeSpin()
   return (
     // No tinted band: the section inherits the page background entirely — pure
     // white in light, pure dark in dark (owner request 2026-07-11).
@@ -310,6 +321,7 @@ export function PartnersStrip() {
       aria-label="Corporate partners"
       data-partners-chrome="freeform"
       className="relative py-6 sm:py-8"
+      {...pauseProps}
     >
       {/* leading-none: the kicker's inherited 1.5 line-height is fractional at
           11px (16.5px box) and shifts every downstream section anchor onto a
