@@ -8,67 +8,65 @@
   image: /corporate_partners/partiful.webp
   imageDark: /corporate_partners/partiful_light.webp
   logoTreatment: natural
-  # Owner 2026-07-23: transparent marks + larger freeform size so the P reads on dark.
-  imageClassName: scale-[1.35]
+  imageClassName: scale-[1.45]
 
 - name: Vybes
   url: https://www.vybes.co/
   image: /corporate_partners/vybes.webp
-  # No logoTreatment: asset is already black-on-transparent, default mono silhouette applies.
-  imageClassName: scale-[0.9]
+  imageClassName: scale-[1.15]
 
 - name: Umbrella
   url: https://umbrellalive.com
   image: /corporate_partners/umbrella.webp
   logoTreatment: outline
-  imageClassName: scale-[1.15]
+  imageClassName: scale-[1.25]
 
 - name: Eria
-  url: https://www.eriaevents.co
+  url: https://www.eriaevents.com
   image: /corporate_partners/eria.webp
-  imageClassName: scale-[0.88]
+  imageClassName: scale-[1.1]
 
 - name: FredEx Entertainment
   url: https://www.fredexentertainment.com/
   image: /corporate_partners/fredex.webp
   logoTreatment: natural
-  imageClassName: scale-[1.05]
+  imageClassName: scale-[1.2]
 
 - name: Nazarian Law
   url: https://nazarianfirm.com
   image: /corporate_partners/nazarian_law.webp
   logoTreatment: natural
-  # Owner request 2026-07-21: enlarge so the wordmark stays readable in the strip.
-  imageClassName: scale-[1.55]
+  imageClassName: scale-[1.65]
 
 - name: SEA//SIDE
   url: https://www.instagram.com/seaside.la/
   image: /corporate_partners/seaside.webp
   logoTreatment: natural
-  imageClassName: scale-[1.05]
+  imageClassName: scale-[1.2]
 
 - name: City Cruises
   url: https://www.cityexperiences.com/city-cruises/
   image: /corporate_partners/city_cruises.webp
   logoTreatment: natural
+  imageClassName: scale-[1.2]
 
 - name: Mutuals
   url: https://apps.apple.com/us/app/mutuals-experiences-plans/id6760976464
   image: /corporate_partners/mutuals.webp
   logoTreatment: natural
-  imageClassName: scale-[1.05]
+  imageClassName: scale-[1.2]
 
 - name: Empress Yachts
   url: https://www.empressevents.com
   image: /corporate_partners/empress_events.webp
   logoTreatment: natural
-  imageClassName: scale-[0.9]
+  imageClassName: scale-[1.1]
 
 - name: Brixton Bar SF
   url: https://thebrixtonsf.com
   image: /corporate_partners/brixton.webp
   logoTreatment: outline
-  imageClassName: scale-[0.9]
+  imageClassName: scale-[1.1]
 
 # Label-only chip (comp: logo null → text label). Owner has the Maison Noir
 # logo asset but hasn't delivered it yet (2026-07-17) — when it lands, add

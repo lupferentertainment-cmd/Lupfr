@@ -40,7 +40,10 @@ describe("PartnersStrip", () => {
     )
     expect(primaryRow).not.toBeNull()
     const links = Array.from(primaryRow!.querySelectorAll("a"))
-    expect(links.map((a) => a.getAttribute("href"))).toEqual(linked.map((p) => p.url))
+    expect(links.map((a) => a.getAttribute("href"))).toEqual([
+      ...linked.map((p) => p.url),
+      ...linked.map((p) => p.url),
+    ])
   })
 
   it("renders logo-pending partners as freeform text labels (comp: logo null → text)", () => {
@@ -221,11 +224,14 @@ describe("PartnersStrip", () => {
     expect(x).toBeGreaterThan(-500)
   })
 
-  it("keeps the duplicate marquee copy hidden and inert for assistive tech", () => {
+  it("keeps the duplicate marquee copy hidden from screen readers with non-tabbable duplicate links so mouse clicks work", () => {
     const { container } = render(<PartnersStrip />)
     const rows = container.querySelectorAll(".partner-marquee-track > div")
     expect(rows.length).toBe(2)
     expect(rows[1].getAttribute("aria-hidden")).toBe("true")
-    expect(rows[1].hasAttribute("inert")).toBe(true)
+    const dupLinks = rows[1].querySelectorAll("a")
+    for (const link of dupLinks) {
+      expect(link.getAttribute("tabindex")).toBe("-1")
+    }
   })
 })

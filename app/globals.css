@@ -172,10 +172,10 @@
   --sidebar-accent-foreground: oklch(0.96 0.008 85);
   --sidebar-border: oklch(0.18 0.015 80);
   --sidebar-ring: var(--gold);
-  --partner-logo-opacity: 0.95;
-  --partner-logo-opacity-outline: 0.96;
-  --partner-logo-opacity-solid: 0.9;
-  --partner-logo-opacity-natural: 0.97;
+  --partner-logo-opacity: 0.98;
+  --partner-logo-opacity-outline: 0.98;
+  --partner-logo-opacity-solid: 0.96;
+  --partner-logo-opacity-natural: 1.0;
   /* Split h2 second line — theme white in dark mode (light mode value in :root) */
   --lupfr-heading-subline-fg: var(--foreground);
 }
@@ -196,7 +196,7 @@
 }
 
 .dark .partner-logo {
-  filter: brightness(0) saturate(100%) invert(1) brightness(0.94);
+  filter: brightness(0) saturate(100%) invert(1) brightness(0.98);
   opacity: var(--partner-logo-opacity);
 }
 

@@ -17,9 +17,10 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { cn } from "@/lib/utils"
 
 const partners = getPartners()
+const repeatedPartners = [...partners, ...partners]
 
 const MARQUEE_LOOP_SECONDS = 50 // keep in sync with `partner-marquee-scroll` in app/globals.css
-const DRAG_CLICK_THRESHOLD_PX = 6
+const DRAG_CLICK_THRESHOLD_PX = 12
 const FLING_FRICTION = 2.2 // exponential decay rate (s⁻¹) after release
 const FLING_MIN_SPEED_PX_S = 8
 
@@ -183,10 +184,20 @@ function useMarqueeSpin() {
 
 /** Comp parity: partners whose logo asset is still pending (`logo: null` in the
  * comp) render the partner name as freeform mono text — no tile/box chrome. */
-function PartnerLabelMark({ name, ariaLabel, href }: { name: string; ariaLabel: string; href?: string }) {
+function PartnerLabelMark({
+  name,
+  ariaLabel,
+  href,
+  isDuplicate,
+}: {
+  name: string
+  ariaLabel: string
+  href?: string
+  isDuplicate?: boolean
+}) {
   return (
-    <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
-      <span className="partner-logo-label whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/75 sm:text-[11px]">
+    <PartnerLogoShell href={href} ariaLabel={ariaLabel} isDuplicate={isDuplicate}>
+      <span className="partner-logo-label whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.14em] text-foreground/85 sm:text-xs">
         {name}
       </span>
     </PartnerLogoShell>
@@ -200,6 +211,7 @@ function PartnerLogoMark({
   imageClassName,
   ariaLabel,
   href,
+  isDuplicate,
 }: {
   name: string
   image: string
@@ -207,6 +219,7 @@ function PartnerLogoMark({
   imageClassName?: string
   ariaLabel: string
   href?: string
+  isDuplicate?: boolean
 }) {
   const { resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -216,22 +229,22 @@ function PartnerLogoMark({
   const activeSrc = mounted && resolvedTheme === "dark" && imageDark ? imageDark : image
 
   return (
-    <PartnerLogoShell href={href} ariaLabel={ariaLabel}>
+    <PartnerLogoShell href={href} ariaLabel={ariaLabel} isDuplicate={isDuplicate}>
       {/* No skeleton tile — a shimmer box reads as a card around the mark. */}
       <Image
         key={activeSrc}
         src={activeSrc}
         alt={name}
-        width={240}
-        height={80}
-        sizes="(max-width: 640px) 5.5rem, (max-width: 1024px) 7rem, 8.5rem"
+        width={280}
+        height={90}
+        sizes="(max-width: 640px) 7rem, (max-width: 1024px) 9rem, 11rem"
         draggable={false}
         onLoad={() => setReady(true)}
         className={cn(
           "partner-logo-mark object-contain object-center",
           imageClassName,
           // Height after YAML layout classes so freeform strip sizing wins twMerge.
-          "h-7 w-auto max-w-[9rem] sm:h-8 md:h-9",
+          "h-9 w-auto max-w-[11rem] sm:h-11 md:h-12 lg:h-13",
           "motion-safe:transition-opacity motion-safe:duration-300",
           "motion-reduce:transition-none",
           ready ? "opacity-100" : "opacity-0"
@@ -244,18 +257,20 @@ function PartnerLogoMark({
 function PartnerLogoShell({
   href,
   ariaLabel,
+  isDuplicate,
   children,
 }: {
   href?: string
   ariaLabel: string
+  isDuplicate?: boolean
   children: ReactNode
 }) {
   // Freeform corporate strip: marks sit on the page background with no
   // bordered/card tiles — natural logo aspect, muted until hover/focus.
   const className = cn(
-    "partner-logo-shell group inline-flex h-8 shrink-0 items-center bg-transparent sm:h-9 md:h-10",
+    "partner-logo-shell group inline-flex h-10 shrink-0 items-center bg-transparent sm:h-12 md:h-14",
     "border-0 shadow-none ring-0",
-    "opacity-70 transition-opacity duration-200 ease-snap hover:opacity-100",
+    "opacity-85 transition-opacity duration-200 ease-snap hover:opacity-100",
     "focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
   )
   if (!href) return <div className={className} aria-label={ariaLabel}>{children}</div>
@@ -266,6 +281,7 @@ function PartnerLogoShell({
       rel="noopener noreferrer"
       className={className}
       aria-label={ariaLabel}
+      tabIndex={isDuplicate ? -1 : undefined}
     >
       {children}
     </a>
@@ -306,25 +322,31 @@ export function PartnersStrip() {
             <div
               key={isDuplicate ? "duplicate" : "primary"}
               aria-hidden={isDuplicate || undefined}
-              inert={isDuplicate || undefined}
               className={cn(
                 "flex shrink-0 items-center gap-x-10",
                 "sm:gap-x-12 md:gap-x-14 lg:gap-x-16"
               )}
             >
-              {partners.map((p) =>
+              {repeatedPartners.map((p, idx) =>
                 p.image ? (
                   <PartnerLogoMark
-                    key={p.name}
+                    key={`${p.name}-${isDuplicate ? "dup" : "pri"}-${idx}`}
                     name={p.name}
                     image={p.image}
                     imageDark={p.imageDark}
                     imageClassName={p.imageClassName}
                     ariaLabel={p.ariaLabel ?? p.name}
                     href={p.url}
+                    isDuplicate={isDuplicate}
                   />
                 ) : (
-                  <PartnerLabelMark key={p.name} name={p.name} ariaLabel={p.ariaLabel ?? p.name} href={p.url} />
+                  <PartnerLabelMark
+                    key={`${p.name}-${isDuplicate ? "dup" : "pri"}-${idx}`}
+                    name={p.name}
+                    ariaLabel={p.ariaLabel ?? p.name}
+                    href={p.url}
+                    isDuplicate={isDuplicate}
+                  />
                 )
               )}
             </div>

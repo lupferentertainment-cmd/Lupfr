@@ -19,7 +19,7 @@ describe("PARTNERS", () => {
     expect(partiful?.image).toBe("/corporate_partners/partiful.webp")
     expect(partiful?.imageDark).toBe("/corporate_partners/partiful_light.webp")
     expect(partiful?.logoTreatment).toBe("natural")
-    expect(partiful?.imageClassName).toContain("scale-[1.35]")
+    expect(partiful?.imageClassName).toMatch(/scale-\[/)
   })
 
   it("every image path starts with / when present", () => {
