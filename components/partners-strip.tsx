@@ -108,19 +108,17 @@ function useMarqueeSpin() {
     }
   }, [])
 
+  const capturedRef = useRef(false)
+
   const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (!active || e.button !== 0) return
     draggingRef.current = true
+    capturedRef.current = false
     setDragging(true)
     dragDistanceRef.current = 0
     velocityRef.current = 0
     lastPointerXRef.current = e.clientX
     lastPointerTimeRef.current = performance.now()
-    try {
-      e.currentTarget.setPointerCapture?.(e.pointerId)
-    } catch {
-      // happy-dom / older engines without pointer capture: drag still works
-    }
   }
 
   const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -132,6 +130,14 @@ function useMarqueeSpin() {
     lastPointerTimeRef.current = now
     dragDistanceRef.current += Math.abs(dx)
     offsetRef.current += dx
+    if (dragDistanceRef.current > DRAG_CLICK_THRESHOLD_PX && !capturedRef.current) {
+      capturedRef.current = true
+      try {
+        e.currentTarget.setPointerCapture?.(e.pointerId)
+      } catch {
+        // happy-dom / older engines without pointer capture: drag still works
+      }
+    }
     if (dt > 0) {
       velocityRef.current = velocityRef.current * 0.2 + (dx / dt) * 0.8
     }
@@ -144,10 +150,13 @@ function useMarqueeSpin() {
     if (dragDistanceRef.current > DRAG_CLICK_THRESHOLD_PX) {
       suppressClickRef.current = true
     }
-    try {
-      e.currentTarget.releasePointerCapture?.(e.pointerId)
-    } catch {
-      // capture may never have been taken; nothing to release
+    if (capturedRef.current) {
+      capturedRef.current = false
+      try {
+        e.currentTarget.releasePointerCapture?.(e.pointerId)
+      } catch {
+        // capture may never have been taken; nothing to release
+      }
     }
   }
 
