@@ -221,6 +221,14 @@ function EventCard({
               {image}
             </m.div>
           )}
+          {/* Poster-agnostic frame drawn in code so every tile reads framed,
+             regardless of whether the artwork bakes in its own border. Inset to
+             10px so it joins the corner brackets into one continuous frame. */}
+          <div
+            className="event-card-frame pointer-events-none absolute inset-[10px] z-[2] rounded-[2px] border border-white/25 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.22)]"
+            style={cornerStyle}
+            aria-hidden
+          />
           <div
             className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
             style={cornerStyle}
@@ -377,6 +385,7 @@ function EventsCarousel({
   prefetchDetails,
   prioritizeFirstImage,
   compact = false,
+  bleedRight = false,
 }: {
   events: EventItem[]
   isRevealed: boolean
@@ -389,6 +398,8 @@ function EventsCarousel({
   prefetchDetails: boolean
   prioritizeFirstImage: boolean
   compact?: boolean
+  /** Spill cards to the true viewport right edge (arrows stay anchored). */
+  bleedRight?: boolean
 }) {
   const router = useRouter()
   const eventSlugs = events.map((event) => event.slug).join("|")
@@ -445,7 +456,12 @@ function EventsCarousel({
       <Carousel opts={CAROUSEL_OPTS} setApi={setApi} className="w-full">
         <CarouselContent
           className="-ml-4 md:-ml-6"
-          viewportClassName="pb-3"
+          viewportClassName={cn(
+            "pb-3",
+            // -mr(50vw-50%) widens the auto-width viewport so its right edge lands
+            // on the viewport edge; overflow-hidden clips inner cards, no page scroll.
+            bleedRight && "events-bleed-right mr-[calc(50%-50vw)]"
+          )}
         >
           {events.map((event, i) => (
             /* No h-full on items: a specified % height on a flex child of an auto-height
@@ -582,6 +598,7 @@ export function Events() {
               now={now}
               prefetchDetails={isMobile === false}
               prioritizeFirstImage={isMobile === false}
+              bleedRight
             />
           ) : (
             <p className="text-muted-foreground text-base sm:text-lg max-w-xl">
@@ -617,6 +634,7 @@ export function Events() {
               prefetchDetails={isMobile === false}
               prioritizeFirstImage={false}
               compact
+              bleedRight
             />
           </m.div>
         )}

@@ -32,6 +32,9 @@ const POLL_INTERVAL_MS = 100
 const STABILITY_WINDOW_MS = 500
 const ALIGN_TOLERANCE_PX = 48 // flush under the header; a broken jump is off by 100s
 const STABILITY_TOLERANCE_PX = 4
+// Scroll-spy (IntersectionObserver) can lag the scroll settle under parallel CI
+// load, so the active-link read is polled to convergence instead of read once.
+const ACTIVE_SETTLE_MS = 4000
 
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -159,7 +162,16 @@ async function _check(page, { label, sectionId, mobile }, sink) {
   }
 
   if (mobile) await _open_mobile_menu(page)
-  const activeLabels = await linkScope.locator('a[aria-current="true"]').allTextContents()
+  // Poll for scroll-spy to converge on the clicked section — the observer that
+  // sets aria-current can fire a frame or two after the scroll settles under CI
+  // contention, so a single read races and false-flags the section above.
+  let activeLabels = []
+  const activeDeadline = Date.now() + ACTIVE_SETTLE_MS
+  while (Date.now() < activeDeadline) {
+    activeLabels = await linkScope.locator('a[aria-current="true"]').allTextContents()
+    if (activeLabels.length === 1 && activeLabels[0]?.trim() === label) break
+    await page.waitForTimeout(POLL_INTERVAL_MS)
+  }
   if (activeLabels.length !== 1 || activeLabels[0]?.trim() !== label) {
     sink.push({
       where,
