@@ -221,14 +221,16 @@ function EventCard({
               {image}
             </m.div>
           )}
-          {/* Poster-agnostic frame drawn in code so every tile reads framed,
-             regardless of whether the artwork bakes in its own border. Inset to
-             10px so it joins the corner brackets into one continuous frame. */}
-          <div
-            className="event-card-frame pointer-events-none absolute inset-[10px] z-[2] rounded-[2px] border border-white/25 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.22)]"
-            style={cornerStyle}
-            aria-hidden
-          />
+          {/* Poster-agnostic frame (owner 2026-07-27): borderless posters get a
+             code-drawn dual-tone inset frame so they read framed; posters that
+             bake their own border opt out via `bakedFrame` so they never show a
+             double border. Corner brackets stay on every card. */}
+          {event.image && !event.bakedFrame ? (
+            <div
+              className="event-card-frame pointer-events-none absolute inset-[10px] z-[2]"
+              aria-hidden
+            />
+          ) : null}
           <div
             className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
             style={cornerStyle}

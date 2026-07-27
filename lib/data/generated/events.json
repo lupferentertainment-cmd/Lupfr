@@ -119,6 +119,7 @@
     "brandTag": "IN//SIDE",
     "city": "SF",
     "image": "/events/gas_money.webp",
+    "bakedFrame": true,
     "ticketStatus": "tbd",
     "description": "GAS MONEY at ERIA MARINA in the Marina District."
   },
@@ -254,6 +255,7 @@
     "brandTag": "IN//SIDE",
     "city": "SF",
     "image": "/events/shamrock_house.webp",
+    "bakedFrame": true,
     "description": "St. Patrick's season house music at Brixton Bar.",
     "contentLinks": [
       {
