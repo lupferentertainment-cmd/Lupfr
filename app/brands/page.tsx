@@ -1,12 +1,13 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BrandDeck } from "@/components/brand-deck"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { Navigation } from "@/components/navigation"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { ShimmerImage } from "@/components/shimmer-image"
-import { brandPath, brandPlainTitle, getBrands, type BrandItem } from "@/lib/data/brands"
+import { brandPath, brandPlainTitle, getBrands, LUPFR_DECK, type BrandItem } from "@/lib/data/brands"
 import { eventDetailPath, getPastEvents, getUpcomingEvents } from "@/lib/events"
 import { SITE_URL } from "@/lib/site"
 
@@ -150,9 +151,14 @@ export default function BrandsPage() {
       <div className="px-4 pb-20 pt-32 sm:px-6 sm:pt-36 md:pt-40 lg:px-12">
         <div className="mx-auto max-w-[1400px]">
           <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
-          <GoldShineText as="h1" className="mb-8 sm:mb-12">
+          <GoldShineText as="h1" className="mb-6">
             Our Brands
           </GoldShineText>
+
+          {/* The parent portfolio deck — one brand, five worlds. */}
+          <div className="mb-10 sm:mb-14">
+            <BrandDeck slides={LUPFR_DECK} label="LUPFR" />
+          </div>
 
           {brands.map((brand, index) => (
             <BrandOverviewRow key={brand.key} brand={brand} index={index} />

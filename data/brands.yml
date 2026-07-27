@@ -9,6 +9,9 @@
 # centered "COMING SOON" block instead of UPCOMING/PAST event lists.
 # gallery (optional) = list of site-root WebP paths under public/brands/ shown
 # as a 3-up preview grid on the brand detail page (seaside only, per comp).
+# deck (optional) = ordered pitch-deck slides (site-root WebP under
+# public/brands/) opened by the VIEW DECK viewer on the brand detail page
+# (highrise only). The parent LUPFR deck lives in lib/data/brands.ts.
 
 - key: seaside
   title: "SEA//SIDE"
@@ -34,6 +37,14 @@
   description: "Corporate galas, product launches, and executive gatherings that produce music with class."
   format: "Corporate events · LA & SF"
   comingSoon: true
+  deck:
+    - "/brands/highrise-deck-1.webp"
+    - "/brands/highrise-deck-2.webp"
+    - "/brands/highrise-deck-3.webp"
+    - "/brands/highrise-deck-4.webp"
+    - "/brands/highrise-deck-5.webp"
+    - "/brands/highrise-deck-6.webp"
+    - "/brands/highrise-deck-7.webp"
 
 - key: soundcheck
   title: "SOUND//CHECK"

@@ -14,6 +14,7 @@ export interface BrandItemRaw {
   externalUrl?: string
   comingSoon?: boolean
   gallery?: string[]
+  deck?: string[]
 }
 
 export interface BrandItem {
@@ -27,6 +28,9 @@ export interface BrandItem {
   externalUrl?: string
   comingSoon?: boolean
   gallery?: string[]
+  /** Ordered pitch-deck slides (site-root WebP under public/brands/), shown by
+   * the VIEW DECK viewer on the brand detail page. */
+  deck?: string[]
 }
 
 function normalizePath(path: string): string {
@@ -37,8 +41,15 @@ function mapBrands(raw: BrandItemRaw[]): BrandItem[] {
   return raw.map((b) => ({
     ...b,
     gallery: b.gallery?.map(normalizePath),
+    deck: b.deck?.map(normalizePath),
   }))
 }
+
+/**
+ * The parent LUPFR deck (the portfolio story: one brand, five worlds), shown on
+ * the /brands index. Not in brands.yml — LUPFR is the parent, not a sub-brand.
+ */
+export const LUPFR_DECK: string[] = [1, 2, 3, 4, 5].map((n) => `/brands/lupfr-deck-${n}.webp`)
 
 export const BRANDS: BrandItem[] = mapBrands(brandsJson as BrandItemRaw[])
 

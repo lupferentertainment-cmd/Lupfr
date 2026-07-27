@@ -25,7 +25,16 @@
     "image": "/brands/highrise.webp",
     "description": "Corporate galas, product launches, and executive gatherings that produce music with class.",
     "format": "Corporate events · LA & SF",
-    "comingSoon": true
+    "comingSoon": true,
+    "deck": [
+      "/brands/highrise-deck-1.webp",
+      "/brands/highrise-deck-2.webp",
+      "/brands/highrise-deck-3.webp",
+      "/brands/highrise-deck-4.webp",
+      "/brands/highrise-deck-5.webp",
+      "/brands/highrise-deck-6.webp",
+      "/brands/highrise-deck-7.webp"
+    ]
   },
   {
     "key": "soundcheck",

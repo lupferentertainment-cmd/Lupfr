@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import { BrandDeck } from "@/components/brand-deck"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
@@ -122,6 +123,12 @@ export default async function BrandDetailPage({ params }: BrandPageParams) {
                       <ShimmerImage src={src} alt="" fill sizes="(max-width: 768px) 33vw, 180px" className="object-cover" />
                     </div>
                   ))}
+                </div>
+              ) : null}
+
+              {brand.deck && brand.deck.length > 0 ? (
+                <div className="mb-6">
+                  <BrandDeck slides={brand.deck} label={brandPlainTitle(brand)} />
                 </div>
               ) : null}
 
