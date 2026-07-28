@@ -58,10 +58,15 @@ describe("PartnersStrip", () => {
         (el) => el.textContent?.trim().toLowerCase() === p.name.toLowerCase()
       )
       expect(label, `${p.name} label missing from marquee`).toBeDefined()
-      // Label-only: no logo image, no dead link wrapper, no tile chrome.
+      // Label-only: no logo image, no tile chrome.
       expect(label!.querySelector("img")).toBeNull()
-      expect(label!.closest("a")).toBeNull()
       expect(label!.closest(".partner-logo-chip")).toBeNull()
+      // No *dead* link wrapper: a pending partner is only linked when it
+      // actually has a url (FredEx awaits a real logo but has a live site;
+      // Maison Noir has neither, so it stays plain text).
+      const link = label!.closest("a")
+      if (p.url) expect(link?.getAttribute("href")).toBe(p.url)
+      else expect(link).toBeNull()
     }
   })
 

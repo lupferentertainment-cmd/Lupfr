@@ -501,9 +501,12 @@
    * `bakedFrame` in data/events.yml — so bordered flyers never double up. */
   .event-card-frame {
     border-radius: 2px;
+    /* Light line on top for dark posters, darker line just inside it for light
+     * ones (Third Thursday's bakes a cream border into the art — a faint dark
+     * line there was invisible, so both hairlines stay ≥0.45 alpha). */
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.5),
-      inset 0 0 0 2.5px rgba(0, 0, 0, 0.34);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+      inset 0 0 0 2px rgba(0, 0, 0, 0.55);
   }
 
   /* Depth via dark elevation only — never light/--foreground shadows (those

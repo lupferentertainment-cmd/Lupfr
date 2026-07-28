@@ -37,6 +37,18 @@ describe("conditional poster-agnostic frame", () => {
     expect(rule).toMatch(/rgba\(0,\s*0,\s*0/) //        dark line for light posters
   })
 
+  it("both hairlines are opaque enough to read on their opposite background", () => {
+    // Regression: at 0.34 the dark line vanished on light poster art, so
+    // Third Thursday's (cream border baked into the poster) showed no frame
+    // at all while dark posters looked fine. Seen live 2026-07-28.
+    const rule = globalsCss.match(/\.event-card-frame\s*\{[^}]*\}/)?.[0] ?? ""
+    const alphas = [...rule.matchAll(/rgba\(\s*(?:255,\s*255,\s*255|0,\s*0,\s*0)\s*,\s*([\d.]+)\s*\)/g)].map(
+      (m) => Number(m[1])
+    )
+    expect(alphas.length).toBeGreaterThanOrEqual(2)
+    for (const a of alphas) expect(a).toBeGreaterThanOrEqual(0.45)
+  })
+
   it("posters that bake their own border opt out via bakedFrame: true", () => {
     expect(eventsYaml).toMatch(/slug: gas-money-eria-marina[\s\S]{0,400}bakedFrame: true/)
     expect(eventsYaml).toMatch(/slug: shamrock-house[\s\S]{0,400}bakedFrame: true/)
