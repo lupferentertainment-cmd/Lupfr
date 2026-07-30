@@ -49,7 +49,6 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(names.some((n) => n.includes("Will Lupfer"))).toBe(true)
     expect(names.some((n) => n.includes("Zac"))).toBe(true)
     expect(names.some((n) => n.includes("Kylie"))).toBe(true)
-    expect(names.some((n) => n.includes("Mateen"))).toBe(true)
     expect(names.some((n) => n.includes("Cianna"))).toBe(true)
   })
 
@@ -73,7 +72,7 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(names[0]).toContain("Will Lupfer")
   })
 
-  it("LA shows Zac, Kylie, and Cianna (no Will, no Mateen)", async () => {
+  it("LA shows Zac, Kylie, and Cianna (no Will)", async () => {
     const user = userEvent.setup()
     render(<Team />)
     await user.click(screen.getByRole("button", { name: "Show LA team" }))
@@ -82,15 +81,13 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(names.some((n) => n.includes("Kylie"))).toBe(true)
     expect(names.some((n) => n.includes("Cianna"))).toBe(true)
     expect(names.some((n) => n.includes("Will"))).toBe(false)
-    expect(names.some((n) => n.includes("Mateen"))).toBe(false)
   })
 
-  it("SF shows Mateen and Cianna", async () => {
+  it("SF shows Cianna", async () => {
     const user = userEvent.setup()
     render(<Team />)
     await user.click(screen.getByRole("button", { name: "Show SF team" }))
     const names = visibleNames()
-    expect(names.some((n) => n.includes("Mateen"))).toBe(true)
     expect(names.some((n) => n.includes("Cianna"))).toBe(true)
     expect(names.some((n) => n.includes("Will"))).toBe(false)
     expect(names.some((n) => n.includes("Zac"))).toBe(false)
@@ -135,7 +132,6 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     const user = userEvent.setup()
     render(<Team />)
     await user.click(screen.getByRole("button", { name: "Show SF team" }))
-    expect(screen.getByAltText(/Mateen/)).toBeInTheDocument()
     expect(screen.getByAltText(/Cianna/)).toBeInTheDocument()
     expect(screen.queryByText("Portrait coming soon")).toBeNull()
   })

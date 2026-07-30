@@ -4,6 +4,10 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Changed
+
+- **Team roster update:** Removed Mateen Malekinejad from the team configuration (`data/team.yml` and `lib/data/generated/team.json`) and updated corresponding tests and documentation specs.
+
 ### Added
 
 - **VIEW DECK — the HIGH//RISE and LUPFR pitch decks (owner zip, July 24 → shipped 2026-07-27):** the 12 deck slides delivered in `LUPFR WEBSITE updates_july24.zip` were deferred at the time and never revisited — there was no deck surface in the site at all. They now ship as WebP under `public/brands/` (`highrise-deck-1..7`, `lupfr-deck-1..5`) behind a new optional `deck` list on `data/brands.yml` and `LUPFR_DECK` in `lib/data/brands.ts`. `components/brand-deck.tsx` renders a mono "View deck" pill that opens the slides in the shared `ui/dialog`: `object-contain` frame, circular prev/next chevrons, `ArrowLeft`/`ArrowRight` + Escape, an `aria-live` "N / M" counter, and a reset to slide 1 per open. HIGH//RISE's 7-slide corporate deck mounts on `/brands/highrise`; the parent 5-slide LUPFR portfolio deck mounts on the `/brands` index. No new dependency. The zip's `highrise/banner.png` + `mark.png` are not slides and were intentionally skipped (brand card art already covers that). Locked by `tests/unit/brand-deck.test.ts`.

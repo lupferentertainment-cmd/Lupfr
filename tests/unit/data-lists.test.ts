@@ -54,6 +54,6 @@ describe("team list", () => {
     const exec = team.filter((m) => m.teams.includes("Exec"))
     expect(exec.map((m) => m.name)).toEqual(["Will Lupfer"])
     expect(team.filter((m) => m.teams.includes("LA")).length).toBeGreaterThanOrEqual(3)
-    expect(team.filter((m) => m.teams.includes("SF")).length).toBeGreaterThanOrEqual(2)
+    expect(team.filter((m) => m.teams.includes("SF")).length).toBeGreaterThanOrEqual(1)
   })
 })
