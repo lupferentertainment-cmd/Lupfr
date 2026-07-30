@@ -54,6 +54,10 @@
   image: /corporate_partners/empress_events.webp
   logoTreatment: natural
 
+- name: Brixton Bar SF
+  image: /corporate_partners/brixton.webp
+  logoTreatment: outline
+
 # Label-only chip (comp: logo null → text label). Owner has the Maison Noir
 # logo asset but hasn't delivered it yet (2026-07-17) — when it lands, add
 # image: /corporate_partners/maison_noir.webp (+ url if one exists).

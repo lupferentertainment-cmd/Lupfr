@@ -58,6 +58,11 @@
     "logoTreatment": "natural"
   },
   {
+    "name": "Brixton Bar SF",
+    "image": "/corporate_partners/brixton.webp",
+    "logoTreatment": "outline"
+  },
+  {
     "name": "Maison Noir"
   }
 ]

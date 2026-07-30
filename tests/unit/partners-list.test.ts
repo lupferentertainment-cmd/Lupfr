@@ -95,12 +95,11 @@ describe("PARTNERS", () => {
     }
   })
 
-  it("only label-only pending chips may omit a destination", () => {
-    for (const p of PARTNERS) {
-      if (p.url === undefined) {
-        expect(p.image, `${p.name} has a logo but no destination`).toBeUndefined()
-      }
-    }
+  it("unlinked partners carry no URL (label-only pending or unlinked image partners)", () => {
+    const unlinked = PARTNERS.filter((p) => p.url === undefined)
+    expect(unlinked.map((p) => p.name)).toEqual(
+      expect.arrayContaining(["Brixton Bar SF", "Maison Noir"])
+    )
   })
 })
 

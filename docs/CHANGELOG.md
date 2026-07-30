@@ -7,6 +7,7 @@ All notable project changes are recorded here.
 ### Changed
 
 - **Team roster update:** Removed Mateen Malekinejad from the team configuration (`data/team.yml` and `lib/data/generated/team.json`) and updated corresponding tests and documentation specs.
+- **Brixton Bar partner logo:** Restored Brixton Bar SF logo in `data/partners.yml` as an unlinked logo (removed external URL `https://thebrixtonsf.com`).
 
 ### Added
 
