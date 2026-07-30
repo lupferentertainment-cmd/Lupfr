@@ -31,8 +31,7 @@
     "name": "Nazarian Law",
     "url": "https://nazarianfirm.com",
     "image": "/corporate_partners/nazarian_law.webp",
-    "logoTreatment": "natural",
-    "imageClassName": "scale-[1.5]"
+    "logoTreatment": "natural"
   },
   {
     "name": "SEA//SIDE",
@@ -44,8 +43,7 @@
     "name": "City Cruises",
     "url": "https://www.cityexperiences.com/city-cruises/",
     "image": "/corporate_partners/city_cruises.webp",
-    "logoTreatment": "natural",
-    "imageClassName": "scale-[1.35]"
+    "logoTreatment": "natural"
   },
   {
     "name": "Mutuals",
@@ -57,14 +55,7 @@
     "name": "Empress Yachts",
     "url": "https://www.empressevents.com",
     "image": "/corporate_partners/empress_events.webp",
-    "logoTreatment": "natural",
-    "imageClassName": "scale-[1.25]"
-  },
-  {
-    "name": "Brixton Bar SF",
-    "url": "https://thebrixtonsf.com",
-    "image": "/corporate_partners/brixton.webp",
-    "logoTreatment": "outline"
+    "logoTreatment": "natural"
   },
   {
     "name": "Maison Noir"

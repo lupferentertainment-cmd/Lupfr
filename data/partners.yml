@@ -33,7 +33,6 @@
   url: https://nazarianfirm.com
   image: /corporate_partners/nazarian_law.webp
   logoTreatment: natural
-  imageClassName: scale-[1.5]
 
 - name: SEA//SIDE
   url: https://www.instagram.com/seaside.la/
@@ -44,7 +43,6 @@
   url: https://www.cityexperiences.com/city-cruises/
   image: /corporate_partners/city_cruises.webp
   logoTreatment: natural
-  imageClassName: scale-[1.35]
 
 - name: Mutuals
   url: https://apps.apple.com/us/app/mutuals-experiences-plans/id6760976464
@@ -55,12 +53,6 @@
   url: https://www.empressevents.com
   image: /corporate_partners/empress_events.webp
   logoTreatment: natural
-  imageClassName: scale-[1.25]
-
-- name: Brixton Bar SF
-  url: https://thebrixtonsf.com
-  image: /corporate_partners/brixton.webp
-  logoTreatment: outline
 
 # Label-only chip (comp: logo null → text label). Owner has the Maison Noir
 # logo asset but hasn't delivered it yet (2026-07-17) — when it lands, add
