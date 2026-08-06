@@ -28,48 +28,115 @@ beforeAll(() => {
 })
 
 function visibleNames(): string[] {
-  // Only member-card h3s (filter out the Partiful announcement band heading).
+  // Only roster-card h3s: those sit inside the click-to-expand button. Founder
+  // cards and the Partiful band heading are excluded by design.
   return screen
     .getAllByRole("heading", { level: 3 })
     .filter((h) => h.closest("button") !== null)
     .map((h) => h.textContent?.trim() ?? "")
 }
 
-describe("Team — LA / SF / Exec filter boxes", () => {
-  it("renders the All / LA / SF / Exec filter controls", () => {
+function foundersRegion(): HTMLElement {
+  return screen.getByRole("region", { name: /founders/i })
+}
+
+describe("Team — founders row (owner request 2026-08-04)", () => {
+  it("renders Will and Eliott in a dedicated founders region", () => {
     render(<Team />)
-    for (const label of ["All", "LA", "SF", "Exec"]) {
-      expect(screen.getByRole("button", { name: `Show ${label} team` })).toBeInTheDocument()
-    }
+    const founders = foundersRegion()
+    expect(founders.textContent).toContain("Will Lupfer")
+    expect(founders.textContent).toContain("Eliott")
+    expect(founders.textContent).toContain("Co-Founder")
   })
 
-  it("shows every member (including Cianna) by default", () => {
+  it("shows founder bios inline — 'larger images / description below', not click-to-expand", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    expect(founders.textContent).toMatch(/Will founded LUPFR/)
+    expect(founders.textContent).toMatch(/strategic partnerships lead at LUPFR/)
+    // No expand toggle inside a founder card.
+    expect(founders.querySelectorAll("[aria-expanded]")).toHaveLength(0)
+  })
+
+  it("renders both founder portraits", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    const srcs = Array.from(founders.querySelectorAll("img")).map((i) => i.getAttribute("src"))
+    expect(srcs).toContain("/images/team/will.webp")
+    expect(srcs).toContain("/images/team/eliott.webp")
+  })
+
+  it("places the founders row above the filtered roster grid", () => {
+    const { container } = render(<Team />)
+    const founders = foundersRegion()
+    const grid = container.querySelector("[data-team-grid]")
+    expect(grid).not.toBeNull()
+    // DOCUMENT_POSITION_FOLLOWING === founders comes first in document order.
+    expect(founders.compareDocumentPosition(grid!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("keeps founders out of the roster grid so they are not rendered twice", () => {
     render(<Team />)
     const names = visibleNames()
-    expect(names.some((n) => n.includes("Will Lupfer"))).toBe(true)
+    expect(names.some((n) => n.includes("Will Lupfer"))).toBe(false)
+    expect(names.some((n) => n.includes("Eliott"))).toBe(false)
+  })
+
+  it("adapts to a third founder without a code change", async () => {
+    vi.resetModules()
+    const member = (name: string, founder: boolean) => ({
+      name,
+      title: founder ? "Co-Founder" : "Intern",
+      location: "Los Angeles, CA",
+      teams: ["LA"],
+      badges: ["LA"],
+      bio: `${name} bio.`,
+      founder,
+      image: `/images/team/${name.toLowerCase()}.webp`,
+    })
+    vi.doMock("@/lib/data/team", () => ({
+      TEAM_TAGS: ["LA", "SF", "Exec"],
+      getFounders: () => [member("Alpha", true), member("Beta", true), member("Gamma", true)],
+      getRoster: () => [member("Delta", false)],
+    }))
+    const { Team: T } = await import("@/components/team")
+    render(<T />)
+    const founders = screen.getByRole("region", { name: /founders/i })
+    for (const n of ["Alpha", "Beta", "Gamma"]) expect(founders.textContent).toContain(n)
+    vi.doUnmock("@/lib/data/team")
+    vi.resetModules()
+  })
+})
+
+describe("Team — LA / SF filter boxes", () => {
+  it("renders a filter box only for tags that have roster members", () => {
+    render(<Team />)
+    for (const label of ["All", "LA", "SF"]) {
+      expect(screen.getByRole("button", { name: `Show ${label} team` })).toBeInTheDocument()
+    }
+    // Exec is founders-only now, so an Exec filter would show an empty grid.
+    expect(screen.queryByRole("button", { name: "Show Exec team" })).toBeNull()
+  })
+
+  it("shows every roster member by default", () => {
+    render(<Team />)
+    const names = visibleNames()
     expect(names.some((n) => n.includes("Zac"))).toBe(true)
     expect(names.some((n) => n.includes("Kylie"))).toBe(true)
     expect(names.some((n) => n.includes("Cianna"))).toBe(true)
   })
 
-  it("renders a location/role badge per team tag on Will's card (phase 25, ported from the comp)", () => {
+  it("renders a badge per team tag on a roster card (phase 25, ported from the comp)", () => {
     render(<Team />)
-    const willHeading = screen.getAllByRole("heading", { level: 3 }).find((h) => h.textContent?.includes("Will Lupfer"))
-    expect(willHeading).toBeDefined()
-    const card = willHeading!.closest("button")
+    const heading = screen
+      .getAllByRole("heading", { level: 3 })
+      .find((h) => h.textContent?.includes("Cianna"))
+    expect(heading).toBeDefined()
+    const card = heading!.closest("button")
     expect(card).not.toBeNull()
-    for (const tag of ["Exec", "LA", "SF"]) {
+    for (const tag of ["LA", "SF"]) {
       expect(card!.textContent).toContain(tag)
     }
-  })
-
-  it("Exec shows only Will", async () => {
-    const user = userEvent.setup()
-    render(<Team />)
-    await user.click(screen.getByRole("button", { name: "Show Exec team" }))
-    const names = visibleNames()
-    expect(names).toHaveLength(1)
-    expect(names[0]).toContain("Will Lupfer")
   })
 
   it("LA shows Zac, Kylie, and Cianna (no Will)", async () => {
@@ -108,7 +175,7 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     const { container } = render(<Team />)
     // flex-wrap + justify-center: all members visible, no manual horizontal scroll,
     // sparse filters center instead of a stranded bottom-right grid gap.
-    const row = container.querySelector(".flex.flex-wrap.justify-center")
+    const row = container.querySelector("[data-team-grid]")
     expect(row).not.toBeNull()
     expect(row?.className).not.toContain("grid-cols-4")
     // phones are 2-up via a 50%-basis wrapper on each card.
@@ -116,16 +183,18 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     expect(firstItem?.className).toContain("basis-[calc(50%-0.375rem)]")
   })
 
-  it("tapping a card toggles the expandable bio open and closed", async () => {
+  it("tapping a roster card toggles the expandable bio open and closed", async () => {
     const user = userEvent.setup()
     render(<Team />)
-    const willCard = screen.getByRole("button", { name: /Will Lupfer/ })
-    expect(willCard).toHaveAttribute("aria-expanded", "false")
-    await user.click(willCard)
-    expect(willCard).toHaveAttribute("aria-expanded", "true")
-    expect(screen.getByRole("region")).toHaveTextContent(/Will founded LUPFR/)
-    await user.click(willCard)
-    expect(willCard).toHaveAttribute("aria-expanded", "false")
+    const card = screen.getByRole("button", { name: /Zac Brosky/ })
+    expect(card).toHaveAttribute("aria-expanded", "false")
+    await user.click(card)
+    expect(card).toHaveAttribute("aria-expanded", "true")
+    expect(screen.getByRole("region", { name: /Zac Brosky/ })).toHaveTextContent(
+      /Loyola Marymount/
+    )
+    await user.click(card)
+    expect(card).toHaveAttribute("aria-expanded", "false")
   })
 
   it("every member renders a portrait (Cianna's arrived 2026-07-06)", async () => {
@@ -140,7 +209,8 @@ describe("Team — LA / SF / Exec filter boxes", () => {
     vi.resetModules()
     vi.doMock("@/lib/data/team", () => ({
       TEAM_TAGS: ["LA", "SF", "Exec"],
-      getTeam: () => [
+      getFounders: () => [],
+      getRoster: () => [
         {
           name: "Pending Portrait",
           title: "New Hire",
@@ -148,6 +218,7 @@ describe("Team — LA / SF / Exec filter boxes", () => {
           teams: ["SF"],
           badges: ["SF"],
           bio: "Bio pending.",
+          founder: false,
         },
       ],
     }))

@@ -9,7 +9,7 @@ import { MapPin } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
-import { getTeam, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
+import { getFounders, getRoster, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
 import { LINKS } from "@/lib/links"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -19,7 +19,8 @@ import { cn } from "@/lib/utils"
 const TEAM_IMAGE_WIDTH = 1000
 const TEAM_IMAGE_HEIGHT = 800
 
-const team = getTeam()
+const founders = getFounders()
+const roster = getRoster()
 
 function TeamCard({
   member,
@@ -162,9 +163,94 @@ function TeamCard({
   )
 }
 
-const TEAM_FILTERS = ["All", ...TEAM_TAGS] as const
+/**
+ * Founder card — deliberately NOT a TeamCard. Owner asked for "larger images /
+ * description below" (Will, 2026-08-04), so the portrait is bigger and the bio
+ * reads inline instead of hiding behind the roster card's expand toggle.
+ */
+function FounderCard({
+  member,
+  index,
+  isInView,
+  isMobile,
+}: {
+  member: TeamMember
+  index: number
+  isInView: boolean
+  isMobile: boolean | undefined
+}) {
+  const [imageReady, setImageReady] = useState(false)
 
-type TeamFilter = (typeof TEAM_FILTERS)[number]
+  return (
+    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6}>
+      <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted">
+        {member.image ? (
+          <>
+            <div
+              className={cn(
+                "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
+                "motion-safe:transition-opacity motion-safe:duration-300 motion-reduce:transition-none",
+                imageReady ? "opacity-0" : "opacity-100"
+              )}
+              aria-hidden
+            />
+            <Image
+              src={member.image}
+              alt={`${member.name}, ${member.title}`}
+              width={TEAM_IMAGE_WIDTH}
+              height={TEAM_IMAGE_HEIGHT}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              priority={index === 0}
+              onLoad={() => setImageReady(true)}
+              className={cn(
+                "relative z-[1] h-full w-full object-cover object-center",
+                "motion-safe:transition-opacity motion-safe:duration-500 motion-reduce:transition-none",
+                imageReady ? "opacity-100" : "opacity-0"
+              )}
+            />
+          </>
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
+            <span className="font-serif text-5xl font-bold text-accent/50" aria-hidden>
+              {member.name.charAt(0)}
+            </span>
+            <span className="text-xs tracking-normal text-muted-foreground">Portrait coming soon</span>
+          </div>
+        )}
+      </div>
+      <div className="p-5 md:p-7">
+        <div className="mb-1.5 flex items-center gap-2">
+          <MapPin size={14} className="shrink-0 text-accent" aria-hidden />
+          <span className="text-xs tracking-normal text-muted-foreground">{member.location}</span>
+        </div>
+        <h3 className="font-condensed text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          {member.name}
+        </h3>
+        <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {member.badges.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-xs border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </GoldCard>
+  )
+}
+
+type TeamFilter = "All" | TeamTag
+
+/** Only offer a filter box for tags that actually have a roster member behind
+ *  them — founders live in their own row, so Exec would otherwise show empty. */
+const TEAM_FILTERS: readonly TeamFilter[] = [
+  "All",
+  ...TEAM_TAGS.filter((tag) => roster.some((m) => m.teams.includes(tag))),
+]
 
 export function Team() {
   const ref = useRef(null)
@@ -175,8 +261,8 @@ export function Team() {
 
   const visibleTeam =
     activeFilter === "All"
-      ? team
-      : team.filter((member) => member.teams.includes(activeFilter as TeamTag))
+      ? roster
+      : roster.filter((member) => member.teams.includes(activeFilter as TeamTag))
 
   const selectFilter = (filter: TeamFilter) => {
     setActiveFilter(filter)
@@ -197,7 +283,30 @@ export function Team() {
           <span className="lupfr-heading-subline">Team</span>
         </h2>
 
-        {/* Clickable team boxes: All / LA / SF / Exec (owner request, 2026-07-02). */}
+        {/* Founders row (owner request 2026-08-04: "a dedicated section for the
+            founders … three larger images / description below"). Sits above the
+            roster and adapts from two to three cards as founders are added. */}
+        {founders.length > 0 && (
+          <div
+            role="region"
+            aria-label="Founders"
+            className="mb-12 sm:mb-16"
+          >
+            <p className="lupfr-section-kicker mb-5">The Founders</p>
+            <div className="flex flex-wrap justify-center gap-5 sm:gap-7 items-start">
+              {founders.map((member, i) => (
+                <div
+                  key={member.name}
+                  className="basis-full sm:basis-[calc(50%-0.875rem)] lg:basis-[calc(33.333%-1.17rem)] sm:grow max-w-[520px]"
+                >
+                  <FounderCard member={member} index={i} isInView={isInView} isMobile={isMobile} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Clickable team boxes: All / LA / SF (owner request, 2026-07-02). */}
         <div className="mb-8 flex flex-wrap gap-2 sm:gap-3" role="group" aria-label="Filter team by city">
           {TEAM_FILTERS.map((filter) => (
             <button
@@ -224,7 +333,7 @@ export function Team() {
             all five sit in one row. items-start so an expanded bio doesn't stretch neighbors.
             Phones stay 2-up; sm+ cards grow to fill the row (capped) so few-member filters
             still read full. */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-6 items-start">
+        <div data-team-grid className="flex flex-wrap justify-center gap-3 sm:gap-6 items-start">
           {visibleTeam.map((member, i) => (
             <div
               key={member.name}

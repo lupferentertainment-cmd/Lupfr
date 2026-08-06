@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { getPress } from "@/lib/data/press"
 import { getCareers } from "@/lib/data/careers"
-import { getTeam, TEAM_TAGS } from "@/lib/data/team"
+import { getFounders, getRoster, getTeam, TEAM_TAGS } from "@/lib/data/team"
 
 /**
  * Small YAML-backed list contracts: normalized paths and required fields, so a
@@ -49,11 +49,24 @@ describe("team list", () => {
     expect(cianna?.teams.sort()).toEqual(["LA", "SF"])
   })
 
-  it("Will is the only Exec; LA and SF each have members", () => {
+  it("Exec is the founders; LA and SF each have members", () => {
     const team = getTeam()
     const exec = team.filter((m) => m.teams.includes("Exec"))
-    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer"])
+    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott"])
     expect(team.filter((m) => m.teams.includes("LA")).length).toBeGreaterThanOrEqual(3)
     expect(team.filter((m) => m.teams.includes("SF")).length).toBeGreaterThanOrEqual(1)
+  })
+
+  it("founders and roster partition the team, and every founder has a bio", () => {
+    const founders = getFounders()
+    const roster = getRoster()
+    expect(founders.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott"])
+    expect(founders.length + roster.length).toBe(getTeam().length)
+    expect(founders.some((m) => roster.includes(m))).toBe(false)
+    for (const f of founders) {
+      // The founders row shows the bio inline, so an empty one would render blank.
+      expect(f.bio.length, f.name).toBeGreaterThan(80)
+      expect(f.image, f.name).toBeTruthy()
+    }
   })
 })

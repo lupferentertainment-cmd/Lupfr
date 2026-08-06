@@ -16,6 +16,8 @@ export interface TeamMember {
   bio: string
   /** Which team filter boxes show this member. */
   teams: TeamTag[]
+  /** Founders render in the larger row above the roster, not in the grid. */
+  founder: boolean
   /** Short card badges (phase 25, ported from the comp): teams ∪ city codes parsed from location. */
   badges: string[]
 }
@@ -38,7 +40,11 @@ function deriveBadges(teams: TeamTag[], location: string): string[] {
   return TEAM_TAGS.filter((tag) => badges.has(tag))
 }
 
-type TeamRow = Omit<TeamMember, "image" | "teams" | "badges"> & { image?: string; teams?: unknown }
+type TeamRow = Omit<TeamMember, "image" | "teams" | "badges" | "founder"> & {
+  image?: string
+  teams?: unknown
+  founder?: unknown
+}
 
 export const TEAM: TeamMember[] = (teamJson as TeamRow[]).map((m) => {
   const teams = normalizeTeams(m.teams)
@@ -47,9 +53,20 @@ export const TEAM: TeamMember[] = (teamJson as TeamRow[]).map((m) => {
     image: normalizeImage(m.image),
     teams,
     badges: deriveBadges(teams, m.location),
+    founder: m.founder === true,
   }
 })
 
 export function getTeam(): TeamMember[] {
   return TEAM
+}
+
+/** Founders, for the larger row above the roster grid. */
+export function getFounders(): TeamMember[] {
+  return TEAM.filter((m) => m.founder)
+}
+
+/** Everyone else — the filterable roster grid. */
+export function getRoster(): TeamMember[] {
+  return TEAM.filter((m) => !m.founder)
 }

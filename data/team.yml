@@ -3,13 +3,24 @@
 # into the artwork — keep the text block below the image, not overlaid.
 # `teams`: one or more of Exec / LA / SF — drives the clickable team filter boxes.
 # Omit `image` while a portrait is pending; the card renders a placeholder.
+# `founder: true` lifts a member into the larger Founders row above the roster
+# grid (bio shown inline, not click-to-expand) and out of the filtered grid.
 
 - name: Will Lupfer
   title: CEO & Founder
   location: Los Angeles & San Francisco
   teams: [Exec]
+  founder: true
   image: /images/team/will.webp
   bio: "Will founded LUPFR to bring intentional, artist-first production to live music and events across San Francisco and Los Angeles. Splitting his time between both markets, he leads sponsorship, brand strategy, and the vision behind LUPFR's flagship franchises — from intimate boiler-room sets to full-scale yacht takeovers. An active DJ with a deep personal passion for curated nightlife, Will built the company from the ground up while balancing it alongside a background in infrastructure finance."
+
+- name: Eliott
+  title: Co-Founder
+  location: Los Angeles, CA
+  teams: [Exec, LA]
+  founder: true
+  image: /images/team/eliott.webp
+  bio: "Eliott serves as strategic partnerships lead at LUPFR, where he drives business development, brand partnerships, and long-term growth. A licensed attorney with a background spanning entertainment, media, and entrepreneurship, he supports LUPFR's expansion across Los Angeles and beyond. Outside of his legal practice, Eliott is an actor, content creator, and entrepreneur with a passion for entertainment, community-building, and creating meaningful experiences."
 
 - name: Zac Brosky
   title: Event Manager
