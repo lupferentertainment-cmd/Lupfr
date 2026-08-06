@@ -62,9 +62,11 @@ describe("carousel right-edge bleed", () => {
     expect(eventsSource).toContain("mr-[calc(50%-50vw)]")
   })
 
-  it("enables the bleed on the Past carousel", () => {
-    const pastIdx = eventsSource.indexOf("Past\n")
-    expect(pastIdx).toBeGreaterThan(-1)
-    expect(eventsSource.slice(pastIdx)).toMatch(/<EventsCarousel[\s\S]{0,600}bleedRight/)
+  it("enables the bleed on the Upcoming carousel", () => {
+    // The Past carousel left the landing page on 2026-08-05 (archive is /events),
+    // so Upcoming is the only carousel here that needs the right-edge bleed.
+    const idx = eventsSource.indexOf("upcoming.length > 0")
+    expect(idx).toBeGreaterThan(-1)
+    expect(eventsSource.slice(idx)).toMatch(/<EventsCarousel[\s\S]{0,600}bleedRight/)
   })
 })

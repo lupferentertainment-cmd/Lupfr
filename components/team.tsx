@@ -9,6 +9,7 @@ import { MapPin } from "lucide-react"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { GoldCard } from "@/components/gold-card"
+import { ShimmerImage } from "@/components/shimmer-image"
 import { getFounders, getRoster, TEAM_TAGS, type TeamMember, type TeamTag } from "@/lib/data/team"
 import { LINKS } from "@/lib/links"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -37,8 +38,6 @@ function TeamCard({
   isExpanded: boolean
   onToggle: () => void
 }) {
-  const [imageReady, setImageReady] = useState(false)
-
   return (
     <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={10}>
       <motion.button
@@ -51,32 +50,20 @@ function TeamCard({
       >
         <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted">
           {member.image ? (
-            <>
-              <div
-                className={cn(
-                  "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
-                  "motion-safe:transition-opacity motion-safe:duration-300",
-                  "motion-reduce:transition-none",
-                  imageReady ? "opacity-0" : "opacity-100"
-                )}
-                aria-hidden
-              />
-              <Image
-                src={member.image}
-                alt={`${member.name}, ${member.title}`}
-                width={TEAM_IMAGE_WIDTH}
-                height={TEAM_IMAGE_HEIGHT}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                loading="lazy"
-                onLoad={() => setImageReady(true)}
-                className={cn(
-                  "relative z-[1] w-full h-full object-cover object-center",
-                  "motion-safe:transition-[opacity,transform] motion-safe:duration-500 motion-reduce:transition-none",
-                  "motion-safe:group-hover:scale-[1.08]",
-                  imageReady ? "opacity-100" : "opacity-0"
-                )}
-              />
-            </>
+            /* Same cached-image guard as the founder cards: a portrait already in
+               the browser cache must not stay invisible behind the shimmer. */
+            <ShimmerImage
+              src={member.image}
+              alt={`${member.name}, ${member.title}`}
+              width={TEAM_IMAGE_WIDTH}
+              height={TEAM_IMAGE_HEIGHT}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              loading="lazy"
+              className={cn(
+                "relative z-[1] w-full h-full object-cover object-center",
+                "motion-safe:group-hover:scale-[1.08]"
+              )}
+            />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
               <span className="font-serif text-4xl font-bold text-accent/50" aria-hidden>
@@ -179,36 +166,24 @@ function FounderCard({
   isInView: boolean
   isMobile: boolean | undefined
 }) {
-  const [imageReady, setImageReady] = useState(false)
-
   return (
     <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6}>
       <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted">
         {member.image ? (
-          <>
-            <div
-              className={cn(
-                "skeleton-shimmer pointer-events-none absolute inset-0 z-0",
-                "motion-safe:transition-opacity motion-safe:duration-300 motion-reduce:transition-none",
-                imageReady ? "opacity-0" : "opacity-100"
-              )}
-              aria-hidden
-            />
-            <Image
-              src={member.image}
-              alt={`${member.name}, ${member.title}`}
-              width={TEAM_IMAGE_WIDTH}
-              height={TEAM_IMAGE_HEIGHT}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              priority={index === 0}
-              onLoad={() => setImageReady(true)}
-              className={cn(
-                "relative z-[1] h-full w-full object-cover object-center",
-                "motion-safe:transition-opacity motion-safe:duration-500 motion-reduce:transition-none",
-                imageReady ? "opacity-100" : "opacity-0"
-              )}
-            />
-          </>
+          /* ShimmerImage, not a hand-rolled onLoad fade: it reads `complete` on
+             mount, so a browser-cached portrait can't stay stuck at opacity 0
+             behind the shimmer. No `priority` — the founders row sits well below
+             the fold, so eager-loading it would compete with the hero's LCP on
+             mobile. */
+          <ShimmerImage
+            src={member.image}
+            alt={`${member.name}, ${member.title}`}
+            width={TEAM_IMAGE_WIDTH}
+            height={TEAM_IMAGE_HEIGHT}
+            sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 33vw"
+            loading="lazy"
+            className="relative z-[1] h-full w-full object-cover object-center"
+          />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
             <span className="font-serif text-5xl font-bold text-accent/50" aria-hidden>

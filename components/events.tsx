@@ -12,7 +12,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react"
-import { eventDetailPath, getUpcomingEvents, getPastEvents, getEventTag, type EventItem } from "@/lib/events"
+import { eventDetailPath, getUpcomingEvents, getEventTag, type EventItem } from "@/lib/events"
 import { getBrands } from "@/lib/data/brands"
 import { useEventCalendarClock } from "@/hooks/use-event-calendar-clock"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -545,7 +545,6 @@ export function Events() {
   }, [inViewNow])
   const isRevealed = hasRevealed
   // Mount Past only after the section has been (or is about to be) in view.
-  const mountBelowFold = hasRevealed
   const enableTilt = useFinePointerHover()
   const isMobile = useIsMobile()
   // Touch/unresolved: skip hover-only motion nodes; desktop keeps full card inners.
@@ -554,7 +553,6 @@ export function Events() {
   const clearHover = useCallback(() => setHoveredId(null), [])
   const now = useEventCalendarClock()
   const upcoming = getUpcomingEvents(now)
-  const past = getPastEvents(now)
 
   return (
     <section
@@ -609,37 +607,9 @@ export function Events() {
           )}
         </m.div>
 
-        {mountBelowFold && past.length > 0 && (
-          <m.div
-            id="past-events"
-            initial={{ opacity: 0, y: 24 }}
-            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-            transition={{ duration: 0.45, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="pt-2 pb-4"
-          >
-            <GoldShineText
-              as="h3"
-              scrollTargetRef={ref}
-              className="lupfr-heading-sub mb-8 md:mb-10"
-            >
-              Past
-            </GoldShineText>
-            <EventsCarousel
-              events={past}
-              isRevealed={isRevealed}
-              enableTilt={enableTilt}
-              staticInner={staticInner}
-              hoveredId={hoveredId}
-              onHover={setHoveredId}
-              onLeave={clearHover}
-              now={now}
-              prefetchDetails={isMobile === false}
-              prioritizeFirstImage={false}
-              compact
-              bleedRight
-            />
-          </m.div>
-        )}
+        {/* The Past archive lives on /events only (owner request 2026-08-05) —
+            the landing page stays forward-looking. `EventsDirectory` renders it
+            behind the Past/All filter there. */}
       </ScrollReveal>
     </section>
   )

@@ -80,10 +80,14 @@ async function main() {
 
     await _scrollUntil(page, "#events")
     await page.evaluate(() => window.scrollBy(0, 700))
-    try {
-      await page.locator('[data-compact="true"]').first().waitFor({ state: "attached", timeout: 15000 })
-    } catch {
-      failures.push("Past carousel never mounted with data-compact=true")
+    // Past events are archive-only now (owner request 2026-08-05): the landing
+    // page stays forward-looking and the archive lives on /events.
+    await page.waitForTimeout(1500)
+    if ((await page.locator('[data-compact="true"]').count()) > 0) {
+      failures.push("Past carousel still renders on the landing page")
+    }
+    if ((await page.locator("#past-events").count()) > 0) {
+      failures.push("#past-events section still renders on the landing page")
     }
 
     await _scrollUntil(page, "#artists")

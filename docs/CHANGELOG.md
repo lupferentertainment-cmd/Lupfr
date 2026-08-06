@@ -6,6 +6,12 @@ All notable project changes are recorded here.
 
 ### Changed
 
+- **Past events are archive-only (owner request 2026-08-05):** the home Events section no longer renders the Past carousel — the landing page stays forward-looking, and the full archive stays on `/events` behind the `EventsDirectory` Past/All filter (unchanged). `components/events.tsx` drops the `#past-events` block and no longer calls `getPastEvents` at all, so the landing page never even builds the past list. `EventsCarousel` keeps its `compact` prop for the archive surface. `scripts/verify-will-home.mjs` now asserts the opposite of what it used to: no `[data-compact="true"]` and no `#past-events` on `/`. `tests/unit/past-events-compact.test.ts`, `event-frame-bleed.test.ts`, and `mobile-events-trim.test.ts` updated in the same change.
+
+### Fixed
+
+- **Team portraits could stay invisible behind the loading shimmer:** `components/team.tsx` hand-rolled the `onLoad` opacity fade instead of using `ShimmerImage`, so a portrait already in the browser cache could finish decoding before React attached `onLoad` and sit at `opacity: 0` forever — the same defect fixed earlier on the `/brands` deck viewer. Both the roster card and the new founder card now render through `components/shimmer-image.tsx`, which reads `complete` on mount. Mobile cost also came down: the founders row is explicitly `loading="lazy"` with no `priority` (it sits far below the fold, so eager-loading it would compete with the hero for LCP), and `sizes` now asks for a phone-width portrait (`92vw` founders, `50vw` roster 2-up) instead of a full-width one. Locked by `tests/unit/team-image-flicker.test.ts`; mobile budgets re-measured green (LCP 620ms, long task 441ms).
+
 - **Team roster update:** Removed Mateen Malekinejad from the team configuration (`data/team.yml` and `lib/data/generated/team.json`) and updated corresponding tests and documentation specs.
 - **Brixton Bar partner logo:** Restored Brixton Bar SF logo in `data/partners.yml` as an unlinked logo (removed external URL `https://thebrixtonsf.com`).
 

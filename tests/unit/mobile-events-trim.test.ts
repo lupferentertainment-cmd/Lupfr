@@ -17,9 +17,11 @@ describe("mobile events main-thread trim", () => {
     )
   })
 
-  it("gates the Past carousel behind the section in-view latch", () => {
-    expect(events).toContain("const mountBelowFold = hasRevealed")
-    expect(events).toContain("{mountBelowFold && past.length > 0 && (")
+  it("no longer mounts a Past carousel below the fold", () => {
+    // Past events moved to /events on 2026-08-05, so the landing page does not
+    // read or render them at all — the cheapest possible mobile main thread.
+    expect(events).not.toContain("getPastEvents")
+    expect(events).not.toContain("past.length > 0")
   })
 
   it("uses static card inners on mobile while preserving tilt shell + m.article", () => {
