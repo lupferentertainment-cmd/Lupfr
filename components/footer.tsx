@@ -36,6 +36,7 @@ const companyLinksBase = [
     { name: "Events", href: "#events" },
     { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },
+    { name: "Media", href: "/media" },
     { name: "Careers", href: "/careers" },
     { name: "Contact", href: "#contact" },
 ] as const
