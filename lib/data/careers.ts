@@ -14,7 +14,7 @@ export interface CareerItem {
   linkedinUrl: string
 }
 
-export const CAREERS: CareerItem[] = careersJson as CareerItem[]
+export const CAREERS: CareerItem[] = (careersJson as CareerItem[] | null) ?? []
 
 export function getCareers(): CareerItem[] {
   return CAREERS

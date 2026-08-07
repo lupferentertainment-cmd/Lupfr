@@ -1,15 +1,3 @@
 # Open roles. Each entry renders a card on /careers that links out to the LinkedIn posting.
 # Remove an entry when the role closes; the page shows a "no open roles" state when empty.
 # All roles also appear at https://www.linkedin.com/company/lupfr/jobs/
-
-- title: Marketing & Strategy Intern
-  location: Los Angeles, CA
-  type: Internship
-  workMode: Hybrid
-  summary: "Help own and evolve the LUPFR brand across all public-facing channels — content, community, and creative on the front end; strategy, PR support, and B2B communications on the back end."
-  highlights:
-    - Manage day-to-day content and community on Instagram and TikTok
-    - Run and grow email and SMS marketing with Klaviyo
-    - Support PR efforts — press outreach, media lists, coverage tracking
-    - Track performance analytics and report on what's working
-  linkedinUrl: https://www.linkedin.com/jobs/view/4423602070/
