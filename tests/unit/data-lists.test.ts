@@ -52,7 +52,7 @@ describe("team list", () => {
   it("Exec is the founders; LA and SF each have members", () => {
     const team = getTeam()
     const exec = team.filter((m) => m.teams.includes("Exec"))
-    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott"])
+    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian"])
     expect(team.filter((m) => m.teams.includes("LA")).length).toBeGreaterThanOrEqual(3)
     expect(team.filter((m) => m.teams.includes("SF")).length).toBeGreaterThanOrEqual(1)
   })
@@ -60,7 +60,7 @@ describe("team list", () => {
   it("founders and roster partition the team, and every founder has a bio", () => {
     const founders = getFounders()
     const roster = getRoster()
-    expect(founders.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott"])
+    expect(founders.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian"])
     expect(founders.length + roster.length).toBe(getTeam().length)
     expect(founders.some((m) => roster.includes(m))).toBe(false)
     for (const f of founders) {
