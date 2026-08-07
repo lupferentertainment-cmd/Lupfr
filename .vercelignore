@@ -6,5 +6,4 @@ node_modules
 .DS_Store
 coverage
 .nyc_output
-# Large static asset dirs already on Vercel CDN from prior deploys
-public/gallery
+
