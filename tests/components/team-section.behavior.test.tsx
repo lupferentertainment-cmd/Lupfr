@@ -53,7 +53,8 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
     render(<Team />)
     const founders = foundersRegion()
     expect(founders.textContent).toMatch(/Will founded LUPFR/)
-    expect(founders.textContent).toMatch(/strategic partnerships lead at LUPFR/)
+    // Eliott's bio became the owner's design-file copy on 2026-08-08.
+    expect(founders.textContent).toMatch(/co-founder of LUPFR/)
     // No expand toggle inside a founder card.
     expect(founders.querySelectorAll("[aria-expanded]")).toHaveLength(0)
   })
@@ -63,7 +64,8 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
     const founders = foundersRegion()
     const srcs = Array.from(founders.querySelectorAll("img")).map((i) => i.getAttribute("src"))
     expect(srcs).toContain("/images/team/will.webp")
-    expect(srcs).toContain("/images/team/eliott.webp")
+    // Owner supplied a square portrait for Eliott on 2026-08-08.
+    expect(srcs).toContain("/images/team/eliott-square.webp")
   })
 
   it("places the founders row above the filtered roster grid", () => {

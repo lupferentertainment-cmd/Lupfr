@@ -19,8 +19,12 @@
   location: Los Angeles, CA
   teams: [Exec, LA]
   founder: true
-  image: /images/team/eliott.webp
-  bio: "Eliott serves as strategic partnerships lead at LUPFR, where he drives business development, brand partnerships, and long-term growth. A licensed attorney with a background spanning entertainment, media, and entrepreneurship, he supports LUPFR's expansion across Los Angeles and beyond. Outside of his legal practice, Eliott is an actor, content creator, and entrepreneur with a passion for entertainment, community-building, and creating meaningful experiences."
+  # Square portrait + bio delivered in the AUG 8 restructure zip; the owner asked
+  # for "this exact design + the descriptions I added", so the bio below is the
+  # design file's `founders[1].bio` verbatim. The previous 1000x800 eliott.webp
+  # stays on disk for an easy revert.
+  image: /images/team/eliott-square.webp
+  bio: "Eliott is a co-founder of LUPFR, helping shape the company's strategy, partnerships, and expansion across Los Angeles and beyond. A licensed attorney, actor, entrepreneur, and entertainment professional, he brings a multidisciplinary perspective to building the brand — developing partnerships, structuring opportunities, and turning ambitious ideas into scalable ventures. With roots in LA's creative community spanning music, nightlife, film, fashion, and media, Eliott is focused on growing LUPFR into a platform where culture, community, and business intersect."
 
 - name: Zac Brosky
   title: Event Manager

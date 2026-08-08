@@ -8,6 +8,7 @@ import { Brands } from "@/components/brands"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { News } from "@/components/news"
+import { LayloEmbed } from "@/components/laylo-embed"
 import { PartnersStrip } from "@/components/partners-strip"
 import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -62,6 +63,8 @@ export function HomePage() {
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         <Contact />
+        {/* Owner 2026-08-08: Laylo drop signup, above the footer. */}
+        <LayloEmbed />
         <Footer />
       </DeferredHomeSection>
     </main>

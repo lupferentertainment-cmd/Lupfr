@@ -73,6 +73,39 @@ describe("mobile brand/service tiles are short enough to see several (owner 2026
   })
 })
 
+describe("Laylo drop embed (owner 2026-08-08)", () => {
+  const laylo = read("components", "laylo-embed.tsx")
+  const homePage = read("components", "home-page.tsx")
+
+  it("keeps the owner's drop id and query params verbatim", () => {
+    expect(laylo).toContain("dropId=2qWvZ")
+    expect(laylo).toContain("color=FED455")
+    expect(laylo).toContain("minimal=false")
+    expect(laylo).toContain("theme=light")
+    expect(laylo).toContain('id="laylo-drop-2qWvZ"')
+  })
+
+  it("loads the SDK that resizes the frame, off the critical path", () => {
+    expect(laylo).toContain("https://embed.laylo.com/laylo-sdk.js")
+    expect(laylo).toContain('strategy="lazyOnload"')
+  })
+
+  it("keeps Laylo's responsive-iframe width idiom intact", () => {
+    // width:1px + min-width:100% is deliberate, not a typo — dropping the 1px
+    // makes the frame refuse to shrink inside a flex/grid parent.
+    expect(laylo).toMatch(/width:\s*"1px"/)
+    expect(laylo).toMatch(/minWidth:\s*"100%"/)
+  })
+
+  it("gives the iframe an accessible title", () => {
+    expect(laylo).toMatch(/title="[^"]+"/)
+  })
+
+  it("is mounted on the home page", () => {
+    expect(homePage).toContain("<LayloEmbed />")
+  })
+})
+
 describe("section headers render on one line (owner 2026-08-08)", () => {
   const splitHeadings: Array<[string, string]> = [
     ["components/artists.tsx", "Artists"],
