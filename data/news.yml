@@ -1,0 +1,38 @@
+# Company news shown in the home-page News strip, below the Hero.
+#
+# Owner delivery 2026-08-08 (AUG 8 restructure design file, `pressProof`).
+# EVERY entry must link to a real, reachable permalink — this strip is company
+# news about a real business, so an invented headline or a link to a generic
+# profile page is a defect, not a placeholder. The design file also carried
+# several unverifiable items ("LUPFR opens its first full HQ in Old Town
+# Pasadena", "six sold-out Bay sailings", a Downtown LA HIGH//RISE launch)
+# pointing at generic company pages rather than articles; those are deliberately
+# NOT shipped, matching the same call made for the Media Hub.
+#
+# url: canonical permalink. dateISO drives ordering (newest first).
+- id: 1
+  source: Company News
+  dateISO: "2026-08-07"
+  title: >-
+    Eliott Nazarian joins LUPFR as Co-Founder, leading strategy, partnerships,
+    and LA expansion.
+  url: https://www.linkedin.com/feed/update/urn:li:activity:7491887671884046336/
+
+- id: 2
+  source: Partnership
+  dateISO: "2026-07-16"
+  title: >-
+    LUPFR Entertainment partners with Partiful to power ticketing and guest
+    lists across its live music events.
+  url: https://www.linkedin.com/posts/lupfr_lupfr-partiful-livemusic-activity-7485373985195499521-6FyS
+
+# The design file's copy of this item points at a `-redefining-live-events/`
+# slug that 404s; the live article is the `-in-san-francisco/` slug already
+# recorded in data/press.yml. Verified 200 on 2026-08-08.
+- id: 3
+  source: San Francisco Post
+  dateISO: "2026-06-10"
+  title: >-
+    "From Energy Projects to Yacht Parties: How LUPFR Entertainment Is
+    Redefining the Music Experience in San Francisco"
+  url: https://sanfranciscopost.com/from-energy-projects-to-yacht-parties-how-lupfr-entertainment-is-redefining-the-music-experience-in-san-francisco/

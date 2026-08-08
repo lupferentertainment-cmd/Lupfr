@@ -7,6 +7,7 @@ import { Artists } from "@/components/artists"
 import { Brands } from "@/components/brands"
 import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
+import { News } from "@/components/news"
 import { PartnersStrip } from "@/components/partners-strip"
 import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -44,6 +45,11 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <PartnersStrip />
+      {/* Owner 2026-08-08: "company news items below the Hero". Placed after the
+          partners marquee rather than before it, because an earlier owner
+          request (2026-07-11) pins that strip *directly* under the hero — this
+          order satisfies both. */}
+      <News />
       <Brands />
       <Events />
       <Services />

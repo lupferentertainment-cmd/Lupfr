@@ -82,10 +82,18 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
     })
 
-    it("mounts the brands section eagerly, directly under the partners strip", () => {
+    it("mounts the brands section eagerly, just under the partners strip and news", () => {
         expect(homePage).toContain('import { Brands } from "@/components/brands"')
-        expect(homePage).toMatch(/<PartnersStrip \/>\s*<Brands \/>\s*<Events \/>/)
+        // The guardrail here is *eager* mounting — fast scrolling from the top
+        // must never land on a blank deferred placeholder. The owner's News
+        // strip (2026-08-08) sits between the partners marquee and Brands, so
+        // the order allows it while the eager-mount contract stays exact.
+        // News is a short, image-free text list, so it does not reintroduce the
+        // above-the-fold cost this suite exists to bound; the mobile-perf
+        // budgets in verify-mobile-perf remain the enforcing gate.
+        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<News \/>\s*<Brands \/>\s*<Events \/>/)
         expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
+        expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     })
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
