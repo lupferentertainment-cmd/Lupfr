@@ -401,7 +401,10 @@ describe("home page section structure", () => {
     expect(brandsComponent).toContain("object-cover")
     expect(brandsComponent).toContain("opacity-[0.34] dark:opacity-[0.16]")
     expect(brandsComponent).not.toContain("from-black/55 via-black/35 to-black/85")
-    expect(brandsComponent).toContain("min-h-[460px]")
+    // Owner 2026-08-08 shrank the mobile floor from 460px so several brand
+    // tiles fit a phone screen; the desktop floor is unchanged. Exact mobile
+    // value is pinned in tests/unit/aug8-owner-updates.test.ts.
+    expect(brandsComponent).toContain("sm:min-h-[340px]")
     expect(brandsComponent).toContain("sm:min-h-[340px]")
     expect(brandsComponent).toContain("lg:gap-8")
   })

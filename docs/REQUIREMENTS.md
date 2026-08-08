@@ -15,6 +15,12 @@
 - Resend must be configured (`RESEND_API_KEY`); no silent degradation—API returns explicit error if missing.
 - Canonical documentation lives in `docs/` (OVERVIEW, ARCHITECTURE, DESIGN, API, DEPLOYMENT, TESTING, REQUIREMENTS); docs are repo-only and guarded from public route exposure.
 
+**Third-party consent (hard content guardrail).**
+
+- **Will Lupfer's father must not be referenced on the site, and neither must Nike.** Owner relayed the objection directly on 2026-08-08: *"My dad doesn't want him or Nike mentioned."* The AUG 8 restructure design file's founder bio contains exactly this material — a 20-year Nike tenure, Phil Knight as the LUPFR blueprint, and a "Nike had Just Do It" parallel — so any future port of that bio **must drop those passages**, not paraphrase them. This is a named living person's stated refusal of consent, not a copy preference.
+- **Will's founder bio is embargoed** until the owner says otherwise (same message: *"Don't put my bio up rn"*). Eliott's bio is unaffected.
+- Enforced by `tests/unit/founder-bio-consent.test.ts`, which fails on these terms appearing in shipped copy (`data/`, `components/`, `app/`). Remove the guard only on an explicit owner instruction recorded in `docs/CHANGELOG.md`.
+
 **Non-goals (current scope).**
 
 - No CMS / in-browser YAML or media editing; no mutating `data/*` from the operator UI.

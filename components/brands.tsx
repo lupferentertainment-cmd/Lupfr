@@ -18,7 +18,11 @@ function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -5, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
-      className="group relative flex min-h-[460px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-[border-color,box-shadow] duration-150 ease-out hover:border-accent/50 hover:shadow-lg sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
+      // Owner 2026-08-08: the mobile floor used to be 460px — taller than the
+      // 340px desktop floor — so a phone showed one tile at a time. Lowered so
+      // several are visible while scrolling, per the design file's short mobile
+      // brand slats. `min-h` is only a floor: content still sizes the tile.
+      className="group relative flex min-h-[240px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-[border-color,box-shadow] duration-150 ease-out hover:border-accent/50 hover:shadow-lg sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
     >
       {brand.image && (
         <>

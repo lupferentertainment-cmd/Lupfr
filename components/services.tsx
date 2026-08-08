@@ -102,7 +102,7 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
       >
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
         {service.image && (
-          <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
+          <div className="relative h-[132px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
             <ShimmerImage
               src={service.image}
               alt=""
@@ -113,7 +113,7 @@ function ServiceCardStaticBody({ service, index }: { service: ServiceItem; index
           </div>
         )}
 
-        <div className="relative flex-1 p-8">
+        <div className="relative flex-1 p-5 sm:p-8">
           <span
             className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
             aria-hidden
@@ -170,7 +170,7 @@ function ServiceCardMotionBody({
         {/* Subtle top-edge highlight for raised surface feel */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent rounded-t-sm pointer-events-none z-10" aria-hidden />
         {service.image && (
-          <div className="relative h-[180px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
+          <div className="relative h-[132px] sm:h-[220px] w-full shrink-0 overflow-hidden bg-muted">
             <ShimmerImage
               src={service.image}
               alt=""
@@ -181,7 +181,7 @@ function ServiceCardMotionBody({
           </div>
         )}
 
-        <div className="relative flex-1 p-8">
+        <div className="relative flex-1 p-5 sm:p-8">
           <span
             className="absolute top-0 right-3 font-condensed font-extrabold text-7xl leading-none text-border/80 select-none pointer-events-none z-0"
             aria-hidden
