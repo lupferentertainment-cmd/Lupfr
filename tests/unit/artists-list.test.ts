@@ -33,7 +33,6 @@ describe("featured artist data", () => {
       "Nick Rosen",
       "Admiral",
       "LUPFR",
-      "MALEK",
       "Alex Rayne",
       "Midfield Avenue",
       "trillbot",
@@ -54,16 +53,11 @@ describe("featured artist data", () => {
     expect(astrd?.soundcloud).toBeUndefined()
   })
 
-  it("loads the phase 20 roster completion with copy sourced verbatim from the comp's embedded artist data", () => {
-    const malek = getArtists().find((artist) => artist.name === "MALEK")
-    expect(malek).toMatchObject({
-      genre: "House",
-      image: "/artists/malek.webp",
-      bio: "House selector and LUPFR team member bringing his own sound to the decks.",
-      soundcloud: "https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6",
-    })
-    expect(malek?.spotify).toBeUndefined()
+  it("drops MALEK from the roster (owner request 2026-08-08)", () => {
+    expect(getArtists().find((artist) => artist.name === "MALEK")).toBeUndefined()
+  })
 
+  it("loads the phase 20 roster completion with copy sourced verbatim from the comp's embedded artist data", () => {
     const alexRayne = getArtists().find((artist) => artist.name === "Alex Rayne")
     expect(alexRayne).toMatchObject({
       genre: "Electronic",
@@ -190,11 +184,6 @@ describe("featured artist data", () => {
     expect(byName("Alex Rayne")?.featuredTrack).toEqual({
       url: "https://open.spotify.com/track/5MtTgUg2fOkUdrJn4I7VKp",
       platform: "spotify",
-    })
-    // Owner delivered an on.soundcloud.com short link; stored as the resolved canonical track page.
-    expect(byName("MALEK")?.featuredTrack).toEqual({
-      url: "https://soundcloud.com/user-106497389/mainstage-mix",
-      platform: "soundcloud",
     })
     expect(byName("Midfield Avenue")?.featuredTrack).toEqual({
       url: "https://open.spotify.com/track/4UJtVs2l4vszbUoVjrLEA5",

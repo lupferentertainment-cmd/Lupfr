@@ -144,9 +144,12 @@ function EventCard({
     delay: isFirstCard ? 0 : index * 0.08,
     ease: [0.22, 1, 0.36, 1],
   }
+  // Owner 2026-08-08: cards carry no per-brand border colour — the design file
+  // frames every event in the neutral `var(--border)` hairline and lets the
+  // brand read through the tag text alone.
   const className = cn(
     "event-card-depth group relative w-full overflow-hidden rounded-sm bg-card border flex flex-col h-full",
-    brandAccent ? "border-[color:var(--event-brand)] hover:border-[color:var(--event-brand)]" : "border-border hover:border-accent/50"
+    "border-border hover:border-accent/50"
   )
 
   const image = event.image ? (
@@ -188,10 +191,6 @@ function EventCard({
     </h4>
   )
 
-  const cornerStyle = brandAccent ? { borderColor: brandAccent } : undefined
-  const brandStyle = brandAccent
-    ? ({ ["--event-brand" as string]: brandAccent } as CSSProperties)
-    : undefined
   const body = (
     <>
       <EventDetailLink slug={event.slug} className="flex flex-col flex-1">
@@ -233,12 +232,10 @@ function EventCard({
           ) : null}
           <div
             className="absolute bottom-[10px] left-[10px] z-[2] h-3 w-3 border-b border-l border-foreground/50 pointer-events-none"
-            style={cornerStyle}
             aria-hidden
           />
           <div
             className="absolute bottom-[10px] right-[10px] z-[2] h-3 w-3 border-b border-r border-foreground/50 pointer-events-none"
-            style={cornerStyle}
             aria-hidden
           />
           {staticInner ? (
@@ -270,9 +267,10 @@ function EventCard({
               className={cn(
                 "inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs border font-mono uppercase tracking-wider",
                 compact ? "px-1.5 py-0.5 text-[8px]" : "px-2 py-1 text-[9px]",
-                brandAccent ? undefined : "border-border text-foreground"
+                "border-border",
+                brandAccent ? undefined : "text-foreground"
               )}
-              style={brandAccent ? { borderColor: brandAccent, color: brandAccent } : undefined}
+              style={brandAccent ? { color: brandAccent } : undefined}
             >
               <span
                 className="h-[7px] w-[7px] shrink-0 rounded-full"
@@ -341,7 +339,6 @@ function EventCard({
         initial={initial}
         animate={animate}
         transition={transition}
-        style={brandStyle}
       >
         {body}
       </EventCardTiltShell>
@@ -356,7 +353,7 @@ function EventCard({
       className={className}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      style={{ rotateX: 0, rotateY: 0, ...brandStyle }}
+      style={{ rotateX: 0, rotateY: 0 }}
     >
       {body}
     </m.article>

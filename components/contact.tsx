@@ -205,8 +205,7 @@ export function Contact() {
         >
           <p className="lupfr-section-kicker mb-4">Get in touch</p>
           <h2 className="mb-5 lupfr-heading-split-leading">
-            <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>
-            <br />
+            <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>{" "}
             <span className="lupfr-heading-subline">Something</span>
           </h2>
           {/* "Ready to elevate" card retired; its copy lives here under the heading (owner request, 2026-07-02). */}

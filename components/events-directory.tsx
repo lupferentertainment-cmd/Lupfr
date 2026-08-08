@@ -140,10 +140,10 @@ function EventBrandTag({ event }: { event: EventItem }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs border px-2 py-1 font-mono text-[9px] uppercase tracking-wider",
-        accent ? undefined : "border-border text-accent"
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-xs border border-border px-2 py-1 font-mono text-[9px] uppercase tracking-wider",
+        accent ? undefined : "text-accent"
       )}
-      style={accent ? { borderColor: accent, color: accent } : undefined}
+      style={accent ? { color: accent } : undefined}
     >
       <span
         className="h-[7px] w-[7px] shrink-0 rounded-full"

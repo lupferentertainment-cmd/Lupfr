@@ -35,6 +35,7 @@ export VERIFY_WILL_HOME_PORT="${VERIFY_WILL_HOME_PORT:-$(_lupfr_pick_port 4395 8
 export VERIFY_ADMIN_PORT="${VERIFY_ADMIN_PORT:-$(_lupfr_pick_port 4396 8000)}"
 export VERIFY_PARTNERS_MARQUEE_PORT="${VERIFY_PARTNERS_MARQUEE_PORT:-$(_lupfr_pick_port 4398 8000)}"
 export VERIFY_MOBILE_PERF_PORT="${VERIFY_MOBILE_PERF_PORT:-$(_lupfr_pick_port 6310 8000)}"
+export VERIFY_MOBILE_LAYOUT_PORT="${VERIFY_MOBILE_LAYOUT_PORT:-$(_lupfr_pick_port 16310 8000)}"
 export VITEST_MAX_WORKERS="${VITEST_MAX_WORKERS:-50%}"
 export LUPFR_BLOCK_NEXT_DEV=1
 
@@ -102,6 +103,8 @@ run_browser_checks() {
   bun run _verify:admin
   restore_next_snapshots
   bun run _verify:mobile-perf
+  restore_next_snapshots
+  bun run _verify:mobile-layout
   restore_next_snapshots
 }
 

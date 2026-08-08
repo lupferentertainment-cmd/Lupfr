@@ -253,8 +253,7 @@ export function Team() {
       <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px] relative z-10">
         <p className="lupfr-section-kicker mb-4">Who We Are</p>
         <h2 className="lupfr-heading--compact lupfr-heading-stack">
-          <GoldShineText scrollTargetRef={ref}>Our</GoldShineText>
-          <br />
+          <GoldShineText scrollTargetRef={ref}>Our</GoldShineText>{" "}
           <span className="lupfr-heading-subline">Team</span>
         </h2>
 

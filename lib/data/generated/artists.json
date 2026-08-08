@@ -142,18 +142,6 @@
     }
   },
   {
-    "id": 5,
-    "name": "MALEK",
-    "genre": "House",
-    "image": "/artists/malek.webp",
-    "bio": "House selector and LUPFR team member bringing his own sound to the decks.",
-    "soundcloud": "https://on.soundcloud.com/Wc5yFC4vYqzCLu2Zl6",
-    "featuredTrack": {
-      "url": "https://soundcloud.com/user-106497389/mainstage-mix",
-      "platform": "soundcloud"
-    }
-  },
-  {
     "id": 13,
     "name": "Alex Rayne",
     "genre": "Electronic",

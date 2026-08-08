@@ -446,8 +446,7 @@ export function Artists() {
           </p>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <h2 className="lupfr-heading-split-leading">
-              <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>
-              <br />
+              <GoldShineText scrollTargetRef={ref}>Featured</GoldShineText>{" "}
               <span className="lupfr-heading-subline">Artists</span>
             </h2>
             <div className="max-w-md md:text-right">
