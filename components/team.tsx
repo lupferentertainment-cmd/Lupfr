@@ -167,8 +167,8 @@ function FounderCard({
   isMobile: boolean | undefined
 }) {
   return (
-    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6}>
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted">
+    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6} className="h-full flex flex-col">
+      <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted shrink-0">
         {member.image ? (
           /* ShimmerImage, not a hand-rolled onLoad fade: it reads `complete` on
              mount, so a browser-cached portrait can't stay stuck at opacity 0
@@ -193,17 +193,19 @@ function FounderCard({
           </div>
         )}
       </div>
-      <div className="p-5 md:p-7">
-        <div className="mb-1.5 flex items-center gap-2">
-          <MapPin size={14} className="shrink-0 text-accent" aria-hidden />
-          <span className="text-xs tracking-normal text-muted-foreground">{member.location}</span>
+      <div className="p-5 md:p-7 flex-1 flex flex-col justify-between">
+        <div>
+          <div className="mb-1.5 flex items-center gap-2">
+            <MapPin size={14} className="shrink-0 text-accent" aria-hidden />
+            <span className="text-xs tracking-normal text-muted-foreground">{member.location}</span>
+          </div>
+          <h3 className="font-condensed text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+            {member.name}
+          </h3>
+          <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
         </div>
-        <h3 className="font-condensed text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-          {member.name}
-        </h3>
-        <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
-        <div className="mt-4 flex flex-wrap gap-1.5">
+        <div className="mt-4 flex flex-wrap gap-1.5 pt-2">
           {member.badges.map((tag) => (
             <span
               key={tag}
@@ -267,7 +269,7 @@ export function Team() {
             className="mb-12 sm:mb-16"
           >
             <p className="lupfr-section-kicker mb-5">The Founders</p>
-            <div className="flex flex-wrap justify-center gap-5 sm:gap-7 items-start">
+            <div className="flex flex-wrap justify-center gap-5 sm:gap-7 items-stretch">
               {founders.map((member, i) => (
                 <div
                   key={member.name}

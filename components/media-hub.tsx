@@ -8,6 +8,7 @@ import { getMediaChannels } from "@/lib/data/media"
 import { cn } from "@/lib/utils"
 
 const channels = getMediaChannels()
+const ON_ACCENT_INK = "#0a0a09"
 
 /**
  * Media Hub panel — "cycle through LUPFR and each brand" from the owner's
@@ -44,16 +45,30 @@ export function MediaHub() {
               className={cn(
                 "min-h-[44px] rounded-full border px-5 py-2 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-200 ease-snap",
                 selected
-                  ? "text-background"
+                  ? "font-semibold"
                   : "border-border bg-card text-muted-foreground hover:border-accent/50 hover:text-foreground"
               )}
               style={
                 selected
-                  ? { backgroundColor: c.accent, borderColor: c.accent }
+                  ? {
+                      backgroundColor: c.accent,
+                      borderColor: c.accent,
+                      // Fixed dark ink, not `text-background`: every brand accent
+                      // is a light pastel, so in LIGHT mode `--background`
+                      // (#f0f0ed) put near-white text on a near-white pill.
+                      // `tests/unit/media-hub-pills.test.ts` fails if an accent
+                      // is ever added that is too dark for this ink.
+                      color: ON_ACCENT_INK,
+                    }
                   : undefined
               }
             >
-              <BrandSlashText text={c.label} />
+              {/*
+                On the selected pill the divider must inherit the dark ink —
+                its default gold is near-invisible on a light accent, which is
+                exactly what the owner reported for OUT // SIDE.
+              */}
+              <BrandSlashText text={c.label} color={selected ? "currentColor" : undefined} />
             </button>
           )
         })}

@@ -302,6 +302,11 @@ describe("artists card corporate polish", () => {
     expect(artistsComponent).toMatch(/font-mono text-\[9px\] tracking-\[0\.1em\] uppercase text-muted-foreground">Listen/)
     expect(artistsComponent).not.toContain('text-xs font-semibold tracking-tight text-accent">Listen')
   })
+
+  it("embed player container features gold accent borders and ambient glow", () => {
+    expect(artistsComponent).toContain("border-accent/40")
+    expect(artistsComponent).toContain("shadow-[0_0_12px_rgba(212,175,55,0.08)]")
+  })
 })
 
 // ── team card corporate polish ──────────────────────────────────────────────────

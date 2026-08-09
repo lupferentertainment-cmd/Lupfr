@@ -53,9 +53,9 @@ function FeaturedTrackEmbed({
   const height = platform === "spotify" ? "80" : "166"
 
   return (
-    <div ref={embedRef} className="mt-4 w-full pt-4 border-t border-border/80">
+    <div ref={embedRef} className="mt-3.5 w-full pt-3.5 border-t border-accent/30">
       <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted-foreground">Listen</span>
-      <div className="mt-1.5 rounded-sm overflow-hidden bg-muted/80 border border-border/80 w-full">
+      <div className="mt-1.5 rounded-md overflow-hidden bg-muted/90 border border-accent/40 shadow-[0_0_12px_rgba(212,175,55,0.08)] hover:border-accent/70 transition-colors w-full">
         {isInView ? (
           <iframe
             src={featuredTrackEmbedUrl}
@@ -67,7 +67,7 @@ function FeaturedTrackEmbed({
                 ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 : "autoplay; encrypted-media; fullscreen"
             }
-            className="border-0"
+            className="border-0 block"
             title={`Listen to ${artistName} on ${label}`}
           />
         ) : (
