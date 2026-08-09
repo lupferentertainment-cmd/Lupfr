@@ -10,6 +10,7 @@
  * brand tabs surface the company channels flagged via `socialsAreCompanyWide`.
  */
 import { getBrands } from "@/lib/data/brands"
+import { getNews } from "@/lib/data/news"
 import { getPress } from "@/lib/data/press"
 import { LINKS } from "@/lib/links"
 
@@ -26,6 +27,8 @@ export interface MediaNews {
   source: string
   /** Human date; empty when the source has no publication date recorded. */
   date: string
+  /** Raw ISO date, kept for sorting across press + company-news sources. */
+  dateISO: string
   title: string
   url: string
 }
@@ -67,13 +70,36 @@ const MONTH_YEAR = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 })
 
+/**
+ * Editorial coverage (`data/press.yml`) plus owner-reviewed company news
+ * (`data/news.yml`, the home News strip), newest first and de-duplicated by URL
+ * — the San Francisco Post feature is legitimately present in both files, and
+ * the Media Hub should list it once.
+ */
 function pressAsNews(): MediaNews[] {
-  return getPress().map((item) => ({
+  const fromPress: MediaNews[] = getPress().map((item) => ({
     source: item.outlet,
+    dateISO: item.dateISO,
     date: item.dateISO ? MONTH_YEAR.format(new Date(`${item.dateISO}T00:00:00Z`)) : "",
     title: item.title,
     url: item.url,
   }))
+
+  const fromNews: MediaNews[] = getNews().map((item) => ({
+    source: item.source,
+    dateISO: item.dateISO,
+    date: MONTH_YEAR.format(new Date(`${item.dateISO}T00:00:00Z`)),
+    title: item.title,
+    url: item.url,
+  }))
+
+  const byUrl = new Map<string, MediaNews>()
+  for (const item of [...fromPress, ...fromNews]) {
+    if (!byUrl.has(item.url)) byUrl.set(item.url, item)
+  }
+
+  // Both sources type dateISO as a required string, so no fallback is needed.
+  return [...byUrl.values()].sort((a, b) => b.dateISO.localeCompare(a.dateISO))
 }
 
 /** Strip the brand-slash divider for plain-text contexts (`SEA//SIDE` → `SEA/SIDE`). */

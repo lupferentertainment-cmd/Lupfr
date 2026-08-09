@@ -10,6 +10,7 @@ import { getMediaChannels, LUPFR_MEDIA_KEY } from "@/lib/data/media"
 import { LINKS } from "@/lib/links"
 import { getBrands } from "@/lib/data/brands"
 import { getPress } from "@/lib/data/press"
+import { getNews } from "@/lib/data/news"
 
 const channels = getMediaChannels()
 
@@ -79,14 +80,27 @@ describe("media hub links are real, never invented", () => {
 })
 
 describe("media hub news comes from real press", () => {
-  it("surfaces every press item on the LUPFR tab", () => {
+  it("surfaces press and company news together on the LUPFR tab, de-duplicated", () => {
     const news = channels[0].news
-    expect(news).toHaveLength(getPress().length)
+    const urls = new Set([
+      ...getPress().map((p) => p.url),
+      ...getNews().map((n) => n.url),
+    ])
+    // Union of both sources, each URL once — the San Francisco Post feature is
+    // legitimately in press.yml AND news.yml and must not list twice.
+    expect(news).toHaveLength(urls.size)
+    expect(new Set(news.map((n) => n.url)).size).toBe(news.length)
+
     for (const n of news) {
       expect(n.url.startsWith("https://")).toBe(true)
       expect(n.source.length).toBeGreaterThan(0)
       expect(n.title.length).toBeGreaterThan(0)
     }
+  })
+
+  it("orders the LUPFR tab newest first across both sources", () => {
+    const dates = channels[0].news.map((n) => n.dateISO)
+    expect(dates).toEqual([...dates].sort((a, b) => b.localeCompare(a)))
   })
 
   it("invents no coverage — the mockup's fake headlines never appear", () => {
