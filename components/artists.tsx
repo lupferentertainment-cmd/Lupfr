@@ -227,96 +227,102 @@ const ArtistCard = memo(function ArtistCard({
         )}
       </div>
 
-      {/* Name, links (above Listen), player — always visible */}
-      <div className="flex-1 p-4 md:p-5 rounded-b-sm bg-card">
-        <div className="flex items-center gap-2 mb-1">
-          <Music size={14} className="text-accent shrink-0" />
-          <span className="text-xs tracking-[0.08em] text-muted-foreground">{artist.genre}</span>
-        </div>
-        {/* Owner 2026-08-09: the platform links sit on the same row as the
-            artist name, immediately to its right — not stacked underneath.
-            `flex-wrap` lets the chips drop to a second line only when a long
-            name genuinely leaves no room, instead of overflowing the card. */}
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
-            {artist.name}
-          </h3>
-          <div className="flex items-center gap-2">
-          {hasSpotify && (
-            <m.a
-              href={artist.spotify}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              aria-label="Spotify"
-            >
-              <ExternalLink size={14} />
-            </m.a>
-          )}
-          {hasAppleMusic && (
-            <m.a
-              href={artist.appleMusic}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              aria-label="Apple Music"
-            >
-              <Music size={14} />
-            </m.a>
-          )}
-          {artist.instagram && (
-            <m.a
-              href={artist.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              aria-label="Instagram"
-            >
-              <Instagram size={14} />
-            </m.a>
-          )}
-          {hasYoutube && (
-            <m.a
-              href={artist.youtube}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              aria-label="YouTube"
-            >
-              <Youtube size={14} />
-            </m.a>
-          )}
-          {hasSoundcloud && (
-            <m.a
-              href={artist.soundcloud}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center size-[26px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              aria-label="SoundCloud"
-            >
-              <ExternalLink size={14} />
-            </m.a>
-          )}
+      {/* Name, links, and inline side-by-side player */}
+      <div className="flex-1 p-4 md:p-5 rounded-b-sm bg-card flex flex-col justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Music size={14} className="text-accent shrink-0" />
+            <span className="text-xs tracking-[0.08em] text-muted-foreground">{artist.genre}</span>
+          </div>
+
+          {/* Header row with Artist Name, Social Icons, and compact right-aligned Spotify/SoundCloud player */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 min-w-0">
+              <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
+                {artist.name}
+              </h3>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {hasSpotify && (
+                  <m.a
+                    href={artist.spotify}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-[24px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.92 }}
+                    aria-label="Spotify"
+                  >
+                    <ExternalLink size={12} />
+                  </m.a>
+                )}
+                {hasAppleMusic && (
+                  <m.a
+                    href={artist.appleMusic}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-[24px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.92 }}
+                    aria-label="Apple Music"
+                  >
+                    <Music size={12} />
+                  </m.a>
+                )}
+                {artist.instagram && (
+                  <m.a
+                    href={artist.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-[24px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.92 }}
+                    aria-label="Instagram"
+                  >
+                    <Instagram size={12} />
+                  </m.a>
+                )}
+                {hasYoutube && (
+                  <m.a
+                    href={artist.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-[24px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.92 }}
+                    aria-label="YouTube"
+                  >
+                    <Youtube size={12} />
+                  </m.a>
+                )}
+                {hasSoundcloud && (
+                  <m.a
+                    href={artist.soundcloud}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center size-[24px] bg-secondary rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
+                    whileHover={{ scale: 1.12 }}
+                    whileTap={{ scale: 0.92 }}
+                    aria-label="SoundCloud"
+                  >
+                    <ExternalLink size={12} />
+                  </m.a>
+                )}
+              </div>
+            </div>
+
+            {/* Inline player right beside artist name */}
+            {artist.featuredTrack && featuredTrackEmbedUrl && (
+              <div className="shrink-0 w-full sm:w-[220px]">
+                <FeaturedTrackEmbed
+                  featuredTrackEmbedUrl={featuredTrackEmbedUrl}
+                  platform={artist.featuredTrack.platform}
+                  artistName={artist.name}
+                  label={featuredTrackLabel}
+                />
+              </div>
+            )}
           </div>
         </div>
-        {artist.featuredTrack && featuredTrackEmbedUrl && (
-          <FeaturedTrackEmbed
-            featuredTrackEmbedUrl={featuredTrackEmbedUrl}
-            platform={artist.featuredTrack.platform}
-            artistName={artist.name}
-            label={featuredTrackLabel}
-          />
-        )}
       </div>
     </div>
   )

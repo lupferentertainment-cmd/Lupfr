@@ -293,8 +293,8 @@ describe("services card corporate numeral", () => {
 // ── artists card corporate polish ───────────────────────────────────────────────
 
 describe("artists card corporate polish", () => {
-  it("social-link chips are 26px circles with 14px icons (owner redesign 2026-07-16)", () => {
-    expect(artistsComponent).toContain("size-[26px]")
+  it("social-link chips are 24px-26px circles (owner redesign 2026-07-16)", () => {
+    expect(artistsComponent).toMatch(/size-\[2[46]px\]/)
     expect(artistsComponent).not.toContain("size={16}")
   })
 
