@@ -26,6 +26,8 @@ All notable project changes are recorded here.
 
 ### Fixed
 
+- **"Backed by Partiful" band was a black slab in light mode (owner report 2026-08-10, "i dont want this to be black"):** the band's left panel was `partiful-announcement.webp`, a baked near-black lockup. A raster cannot follow the theme, so in light mode it sat as a black block against a near-white page. The lockup is now **composed** from the two real marks — `/images/le-logo.webp` × `/corporate_partners/partiful.webp` — over a `bg-muted/40` surface, so it reads correctly in both modes and drops a raster from the page. The retired WebP is deleted rather than left orphaned in `public/` (recoverable from git history). `scripts/verify-will-home.mjs` locates the band via `img[alt*="Partiful" i]`, which the composed panel preserves. `tests/unit/partiful-announcement-art.test.ts` previously asserted "the raster is dark enough"; that contract is obsolete — it now pins the composition, the themed surface, and the absence of any hardcoded black.
+
 - **Laylo embed rendered a white panel on the dark site:** the owner's original snippet specified `theme=light`. It shipped verbatim as delivered, was flagged back with a screenshot, and is now `theme=dark`. `tests/unit/aug8-owner-updates.test.ts` pins the dark theme so re-pasting the original snippet cannot silently reintroduce the white block.
 
 

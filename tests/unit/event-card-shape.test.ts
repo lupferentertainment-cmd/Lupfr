@@ -86,6 +86,8 @@ describe("artist card shape guardrails", () => {
         // Both article shells fill the stretched slide…
         expect(artistsSource.match(/h-full w-full flex flex-col rounded-sm bg-card overflow-hidden/g)).toHaveLength(2)
         // …and the content block absorbs the leftover height.
-        expect(artistsSource).toContain('className="flex-1 p-4 md:p-5 rounded-b-sm bg-card"')
+        // The body gained flex utilities when the card grew a right-aligned
+        // player; assert the stretch contract, not the exact class list.
+        expect(artistsSource).toMatch(/className="flex-1 p-4 md:p-5 rounded-b-sm bg-card[^"]*"/)
     })
 })

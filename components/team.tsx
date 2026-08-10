@@ -168,7 +168,14 @@ function FounderCard({
 }) {
   return (
     <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6} className="h-full flex flex-col">
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-muted shrink-0">
+      {/*
+        Owner 2026-08-10: the portrait was `aspect-[5/4]` with no ceiling, so on
+        a wide two-up desktop row an ~800px card produced a ~640px-tall image
+        that swallowed the card. The aspect still drives height on narrow
+        screens; `max-h` caps it once the card gets wide, so the portrait stays
+        a header rather than the whole card.
+      */}
+      <div className="relative aspect-[5/4] max-h-[340px] w-full overflow-hidden bg-muted shrink-0 sm:max-h-[380px]">
         {member.image ? (
           /* ShimmerImage, not a hand-rolled onLoad fade: it reads `complete` on
              mount, so a browser-cached portrait can't stay stuck at opacity 0
@@ -182,7 +189,7 @@ function FounderCard({
             height={TEAM_IMAGE_HEIGHT}
             sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 33vw"
             loading="lazy"
-            className="relative z-[1] h-full w-full object-cover object-center"
+            className="relative z-[1] h-full w-full object-cover object-top"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
@@ -332,13 +339,31 @@ export function Team() {
           className="mt-12 sm:mt-14 grid gap-6 overflow-hidden rounded-sm border border-accent/25 bg-card sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:rounded-md"
           aria-label="Partiful partnership announcement"
         >
-          <div className="relative min-h-[200px] sm:min-h-[240px]">
+          {/*
+            Owner 2026-08-10: this panel used to be `partiful-announcement.webp`,
+            a baked near-black lockup. An image cannot follow the theme, so in
+            light mode it sat as a black slab against a near-white page. The
+            lockup is now composed from the two real marks over a themed
+            surface, so it reads correctly in both modes and drops a ~200KB
+            raster from the page at the same time.
+          */}
+          <div className="relative flex min-h-[200px] items-center justify-center gap-6 bg-muted/40 px-6 py-10 sm:min-h-[240px] sm:gap-8">
             <Image
-              src="/images/partiful-announcement.webp"
-              alt="Partiful partnership mark"
-              fill
-              sizes="(max-width: 640px) 100vw, 50vw"
-              className="object-cover"
+              src="/images/le-logo.webp"
+              alt="LUPFR Entertainment"
+              width={110}
+              height={110}
+              className="h-14 w-auto object-contain sm:h-16"
+            />
+            <span className="text-2xl font-light text-muted-foreground/60" aria-hidden>
+              ×
+            </span>
+            <Image
+              src="/corporate_partners/partiful.webp"
+              alt="Partiful"
+              width={110}
+              height={110}
+              className="partner-logo partner-logo--natural h-14 w-auto object-contain sm:h-16"
             />
           </div>
           <div className="flex flex-col justify-center gap-4 px-6 py-7 sm:px-8 sm:py-8">
