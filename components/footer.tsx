@@ -138,7 +138,7 @@ export function Footer() {
         {/* Vertical gold rules split the three columns on desktop (owner request
             2026-07-19, Eria-footer treatment); columns carry their own lg padding
             since the divide replaces the gap. */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-x-8 lg:gap-x-0 gap-y-12 sm:gap-y-14 mb-12 sm:mb-14 lg:divide-x lg:divide-accent/15">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-x-8 lg:gap-x-0 gap-y-12 sm:gap-y-14 mb-12 sm:mb-14 md:divide-x md:divide-accent/30 lg:divide-accent/30">
           {/* Brand */}
           <motion.div
             className="md:col-span-2 lg:col-span-5 lg:pr-10"

@@ -148,6 +148,36 @@ export async function POST(request: Request) {
         )
     }
 
+    // Optional dual-write to Laylo API / webhook when configured
+    const layloApiKey = process.env.LAYLO_API_KEY?.trim()
+    const layloDropId = process.env.LAYLO_DROP_ID?.trim() || "2qWvZ"
+    const layloWebhookUrl = process.env.LAYLO_WEBHOOK_URL?.trim()
+
+    if (layloWebhookUrl) {
+        try {
+            await fetch(layloWebhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, phone, dropId: layloDropId }),
+            })
+        } catch {
+            // non-blocking
+        }
+    } else if (layloApiKey) {
+        try {
+            await fetch(`https://api.laylo.com/v1/drops/${layloDropId}/subscribers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${layloApiKey}`,
+                },
+                body: JSON.stringify({ name, email, phone }),
+            })
+        } catch {
+            // non-blocking
+        }
+    }
+
     // Dual-write to Supabase for in-admin contacts (Sheets remains source of record).
     // Never fail the public signup if the optional store is down.
     if (isSupabaseConfigured()) {

@@ -233,10 +233,15 @@ const ArtistCard = memo(function ArtistCard({
           <Music size={14} className="text-accent shrink-0" />
           <span className="text-xs tracking-[0.08em] text-muted-foreground">{artist.genre}</span>
         </div>
-        <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
-          {artist.name}
-        </h3>
-        <div className="flex items-center gap-3 flex-wrap mt-4">
+        {/* Owner 2026-08-09: the platform links sit on the same row as the
+            artist name, immediately to its right — not stacked underneath.
+            `flex-wrap` lets the chips drop to a second line only when a long
+            name genuinely leaves no room, instead of overflowing the card. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground">
+            {artist.name}
+          </h3>
+          <div className="flex items-center gap-2">
           {hasSpotify && (
             <m.a
               href={artist.spotify}
@@ -302,6 +307,7 @@ const ArtistCard = memo(function ArtistCard({
               <ExternalLink size={14} />
             </m.a>
           )}
+          </div>
         </div>
         {artist.featuredTrack && featuredTrackEmbedUrl && (
           <FeaturedTrackEmbed

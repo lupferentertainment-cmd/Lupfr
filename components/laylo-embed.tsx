@@ -43,7 +43,7 @@ export function LayloEmbed() {
           scrolling="no"
           allow="web-share"
           style={{ width: "1px", minWidth: "100%", maxWidth: "1000px" }}
-          src="https://embed.laylo.com?dropId=2qWvZ&color=FED455&minimal=false&theme=light"
+          src="https://embed.laylo.com?dropId=2qWvZ&color=FED455&minimal=false&theme=dark"
         />
       </div>
     </section>

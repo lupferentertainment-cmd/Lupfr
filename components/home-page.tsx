@@ -9,6 +9,7 @@ import { Hero } from "@/components/hero"
 import { Navigation } from "@/components/navigation"
 import { News } from "@/components/news"
 import { LayloEmbed } from "@/components/laylo-embed"
+import { FollowTheMomentum } from "@/components/follow-the-momentum"
 import { PartnersStrip } from "@/components/partners-strip"
 import { Services } from "@/components/services"
 import { ScrollProgress } from "@/components/scroll-progress"
@@ -62,6 +63,10 @@ export function HomePage() {
         <Team />
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
+        {/* Owner 2026-08-08 flow: About → Our Team → Follow the Momentum. Rides
+            the contact deferred block rather than getting its own, so it stays
+            below the fold without adding another placeholder to scroll through. */}
+        <FollowTheMomentum />
         <Contact />
         {/* Owner 2026-08-08: Laylo drop signup, above the footer. */}
         <LayloEmbed />
