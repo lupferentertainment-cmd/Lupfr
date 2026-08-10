@@ -106,7 +106,16 @@ export function Navigation() {
   }
   const bookHref = CONTACT_PAGE_PATH
   const bookLabel = "Book an Event"
-  const scheduleTone = isScrolled ? "on-surface" : "on-dark"
+  /**
+   * The transparent, white-on-video nav treatment is only correct while the bar
+   * actually sits over the home hero. On every other route the page starts on
+   * `--background`, which is #f0f0ed in light mode — so the old
+   * `!isScrolled → text-white` rule rendered white links on a near-white page
+   * (reported on /media 2026-08-08). Subpages therefore always use the settled
+   * treatment, and the menu-open drawer is never "over hero" either.
+   */
+  const overHero = isHome && !isScrolled && !isOpen
+  const scheduleTone = overHero ? "on-dark" : "on-surface"
 
   const closeMenu = useCallback(() => setIsOpen(false), [])
 
@@ -175,7 +184,7 @@ export function Navigation() {
     <>
       <header
         data-lupfr-nav-menu-open={isOpen ? "true" : "false"}
-        data-lupfr-nav-state={isScrolled || isOpen ? "settled" : "hero"}
+        data-lupfr-nav-state={overHero ? "hero" : "settled"}
         className="lupfr-site-header fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap"
       >
         <nav
@@ -210,9 +219,9 @@ export function Navigation() {
                 const href = linkHref(link.href)
                 const linkClass = `inline-flex shrink-0 items-center text-sm font-medium leading-tight tracking-normal transition-colors duration-200 ease-snap relative group py-1 whitespace-nowrap ${isActive
                   ? "text-accent"
-                  : isScrolled
-                    ? "text-foreground/90 hover:text-foreground"
-                    : "text-white/90 hover:text-white"
+                  : overHero
+                    ? "text-white/90 hover:text-white"
+                    : "text-foreground/90 hover:text-foreground"
                   }`
                 const underline = (
                   <span
@@ -275,9 +284,9 @@ export function Navigation() {
               <button
                 type="button"
                 onClick={() => setIsOpen(true)}
-                className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${isScrolled
-                  ? "text-foreground"
-                  : "text-white"
+                className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center ${overHero
+                  ? "text-white"
+                  : "text-foreground"
                   }`}
                 aria-label="Open menu"
                 aria-expanded="false"
