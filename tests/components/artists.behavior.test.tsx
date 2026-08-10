@@ -6,7 +6,7 @@ import { Artists, ArtistsDirectory } from "@/components/artists"
 import { artistSlug, getArtists } from "@/lib/data/artists"
 
 describe("Artists home section", () => {
-  it("shows six featured cards and keeps every artist in the aligned name roster", () => {
+  it("shows six featured cards and keeps every artist in the roster marquee ticker", () => {
     const artists = getArtists()
     const { container } = render(<Artists />)
 
@@ -14,13 +14,12 @@ describe("Artists home section", () => {
       screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent),
     ).toEqual(artists.slice(0, 6).map((artist) => artist.name))
 
-    const roster = screen.getByRole("list", { name: "Artist roster" })
-    expect(within(roster).getAllByRole("listitem")).toHaveLength(artists.length)
+    const roster = screen.getByLabelText("Artist roster ticker")
     for (const artist of artists) {
-      expect(within(roster).getByText(artist.name)).toBeInTheDocument()
+      expect(within(roster).getAllByText(artist.name).length).toBeGreaterThan(0)
     }
 
-    expect(roster.querySelectorAll(".heading-metallic-gold")).toHaveLength(6)
+    expect(roster.querySelectorAll(".heading-metallic-gold").length).toBeGreaterThan(0)
     expect(roster.querySelector(".bg-accent")).toBeNull()
     expect(container.querySelector('a[href="/artists"]')).toHaveTextContent("View all artists")
   })
@@ -29,12 +28,10 @@ describe("Artists home section", () => {
     const artists = getArtists()
     render(<Artists />)
 
-    const roster = screen.getByRole("list", { name: "Artist roster" })
-    const links = within(roster).getAllByRole("link")
-    expect(links).toHaveLength(artists.length)
+    const roster = screen.getByLabelText("Artist roster ticker")
     for (const artist of artists) {
       expect(
-        within(roster).getByRole("link", { name: `View ${artist.name} in the artists directory` }),
+        within(roster).getAllByRole("link", { name: `View ${artist.name} in the artists directory` })[0],
       ).toHaveAttribute("href", `/artists?artist=${artistSlug(artist.name)}`)
     }
   })

@@ -251,9 +251,9 @@ describe("artists static grid (no carousel)", () => {
         expect(artists).toContain("items={visibleArtists}")
     })
 
-    it("shows an aligned all-name roster with the six featured names in metallic gold", () => {
-        expect(artists).toContain('aria-label="Artist roster"')
-        expect(artists).toContain("grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6")
+    it("shows an aligned all-name roster ticker with the six featured names in metallic gold", () => {
+        expect(artists).toContain('aria-label="Artist roster ticker"')
+        expect(artists).toContain("roster-marquee")
         expect(artists).toContain('variant="static"')
         expect(artists).toContain("featuredArtistIds.has(artist.id)")
     })

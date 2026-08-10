@@ -375,29 +375,37 @@ function ArtistGrid({
 function ArtistRoster() {
   // Owner request 2026-07-21: home roster is A–Z; featured-card names stay gold + bold.
   const rosterArtists = [...artists].sort((a, b) => a.name.localeCompare(b.name))
+  // Repeat list for continuous marquee loop
+  const marqueeItems = [...rosterArtists, ...rosterArtists]
+
   return (
-    <ul
-      aria-label="Artist roster"
-      className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-3 border-y border-border py-5 text-center text-sm font-medium"
+    <div
+      aria-label="Artist roster ticker"
+      className="roster-marquee border-y border-border py-5 text-sm font-medium"
     >
-      {rosterArtists.map((artist) => (
-        <li key={artist.id} className="flex min-h-6 items-center justify-center">
-          <Link
-            href={`/artists?artist=${artistSlug(artist.name)}`}
-            aria-label={`View ${artist.name} in the artists directory`}
-            className="rounded-sm px-1 decoration-accent underline-offset-4 transition-colors hover:underline focus-visible:underline focus-visible:outline-none"
-          >
-            {featuredArtistIds.has(artist.id) ? (
-              <span className="font-bold">
-                <GoldShineText variant="static">{artist.name}</GoldShineText>
-              </span>
-            ) : (
-              <span className="text-muted-foreground transition-colors hover:text-accent">{artist.name}</span>
-            )}
-          </Link>
-        </li>
-      ))}
-    </ul>
+      <div className="roster-marquee-track flex items-center gap-8 sm:gap-12 pr-8 sm:pr-12">
+        {marqueeItems.map((artist, idx) => (
+          <div key={`${artist.id}-${idx}`} className="flex items-center gap-8 sm:gap-12 shrink-0">
+            <Link
+              href={`/artists?artist=${artistSlug(artist.name)}`}
+              aria-label={`View ${artist.name} in the artists directory`}
+              className="rounded-sm px-1 decoration-accent underline-offset-4 transition-colors hover:underline focus-visible:underline focus-visible:outline-none whitespace-nowrap"
+            >
+              {featuredArtistIds.has(artist.id) ? (
+                <span className="font-bold">
+                  <GoldShineText variant="static">{artist.name}</GoldShineText>
+                </span>
+              ) : (
+                <span className="text-muted-foreground transition-colors hover:text-accent">{artist.name}</span>
+              )}
+            </Link>
+            <span aria-hidden="true" className="text-accent/40 select-none font-bold text-xs">
+              /
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
