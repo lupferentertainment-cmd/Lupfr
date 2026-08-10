@@ -77,12 +77,20 @@ describe("Laylo drop embed (owner 2026-08-08)", () => {
   const laylo = read("components", "laylo-embed.tsx")
   const homePage = read("components", "home-page.tsx")
 
-  it("keeps the owner's drop id and query params verbatim", () => {
+  it("keeps the owner's drop id and brand colour verbatim", () => {
     expect(laylo).toContain("dropId=2qWvZ")
     expect(laylo).toContain("color=FED455")
     expect(laylo).toContain("minimal=false")
-    expect(laylo).toContain("theme=light")
     expect(laylo).toContain('id="laylo-drop-2qWvZ"')
+  })
+
+  it("renders the widget in dark theme to match the site", () => {
+    // The owner's original snippet specified `theme=light`, which shipped as a
+    // white panel on the dark site — flagged with a screenshot and then
+    // switched to dark. Pinned so a future copy-paste of the original snippet
+    // does not silently reintroduce the white block.
+    expect(laylo).toContain("theme=dark")
+    expect(laylo).not.toContain("theme=light")
   })
 
   it("loads the SDK that resizes the frame, off the critical path", () => {

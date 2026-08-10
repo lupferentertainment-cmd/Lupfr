@@ -5,11 +5,16 @@ import Script from "next/script"
 /**
  * Laylo drop embed (owner delivery 2026-08-08, "Lets embed Laylo").
  *
- * Markup and query params are the owner's snippet verbatim — `dropId=2qWvZ`,
- * `color=FED455`, `minimal=false`, `theme=light`. The `width:1px` +
- * `min-width:100%` pair is Laylo's own responsive-iframe idiom, not a typo: it
- * lets the frame shrink below its intrinsic width inside a flex/grid parent
- * while still filling the container.
+ * Markup and query params follow the owner's snippet — `dropId=2qWvZ`,
+ * `color=FED455`, `minimal=false` — with one deliberate change: the snippet
+ * asked for a light theme, which shipped as a white panel against the dark
+ * site. That was flagged back with a screenshot and switched to the dark
+ * theme; `tests/unit/aug8-owner-updates.test.ts` pins it so re-pasting the
+ * original snippet cannot silently bring the white block back.
+ *
+ * The `width:1px` + `min-width:100%` pair is Laylo's own responsive-iframe
+ * idiom, not a typo: it lets the frame shrink below its intrinsic width inside
+ * a flex/grid parent while still filling the container.
  *
  * The SDK is what resizes the frame to its content height (it posts a message
  * back to the parent), so it must load for the embed to size correctly.
