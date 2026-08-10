@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { BrandDeck } from "@/components/brand-deck"
 import { BrandSlashText } from "@/components/brand-slash-text"
@@ -148,8 +149,25 @@ export default function BrandsPage() {
   return (
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
-      <div className="px-4 pb-20 pt-32 sm:px-6 sm:pt-36 md:pt-40 lg:px-12">
-        <div className="mx-auto max-w-[1400px]">
+      <div className="relative px-4 pb-20 pt-32 sm:px-6 sm:pt-36 md:pt-40 lg:px-12">
+        {/*
+          LE monogram watermark behind the portfolio (owner note 2026-08-08:
+          "dont miss the LE logo in background of the corp structure"), ported
+          from the design file's corporate-tree treatment — centred, ~4.5%
+          opacity, faintly blurred. Purely decorative: `aria-hidden` and
+          `pointer-events-none` keep it out of the a11y tree and off every
+          click target. `select-none` stops it being caught by drag-select.
+        */}
+        <Image
+          src="/images/le-logo.webp"
+          alt=""
+          aria-hidden
+          width={1100}
+          height={1100}
+          priority={false}
+          className="pointer-events-none absolute left-1/2 top-1/2 w-[min(110%,1100px)] max-w-none -translate-x-1/2 -translate-y-1/2 select-none opacity-[0.045] blur-[0.5px]"
+        />
+        <div className="relative mx-auto max-w-[1400px]">
           <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
           <GoldShineText as="h1" className="mb-6">
             Our Brands
