@@ -9,9 +9,11 @@ const read = (file: string) => fs.readFileSync(path.join(root, file), "utf8")
 describe("image skeleton shimmer coverage", () => {
   it("keeps the shared image wrapper on every live surface added after the original shimmer sweep", () => {
     for (const file of [
-      "components/services.tsx",
+      // services.tsx/brands.tsx render their photos through the shared
+      // poster-tile.tsx component (owner restructure, 2026-08-28), which is
+      // asserted directly below instead of duplicating the check per caller.
+      "components/poster-tile.tsx",
       "app/services/page.tsx",
-      "components/brands.tsx",
       "components/drive-gallery-albums.tsx",
       "components/events-directory.tsx",
     ]) {

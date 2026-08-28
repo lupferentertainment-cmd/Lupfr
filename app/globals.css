@@ -550,6 +550,23 @@
       inset 0 0 0 2px rgba(0, 0, 0, 0.55);
   }
 
+  /* Poster-tile grid (owner restructure note, 2026-08-28): Our Brands + the
+   * home Our Services tease. Full-bleed photo, 3:4 on desktop; the owner's
+   * design canvas swaps to a shorter 5:3 tile under 480px so a phone gets a
+   * wide poster instead of a tall one — this is the canvas's own mobile
+   * variant, not a generic responsive guess. */
+  .lp-poster-tile {
+    aspect-ratio: 3 / 4;
+  }
+  @media (max-width: 480px) {
+    .lp-poster-tile {
+      aspect-ratio: 5 / 3;
+    }
+    .lp-poster-tile .lp-poster-desc {
+      -webkit-line-clamp: 2;
+    }
+  }
+
   /* Depth via dark elevation only — never light/--foreground shadows (those
    * read as a white halo around every card on the dark stage). */
   .event-card-depth {

@@ -41,26 +41,30 @@ describe("Brands", () => {
     expect(accents).toEqual(["#6fb8c9", "#e08a4a", "#c9a869", "#e8e4da", "#8aa878"])
   })
 
-  it("links SEA//SIDE out to seaside.la; other cards have no external link", () => {
-    const { container } = render(<Brands />)
-    const links = Array.from(container.querySelectorAll('a[href="https://seaside.la"]'))
-    expect(links).toHaveLength(1)
-  })
+  // The home poster tile itself no longer carries a raw external link (owner
+  // restructure, 2026-08-28) — that "Visit seaside.la →" CTA lives on the
+  // brand's own /brands/seaside detail page instead (app/brands/[slug]/page.tsx).
 
-  it("links each card's wordmark to its dedicated brand page with an accessible name", () => {
+  it("links each card to its dedicated brand page with an accessible name", () => {
     render(<Brands />)
     expect(screen.getByRole("link", { name: "View SEA SIDE brand" })).toHaveAttribute("href", "/brands/seaside")
     expect(screen.getByRole("link", { name: "View HIGH RISE brand" })).toHaveAttribute("href", "/brands/highrise")
   })
 
-  it("renders a 'Learn more' link on every card pointing at its brand page", () => {
+  it("renders an 'Explore' CTA on every poster tile pointing at its brand page", () => {
     const { container } = render(<Brands />)
-    const learnMoreLinks = Array.from(container.querySelectorAll("a")).filter(
-      (a) => a.textContent === "Learn more →"
-    )
-    expect(learnMoreLinks).toHaveLength(5)
-    expect(learnMoreLinks.map((a) => a.getAttribute("href")).sort()).toEqual(
+    const exploreLinks = Array.from(container.querySelectorAll('a[href^="/brands/"]'))
+    const hrefs = exploreLinks.map((a) => a.getAttribute("href")).sort()
+    expect(hrefs).toEqual(
       ["/brands/highrise", "/brands/inside", "/brands/outside", "/brands/seaside", "/brands/soundcheck"].sort()
     )
+    expect(container.textContent).toContain("Explore")
+  })
+
+  it("renders a Partiful band linking to the owner's Partiful profile", () => {
+    const { container } = render(<Brands />)
+    const link = container.querySelector('a[href="https://partiful.com/u/0SHzuWD8fZTwWwVJixNo"]')
+    expect(link).not.toBeNull()
+    expect(link?.textContent).toContain("Every ticket lives on Partiful")
   })
 })

@@ -20,6 +20,7 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { EventDetailLink } from "@/components/event-detail-link"
+import { PartifulBand } from "@/components/partiful-band"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import {
   Carousel,
@@ -603,6 +604,10 @@ export function Events() {
             </p>
           )}
         </m.div>
+
+        {/* Owner restructure note, 2026-08-28: Partiful band under the events
+           grid — all ticketing runs through Partiful now. */}
+        <PartifulBand />
 
         {/* The Past archive lives on /events only (owner request 2026-08-05) —
             the landing page stays forward-looking. `EventsDirectory` renders it

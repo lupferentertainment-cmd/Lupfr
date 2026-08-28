@@ -45,31 +45,25 @@ describe("event cards drop per-brand border colour (owner 2026-08-08)", () => {
 describe("mobile brand/service tiles are short enough to see several (owner 2026-08-08)", () => {
   // "Mobile: Size the OUR BRANDS and OUR SERVICES tiles just like how I did in
   // Claude. You want to be able to see multiple while scrolling (vs. just one
-  // big image)." The design file's mobile brand slat is 132px; ours carry more
-  // copy, so the floor is lower rather than equal — the point is that a phone
-  // viewport fits more than one tile.
+  // big image)." Superseded by the owner's 2026-08-28 poster-tile restructure:
+  // both sections now share components/poster-tile.tsx (`.lp-poster-tile`),
+  // whose aspect ratio the design canvas itself swaps from a tall 3:4 to a
+  // short, wide 5:3 under 480px — ported verbatim in app/globals.css — so a
+  // phone still sees more than one tile while scrolling.
   const brandsSource = read("components", "brands.tsx")
   const servicesSource = read("components", "services.tsx")
+  const cssSource = read("app", "globals.css")
 
-  it("the brand tile's mobile floor is no taller than its desktop floor", () => {
-    const mobile = Number(brandsSource.match(/min-h-\[(\d+)px\]/)?.[1])
-    const desktop = Number(brandsSource.match(/sm:min-h-\[(\d+)px\]/)?.[1])
-    expect(mobile).toBeGreaterThan(0)
-    expect(desktop).toBeGreaterThan(0)
-    // Regression: mobile used to be 460px against a 340px desktop floor.
-    expect(mobile).toBeLessThanOrEqual(desktop)
+  it("both home grids render tiles through the shared .lp-poster-tile component", () => {
+    expect(brandsSource).toContain("<PosterTile") // via <PosterTile>'s own className
+    expect(servicesSource).toContain("PosterTile")
   })
 
-  it("at least two brand tiles fit an 844px phone viewport", () => {
-    const mobile = Number(brandsSource.match(/min-h-\[(\d+)px\]/)?.[1])
-    expect(mobile * 2).toBeLessThanOrEqual(844)
-  })
-
-  it("the service card's mobile poster is shorter than its desktop poster", () => {
-    const m = servicesSource.match(/h-\[(\d+)px\]\s+sm:h-\[(\d+)px\]/)
-    if (!m) throw new Error("service card poster height classes not found")
-    expect(Number(m[1])).toBeLessThan(Number(m[2]))
-    expect(Number(m[1])).toBeLessThanOrEqual(140)
+  it("the poster tile is a tall 3:4 on desktop and a short 5:3 under 480px", () => {
+    expect(cssSource).toMatch(/\.lp-poster-tile\s*\{[^}]*aspect-ratio:\s*3\s*\/\s*4/)
+    expect(cssSource).toMatch(
+      /@media \(max-width: 480px\)\s*\{\s*\.lp-poster-tile\s*\{[^}]*aspect-ratio:\s*5\s*\/\s*3/
+    )
   })
 })
 

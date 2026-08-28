@@ -1,10 +1,10 @@
 /**
- * Mobile services cards must stay plain DOM (no card-shell motion) so the
- * section does not hydrate framer-motion nodes on phones. Desktop keeps tilt
- * + hover motion; section-level `m` import stays for LazyMotion. Home cards
- * (both mobile/static and desktop/motion) drop the feature-bullet list and
- * icon chip (redesign parity, 2026-07-22) — features stay on `/services`
- * overview + detail pages; home cards get a gold "Learn more →" text link.
+ * Home Services tease (owner restructure, 2026-08-28: "the tiles are more
+ * open on homepage" — poster-tile grid, same photo-forward treatment as
+ * Our Brands, replacing the tilt/orb card shells). The redesign is lighter
+ * than the old architecture by construction (no continuous animated orbs, no
+ * per-card mouse-tilt springs), so there is no separate mobile/desktop card
+ * body to gate — these guardrails just confirm that stayed true.
  */
 import fs from "node:fs"
 import path from "node:path"
@@ -13,49 +13,32 @@ import { describe, expect, it } from "vitest"
 
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const services = fs.readFileSync(path.join(rootDir, "components", "services.tsx"), "utf8")
+const posterTile = fs.readFileSync(path.join(rootDir, "components", "poster-tile.tsx"), "utf8")
 
-describe("mobile services static cards", () => {
-  it("keeps LazyMotion `m` import (no motion proxy) for section reveal", () => {
-    expect(services).toMatch(/\bimport\s*\{[^}]*\bm\b/)
-    expect(services).not.toMatch(/\bimport\s*\{[^}]*\bmotion\b/)
-    expect(services).toContain("<m.div")
+describe("home services tease (poster-tile)", () => {
+  it("renders the home tease through the shared, image-forward PosterTile component", () => {
+    expect(services).toContain('import { PosterTile } from "@/components/poster-tile"')
+    expect(services).toContain("<PosterTile")
   })
 
-  it("gates tilt and infinite orbs to confirmed desktop only", () => {
-    expect(services).toContain("const animateOrbs = isMobile === false")
-    expect(services).toContain("const enableTilt = isMobile === false")
-    expect(services).toContain("if (!enableTilt)")
-    expect(services).toContain("<ServiceCardTiltShell")
+  it("shows only the first three services on the home page (full six live on /services)", () => {
+    expect(services).toContain("HOME_FEATURED_SERVICE_COUNT = 3")
+    expect(services).toContain("services.slice(0, HOME_FEATURED_SERVICE_COUNT)")
   })
 
-  it("ships a plain-DOM static card body for the mobile path", () => {
-    expect(services).toContain("function ServiceCardStaticBody")
-    expect(services).toContain("<ServiceCardStaticBody")
-    const staticBody = services.slice(
-      services.indexOf("function ServiceCardStaticBody"),
-      services.indexOf("function ServiceCardMotionBody"),
-    )
-    expect(staticBody).toContain("<h3")
-    expect(staticBody).toContain("<span")
-    expect(staticBody).not.toContain("<m.")
+  it("drops the old per-card mouse-tilt shell and infinite background orbs", () => {
+    expect(services).not.toContain("ServiceCardTiltShell")
+    expect(services).not.toContain("useMotionValue")
+    expect(services).not.toContain("repeat: Infinity")
   })
 
-  it("drops the home-card feature list and icon chip (redesign parity — features stay on /services)", () => {
+  it("drops the home-card feature list and icon chip (features stay on /services)", () => {
     expect(services).not.toContain("service.features")
     expect(services).not.toContain("<service.icon")
   })
 
-  it("gives each card a gold 'Learn more →' text link at the bottom (styled text, not a nested <a>)", () => {
-    const staticBody = services.slice(
-      services.indexOf("function ServiceCardStaticBody"),
-      services.indexOf("function ServiceCardMotionBody"),
-    )
-    const motionBody = services.slice(
-      services.indexOf("function ServiceCardMotionBody"),
-      services.indexOf("function ServiceCard(", services.indexOf("function ServiceCardMotionBody")),
-    )
-    expect(staticBody).toContain("Learn more →")
-    expect(motionBody).toContain("Learn more →")
-    expect(motionBody).toContain("<m.span")
+  it("gives each tile a gold 'Learn more' CTA rendered by PosterTile", () => {
+    expect(services).toContain('ctaLabel="Learn more"')
+    expect(posterTile).toContain("{ctaLabel}")
   })
 })

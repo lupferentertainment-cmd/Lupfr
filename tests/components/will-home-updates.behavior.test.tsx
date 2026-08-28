@@ -68,19 +68,14 @@ describe("Will homepage update edge cases", () => {
     expect(container.querySelector("ul")).toBeNull()
   })
 
-  it("services desktop path mounts tilt shells when useIsMobile is false", () => {
+  // Owner restructure (2026-08-28): the home Services tease dropped the
+  // per-card mouse-tilt shell entirely (poster-tile grid, same on every
+  // viewport) — see tests/unit/mobile-services-static.test.ts.
+  it("renders the same poster-tile article markup regardless of useIsMobile", () => {
     vi.mocked(useIsMobile).mockReturnValue(false)
     const { container } = render(<Services />)
     const articles = container.querySelectorAll("article")
-    expect(articles.length).toBeGreaterThan(0)
-    // Desktop tilt shell uses tabIndex={-1} on the motion article.
-    expect(container.querySelector("article[tabindex='-1']")).not.toBeNull()
-    const tiltCard = container.querySelector("article[tabindex='-1']")
-    if (tiltCard) {
-      fireEvent.mouseEnter(tiltCard)
-      fireEvent.mouseMove(tiltCard, { clientX: 10, clientY: 10 })
-      fireEvent.mouseLeave(tiltCard)
-    }
+    expect(articles.length).toBe(3)
   })
 
   it("artists roster includes ASTRD and sorts A–Z with gold featured names in marquee ticker", () => {

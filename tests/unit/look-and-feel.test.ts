@@ -30,6 +30,7 @@ const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "
 const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
 const partnersStrip = fs.readFileSync(path.join(rootDir, "components", "partners-strip.tsx"), "utf8")
 const brandsComponent = fs.readFileSync(path.join(rootDir, "components", "brands.tsx"), "utf8")
+const posterTileComponent = fs.readFileSync(path.join(rootDir, "components", "poster-tile.tsx"), "utf8")
 const notFoundPage = fs.readFileSync(path.join(rootDir, "app", "not-found.tsx"), "utf8")
 const protectedPhone = fs.readFileSync(path.join(rootDir, "components", "protected-phone.tsx"), "utf8")
 const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
@@ -286,10 +287,16 @@ describe("hero visual system", () => {
 // ── services card corporate numeral ─────────────────────────────────────────────
 
 describe("services card corporate numeral", () => {
-  it("services cards render the comp's faint background numeral (01, 02, ...) behind the title", () => {
-    expect(servicesComponent).toContain("function serviceNumeral")
-    expect(servicesComponent).toMatch(/padStart\(2, "0"\)/)
-    expect(servicesComponent).toContain("serviceNumeral(index)")
+  // Owner restructure (2026-08-28): the home Services tease moved to the
+  // shared poster-tile component (see brands.behavior.test.tsx /
+  // services.behavior.test.tsx), which renders its own "01, 02, ..." numeral.
+  it("the home Services tease renders its tiles via the shared poster-tile component", () => {
+    expect(servicesComponent).toContain('import { PosterTile } from "@/components/poster-tile"')
+    expect(servicesComponent).toContain("<PosterTile")
+  })
+
+  it("poster-tile renders a zero-padded index numeral", () => {
+    expect(posterTileComponent).toMatch(/padStart\(2, "0"\)/)
   })
 })
 
@@ -411,16 +418,14 @@ describe("navigation structure", () => {
 // ── home page section structure ───────────────────────────────────────────────
 
 describe("home page section structure", () => {
-  it("restores light-mode Brands photo contrast while keeping dark mode restrained", () => {
-    expect(brandsComponent).toContain("object-cover")
-    expect(brandsComponent).toContain("opacity-[0.34] dark:opacity-[0.16]")
-    expect(brandsComponent).not.toContain("from-black/55 via-black/35 to-black/85")
-    // Owner 2026-08-08 shrank the mobile floor from 460px so several brand
-    // tiles fit a phone screen; the desktop floor is unchanged. Exact mobile
-    // value is pinned in tests/unit/aug8-owner-updates.test.ts.
-    expect(brandsComponent).toContain("sm:min-h-[340px]")
-    expect(brandsComponent).toContain("sm:min-h-[340px]")
-    expect(brandsComponent).toContain("lg:gap-8")
+  it("renders Brands as full-bleed poster-tile photos (owner restructure, 2026-08-28)", () => {
+    // The photo-wash treatment (dim background image behind a text card) is
+    // retired in favor of the design canvas's full-opacity poster tile —
+    // see components/poster-tile.tsx and tests/unit/aug8-owner-updates.test.ts
+    // for the mobile aspect-ratio swap that keeps several tiles in view.
+    expect(posterTileComponent).toContain("object-cover")
+    expect(brandsComponent).not.toContain("opacity-[0.34]")
+    expect(brandsComponent).toContain("<PosterTile")
   })
 
   it("keeps the light hero wash restrained instead of milky", () => {

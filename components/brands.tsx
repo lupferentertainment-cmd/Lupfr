@@ -1,96 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { m, useInView } from "framer-motion"
+import { useInView } from "framer-motion"
 import { useRef } from "react"
-import { ShimmerImage } from "@/components/shimmer-image"
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
-import { brandPath, brandPlainTitle, getBrands, type BrandItem } from "@/lib/data/brands"
+import { PosterTile } from "@/components/poster-tile"
+import { PartifulBand } from "@/components/partiful-band"
+import { brandPath, brandPlainTitle, getBrands } from "@/lib/data/brands"
 
 const brands = getBrands()
-
-function BrandCard({ brand, index, isInView }: { brand: BrandItem; index: number; isInView: boolean }) {
-  return (
-    <m.article
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -5, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
-      // Owner 2026-08-08: the mobile floor used to be 460px — taller than the
-      // 340px desktop floor — so a phone showed one tile at a time. Lowered so
-      // several are visible while scrolling, per the design file's short mobile
-      // brand slats. `min-h` is only a floor: content still sizes the tile.
-      className="group relative flex min-h-[240px] flex-col overflow-hidden rounded-sm border border-border bg-card p-5 transition-[border-color,box-shadow] duration-150 ease-out hover:border-accent/50 hover:shadow-lg sm:min-h-[340px] sm:rounded-md sm:px-6 sm:py-7"
-    >
-      {brand.image && (
-        <>
-          <ShimmerImage
-            src={brand.image}
-            alt=""
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
-            className="object-cover opacity-[0.34] dark:opacity-[0.16]"
-          />
-        </>
-      )}
-      <div
-        className="absolute top-2 left-2 h-2.5 w-2.5 border-t border-l"
-        style={{ borderColor: brand.accent }}
-        aria-hidden
-      />
-      <div
-        className="absolute bottom-2 right-2 h-2.5 w-2.5 border-b border-r"
-        style={{ borderColor: brand.accent }}
-        aria-hidden
-      />
-
-      <div className="relative flex items-center justify-between mb-4">
-        <span
-          className="font-mono text-[9px] tracking-wider uppercase rounded-xs border px-2 py-1 whitespace-nowrap"
-          style={{ borderColor: brand.accent, color: brand.accent }}
-        >
-          {brand.tag}
-        </span>
-        <span className="h-[7px] w-[7px] shrink-0 rounded-full" style={{ backgroundColor: brand.accent }} aria-hidden />
-      </div>
-
-      <h3 className="relative font-condensed font-extrabold uppercase tracking-tight text-xl sm:text-2xl leading-tight mb-3 text-foreground">
-        <Link
-          href={brandPath(brand)}
-          aria-label={`View ${brandPlainTitle(brand)} brand`}
-          className="transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-        >
-          <BrandSlashText text={brand.title} color={brand.accent} />
-        </Link>
-      </h3>
-      <p className="relative text-sm text-muted-foreground leading-relaxed mb-5 flex-1">
-        {brand.description}
-      </p>
-
-      <div className="relative flex items-center gap-3 text-xs">
-        <span className="text-muted-foreground/80">{brand.format}</span>
-        {brand.externalUrl ? (
-          <a
-            href={brand.externalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent hover:underline"
-          >
-            {brand.externalUrl.replace(/^https?:\/\//, "")} ↗
-          </a>
-        ) : null}
-      </div>
-      <Link
-        href={brandPath(brand)}
-        className="relative mt-3 inline-block text-sm text-accent underline-offset-4 transition-colors hover:underline"
-      >
-        Learn more →
-      </Link>
-    </m.article>
-  )
-}
 
 export function Brands() {
   const ref = useRef(null)
@@ -114,11 +34,25 @@ export function Brands() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
           {brands.map((brand, i) => (
-            <BrandCard key={brand.key} brand={brand} index={i} isInView={isInView} />
+            <PosterTile
+              key={brand.key}
+              href={brandPath(brand)}
+              ariaLabel={`View ${brandPlainTitle(brand)} brand`}
+              image={brand.image}
+              accent={brand.accent}
+              tagLabel={brand.tag}
+              index={i}
+              title={<BrandSlashText text={brand.title} color={brand.accent} />}
+              description={brand.description}
+              ctaLabel="Explore"
+              isInView={isInView}
+            />
           ))}
         </div>
+
+        <PartifulBand />
       </ScrollReveal>
     </section>
   )

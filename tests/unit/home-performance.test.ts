@@ -19,10 +19,12 @@ const INITIAL_CHUNK_M_MODULES = [
     "scroll-reveal.tsx",
     "gold-shine-text.tsx",
     "scroll-progress.tsx",
-    "services.tsx",
+    // services.tsx/brands.tsx (owner restructure, 2026-08-28: poster-tile grid)
+    // no longer import `m` directly — the per-tile reveal animation now lives
+    // in the shared poster-tile.tsx module both sections render.
+    "poster-tile.tsx",
     "events.tsx",
     "artists.tsx",
-    "brands.tsx",
     "phone-list-popup.tsx",
 ] as const
 
