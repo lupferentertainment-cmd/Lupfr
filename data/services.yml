@@ -20,7 +20,12 @@
 
 - icon: Mic2
   title: Talent Booking
-  image: "/services/talent-booking.webp"
+  # Owner restructure note, 2026-08-28: "Talent Booking uses the live-band-at-mic
+  # shot" — reuses the same night-lit stage photo as the hero's "band" filmstrip
+  # slat (design canvas assets/hero-ideas/slat-band-night.jpg), matching the
+  # owner's reference screenshot. Previously a different (daylight, waterfront)
+  # band photo.
+  image: "/hero/hero-slat-band.webp"
   description: "Connect with the right artists through our network. We source, negotiate contracts, and coordinate riders, travel, and logistics."
   features:
     - Artist Discovery

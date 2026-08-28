@@ -157,6 +157,12 @@
 # Posterless rows render the striped COMING SOON placeholder; tickets TBD.
 - id: 15
   # Subtitle/description updated (owner restructure note, 2026-08-28): lineup confirmed, no longer "TBD".
+  # ticketLink -> partifulLink (same note: "with a real poster (no more Lineup
+  # TBD / Coming soon)") — the event detail page resolves partifulLink's live
+  # og:image/description from the Partiful event page itself (lib/partiful.ts),
+  # so the real poster comes straight from Partiful instead of a local stand-in.
+  # `image` stays as the fallback for the home/listing cards, which don't do
+  # the live Partiful fetch.
   slug: bal-masque
   title: BAL MASQUE
   subtitle: feat. Maison Noir
@@ -167,7 +173,8 @@
   brandTag: IN//SIDE
   city: SF
   image: /events/bal_masque.webp
-  ticketLink: https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH
+  partifulLink: https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH
+  ticketLabel: RSVP on Partiful
   ticketLabel: Tickets
   description: A masquerade night at The Hibernia in San Francisco, featuring Maison Noir.
 
@@ -203,10 +210,13 @@
 
 - id: 19
   # Date/location updated (owner restructure note, 2026-08-28): Sept 19, 2026, Marina del Rey.
-  # Subtitle held at "feat. Zusebi + TBD" — PLS&TY isn't in the roster yet, so it can't be named here.
+  # Subtitle updated (same note): "feat. PLS&TY + Zusebi" — PLS&TY isn't in the
+  # artist roster yet (real portrait crop still pending from the owner; see
+  # data/artists.yml), but the event subtitle is free text, not roster-linked,
+  # so the correct lineup can ship here regardless.
   slug: seaside-002
   title: SEA//SIDE 002
-  subtitle: feat. Zusebi + TBD
+  subtitle: feat. PLS&TY + Zusebi
   date: September 19th, 2026
   dateISO: "2026-09-19"
   time: TBD
