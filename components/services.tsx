@@ -8,13 +8,10 @@ import { GoldShineText } from "@/components/gold-shine-text"
 import { PosterTile } from "@/components/poster-tile"
 import { getServices, servicePath } from "@/lib/data/services"
 
-// Home tease shows the first three services as open, full-bleed poster tiles
-// (owner restructure note, 2026-08-28: "the tiles are more open on
-// homepage" + design-canvas screenshot showing exactly Owned Events, Talent
-// Booking, Event Programming). The full six-service grid lives on /services.
-const HOME_FEATURED_SERVICE_COUNT = 3
+// All six services render on the home page too (owner correction, 2026-08-28:
+// "no the homepage services should be all six, just in that style") — the
+// open, full-bleed poster-tile treatment, not a reduced count.
 const services = getServices()
-const featuredServices = services.slice(0, HOME_FEATURED_SERVICE_COUNT)
 
 export function Services() {
   const ref = useRef(null)
@@ -39,7 +36,7 @@ export function Services() {
         </div>
 
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px]">
-          {featuredServices.map((service, i) => (
+          {services.map((service, i) => (
             <PosterTile
               key={service.title}
               href={servicePath(service)}

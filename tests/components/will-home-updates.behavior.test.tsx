@@ -75,7 +75,7 @@ describe("Will homepage update edge cases", () => {
     vi.mocked(useIsMobile).mockReturnValue(false)
     const { container } = render(<Services />)
     const articles = container.querySelectorAll("article")
-    expect(articles.length).toBe(3)
+    expect(articles.length).toBe(6)
   })
 
   it("artists roster includes ASTRD and sorts A–Z with gold featured names in marquee ticker", () => {

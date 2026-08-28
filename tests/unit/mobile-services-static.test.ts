@@ -21,9 +21,9 @@ describe("home services tease (poster-tile)", () => {
     expect(services).toContain("<PosterTile")
   })
 
-  it("shows only the first three services on the home page (full six live on /services)", () => {
-    expect(services).toContain("HOME_FEATURED_SERVICE_COUNT = 3")
-    expect(services).toContain("services.slice(0, HOME_FEATURED_SERVICE_COUNT)")
+  it("renders all six services on the home page (owner correction, 2026-08-28)", () => {
+    expect(services).toContain("services.map((service, i)")
+    expect(services).not.toContain("services.slice(")
   })
 
   it("drops the old per-card mouse-tilt shell and infinite background orbs", () => {
