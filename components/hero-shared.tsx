@@ -1,13 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useTheme } from "next-themes"
-import { memo, useEffect, useState } from "react"
-
-import { cn } from "@/lib/utils"
-
-import { BrandSlashText } from "@/components/brand-slash-text"
-import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
+import { memo } from "react"
 
 /** Shared hero copy rotation (mounted in parent for phrase interval). */
 export const HERO_PHRASES = [
@@ -20,66 +14,37 @@ export const PHRASE_DURATION_MOBILE_MS = 9000
 export const FADE_DURATION_S = 0.6
 
 /**
- * Poster = a still from the hero drone clip (phase 29) so the video's first
- * frame, its slow-network fallback, and the videoless mobile hero all show the
- * same scene. One frame serves both themes — same precedent as the video
- * itself (HERO_VIDEO_DARK === HERO_VIDEO_LIGHT); the hero's own washes handle
- * theme contrast. The prior ERIA posters stay on disk for easy revert.
+ * Hero filmstrip (owner restructure, 2026-08-28): the static yacht poster/video is
+ * retired in favor of six photo slats. Order is intentional (owner spec) — do not
+ * resort. Desktop renders all six as vertical slats (active one widens); mobile
+ * collapses to a single full-bleed carousel over the same photos + dots, never six
+ * slivers. Sources are pre-sized, WebP-only copies under public/hero/ (kept small —
+ * see tests/unit/hero-filmstrip-performance.test.ts) so the desktop chunk and the
+ * mobile LCP slide both stay light.
+ *
+ * "seaside-step-repeat" is a placeholder (the reused SEA//SIDE golden-hour deck shot)
+ * — the owner has not yet delivered a real SEA//SIDE step-and-repeat photo. Swap
+ * `src` here the moment that lands; nothing else needs to change.
  */
-export const HERO_POSTER_DARK = "/hero/hero-poster-yacht.webp"
-export const HERO_POSTER_LIGHT = "/hero/hero-poster-yacht.webp"
-export const HERO_POSTER = HERO_POSTER_DARK
-
-/**
- * Mobile-only hero poster: purpose-built 3:4 center crop from the yacht still,
- * sized for retina phones so LCP stays sharp. Desktop keeps the full poster +
- * immediate video; mobile may fade the same yacht MP4 in after window load.
- */
-export const HERO_POSTER_DARK_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
-export const HERO_POSTER_LIGHT_MOBILE = "/hero/hero-poster-yacht-mobile.webp"
-
-/** Same yacht clip for desktop + deferred mobile playback (no quality cut). */
-export const HERO_VIDEO_DARK = "/hero/hero_yacht_001.mp4"
-export const HERO_VIDEO_LIGHT = "/hero/hero_yacht_001.mp4"
-
-/**
- * Theme for hero media src selection. SSR cannot know the stored theme, so the
- * server (and first client render) always resolve "dark" via the hydration
- * snapshot — avoids the next/image src hydration mismatch — then swaps to the
- * client's resolved theme after hydration.
- */
-export function useHeroTheme(): "light" | "dark" {
-  const { resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => { setMounted(true) }, [])
-  return mounted && resolvedTheme === "light" ? "light" : "dark"
+export type HeroFilmstripPhoto = {
+  id: string
+  src: string
+  alt: string
 }
 
-/** Remounts whenever `fallbackToImage` toggles on so poster decode state stays correct. */
-export function HeroFallbackPoster({ posterSrc = HERO_POSTER }: { posterSrc?: string }) {
-  const [ready, setReady] = useState(false)
-  return (
-    <div className="absolute inset-0">
-      <SkeletonShimmerLayer show={!ready} />
-      <Image
-        src={posterSrc}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        onLoad={() => setReady(true)}
-        className={cn(
-          "relative z-[1] object-cover object-center",
-          "motion-safe:transition-opacity motion-safe:duration-500 motion-reduce:transition-none",
-          ready ? "opacity-100" : "opacity-0"
-        )}
-        aria-hidden
-      />
-    </div>
-  )
-}
+export const HERO_FILMSTRIP_PHOTOS: readonly HeroFilmstripPhoto[] = [
+  { id: "neon-dj", src: "/hero/hero-slat-neon-dj.webp", alt: "DJ under red, blue, and green stage lights" },
+  { id: "crowd", src: "/hero/hero-slat-crowd.webp", alt: "Crowd dancing in front of the DJ booth" },
+  { id: "masquerade", src: "/hero/hero-slat-masquerade.webp", alt: "Masquerade portrait in gold and black" },
+  { id: "band", src: "/hero/hero-slat-band.webp", alt: "Live band performing with a bay view behind them" },
+  { id: "sunset-deck", src: "/hero/hero-slat-sunset-deck.webp", alt: "Golden-hour crowd on a yacht deck" },
+  // TODO(owner asset): swap for the real SEA//SIDE step-and-repeat photo once delivered.
+  { id: "seaside-step-repeat", src: "/hero/hero-slat-seaside-placeholder.webp", alt: "SEA//SIDE guests on a sunlit yacht deck" },
+] as const
 
-/** LUPFR: same-size letters with a static gold shine (no animated background-position, so it never repaints/flickers over the hero video). */
+export const HERO_FILMSTRIP_INTERVAL_MS = 5000
+
+/** LUPFR: same-size letters with a static gold shine (no animated background-position, so it never repaints/flickers over the hero media). */
 export const HeroLupfrText = memo(function HeroLupfrText({
   prefersReducedMotion,
 }: {
@@ -96,91 +61,55 @@ export const HeroLupfrText = memo(function HeroLupfrText({
   )
 })
 
-/** Mobile: LUPFR keeps its gold-shine gradient; Entertainment is plain condensed/uppercase (matches the comp). */
-export const HeroTitleContentMobile = memo(function HeroTitleContentMobile({
+/**
+ * The bottom-left brand lockup (owner restructure, 2026-08-28): LE mark image beside
+ * the "LUPFR / Entertainment" wordmark, replacing the old full-width centered hero
+ * title. Reuses the existing `.hero-title-lupfr` / `.hero-title-entertainment`
+ * treatment (now sized for a corner lockup, see app/globals.css) so the same
+ * condensed/uppercase/extrabold identity carries over — just smaller and left-aligned.
+ * Shared by both the desktop and mobile hero shells.
+ */
+export const HeroBrandLockup = memo(function HeroBrandLockup({
   prefersReducedMotion,
 }: {
   prefersReducedMotion: boolean | null
 }) {
   return (
-    <h1
-      className="font-condensed hero-title-lupfr font-extrabold tracking-normal leading-none text-center flex flex-col items-center gap-1.5 sm:gap-2 md:gap-3"
-    >
-      <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
-      <span
-        className="block hero-title-entertainment font-medium uppercase tracking-normal text-foreground"
-      >
-        Entertainment
-      </span>
-    </h1>
+    <div className="flex items-center gap-3 sm:gap-4">
+      <Image
+        src="/images/le-logo.webp"
+        alt=""
+        width={64}
+        height={64}
+        className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12"
+        aria-hidden
+      />
+      <h1 className="font-condensed hero-title-lupfr font-extrabold tracking-normal leading-none flex flex-col items-start gap-0.5">
+        <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
+        <span className="block hero-title-entertainment font-medium uppercase tracking-normal text-foreground">
+          Entertainment
+        </span>
+      </h1>
+    </div>
   )
 })
 
 /**
- * Desktop-only decorative framing from the comp: a coordinates readout and
- * corner brackets pinned to the hero's bottom corners (static text/borders,
- * no motion — safe to add without touching the mobile no-video/no-loop
- * performance budget, so this is not rendered on the mobile hero).
+ * Desktop-only decorative corner bracket + the "LOS ANGELES · SAN FRANCISCO / EST.
+ * 2025" readout pinned bottom-right (owner restructure, 2026-08-28 — the coordinates
+ * line is retired now that the bottom-left corner holds the brand lockup instead).
+ * The matching left bracket is dropped: that corner now holds the real
+ * HeroBrandLockup copy block, so a decorative bracket there would sit among live
+ * content instead of framing an empty corner. Static text/border, no motion.
  */
 export function HeroCornerReadout() {
   return (
     <>
-      <div className="absolute bottom-6 left-6 z-[15] font-mono text-[10px] tracking-[0.1em] text-foreground/50 pointer-events-none">
-        <BrandSlashText text="34.1478°N // 118.1445°W" />
-      </div>
       <div className="absolute bottom-6 right-6 z-[15] font-mono text-[10px] tracking-[0.1em] text-foreground/50 pointer-events-none">
-        <BrandSlashText text="LA · SF // EST. 2025" />
+        LOS ANGELES · SAN FRANCISCO / EST. 2025
       </div>
-      <div
-        className="absolute bottom-[120px] left-6 z-[15] h-[14px] w-[14px] border-t border-l border-accent/50 pointer-events-none"
-        aria-hidden
-      />
       <div
         className="absolute bottom-[120px] right-6 z-[15] h-[14px] w-[14px] border-b border-r border-accent/50 pointer-events-none"
-        aria-hidden
-      />
-    </>
-  )
-}
-
-export type HeroOrbVariant = "mobile" | "desktop"
-
-/** Static blurred orbs — mobile hero and desktop reduced-motion / lite paths (lighter blurs on phone). */
-export function HeroLiteOrbs({ variant }: { variant: HeroOrbVariant }) {
-  const orbBlurSide =
-    variant === "desktop"
-      ? "blur-[100px] sm:blur-[128px]"
-      : "blur-[56px] sm:blur-[72px]"
-  const orbBlurCenter =
-    variant === "desktop"
-      ? "blur-[120px] sm:blur-[180px]"
-      : "blur-[72px] sm:blur-[100px]"
-
-  return (
-    <>
-      <div
-        className="absolute inset-0 gpu-accelerate opacity-80 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
-        aria-hidden
-      />
-      <div
-        className={cn(
-          "absolute top-1/4 -left-32 w-72 h-72 sm:w-96 sm:h-96 gpu-accelerate bg-accent/22 rounded-full",
-          orbBlurSide
-        )}
-        aria-hidden
-      />
-      <div
-        className={cn(
-          "absolute bottom-1/4 -right-32 w-72 h-72 sm:w-96 sm:h-96 gpu-accelerate bg-accent/12 rounded-full",
-          orbBlurSide
-        )}
-        aria-hidden
-      />
-      <div
-        className={cn(
-          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(100vw,480px)] h-[min(100vw,480px)] sm:w-[600px] sm:h-[600px] gpu-accelerate bg-accent/6 rounded-full opacity-90",
-          orbBlurCenter
-        )}
         aria-hidden
       />
     </>

@@ -20,16 +20,15 @@ function getPublicImageHash(imagePath: string): string {
 }
 
 describe("featured artist data", () => {
-  it("keeps the requested front artist order", () => {
+  it("keeps the requested front artist order (owner restructure note, 2026-08-28)", () => {
     expect(getArtists().map((artist) => artist.name)).toEqual([
       "Auguste",
-      "Devvy Dub",
       "fromclay",
       "Zusebi",
       "Where's West?",
       "thatfranco",
+      "Devvy Dub",
       "HLWA",
-      "BAUM",
       "Nick Rosen",
       "Admiral",
       "LUPFR",
@@ -40,6 +39,10 @@ describe("featured artist data", () => {
       "GasMoney",
       "ASTRD",
     ])
+  })
+
+  it("drops BAUM from the roster (owner restructure note, 2026-08-28)", () => {
+    expect(getArtists().find((artist) => artist.name === "BAUM")).toBeUndefined()
   })
 
   it("includes ASTRD with Instagram-only socials (owner request 2026-07-21)", () => {
@@ -157,20 +160,12 @@ describe("featured artist data", () => {
 
   it("keeps existing artist social links and tracks", () => {
     const zusebi = getArtists().find((artist) => artist.name === "Zusebi")
-    const baum = getArtists().find((artist) => artist.name === "BAUM")
 
     expect(zusebi?.instagram).toBe("https://www.instagram.com/zusebimusic/")
     expect(zusebi?.youtube).toBe("https://www.youtube.com/@Zusebi")
     expect(zusebi?.featuredTrack).toEqual({
       url: "https://open.spotify.com/track/5pKW3ZTKNXovP0q8huEO9z",
       platform: "spotify",
-    })
-
-    expect(baum?.instagram).toBe("https://www.instagram.com/baum_dj/")
-    expect(baum?.soundcloud).toBe("https://soundcloud.com/user-999208104/tracks")
-    expect(baum?.featuredTrack).toEqual({
-      url: "https://soundcloud.com/user-999208104/baum-live-brackish-petaluma",
-      platform: "soundcloud",
     })
   })
 

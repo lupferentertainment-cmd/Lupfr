@@ -175,7 +175,7 @@ export function Footer() {
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">
                   <MapPin size={15} aria-hidden />
                 </span>
-                <span>87 N Raymond, Floor 6, Pasadena, CA</span>
+                <span>Old Town Pasadena — 6th Floor</span>
               </p>
               <p className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">
@@ -411,21 +411,6 @@ export function Footer() {
             </motion.span>
           </motion.button>
         </motion.div>
-
-        <p className="mt-10 pt-6 border-t border-border/50 text-center text-xs text-muted-foreground/80">
-          Made with{" "}
-          <span className="text-accent/90" aria-hidden>♥</span>
-          {" "}by{" "}
-          <a
-            href="https://mishalubich.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-accent transition-colors underline underline-offset-2"
-          >
-            Misha Lubich
-          </a>
-        </p>
-
       </ScrollReveal>
     </footer>
   )

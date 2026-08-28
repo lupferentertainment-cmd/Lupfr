@@ -1180,19 +1180,21 @@ html:not(.dark) .stat-tile-surface:hover {
     0 20px 42px oklch(0.3 0.01 255 / 0.07);
 }
 
-/* Hero title: viewport-scalable so LUPFR + Entertainment scale by platform (bigger, fluid) */
+/* Hero brand lockup (owner restructure, 2026-08-28): LUPFR + Entertainment now sit
+   beside the LE mark in the hero's bottom-left corner instead of as a full-width
+   centered title, so the scale is a corner-lockup size rather than a hero-filling one. */
 .hero-title-lupfr {
-  font-size: clamp(3.5rem, 12vw + 2rem, 12rem);
+  font-size: clamp(1.75rem, 2.4vw + 1rem, 3rem);
   line-height: 1;
 }
 
 .hero-title-entertainment {
-  font-size: clamp(1.25rem, 3.5vw + 0.75rem, 3.5rem);
+  font-size: clamp(0.7rem, 0.9vw + 0.45rem, 1.05rem);
   line-height: 1.2;
 }
 
-/* Video-legibility layer: preserve the existing gold/mono styling while giving
-   the small hero copy a stable edge against both bright water and dark frames. */
+/* Media-legibility layer: preserve the existing gold/mono styling while giving
+   the small hero copy a stable edge against both bright and dark filmstrip photos. */
 .hero-tagline-contrast {
   filter:
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.9))
@@ -1203,16 +1205,6 @@ html:not(.dark) .stat-tile-surface:hover {
   filter:
     drop-shadow(0 1px 1px rgb(0 0 0 / 0.95))
     drop-shadow(0 0 10px rgb(0 0 0 / 0.8));
-}
-
-.hero-scroll-cue {
-  color: rgb(255 255 255 / 0.96);
-  text-shadow: 0 1px 2px rgb(0 0 0 / 0.95), 0 0 8px rgb(0 0 0 / 0.72);
-}
-
-.hero-scroll-cue:hover,
-.hero-scroll-cue:focus-visible {
-  color: var(--gold-bright);
 }
 
 .hero-outline-cta {

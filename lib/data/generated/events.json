@@ -175,7 +175,7 @@
     "id": 15,
     "slug": "bal-masque",
     "title": "BAL MASQUE",
-    "subtitle": "Lineup TBD",
+    "subtitle": "feat. Maison Noir",
     "date": "August 29th, 2026",
     "dateISO": "2026-08-29",
     "time": "TBD",
@@ -185,12 +185,12 @@
     "image": "/events/bal_masque.webp",
     "ticketLink": "https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH",
     "ticketLabel": "Tickets",
-    "description": "A masquerade night at The Hibernia in San Francisco. Lineup reveal to come."
+    "description": "A masquerade night at The Hibernia in San Francisco, featuring Maison Noir."
   },
   {
     "id": 16,
     "slug": "zusebi-001-live-from-sf",
-    "title": "Zusebi 001: Live from SF",
+    "title": "Zusebi 001: Paris 75",
     "subtitle": "feat. Zusebi",
     "date": "September 12th, 2026",
     "dateISO": "2026-09-12",
@@ -216,32 +216,18 @@
     "description": "A sundown open-air set at the Golden Gate — night two of the Zusebi run."
   },
   {
-    "id": 18,
-    "slug": "zusebi-003-live-from-la",
-    "title": "Zusebi 003: Live from LA",
-    "subtitle": "feat. Zusebi",
-    "date": "September 18th, 2026",
-    "dateISO": "2026-09-18",
-    "time": "TBD",
-    "location": "Los Angeles, CA",
-    "brandTag": "OUT//SIDE",
-    "city": "LA",
-    "ticketStatus": "tbd",
-    "description": "The Zusebi run closes with a Los Angeles takeover."
-  },
-  {
     "id": 19,
     "slug": "seaside-002",
     "title": "SEA//SIDE 002",
     "subtitle": "feat. Zusebi + TBD",
-    "date": "TBD",
-    "dateISO": null,
+    "date": "September 19th, 2026",
+    "dateISO": "2026-09-19",
     "time": "TBD",
-    "location": "Los Angeles, CA",
+    "location": "Marina del Rey, CA",
     "brandTag": "SEA//SIDE",
     "city": "LA",
     "ticketStatus": "tbd",
-    "description": "SEA//SIDE returns to the LA waterfront. Date and lineup to be announced."
+    "description": "SEA//SIDE returns for a Marina del Rey waterfront night. Lineup to be announced."
   },
   {
     "id": 2,

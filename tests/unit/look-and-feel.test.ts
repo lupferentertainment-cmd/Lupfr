@@ -152,17 +152,20 @@ describe("hero tagline corporate treatment", () => {
     expect(heroMobile).toContain("heading-metallic-gold gold-shine-text")
   })
 
-  it("keeps the hero tagline and scroll cue legible over video in both themes", () => {
+  it("keeps the hero tagline legible over the filmstrip photos in both themes", () => {
     expect(heroDesktop).toContain("hero-tagline-contrast")
     expect(heroMobile).toContain("hero-tagline-contrast")
-    expect(heroDesktop).toContain("hero-scroll-cue")
-    expect(heroMobile).toContain("hero-scroll-cue")
     expect(css).toContain(".hero-tagline-contrast")
-    expect(css).toContain(".hero-scroll-cue")
     expect(css).toMatch(/\.dark \.hero-tagline-contrast/)
     expect(heroDesktop).toContain("hero-outline-cta")
     expect(heroMobile).toContain("hero-outline-cta")
     expect(css).toContain(".hero-outline-cta")
+  })
+
+  it("drops the scroll-cue prompt from the hero (owner restructure, 2026-08-28)", () => {
+    expect(heroDesktop).not.toContain("hero-scroll-cue")
+    expect(heroMobile).not.toContain("hero-scroll-cue")
+    expect(css).not.toContain(".hero-scroll-cue")
   })
 })
 
@@ -248,32 +251,32 @@ describe("hero visual system", () => {
     expect(css).not.toContain("--entertainment-line-end")
   })
 
-  it("hero desktop references hero-title-lupfr and hero-title-entertainment classes", () => {
-    expect(heroDesktop).toContain("hero-title-lupfr")
-    expect(heroDesktop).toContain("hero-title-entertainment")
+  // Owner restructure (2026-08-28): the wordmark moved from a full-width centered
+  // hero title into a shared `HeroBrandLockup` (hero-shared.tsx) rendered bottom-left
+  // beside the LE mark, used by both hero-desktop.tsx and hero-mobile-static.tsx —
+  // so the treatment itself now lives in one place instead of being duplicated.
+  it("hero desktop and mobile both render the shared brand lockup", () => {
+    expect(heroDesktop).toContain("HeroBrandLockup")
+    expect(heroMobile).toContain("HeroBrandLockup")
   })
 
-  it("hero desktop uses hero-title-lupfr for the LUPFR wordmark wrapper", () => {
-    expect(heroDesktop).toContain("hero-title-lupfr")
-  })
-
-  it("hero wordmark (LUPFR + Entertainment) uses the comp's condensed/uppercase/extrabold treatment on both desktop and mobile (phase 22, ported from the comp's bound titleFont/titleTransform/titleWeight)", () => {
-    for (const source of [heroDesktop, heroShared]) {
-      expect(source).toMatch(/font-condensed hero-title-lupfr font-extrabold tracking-normal/)
-      expect(source).toMatch(/hero-title-entertainment font-medium uppercase tracking-normal/)
-      expect(source).not.toMatch(/hero-title-lupfr[^"]*font-serif|font-serif[^"]*hero-title-lupfr/)
-      expect(source).not.toContain("hero-entertainment-text")
-      expect(source).not.toContain("normal-case")
-    }
+  it("hero wordmark (LUPFR + Entertainment) uses the comp's condensed/uppercase/extrabold treatment (phase 22, ported from the comp's bound titleFont/titleTransform/titleWeight; now sized for the corner lockup, phase restructure 2026-08-28)", () => {
+    expect(heroShared).toMatch(/font-condensed hero-title-lupfr font-extrabold tracking-normal/)
+    expect(heroShared).toMatch(/hero-title-entertainment font-medium uppercase tracking-normal/)
+    expect(heroShared).not.toMatch(/hero-title-lupfr[^"]*font-serif|font-serif[^"]*hero-title-lupfr/)
+    expect(heroShared).not.toContain("hero-entertainment-text")
+    expect(heroShared).not.toContain("normal-case")
   })
 
   it(".stat-tile-surface is defined for metric card backgrounds", () => {
     expect(css).toContain(".stat-tile-surface {")
   })
 
-  it("desktop hero renders the comp's coordinates/corner-bracket readout; mobile hero omits it (static, decorative, desktop-only)", () => {
+  it("desktop hero renders the corner-bracket + location readout; mobile hero omits it (static, decorative, desktop-only)", () => {
+    // Coordinates readout retired (owner restructure, 2026-08-28) — the bottom-left
+    // corner now holds the brand lockup instead; bottom-right keeps a location line.
     expect(heroShared).toContain("export function HeroCornerReadout")
-    expect(heroShared).toMatch(/34\.1478°N \/\/ 118\.1445°W/)
+    expect(heroShared).toMatch(/LOS ANGELES · SAN FRANCISCO \/ EST\. 2025/)
     expect(heroDesktop).toContain("HeroCornerReadout")
     expect(heroDesktop).toContain("<HeroCornerReadout />")
     expect(heroMobile).not.toContain("HeroCornerReadout")
@@ -359,10 +362,16 @@ describe("partner logo CSS system", () => {
 
 describe("navigation structure", () => {
   it("defines all expected section nav links", () => {
-    const expected = ["#brands", "#events", "#services", "#artists", "#about", "#team", "#contact"]
+    // "#team" dropped from the nav (owner restructure note, 2026-08-28) — Team now
+    // lives inside the About section, reachable via "#about" below.
+    const expected = ["#brands", "#events", "#services", "#artists", "#about", "#contact"]
     for (const href of expected) {
       expect(navigation, `nav missing link to ${href}`).toContain(`href: "${href}"`)
     }
+  })
+
+  it("no longer links a standalone Team nav anchor (Team lives inside About)", () => {
+    expect(navigation).not.toContain('href: "#team"')
   })
 
   it("no longer links the retired standalone gallery section", () => {
@@ -544,7 +553,9 @@ describe("contact structure", () => {
 describe("footer contact info", () => {
   it("footer carries email, location, and the protected phone", () => {
     expect(footer).toContain("will@lupfr.com")
-    expect(footer).toContain("87 N Raymond, Floor 6, Pasadena, CA")
+    // HQ copy updated (owner restructure note, 2026-08-28): "Old Town Pasadena — 6th Floor".
+    expect(footer).toContain("Old Town Pasadena")
+    expect(footer).toContain("6th Floor")
     expect(footer).toContain("ProtectedPhone")
   })
 })

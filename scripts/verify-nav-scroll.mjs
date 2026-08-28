@@ -201,7 +201,7 @@ async function _check(page, { label, sectionId, mobile }, sink) {
 const CASES = [
   { label: "Events", sectionId: "events", mobile: false }, // eager control
   { label: "Contact", sectionId: "contact", mobile: false }, // deepest deferred
-  { label: "Team", sectionId: "team", mobile: false }, // middle deferred
+  { label: "About", sectionId: "about", mobile: false }, // middle deferred (Team nav link retired 2026-08-28; Team now lives inside About)
   { label: "Contact", sectionId: "contact", mobile: true }, // mobile menu path
 ]
 

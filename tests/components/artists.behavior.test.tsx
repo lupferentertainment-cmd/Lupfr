@@ -48,9 +48,9 @@ describe("Artists home section", () => {
     ).toEqual(artists.map((artist) => artist.name).sort((a, b) => a.localeCompare(b)))
 
     const genre = screen.getByLabelText("Filter artists by genre")
-    fireEvent.change(genre, { target: { value: "Tech House" } })
+    fireEvent.change(genre, { target: { value: "UK Garage" } })
     expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(1)
-    expect(screen.getByRole("heading", { level: 3, name: "BAUM" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { level: 3, name: "fromclay" })).toBeInTheDocument()
 
     fireEvent.change(genre, { target: { value: "missing" } })
     expect(screen.getByText("No artists match this genre.")).toBeInTheDocument()
@@ -62,7 +62,7 @@ describe("Artists home section", () => {
     })
 
     it("highlights the artist named by ?artist=<slug>", () => {
-      const slug = artistSlug("BAUM")
+      const slug = artistSlug("fromclay")
       window.history.replaceState(null, "", `/artists?artist=${slug}`)
       render(<ArtistsDirectory />)
 
@@ -78,7 +78,7 @@ describe("Artists home section", () => {
     })
 
     it("uses auto scroll behavior under prefers-reduced-motion", () => {
-      const slug = artistSlug("BAUM")
+      const slug = artistSlug("fromclay")
       window.history.replaceState(null, "", `/artists?artist=${slug}`)
       const scrollIntoView = vi.fn()
       const mql = {

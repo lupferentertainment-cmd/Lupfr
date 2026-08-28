@@ -13,19 +13,6 @@
     }
   },
   {
-    "id": 10,
-    "name": "Devvy Dub",
-    "genre": "Alternative Rock",
-    "image": "/artists/devvy_dub.webp",
-    "bio": "Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.",
-    "spotify": "https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0",
-    "appleMusic": "https://music.apple.com/us/artist/devvy-dub/1257899389",
-    "featuredTrack": {
-      "url": "https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9",
-      "platform": "spotify"
-    }
-  },
-  {
     "id": 7,
     "name": "fromclay",
     "genre": "UK Garage",
@@ -81,6 +68,19 @@
     }
   },
   {
+    "id": 10,
+    "name": "Devvy Dub",
+    "genre": "Alternative Rock",
+    "image": "/artists/devvy_dub.webp",
+    "bio": "Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.",
+    "spotify": "https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0",
+    "appleMusic": "https://music.apple.com/us/artist/devvy-dub/1257899389",
+    "featuredTrack": {
+      "url": "https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9",
+      "platform": "spotify"
+    }
+  },
+  {
     "id": 3,
     "name": "HLWA",
     "genre": "Melodic House",
@@ -91,19 +91,6 @@
     "featuredTrack": {
       "url": "https://open.spotify.com/track/7q4k2mexMoEVIqzx0xrcVo?si=5iZitaPGTFG3otdH9msDZA",
       "platform": "spotify"
-    }
-  },
-  {
-    "id": 4,
-    "name": "BAUM",
-    "genre": "Tech House",
-    "image": "/artists/baum.webp",
-    "bio": "Bay Area DJ with a deep, driving sound shaped for pop-ups, boat parties, and rooms that want to move.",
-    "soundcloud": "https://soundcloud.com/user-999208104/tracks",
-    "instagram": "https://www.instagram.com/baum_dj/",
-    "featuredTrack": {
-      "url": "https://soundcloud.com/user-999208104/baum-live-brackish-petaluma",
-      "platform": "soundcloud"
     }
   },
   {

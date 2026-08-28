@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { m } from "framer-motion"
-import { CalendarDays, History, MapPin } from "lucide-react"
+import { CalendarDays, History, MapPin, Ticket } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { getBrands } from "@/lib/data/brands"
+import { LINKS } from "@/lib/links"
 import {
   EVENTS,
   type EventItem,
@@ -25,8 +26,13 @@ const MONTH_NAMES = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ] as const
 
+// Exported so the TBD (dateISO: null) branches below can be unit-tested
+// directly: no event in the live roster is currently TBD (the owner
+// restructure filled in SEA//SIDE 002's date and dropped Zusebi 003, the
+// roster's last two TBD-shaped rows), so this path would otherwise go
+// untested until a future TBD event exists.
 /** "2026-07-24" -> "Jul 24" (deterministic, no locale/timezone drift). */
-function shortDate(dateISO: string | null): string {
+export function shortDate(dateISO: string | null): string {
   if (!dateISO) return "TBD"
   const [, month, day] = dateISO.split("-").map(Number)
   return `${MONTH_NAMES[(month ?? 1) - 1]} ${day}`
@@ -39,7 +45,7 @@ function daysFromToday(dateISO: string, todayISO: string): number {
   )
 }
 
-function upcomingPillLabel(event: EventItem, todayISO: string): string {
+export function upcomingPillLabel(event: EventItem, todayISO: string): string {
   if (event.dateISO === null) return "DATE TBD"
   const days = daysFromToday(event.dateISO, todayISO)
   if (days === 0) return "TODAY"
@@ -202,6 +208,39 @@ function PastEventCard({ event, todayISO }: { event: EventItem; todayISO: string
   )
 }
 
+// Owner restructure note (2026-08-28): all ticketing now runs through Partiful,
+// so a band pointing to the LUPFR Partiful profile sits under the full events
+// grid on this page (per-event "Get tickets" links already use ticketLink from
+// data/events.yml, which are Partiful URLs where set).
+function PartifulTicketingBand() {
+  return (
+    <div className="mt-14 flex flex-col items-start gap-4 rounded-sm border border-border bg-card px-6 py-8 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+      <div className="flex items-center gap-4">
+        <span
+          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10 text-accent"
+          aria-hidden
+        >
+          <Ticket size={18} />
+        </span>
+        <div>
+          <p className="lupfr-section-kicker mb-1 leading-none">All Ticketing</p>
+          <h3 className="font-condensed text-xl font-extrabold uppercase leading-none tracking-tight text-foreground sm:text-2xl">
+            Get tickets on Partiful
+          </h3>
+        </div>
+      </div>
+      <a
+        href={LINKS.partiful}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-accent bg-accent px-5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90"
+      >
+        View on Partiful →
+      </a>
+    </div>
+  )
+}
+
 export function EventsDirectory() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [brandFilter, setBrandFilter] = useState<string>("all")
@@ -286,6 +325,8 @@ export function EventsDirectory() {
           )}
         </section>
       ) : null}
+
+      <PartifulTicketingBand />
     </div>
   )
 }

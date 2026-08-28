@@ -1,4 +1,11 @@
 # Featured artists. Images go in public/artists/; reference as /artists/filename.webp. `bun run test` enforces WebP.
+#
+# Featured order (owner restructure note, 2026-08-28): PLS//TY, Auguste, fromclay
+# on the first row, then Zusebi, Where's West?, thatfranco on the second — PLS//TY
+# is not yet in the roster (no portrait/bio/links delivered), so the first row
+# temporarily holds Auguste + fromclay only and Devvy Dub keeps the 6th featured
+# slot. Move Devvy Dub back out of the featured six and slot PLS//TY in at the
+# very front the moment its artist entry is added.
 
 # Featured track (optional): embed a Spotify or SoundCloud player on the artist card.
 # Spotify: use any spotify.com/track/... URL.
@@ -14,17 +21,6 @@
   appleMusic: https://music.apple.com/us/artist/auguste/368789993
   featuredTrack:
     url: https://open.spotify.com/track/6i6qKFqRA3ZBYtAWAv4Ikf?si=72786a1b0ae54b62
-    platform: spotify
-
-- id: 10
-  name: Devvy Dub
-  genre: Alternative Rock
-  image: /artists/devvy_dub.webp
-  bio: Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.
-  spotify: https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0
-  appleMusic: https://music.apple.com/us/artist/devvy-dub/1257899389
-  featuredTrack:
-    url: https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9
     platform: spotify
 
 - id: 7
@@ -75,6 +71,17 @@
     url: https://open.spotify.com/track/5JJ0eUdq1cIJV9fozbUYE1?si=6e2da29ea4a24e55
     platform: spotify
 
+- id: 10
+  name: Devvy Dub
+  genre: Alternative Rock
+  image: /artists/devvy_dub.webp
+  bio: Alternative rock artist bringing live-wire energy and hook-driven songwriting to the LUPFR lineup, from intimate rooms to waterfront stages.
+  spotify: https://open.spotify.com/artist/4UndKhphjAjPRF7e6j95V0
+  appleMusic: https://music.apple.com/us/artist/devvy-dub/1257899389
+  featuredTrack:
+    url: https://open.spotify.com/track/1q2LCuh76IM9pLWfYfGGZP?si=3c16c996413b45a9
+    platform: spotify
+
 - id: 3
   name: HLWA
   genre: Melodic House
@@ -86,17 +93,6 @@
   featuredTrack:
     url: https://open.spotify.com/track/7q4k2mexMoEVIqzx0xrcVo?si=5iZitaPGTFG3otdH9msDZA
     platform: spotify
-
-- id: 4
-  name: BAUM
-  genre: Tech House
-  image: /artists/baum.webp
-  bio: Bay Area DJ with a deep, driving sound shaped for pop-ups, boat parties, and rooms that want to move.
-  soundcloud: https://soundcloud.com/user-999208104/tracks
-  instagram: https://www.instagram.com/baum_dj/
-  featuredTrack:
-    url: https://soundcloud.com/user-999208104/baum-live-brackish-petaluma
-    platform: soundcloud
 
 - id: 11
   name: Nick Rosen

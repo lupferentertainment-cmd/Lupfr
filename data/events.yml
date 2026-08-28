@@ -156,9 +156,10 @@
 # Comp-announced upcoming events (LUPFR Restructure comp, 2026-07-17).
 # Posterless rows render the striped COMING SOON placeholder; tickets TBD.
 - id: 15
+  # Subtitle/description updated (owner restructure note, 2026-08-28): lineup confirmed, no longer "TBD".
   slug: bal-masque
   title: BAL MASQUE
-  subtitle: Lineup TBD
+  subtitle: feat. Maison Noir
   date: August 29th, 2026
   dateISO: "2026-08-29"
   time: TBD
@@ -168,11 +169,13 @@
   image: /events/bal_masque.webp
   ticketLink: https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH
   ticketLabel: Tickets
-  description: A masquerade night at The Hibernia in San Francisco. Lineup reveal to come.
+  description: A masquerade night at The Hibernia in San Francisco, featuring Maison Noir.
 
 - id: 16
+  # Title renamed (owner restructure note, 2026-08-28): "Zusebi 001: Live from SF" →
+  # "Zusebi 001: Paris 75". Slug held unchanged so existing links/bookmarks keep working.
   slug: zusebi-001-live-from-sf
-  title: "Zusebi 001: Live from SF"
+  title: "Zusebi 001: Paris 75"
   subtitle: feat. Zusebi
   date: September 12th, 2026
   dateISO: "2026-09-12"
@@ -196,31 +199,22 @@
   ticketStatus: tbd
   description: A sundown open-air set at the Golden Gate — night two of the Zusebi run.
 
-- id: 18
-  slug: zusebi-003-live-from-la
-  title: "Zusebi 003: Live from LA"
-  subtitle: feat. Zusebi
-  date: September 18th, 2026
-  dateISO: "2026-09-18"
-  time: TBD
-  location: Los Angeles, CA
-  brandTag: OUT//SIDE
-  city: LA
-  ticketStatus: tbd
-  description: The Zusebi run closes with a Los Angeles takeover.
+# Zusebi 003 removed entirely (owner restructure note, 2026-08-28).
 
 - id: 19
+  # Date/location updated (owner restructure note, 2026-08-28): Sept 19, 2026, Marina del Rey.
+  # Subtitle held at "feat. Zusebi + TBD" — PLS&TY isn't in the roster yet, so it can't be named here.
   slug: seaside-002
   title: SEA//SIDE 002
   subtitle: feat. Zusebi + TBD
-  date: TBD
-  dateISO: null
+  date: September 19th, 2026
+  dateISO: "2026-09-19"
   time: TBD
-  location: Los Angeles, CA
+  location: Marina del Rey, CA
   brandTag: SEA//SIDE
   city: LA
   ticketStatus: tbd
-  description: SEA//SIDE returns to the LA waterfront. Date and lineup to be announced.
+  description: SEA//SIDE returns for a Marina del Rey waterfront night. Lineup to be announced.
 
 - id: 2
   slug: shamrock-house

@@ -12,16 +12,18 @@ const HEADER_SCROLL_THRESHOLD_PX = 50
 const SECTION_SPY_OFFSET_PX = 120
 const SECTION_SPY_MIN_DELTA_PX = 96
 
+// "Media" was merged into "News" (single nav tab; /media is still reachable
+// from the News section's own "News & media →" link) and "Team" was dropped
+// as its own anchor — Team now lives inside the About section (owner note,
+// 2026-08-28 restructure).
 const navLinksBase = [
   { name: "News", href: "#news" },
   { name: "Brands", href: "#brands" },
   { name: "Events", href: "#events" },
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
-  { name: "Media", href: "/media" },
   { name: "Blog", href: "/blog" },
   { name: "About", href: "#about" },
-  { name: "Team", href: "#team" },
   { name: "Contact", href: "#contact" },
 ] as const
 

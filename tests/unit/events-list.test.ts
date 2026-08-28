@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { EventItem } from "@/lib/events"
 import {
+  compareByDateISOThenId,
   eventDetailPath,
   eventHeroAbsoluteUrl,
   eventShareTitle,
@@ -9,6 +10,8 @@ import {
   getEventTag,
   getPastEvents,
   getUpcomingEvents,
+  isPastEvent,
+  isUpcomingEvent,
   todayDateISOInEventTZ,
 } from "@/lib/events"
 
@@ -29,6 +32,9 @@ const eventFixture = (overrides: Partial<EventItem>): EventItem => ({
 const la = (iso: string) => new Date(iso)
 
 describe("events list ordering", () => {
+  // zusebi-003-live-from-la removed and seaside-002 given a real date, 2026-09-19
+  // (owner restructure note, 2026-08-28) — seaside-002 now sorts by date instead of
+  // trailing as TBD-last.
   it("upcoming: sorts by dateISO ascending; TBD (null) last", () => {
     const now = la("2026-04-01T20:00:00-07:00")
     const slugs = getUpcomingEvents(now).map((e) => e.slug)
@@ -45,7 +51,6 @@ describe("events list ordering", () => {
       "bal-masque",
       "zusebi-001-live-from-sf",
       "zusebi-002-live-from-golden-gate",
-      "zusebi-003-live-from-la",
       "seaside-002",
     ])
   })
@@ -54,7 +59,7 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
-      "zusebi-003-live-from-la",
+      "seaside-002",
       "zusebi-002-live-from-golden-gate",
       "zusebi-001-live-from-sf",
       "bal-masque",
@@ -71,6 +76,29 @@ describe("events list ordering", () => {
       "boiler-boat-002-apres-ski-edition",
       "haunted-at-brixton",
     ])
+  })
+})
+
+describe("TBD (dateISO: null) handling", () => {
+  // No event in the live roster is currently TBD (the 2026-08-28 owner
+  // restructure filled in SEA//SIDE 002's date and dropped Zusebi 003, the
+  // roster's last two TBD-shaped rows), so these fixtures keep the null-date
+  // branches covered independent of what's on the live roster.
+  it("isUpcomingEvent treats a TBD date as always upcoming", () => {
+    expect(isUpcomingEvent(eventFixture({ dateISO: null }), "2026-01-01")).toBe(true)
+    expect(isUpcomingEvent(eventFixture({ dateISO: "2025-01-01" }), "2026-01-01")).toBe(false)
+  })
+
+  it("isPastEvent never treats a TBD date as past", () => {
+    expect(isPastEvent(eventFixture({ dateISO: null }), "2026-01-01")).toBe(false)
+    expect(isPastEvent(eventFixture({ dateISO: "2025-01-01" }), "2026-01-01")).toBe(true)
+  })
+
+  it("compareByDateISOThenId sorts TBD (null) rows after dated rows, by id when both are TBD", () => {
+    const dated = eventFixture({ id: 1, dateISO: "2026-06-01" })
+    const tbdA = eventFixture({ id: 2, dateISO: null })
+    const tbdB = eventFixture({ id: 3, dateISO: null })
+    expect([tbdB, dated, tbdA].sort(compareByDateISOThenId)).toEqual([dated, tbdA, tbdB])
   })
 })
 

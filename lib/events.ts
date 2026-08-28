@@ -97,7 +97,12 @@ export function todayDateISOInEventTZ(now: Date = new Date()): string {
   return EVENT_TZ_DATE_FORMATTER.format(now)
 }
 
-function compareByDateISOThenId(a: EventItem, b: EventItem): number {
+// Exported (not just used internally) so the null/TBD branches below can be
+// unit-tested directly against fixtures: no event in the live roster is
+// currently TBD (dateISO: null) — the owner restructure filled in SEA//SIDE
+// 002's date and dropped Zusebi 003, the roster's last two TBD-shaped rows —
+// so these paths would otherwise go untested until a future TBD event exists.
+export function compareByDateISOThenId(a: EventItem, b: EventItem): number {
   const aD = a.dateISO
   const bD = b.dateISO
   if (aD === null && bD === null) return a.id - b.id
@@ -107,23 +112,29 @@ function compareByDateISOThenId(a: EventItem, b: EventItem): number {
   return c !== 0 ? c : a.id - b.id
 }
 
+/** True when `event` belongs in the Upcoming list: date TBD (dateISO null) or >= today (event TZ). */
+export function isUpcomingEvent(event: EventItem, todayISO: string): boolean {
+  if (event.dateISO === null) return true
+  return event.dateISO >= todayISO
+}
+
+/** True when `event` belongs in the Past list: has a calendar date strictly before today (event TZ). TBD never counts as past. */
+export function isPastEvent(event: EventItem, todayISO: string): boolean {
+  if (event.dateISO === null) return false
+  return event.dateISO < todayISO
+}
+
 /** Upcoming: date TBD (dateISO null) or event calendar date >= today (event TZ). Sorted by dateISO ascending; TBD last. */
 export function getUpcomingEvents(now: Date = new Date()): EventItem[] {
   const today = todayDateISOInEventTZ(now)
-  const list = EVENTS_DATA.filter((e) => {
-    if (e.dateISO === null) return true
-    return e.dateISO >= today
-  })
+  const list = EVENTS_DATA.filter((e) => isUpcomingEvent(e, today))
   return [...list].sort(compareByDateISOThenId)
 }
 
 /** Past: event calendar date strictly before today (event TZ). TBD never counts as past. Newest past date first. */
 export function getPastEvents(now: Date = new Date()): EventItem[] {
   const today = todayDateISOInEventTZ(now)
-  const list = EVENTS_DATA.filter((e) => {
-    if (e.dateISO === null) return false
-    return e.dateISO < today
-  })
+  const list = EVENTS_DATA.filter((e) => isPastEvent(e, today))
   return [...list].sort((a, b) => {
     const c = b.dateISO!.localeCompare(a.dateISO!)
     return c !== 0 ? c : b.id - a.id

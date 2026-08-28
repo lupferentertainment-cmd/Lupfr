@@ -43,7 +43,9 @@
 
 - icon: Users
   title: Private Events
-  image: "/services/private-events.webp"
+  # Image reused from the BAL MASQUE event poster (owner restructure note, 2026-08-28):
+  # masquerade portrait, crop keeps both faces high in frame.
+  image: "/events/bal_masque.webp"
   description: "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment."
   features:
     - Custom Concepts

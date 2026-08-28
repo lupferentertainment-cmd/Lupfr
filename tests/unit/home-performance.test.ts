@@ -160,27 +160,22 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("keeps the mobile hero and event section from eager-loading desktop-weight work", () => {
+        // Schedule a call / Watch Reel dropped from the hero (owner restructure,
+        // 2026-08-28) — Book an Event + Upcoming Events are the only hero CTAs now.
         expect(heroMobile).not.toContain('from "framer-motion"')
         expect(heroMobile).not.toContain("MotionScheduleCallCta")
-        expect(heroMobile).toContain("ScheduleCallCta")
+        expect(heroMobile).not.toContain("ScheduleCallCta")
         expect(events).toContain("prefetchDetails={isMobile === false}")
         expect(events).toContain("prioritizeFirstImage={isMobile === false}")
         expect(events).toContain("priority={prioritizeImage}")
     })
 
-    it("serves dedicated mobile hero posters for LCP (not the desktop poster constants)", () => {
-        expect(heroMobile).toContain("HERO_POSTER_DARK_MOBILE")
-        expect(heroMobile).toContain("HERO_POSTER_LIGHT_MOBILE")
-        // Must not fall back to the heavy desktop posters on the mobile path.
+    it("serves a single priority-loaded filmstrip photo for mobile LCP (owner restructure, 2026-08-28 — no more poster+deferred video)", () => {
+        expect(heroMobile).toContain("HERO_FILMSTRIP_PHOTOS")
+        expect(heroMobile).toContain("priority={activeIndex === 0}")
+        expect(heroMobile).not.toContain("HERO_POSTER_DARK_MOBILE")
         expect(heroMobile).not.toMatch(/HERO_POSTER_(DARK|LIGHT)\b/)
-    })
-
-    it("defers the yacht hero MP4 on mobile until after load (skipped for reduced-motion)", () => {
-        expect(heroMobile).toContain("HERO_VIDEO_DARK")
-        expect(heroMobile).toContain("allowDeferredVideo")
-        expect(heroMobile).toContain('prefersReducedMotion === false')
-        expect(heroMobile).toContain("requestIdleCallback")
-        expect(heroMobile).toContain('addEventListener("load"')
+        expect(heroMobile).not.toContain("<video")
     })
 
     it("keeps the base schedule CTA free of Framer Motion", () => {
