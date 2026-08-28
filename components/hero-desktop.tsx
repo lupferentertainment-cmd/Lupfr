@@ -121,7 +121,16 @@ function HeroDesktopParallaxSection({
 
       <HeroCornerReadout />
 
-      <div className="relative z-20 h-full flex flex-col justify-end px-4 sm:px-6 md:px-10 pb-8 sm:pb-10 md:pb-12">
+      {/*
+        absolute inset-0 (not h-full): the parent <section> in hero.tsx only sets
+        min-h-[100vh]/min-h-[100dvh], not an explicit height, so a percentage
+        height here doesn't reliably resolve against it in every browser and the
+        copy block was collapsing to its own content height and rendering at the
+        TOP of the hero instead of bottom-pinned (caught 2026-08-28 on the live
+        preview deploy). Matches how the filmstrip layer and HeroCornerReadout
+        above already position themselves against this same section.
+      */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 sm:px-6 md:px-10 pb-8 sm:pb-10 md:pb-12">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}

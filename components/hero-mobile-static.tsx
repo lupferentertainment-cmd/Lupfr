@@ -94,7 +94,11 @@ export function HeroMobileStaticSection({
         </div>
       </div>
 
-      <div className="relative z-20 h-full flex flex-col justify-end px-4 sm:px-6 pb-16 sm:pb-[4.5rem]">
+      {/* absolute inset-0 (not h-full) — see matching note in hero-desktop.tsx: the
+          parent <section> only sets min-h-*, so a percentage height here doesn't
+          reliably resolve and the copy block was rendering at the top instead of
+          bottom-pinned. */}
+      <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 sm:px-6 pb-16 sm:pb-[4.5rem]">
         <div className="flex flex-col items-start gap-5 motion-safe:animate-[fade-up_600ms_cubic-bezier(0.22,1,0.36,1)_100ms_both]">
           <HeroBrandLockup prefersReducedMotion={prefersReducedMotion} />
 
