@@ -17,9 +17,11 @@
   title: "SEA//SIDE"
   tag: YACHTS
   accent: "#6fb8c9"
-  # Card image swapped to a deck/crowd shot (owner restructure note, 2026-08-28) — reused
-  # from the existing gallery set rather than fabricating new imagery.
-  image: "/brands/seaside-gallery-4.webp"
+  # Owner's actual chosen card background (design canvas, 2026-08-28:
+  # assets/brands/seaside-bg-v3.jpg, the design file's own brandPanelPhotos.seaside) —
+  # re-encoded from that high-res source. Previously stood in with a gallery photo, which
+  # was an interim substitute, not the owner's choice.
+  image: "/brands/seaside.webp"
   description: "An off-shore music series taking the experience aboard yachts, cruises, and sailboats."
   format: "Yacht sessions · LA & SF · 21+"
   externalUrl: "https://seaside.la"
