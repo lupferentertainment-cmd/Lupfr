@@ -30,7 +30,10 @@ type HeroFilmstripSlatProps = {
 /**
  * One vertical slat of the desktop filmstrip: the active slat widens (flex-grow
  * transition, plain CSS — no framer needed for a unitless CSS property) and its dim
- * overlay lifts; inactive slats stay narrow and dimmed. Clicking any slat selects it.
+ * overlay lifts; inactive slats stay narrow and dimmed. Hovering a slat (owner
+ * request 2026-08-28, "make the tiles interactive") previews it immediately —
+ * no click needed on desktop; clicking and keyboard focus still select it too, so
+ * touch/keyboard users (no real `:hover`) aren't left without a way to pick one.
  */
 function HeroFilmstripSlat({ photo, index, isActive, onSelect, prioritize }: HeroFilmstripSlatProps) {
   const [ready, setReady] = useState(false)
@@ -38,6 +41,8 @@ function HeroFilmstripSlat({ photo, index, isActive, onSelect, prioritize }: Her
     <button
       type="button"
       onClick={() => onSelect(index)}
+      onMouseEnter={() => onSelect(index)}
+      onFocus={() => onSelect(index)}
       aria-label={`Show ${photo.alt}`}
       aria-current={isActive}
       className="hero-filmstrip-slat group relative h-full min-w-0 overflow-hidden transition-[flex-grow] duration-[850ms] ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:-outline-offset-2"
@@ -77,8 +82,9 @@ type HeroDesktopParallaxSectionProps = {
 
 /**
  * Desktop (≥768px): the six-photo filmstrip (owner restructure, 2026-08-28) —
- * auto-advances every ~5s, pauses under prefers-reduced-motion (still click-to-select),
- * and restarts its timer on manual selection so a deliberate click sticks.
+ * auto-advances every ~5s, pauses under prefers-reduced-motion (still
+ * hover/click/keyboard-selectable), and restarts its timer on any manual
+ * selection so a deliberate hover/click sticks instead of jumping away mid-look.
  */
 function HeroDesktopParallaxSection({
   containerRef,

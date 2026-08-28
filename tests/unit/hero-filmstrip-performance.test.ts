@@ -49,6 +49,12 @@ describe("hero filmstrip performance guardrails", () => {
         expect(heroMobile).toContain("autoAdvance = prefersReducedMotion !== true")
     })
 
+    it("desktop slats preview on hover, not just click (owner request 2026-08-28)", () => {
+        expect(heroDesktop).toContain("onMouseEnter={() => onSelect(index)}")
+        expect(heroDesktop).toContain("onClick={() => onSelect(index)}")
+        expect(heroDesktop).toContain("onFocus={() => onSelect(index)}")
+    })
+
     it("keeps every hero filmstrip photo within a lean per-image budget", () => {
         // Small per-slat budget: only one image is priority-loaded at a time, but all
         // six are visible (desktop) or swappable (mobile) above the fold.
