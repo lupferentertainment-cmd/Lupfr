@@ -22,9 +22,12 @@ export const FADE_DURATION_S = 0.6
  * see tests/unit/hero-filmstrip-performance.test.ts) so the desktop chunk and the
  * mobile LCP slide both stay light.
  *
- * "seaside-step-repeat" is a placeholder (the reused SEA//SIDE golden-hour deck shot)
- * — the owner has not yet delivered a real SEA//SIDE step-and-repeat photo. Swap
- * `src` here the moment that lands; nothing else needs to change.
+ * All six photos (2026-08-28) are the owner's actual selections from the design
+ * canvas ("LUPFR Website Design v2.zip" → LUPFR Restructure.dc.html's `heroPhotos`
+ * array), re-encoded from the canvas's own high-resolution originals — not stand-ins
+ * from the site's existing photo library. "seaside-step-repeat" is a real SEA//SIDE
+ * step-and-repeat photo (assets/hero-ideas/slat-seaside-step.jpg in the canvas), so
+ * despite the id name it is not a placeholder.
  */
 export type HeroFilmstripPhoto = {
   id: string
@@ -33,13 +36,12 @@ export type HeroFilmstripPhoto = {
 }
 
 export const HERO_FILMSTRIP_PHOTOS: readonly HeroFilmstripPhoto[] = [
-  { id: "neon-dj", src: "/hero/hero-slat-neon-dj.webp", alt: "DJ under red, blue, and green stage lights" },
-  { id: "crowd", src: "/hero/hero-slat-crowd.webp", alt: "Crowd dancing in front of the DJ booth" },
-  { id: "masquerade", src: "/hero/hero-slat-masquerade.webp", alt: "Masquerade portrait in gold and black" },
-  { id: "band", src: "/hero/hero-slat-band.webp", alt: "Live band performing with a bay view behind them" },
+  { id: "neon-dj", src: "/hero/hero-slat-neon-dj.webp", alt: "DJ performing under warm stage lighting as a hand shoots up from the crowd" },
+  { id: "crowd", src: "/hero/hero-slat-crowd.webp", alt: "Crowd dancing around the DJ booth on a yacht" },
+  { id: "masquerade", src: "/hero/hero-slat-masquerade.webp", alt: "Two guests in masquerade makeup and lace masks" },
+  { id: "band", src: "/hero/hero-slat-band.webp", alt: "Live band performing with the city skyline behind them" },
   { id: "sunset-deck", src: "/hero/hero-slat-sunset-deck.webp", alt: "Golden-hour crowd on a yacht deck" },
-  // TODO(owner asset): swap for the real SEA//SIDE step-and-repeat photo once delivered.
-  { id: "seaside-step-repeat", src: "/hero/hero-slat-seaside-placeholder.webp", alt: "SEA//SIDE guests on a sunlit yacht deck" },
+  { id: "seaside-step-repeat", src: "/hero/hero-slat-seaside-step.webp", alt: "SEA//SIDE guests at the step-and-repeat" },
 ] as const
 
 export const HERO_FILMSTRIP_INTERVAL_MS = 5000
