@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { BrandDeck } from "@/components/brand-deck"
 import { BrandSlashText } from "@/components/brand-slash-text"
+import { BrandTree } from "@/components/brand-tree"
 import { Footer } from "@/components/footer"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { Navigation } from "@/components/navigation"
@@ -26,7 +27,7 @@ function BrandOverviewRow({ brand, index }: { brand: BrandItem; index: number })
   const past = brand.comingSoon ? [] : getPastEvents().filter((e) => e.brandTag === brand.title)
 
   return (
-    <section className="border-b border-border py-10 sm:py-14">
+    <section id={`brand-${brand.key}`} className="border-b border-border py-10 sm:py-14 scroll-mt-24">
       <ScrollReveal
         variant="up"
         amountIn={0.1}
@@ -169,9 +170,13 @@ export default function BrandsPage() {
         />
         <div className="relative mx-auto max-w-[1400px]">
           <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
-          <GoldShineText as="h1" className="mb-6">
+          <GoldShineText as="h1" className="mb-4">
             Our Brands
           </GoldShineText>
+          <p className="mb-10 text-muted-foreground sm:mb-14">Five distinct experiences, one company.</p>
+
+          {/* Corporate-structure tree (owner restructure note, 2026-08-28). */}
+          <BrandTree brands={brands} />
 
           {/* The parent portfolio deck — one brand, five worlds. */}
           <div className="mb-10 sm:mb-14">
