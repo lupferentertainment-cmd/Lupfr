@@ -38,6 +38,19 @@ describe("BrandTree", () => {
     expect(screen.getAllByText("Soon")).toHaveLength(2)
   })
 
+  // Owner report, 2026-08-29: "center all text on the corp tree texts."
+  it("centers the group labels and every brand node's text", () => {
+    render(<BrandTree brands={brands} />)
+    const liveLabel = screen.getByText(/Live/).closest("p")
+    const corpLabel = screen.getByText(/Corporate · Media/).closest("p")
+    expect(liveLabel?.className).toContain("text-center")
+    expect(corpLabel?.className).toContain("text-center")
+    for (const button of screen.getAllByRole("button")) {
+      expect(button.className).toContain("items-center")
+      expect(button.className).toContain("text-center")
+    }
+  })
+
   it("clicking a node scrolls its #brand-<key> section into view", () => {
     const scrollIntoView = vi.fn()
     const target = document.createElement("div")

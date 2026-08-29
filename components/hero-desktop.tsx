@@ -137,13 +137,24 @@ function HeroDesktopParallaxSection({
         TOP of the hero instead of bottom-pinned (caught 2026-08-28 on the live
         preview deploy). Matches how the filmstrip layer and HeroCornerReadout
         above already position themselves against this same section.
+
+        pointer-events-none (2026-08-29 owner report, "the arrows between
+        slides on hero do not work"): this wrapper is `inset-0`, so its hit
+        box covers the WHOLE hero even though `justify-end` only visually
+        pins the real content to the bottom — with no pointer-events-none it
+        sat on top of (same/higher z-index, later in DOM order than) the
+        filmstrip slats and HeroFilmstripArrows above and silently ate every
+        click meant for them. Same class of bug HeroCornerReadout's own
+        pointer-events-none already guards against. pointer-events-auto is
+        restored on the actual content wrapper below so its real
+        buttons/links keep working.
       */}
-      <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 sm:px-6 md:px-10 pb-8 sm:pb-10 md:pb-12">
+      <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 sm:px-6 md:px-10 pb-8 sm:pb-10 md:pb-12 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col items-start gap-5 sm:gap-6"
+          className="flex flex-col items-start gap-5 sm:gap-6 pointer-events-auto"
         >
           <HeroBrandLockup />
 

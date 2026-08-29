@@ -26,7 +26,7 @@ function BrandTreeNode({ brand }: { brand: BrandItem }) {
       type="button"
       onClick={() => scrollToBrand(brand.key)}
       aria-label={`Jump to ${brand.title.replace(/\/\//g, " ")}`}
-      className="group flex flex-1 flex-col items-start gap-1 rounded-sm border border-border bg-card px-4 py-3 text-left transition-colors hover:border-accent/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5 sm:py-4"
+      className="group flex flex-1 flex-col items-center gap-1 rounded-sm border border-border bg-card px-4 py-3 text-center transition-colors hover:border-accent/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent sm:px-5 sm:py-4"
     >
       <span className="font-condensed text-base font-extrabold uppercase tracking-tight text-foreground sm:text-lg">
         <BrandSlashText text={brand.title} color={brand.accent} />
@@ -63,7 +63,7 @@ export function BrandTree({ brands }: { brands: BrandItem[] }) {
 
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-10">
         <div className="flex flex-col gap-3 rounded-sm border border-border/60 p-4 sm:p-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
             Live <span className="text-foreground/50">/ Events</span>
           </p>
           <div className="flex flex-col gap-2.5 sm:flex-row">
@@ -74,7 +74,7 @@ export function BrandTree({ brands }: { brands: BrandItem[] }) {
         </div>
 
         <div className="flex flex-col gap-3 rounded-sm border border-border/60 p-4 sm:p-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
             Corporate · Media <span className="text-foreground/50">/ Programming</span>
           </p>
           <div className="flex flex-col gap-2.5 sm:flex-row">

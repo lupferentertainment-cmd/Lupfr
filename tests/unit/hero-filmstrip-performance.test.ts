@@ -93,4 +93,20 @@ describe("hero filmstrip performance guardrails", () => {
         expect(heroMobile).not.toContain("react-swipeable")
         expect(heroMobile).not.toContain("use-gesture")
     })
+
+    // Owner report (2026-08-29): "the arrows between slides on hero do not
+    // work." Root cause: the bottom copy-block wrapper is `absolute inset-0`,
+    // so its hit box covers the whole hero even though `justify-end` only
+    // visually pins the real content to the bottom — with no
+    // pointer-events-none it silently ate every click meant for the
+    // filmstrip slats/arrows/dots underneath. See the matching in-code
+    // comment in both files for the full explanation.
+    it("bottom copy block passes clicks through to the filmstrip layer (only its real content stays clickable)", () => {
+        const copyBlockRe =
+            /absolute inset-0 z-20 flex flex-col justify-end[^"]*pointer-events-none"/
+        expect(heroDesktop).toMatch(copyBlockRe)
+        expect(heroMobile).toMatch(copyBlockRe)
+        expect(heroDesktop).toContain("pointer-events-auto")
+        expect(heroMobile).toContain("pointer-events-auto")
+    })
 })

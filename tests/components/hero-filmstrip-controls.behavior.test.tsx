@@ -55,6 +55,23 @@ describe("HeroMobileStaticSection — manual scroll", () => {
     expect(screen.getByRole("button", { name: "Show next hero photo" })).toBeInTheDocument()
   })
 
+  // Owner report, 2026-08-29: "the arrows between slides on hero do not
+  // work" — the full-bleed bottom copy block was swallowing clicks meant for
+  // the arrows/dots underneath. See the matching source-string check in
+  // tests/unit/hero-filmstrip-performance.test.ts for the desktop half.
+  it("lets clicks pass through the empty part of the bottom copy block to the controls underneath", () => {
+    render(<HeroMobileStaticSection {...props} />)
+    const copyBlock = screen.getByRole("link", { name: "Book an Event" }).closest(".pointer-events-none")
+    expect(copyBlock).not.toBeNull()
+    expect(copyBlock?.className).toContain("absolute inset-0")
+    const realContent = copyBlock?.querySelector(".pointer-events-auto")
+    expect(realContent).not.toBeNull()
+    expect(realContent?.contains(screen.getByRole("link", { name: "Book an Event" }))).toBe(true)
+    // sanity: the arrow buttons live outside the pointer-events-none wrapper entirely
+    const nextArrow = screen.getByRole("button", { name: "Show next hero photo" })
+    expect(copyBlock?.contains(nextArrow)).toBe(false)
+  })
+
   it("advances to the next photo via the next arrow", async () => {
     const user = userEvent.setup()
     render(<HeroMobileStaticSection {...props} />)
