@@ -46,8 +46,16 @@ export function HeroMobileStaticSection({
     return () => window.clearTimeout(timeoutRef.current)
   }, [activeIndex, autoAdvance])
 
+  // Deliberately does NOT reset `ready` back to false here (owner report,
+  // 2026-08-29: "the images on hero go black for a second when flipping
+  // between each one"). Resetting it forced the incoming photo to start at
+  // opacity-0 and fade in over 500ms against the section's black background
+  // on every manual swap — a real black dip, not a loading placeholder,
+  // since these six photos are small and already local. `ready` now only
+  // gates the very first paint's shimmer/fade-in; once true it stays true,
+  // so later swaps just update the same <Image>'s `src` in place and the
+  // browser holds the outgoing frame until the new one decodes.
   const selectSlide = useCallback((index: number) => {
-    setReady(false)
     setActiveIndex(index)
   }, [])
 
@@ -84,7 +92,6 @@ export function HeroMobileStaticSection({
       >
         <SkeletonShimmerLayer show={!ready} />
         <Image
-          key={activePhoto.src}
           src={activePhoto.src}
           alt={activePhoto.alt}
           fill

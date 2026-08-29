@@ -134,14 +134,25 @@ describe("HeroMobileStaticSection — manual scroll", () => {
     expect(dots[0]).toHaveAttribute("aria-selected", "false")
   })
 
-  it("marks the active photo not-ready again once a new slide is selected, until it loads", () => {
+  // Owner report, 2026-08-29: "the images on hero go black for a second when
+  // flipping between each one." Root cause: selecting a new slide reset
+  // `ready` to false, forcing the incoming photo to restart its opacity-0 →
+  // opacity-100 fade against the section's black background on every swap.
+  // Once the first photo has loaded, later swaps must stay at full opacity
+  // the whole time — no dip back to transparent/black.
+  it("keeps the photo at full opacity across slide changes once the first one has loaded (no black flash)", () => {
     render(<HeroMobileStaticSection {...props} />)
     const img = screen.getByAltText(HERO_FILMSTRIP_PHOTOS[0].alt)
     fireEvent.load(img)
+    expect(img.className).toContain("opacity-100")
+
     fireEvent.click(screen.getByRole("button", { name: "Show next hero photo" }))
+    // Same <img> node updates in place (no remount/key-swap) so the browser
+    // holds the outgoing frame instead of blanking to the black background.
     const nextImg = screen.getByAltText(HERO_FILMSTRIP_PHOTOS[1].alt)
-    fireEvent.load(nextImg)
+    expect(nextImg).toBe(img)
     expect(nextImg.className).toContain("opacity-100")
+    expect(nextImg.className).not.toContain("opacity-0")
   })
 
   it("auto-advances on a timer unless motion is reduced", () => {

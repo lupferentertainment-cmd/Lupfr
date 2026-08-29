@@ -3,6 +3,11 @@
  */
 import brandsJson from "@/lib/data/generated/brands.json"
 
+export interface BrandConcept {
+  heading: string
+  body: string
+}
+
 export interface BrandItemRaw {
   key: string
   title: string
@@ -15,6 +20,7 @@ export interface BrandItemRaw {
   comingSoon?: boolean
   gallery?: string[]
   deck?: string[]
+  concepts?: BrandConcept[]
 }
 
 export interface BrandItem {
@@ -31,6 +37,10 @@ export interface BrandItem {
   /** Ordered pitch-deck slides (site-root WebP under public/brands/), shown by
    * the VIEW DECK viewer on the brand detail page. */
   deck?: string[]
+  /** Three heading+body pairs from the design file's per-brand deck ("THE
+   * SERIES · ..." info cards) — seaside/inside/outside only; highrise/
+   * soundcheck use the slide-deck format instead. */
+  concepts?: BrandConcept[]
 }
 
 function normalizePath(path: string): string {

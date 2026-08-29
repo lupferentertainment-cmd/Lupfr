@@ -109,4 +109,16 @@ describe("hero filmstrip performance guardrails", () => {
         expect(heroDesktop).toContain("pointer-events-auto")
         expect(heroMobile).toContain("pointer-events-auto")
     })
+
+    // Owner report (2026-08-29): "the images on hero go black for a second
+    // when flipping between each one." Mobile's single <Image> used to
+    // remount on every slide change (`key={activePhoto.src}`) and reset its
+    // ready-gated opacity to 0, forcing a 500ms fade from the section's
+    // black background on every manual/auto swap. Fixed by keeping the same
+    // <Image> node across slide changes and never re-arming the opacity
+    // gate after the first successful load.
+    it("mobile hero photo does not remount or re-fade on slide changes (no black flash)", () => {
+        expect(heroMobile).not.toContain("key={activePhoto.src}")
+        expect(heroMobile).not.toContain("setReady(false)")
+    })
 })

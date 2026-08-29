@@ -658,3 +658,22 @@ describe("brand detail page back-link row", () => {
     expect(brandDetailPage).not.toContain("inline-flex w-fit items-center rounded-xs")
   })
 })
+
+// ── brands overview page: per-brand deck content ────────────────────────────
+// Owner punch list, 2026-08-29: "Add all the brand info on the sub page I
+// have in the claude file (including exact images)." See docs/DESIGN.md
+// phase 44 for what was/wasn't ported and why.
+
+describe("brands overview page — per-brand deck content", () => {
+  const brandsOverviewPage = fs.readFileSync(path.join(rootDir, "app", "brands", "page.tsx"), "utf8")
+
+  it("renders the design file's concept cards when a brand has them", () => {
+    expect(brandsOverviewPage).toContain("brand.concepts")
+    expect(brandsOverviewPage).toContain("concept.heading")
+    expect(brandsOverviewPage).toContain("concept.body")
+  })
+
+  it("renders a per-brand View deck button when a brand has deck slides (HIGH//RISE)", () => {
+    expect(brandsOverviewPage).toMatch(/<BrandDeck\s+slides=\{brand\.deck\}/)
+  })
+})

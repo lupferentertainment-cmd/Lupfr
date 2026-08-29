@@ -28,4 +28,36 @@ describe("brands list", () => {
     const seaside = getBrands().find((b) => b.key === "seaside")
     expect(seaside?.externalUrl).toBe("https://seaside.la")
   })
+
+  // Owner punch list, 2026-08-29: "Add all the brand info on the sub page I
+  // have in the claude file" — the design file's deckConfig concept cards,
+  // ported verbatim for the three "info" brands (highrise/soundcheck use the
+  // slide-deck format instead).
+  it("SEA//SIDE, IN//SIDE, and OUT//SIDE each carry exactly 3 non-empty concept cards", () => {
+    const brands = getBrands()
+    for (const key of ["seaside", "inside", "outside"]) {
+      const brand = brands.find((b) => b.key === key)
+      expect(brand?.concepts).toHaveLength(3)
+      for (const concept of brand!.concepts!) {
+        expect(concept.heading.length).toBeGreaterThan(0)
+        expect(concept.body.length).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it("HIGH//RISE and SOUND//CHECK have no concept cards (they use the deck-slide format)", () => {
+    const brands = getBrands()
+    for (const key of ["highrise", "soundcheck"]) {
+      const brand = brands.find((b) => b.key === key)
+      expect(brand?.concepts).toBeUndefined()
+    }
+  })
+
+  it("HIGH//RISE has a full 7-slide deck ready to render as a per-brand View deck button", () => {
+    const highrise = getBrands().find((b) => b.key === "highrise")
+    expect(highrise?.deck).toHaveLength(7)
+    for (const slide of highrise!.deck!) {
+      expect(slide).toMatch(/^\/brands\/highrise-deck-\d\.webp$/)
+    }
+  })
 })

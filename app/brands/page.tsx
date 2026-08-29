@@ -80,6 +80,25 @@ function BrandOverviewRow({ brand, index }: { brand: BrandItem; index: number })
       <div className={`flex flex-col justify-center gap-6 ${panelFirst ? "md:order-2" : "md:order-1"}`}>
         <p className="text-base leading-7 text-muted-foreground sm:text-[17px]">{brand.description}</p>
 
+        {brand.deck && brand.deck.length > 0 ? (
+          <div>
+            <BrandDeck slides={brand.deck} label={brandPlainTitle(brand)} />
+          </div>
+        ) : null}
+
+        {brand.concepts && brand.concepts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {brand.concepts.map((concept) => (
+              <div key={concept.heading} className="border-t pt-3" style={{ borderColor: brand.accent }}>
+                <p className="mb-1.5 font-condensed text-sm font-bold uppercase tracking-tight text-foreground">
+                  {concept.heading}
+                </p>
+                <p className="text-sm leading-6 text-muted-foreground">{concept.body}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
         {brand.gallery && brand.gallery.length > 0 ? (
           <div className="grid grid-cols-3 gap-2.5">
             {brand.gallery.slice(0, 3).map((src) => (

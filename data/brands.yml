@@ -12,6 +12,10 @@
 # deck (optional) = ordered pitch-deck slides (site-root WebP under
 # public/brands/) opened by the VIEW DECK viewer on the brand detail page
 # (highrise only). The parent LUPFR deck lives in lib/data/brands.ts.
+# concepts (optional) = three heading+body pairs from the design file's
+# per-brand deck ("THE SERIES · ..." info cards) — seaside/inside/outside
+# only, ported verbatim from LUPFR_Restructure.dc.html's deckConfig
+# (owner design-file punch list, 2026-08-29).
 
 - key: seaside
   title: "SEA//SIDE"
@@ -32,6 +36,13 @@
     - "/brands/seaside-gallery-4.webp"
     - "/brands/seaside-gallery-5.webp"
     - "/brands/seaside-gallery-6.webp"
+  concepts:
+    - heading: "Offshore Venue"
+      body: "Every set happens on the water — yachts, cruises, and sailboats sailing the Bay and the LA coastline."
+    - heading: "Music First"
+      body: "House and live electronic sets from the LUPFR roster and guest artists, from golden hour to sundown."
+    - heading: "The Community"
+      body: "An all-white dress code, a boat full of regulars, and the city skyline framing every drop."
 
 - key: highrise
   title: "HIGH//RISE"
@@ -68,6 +79,13 @@
   image: "/brands/inside.webp"
   description: "Indoor live music experiences redefining what nights out mean in California."
   format: "Indoor sessions · LA & SF"
+  concepts:
+    - heading: "The Room"
+      body: "Warehouses, marinas, and unexpected indoor spaces transformed into one-night venues."
+    - heading: "Late Sets"
+      body: "Programming built for the long haul — doors early, music running well past midnight."
+    - heading: "Underground"
+      body: "Boiler-room framing, close quarters, and a lineup pulled from the LUPFR network."
 
 - key: outside
   title: "OUT//SIDE"
@@ -76,3 +94,10 @@
   image: "/brands/outside.webp"
   description: "The open-air music series melding nature and sound into one."
   format: "Outdoor sessions · LA & SF"
+  concepts:
+    - heading: "Open Air"
+      body: "Rooftops, gardens, and outdoor spaces — no ceilings, no walls, just the horizon."
+    - heading: "Golden Hour"
+      body: "Sets timed to sundown, when the light and the music peak together."
+    - heading: "Nature + Sound"
+      body: "Locations chosen so the setting carries as much of the night as the lineup."
