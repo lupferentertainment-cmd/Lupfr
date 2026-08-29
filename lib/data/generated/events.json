@@ -183,8 +183,8 @@
     "brandTag": "IN//SIDE",
     "city": "SF",
     "image": "/events/bal_masque.webp",
-    "ticketLink": "https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH",
-    "ticketLabel": "Tickets",
+    "partifulLink": "https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH",
+    "ticketLabel": "RSVP on Partiful",
     "description": "A masquerade night at The Hibernia in San Francisco, featuring Maison Noir."
   },
   {
@@ -219,7 +219,7 @@
     "id": 19,
     "slug": "seaside-002",
     "title": "SEA//SIDE 002",
-    "subtitle": "feat. Zusebi + TBD",
+    "subtitle": "feat. PLS&TY + Zusebi",
     "date": "September 19th, 2026",
     "dateISO": "2026-09-19",
     "time": "TBD",

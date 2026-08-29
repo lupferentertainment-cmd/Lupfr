@@ -66,21 +66,25 @@ describe("data integrity (gallery ↔ events, assets on disk)", () => {
     }
   })
 
-  it("every upcoming event has ticketLink or explicit TBD status", () => {
+  it("every upcoming event has ticketLink, partifulLink, or explicit TBD status", () => {
     const upcoming = getUpcomingEvents()
+    // partifulLink (owner restructure, 2026-08-28: "all ticketing runs through
+    // Partiful now") is an equally valid ticket path — resolveEventTicket()
+    // in lib/partiful.ts prefers it over ticketLink for the "Get Tickets" CTA.
+    const hasLink = (v: unknown) => typeof v === "string" && v.trim().length > 0
     const missing = upcoming.filter(
-      (e) => (typeof e.ticketLink !== "string" || e.ticketLink.trim().length === 0) && e.ticketStatus !== "tbd"
+      (e) => !hasLink(e.ticketLink) && !hasLink(e.partifulLink) && e.ticketStatus !== "tbd"
     )
     for (const e of missing) {
       console.warn(
-        `[data-integrity] Upcoming event has no ticketLink or ticketStatus=tbd: slug="${e.slug}" title="${e.title}".`,
+        `[data-integrity] Upcoming event has no ticketLink/partifulLink or ticketStatus=tbd: slug="${e.slug}" title="${e.title}".`,
       )
     }
     expect(
       missing,
       missing.length === 0
         ? ""
-        : `Missing ticketLink for upcoming event(s): ${missing.map((e) => e.slug).join(", ")}. Warnings logged above.`,
+        : `Missing ticketLink/partifulLink for upcoming event(s): ${missing.map((e) => e.slug).join(", ")}. Warnings logged above.`,
     ).toEqual([])
   })
 

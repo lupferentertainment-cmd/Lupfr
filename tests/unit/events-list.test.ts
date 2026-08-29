@@ -188,8 +188,13 @@ describe("event routes and lookup", () => {
       location: "Paris 75, North Beach, SF",
     })
 
+    // BAL MASQUE now carries a live Partiful poster (owner restructure, 2026-08-28:
+    // "no more Lineup TBD / Coming soon") — the ticket URL lives in `partifulLink`,
+    // not `ticketLink`, so the event detail page's live og:image/description fetch
+    // (lib/partiful.ts) picks it up; resolveEventTicket() prefers partifulLink too.
     const balMasque = getEventBySlug("bal-masque")
-    expect(balMasque?.ticketLink).toBe("https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH")
+    expect(balMasque?.partifulLink).toBe("https://partiful.com/e/Ccgql9UJQIpXlKl5XWzH")
+    expect(balMasque?.ticketLink).toBeUndefined()
     expect(balMasque?.ticketStatus).toBeUndefined()
   })
 })
