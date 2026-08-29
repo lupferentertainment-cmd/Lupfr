@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { render, screen, fireEvent } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { About } from "@/components/about"
 
@@ -67,5 +67,21 @@ describe("About — story carousel", () => {
     await user.click(dots[2])
     expect(dots[2]).toHaveAttribute("aria-selected", "true")
     expect(dots[0]).toHaveAttribute("aria-selected", "false")
+  })
+
+  it("advances and rewinds via the arrow keys while focus is inside the carousel", () => {
+    render(<About />)
+    const region = carousel()
+    fireEvent.keyDown(region, { key: "ArrowRight" })
+    expect(region.textContent).toContain("02 / 06")
+    fireEvent.keyDown(region, { key: "ArrowLeft" })
+    expect(region.textContent).toContain("01 / 06")
+  })
+
+  it("ignores non-arrow keys", () => {
+    render(<About />)
+    const region = carousel()
+    fireEvent.keyDown(region, { key: "Enter" })
+    expect(region.textContent).toContain("01 / 06")
   })
 })
