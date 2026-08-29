@@ -7,13 +7,23 @@ export const TEAM_TAGS = ["LA", "SF", "Exec"] as const
 
 export type TeamTag = (typeof TEAM_TAGS)[number]
 
+export interface TeamStat {
+  value: string
+  label: string
+}
+
 export interface TeamMember {
   name: string
   title: string
   location: string
   /** Omitted while a portrait is pending; cards render a placeholder. */
   image?: string
+  /** Paragraphs separated by a blank line in YAML render as separate <p>s (founder cards only). */
   bio: string
+  /** Pull quote shown on founder cards only (owner restructure, 2026-08-28). */
+  quote?: string
+  /** 2-3 short stat callouts shown on founder cards only (owner restructure, 2026-08-28). */
+  stats?: TeamStat[]
   /** Which team filter boxes show this member. */
   teams: TeamTag[]
   /** Founders render in the larger row above the roster, not in the grid. */

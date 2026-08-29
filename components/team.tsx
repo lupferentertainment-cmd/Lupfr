@@ -210,7 +210,40 @@ function FounderCard({
             {member.name}
           </h3>
           <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
-          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
+          {/* Bio paragraphs (owner restructure, 2026-08-28: Will's 5-paragraph
+             bio) — a blank line in YAML splits into separate <p>s; a
+             single-paragraph bio (Eliott) renders exactly as before. */}
+          <div className="mt-4 space-y-3">
+            {member.bio
+              .split(/\n\s*\n/)
+              .map((s) => s.trim())
+              .filter(Boolean)
+              .map((paragraph, i) => (
+                <p key={i} className="text-sm leading-relaxed text-muted-foreground">
+                  {paragraph}
+                </p>
+              ))}
+          </div>
+          {/* Pull quote + stats (owner restructure, 2026-08-28: "Design each
+             founder post area like the claude file, with the cool text/
+             structure"), ported from the design canvas's founder layout. */}
+          {member.quote ? (
+            <blockquote className="mt-5 border-l-2 border-accent pl-4 text-sm italic leading-relaxed text-foreground">
+              {member.quote}
+            </blockquote>
+          ) : null}
+          {member.stats && member.stats.length > 0 ? (
+            <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4">
+              {member.stats.map((stat) => (
+                <div key={stat.label}>
+                  <p className="font-condensed text-xl font-extrabold text-accent md:text-2xl">{stat.value}</p>
+                  <p className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
         <div className="mt-4 flex flex-wrap gap-1.5 pt-2">
           {member.badges.map((tag) => (

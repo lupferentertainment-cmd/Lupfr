@@ -12,7 +12,33 @@
   teams: [Exec]
   founder: true
   image: /images/team/will.webp
-  bio: "Will founded LUPFR to bring intentional, artist-first production to live music and events across San Francisco and Los Angeles. Splitting his time between both markets, he leads sponsorship, brand strategy, and the vision behind LUPFR's flagship franchises — from intimate boiler-room sets to full-scale yacht takeovers. An active DJ with a deep personal passion for curated nightlife, Will built the company from the ground up while balancing it alongside a background in infrastructure finance."
+  # Five-paragraph bio, quote, and stats from the AUG 28 restructure design
+  # file's founders[0] object (owner note: "New Will bio, five paragraphs").
+  # Paragraph 2 references Nike/Phil Knight — previously barred by a 2026-08-08
+  # third-party consent guard (Will's father had objected). Owner explicitly
+  # lifted that restriction on 2026-08-29 ("its fine to put that full bio in.
+  # I no longer reference my dad"); see docs/CHANGELOG.md. The old guard test
+  # (tests/unit/founder-bio-consent.test.ts) has been removed accordingly.
+  # Paragraphs are blank-line-separated so components/team.tsx's FounderCard
+  # splits them into separate <p> tags.
+  bio: |
+    Will founded LUPFR Entertainment to bring unique, untraditional live music experiences to California. Splitting his time between the LA & SF markets, he leads sponsorship, brand strategy, and the vision behind LUPFR's flagship franchises - from SEA//SIDE yacht charters, SOUND//CHECK artist interviews, and full-scale HIGH//RISE corporate productions.
+
+    Raised in Oregon - Portland first, Bend second - Will grew up around brand-building and entrepreneurship; raised in a Nike family and later exposed to business creation. One house, two lessons: how a great brand gets made, and what it takes to build something of your own. The early culture Phil Knight created serves as the blueprint for LUPFR: build a brand, not a product; sell experience rather than a ticket; and grow an ecosystem of artists, venues, media, and community rather than a company. Nike had Just Do It. LUPFR has Redefine the Music Experience.
+
+    His entrepreneurial track record starts young: at 16 he founded B2 Authentic LLC, an e-commerce business selling custom sports iPhone cases, growing it to $15K+ in revenue, 1,000+ units sold, and a social following of 30K+ before heading to college in Colorado.
+
+    Between ventures, Will built a career in renewable energy project finance, where he led portfolio modeling and diligence on over $2B in debt, tax equity, and development capital financings.
+
+    That range - building a company from scratch as a teenager, executing complex project financings, and now founding and scaling LUPFR Entertainment - reflects the same instinct throughout: take something unstructured and build the infrastructure underneath it.
+  quote: "今を生きる - Live in the moment. That is what every LUPFR night is built to deliver."
+  stats:
+    - value: "20+"
+      label: EVENTS PRODUCED
+    - value: "5"
+      label: BRANDS BUILT
+    - value: "$2B+"
+      label: FINANCINGS LED
 
 - name: Eliott Nazarian
   title: Co-Founder
@@ -25,6 +51,15 @@
   # stays on disk for an easy revert.
   image: /images/team/eliott-square.webp
   bio: "Eliott is a co-founder of LUPFR, helping shape the company's strategy, partnerships, and expansion across Los Angeles and beyond. A licensed attorney, actor, entrepreneur, and entertainment professional, he brings a multidisciplinary perspective to building the brand — developing partnerships, structuring opportunities, and turning ambitious ideas into scalable ventures. With roots in LA's creative community spanning music, nightlife, film, fashion, and media, Eliott is focused on growing LUPFR into a platform where culture, community, and business intersect."
+  # Quote + stats from the AUG 28 restructure design file's founders[1] object.
+  quote: "\"The best way to predict the future is to invent it.\" — Alan Kay"
+  stats:
+    - value: ESQ.
+      label: LICENSED ATTORNEY
+    - value: BD
+      label: PARTNERSHIPS & GROWTH
+    - value: LA
+      label: HOME MARKET
 
 - name: Zac Brosky
   title: Event Manager

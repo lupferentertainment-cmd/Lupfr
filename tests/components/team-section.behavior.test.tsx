@@ -110,6 +110,59 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
   })
 })
 
+describe("Team — founder quote/stats (owner restructure, 2026-08-28)", () => {
+  it("splits a multi-paragraph founder bio into separate paragraphs", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    const paragraphs = Array.from(founders.querySelectorAll("p")).map((p) => p.textContent?.trim())
+    // Will's bio ships as 2 paragraphs on data/team.yml pending owner-supplied
+    // replacement copy for the dropped paragraph — see data/team.yml comment.
+    expect(paragraphs.some((t) => t?.startsWith("Will founded LUPFR Entertainment"))).toBe(true)
+    expect(paragraphs.some((t) => t?.includes("B2 Authentic LLC"))).toBe(true)
+  })
+
+  it("renders each founder's pull quote", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    expect(founders.textContent).toContain("今を生きる")
+    expect(founders.textContent).toContain("The best way to predict the future is to invent it.")
+  })
+
+  it("renders each founder's stat callouts", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    expect(founders.textContent).toContain("20+")
+    expect(founders.textContent).toContain("EVENTS PRODUCED")
+    expect(founders.textContent).toContain("ESQ.")
+    expect(founders.textContent).toContain("LICENSED ATTORNEY")
+  })
+
+  it("omits the quote/stats blocks for a founder without them", async () => {
+    vi.resetModules()
+    vi.doMock("@/lib/data/team", () => ({
+      TEAM_TAGS: ["LA", "SF", "Exec"],
+      getFounders: () => [
+        {
+          name: "No Quote Founder",
+          title: "Co-Founder",
+          location: "Los Angeles, CA",
+          teams: ["Exec"],
+          badges: ["Exec"],
+          bio: "A single-paragraph bio with no quote or stats.",
+          founder: true,
+          image: "/images/team/no-quote.webp",
+        },
+      ],
+      getRoster: () => [],
+    }))
+    const { Team: T } = await import("@/components/team")
+    const { container } = render(<T />)
+    expect(container.querySelector("blockquote")).toBeNull()
+    vi.doUnmock("@/lib/data/team")
+    vi.resetModules()
+  })
+})
+
 describe("Team — LA / SF filter boxes", () => {
   it("renders a filter box only for tags that have roster members", () => {
     render(<Team />)
