@@ -16,10 +16,15 @@ const testConfig = {
   minWorkers: 1,
   // Vitest's 5000ms default is too thin a margin on Vercel's shared 2-core
   // build machine under transient load (observed cumulative transform/setup
-  // times of 150s+ there vs <1s locally) — raised so a slow-but-fine test
-  // doesn't flake, while still catching genuine hangs.
-  testTimeout: 20000,
-  hookTimeout: 20000,
+  // times of 150s+ there vs <1s locally) — raised once to 20000ms so a
+  // slow-but-fine test doesn't flake, while still catching genuine hangs.
+  // 2026-08-29: still flaked at 20000ms on Vercel (tests/integration/
+  // telemetry-route.test.ts > "returns 400 for invalid body" — a synchronous,
+  // no-I/O test with nothing to actually hang on; the failure was purely
+  // build-machine scheduling contention under the coverage-instrumented run).
+  // Raised again with more headroom.
+  testTimeout: 45000,
+  hookTimeout: 45000,
   coverage: {
     provider: "v8" as const,
     reportsDirectory: coverageReportsDirectory,
