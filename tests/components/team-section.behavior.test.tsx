@@ -110,6 +110,42 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
   })
 })
 
+describe("Team — founder layout matches the design file's split layout (owner punch list, 2026-08-29)", () => {
+  it("renders each founder as a portrait + copy pair, not a bordered card", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    // One CSS grid holds every founder's two elements as direct children —
+    // no per-founder wrapper card, no click-to-expand affordance.
+    const grid = founders.querySelector(":scope > div.grid")
+    expect(grid).not.toBeNull()
+    // 2 founders × (portrait + copy) = 4 direct grid children.
+    expect(grid!.children).toHaveLength(4)
+    // No click-to-expand buttons inside the founders region (unlike the
+    // roster cards below, whose bios stay hidden behind a toggle).
+    expect(founders.querySelectorAll("button")).toHaveLength(0)
+  })
+
+  it("splits each founder's name into an outlined first name and a solid-accent last name", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    const willHeading = Array.from(founders.querySelectorAll("h3")).find((h) =>
+      h.textContent?.includes("Will")
+    )
+    expect(willHeading).toBeTruthy()
+    const spans = willHeading!.querySelectorAll("span")
+    expect(Array.from(spans).some((s) => s.textContent === "Will")).toBe(true)
+    expect(Array.from(spans).some((s) => s.textContent === "Lupfer")).toBe(true)
+    expect(willHeading!.textContent).toContain("Will Lupfer")
+  })
+
+  it("shows a role · location divider line for each founder", () => {
+    render(<Team />)
+    const founders = foundersRegion()
+    expect(founders.textContent).toContain("CEO & Founder")
+    expect(founders.textContent).toContain("Los Angeles & San Francisco")
+  })
+})
+
 describe("Team — founder quote/stats (owner restructure, 2026-08-28)", () => {
   it("splits a multi-paragraph founder bio into separate paragraphs", () => {
     render(<Team />)

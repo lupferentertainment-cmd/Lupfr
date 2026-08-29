@@ -42,11 +42,20 @@ describe("founder portraits stay cheap on mobile", () => {
   })
 
   it("asks for a phone-sized portrait rather than a full-width one", () => {
-    expect(teamSource).toContain("(max-width: 640px) 92vw")
+    // Founder portrait: the 2026-08-29 design-file split layout switches from
+    // a stacked mobile column to a fixed 420px desktop column at `lg` (1024px),
+    // not the roster grid's `sm` (640px) breakpoint, so its `sizes` hint's
+    // threshold moved with it — still a conservative phone-width estimate
+    // (92vw), not a naive 100vw.
+    expect(teamSource).toContain("(min-width: 1024px) 420px, 92vw")
     expect(teamSource).toContain("(max-width: 640px) 50vw")
   })
 
   it("keeps tilt springs off touch devices", () => {
-    expect(teamSource.match(/enableTilt=\{!isMobile\}/g) ?? []).toHaveLength(2)
+    // Roster cards only. The 2026-08-29 founder-layout rebuild moved
+    // FounderCard off the shared `GoldCard` tilt-card shell entirely — the
+    // design file's founder split is a flat editorial layout, not a
+    // hover-tilt card, so there is nothing left to gate off touch there.
+    expect(teamSource.match(/enableTilt=\{!isMobile\}/g) ?? []).toHaveLength(1)
   })
 })

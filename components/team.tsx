@@ -151,45 +151,57 @@ function TeamCard({
 }
 
 /**
- * Founder card — deliberately NOT a TeamCard. Owner asked for "larger images /
- * description below" (Will, 2026-08-04), so the portrait is bigger and the bio
- * reads inline instead of hiding behind the roster card's expand toggle.
+ * Founder card — deliberately NOT a TeamCard. Rebuilt (owner punch list,
+ * 2026-08-29: "Founder section: rebuild to match design file exactly") to
+ * match `LUPFR_Restructure.dc.html`'s default founder layout ("layout A" /
+ * `.lp-founder-split`) rather than the roster card's bordered-tile shape: a
+ * fixed-width portrait column with a right-edge fade into the copy column,
+ * a two-tone stacked name, a thin rule + role/location line, and bordered
+ * stat pills. Returns a Fragment of exactly two elements (portrait, copy) —
+ * `Team` renders founders as direct children of one CSS grid below, so
+ * multiple founders auto-flow into additional same-shaped rows the way the
+ * design file's own `sc-for` repeats them, instead of a flex-wrap card row.
  */
-function FounderCard({
-  member,
-  index,
-  isInView,
-  isMobile,
-}: {
-  member: TeamMember
-  index: number
-  isInView: boolean
-  isMobile: boolean | undefined
-}) {
+function FounderCard({ member }: { member: TeamMember }) {
+  const spaceIndex = member.name.indexOf(" ")
+  const firstName = spaceIndex === -1 ? member.name : member.name.slice(0, spaceIndex)
+  const lastName = spaceIndex === -1 ? "" : member.name.slice(spaceIndex + 1)
+  const paragraphs = member.bio
+    .split(/\n\s*\n/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+
   return (
-    <GoldCard index={index} isRevealed={isInView} enableTilt={!isMobile} tiltMaxDeg={6} className="h-full flex flex-col">
-      {/*
-        Owner 2026-08-10: the portrait was `aspect-[5/4]` with no ceiling, so on
-        a wide two-up desktop row an ~800px card produced a ~640px-tall image
-        that swallowed the card. The aspect still drives height on narrow
-        screens; `max-h` caps it once the card gets wide, so the portrait stays
-        a header rather than the whole card.
-      */}
-      <div className="relative aspect-[5/4] max-h-[340px] w-full overflow-hidden bg-muted shrink-0 sm:max-h-[380px]">
+    <>
+      {/* Portrait column: square on mobile (design file's own <760px override),
+          a fixed-width 3/4 column that fades into the copy column at lg+ — the
+          design's `.lp-founder-split > div:nth-child(odd)` behavior, reproduced
+          with a responsive class pair instead of a literal breakpoint match,
+          since a 420px-fixed image column needs real width to sit beside text. */}
+      <div
+        className={cn(
+          "relative aspect-square w-full self-start overflow-hidden bg-muted",
+          "lg:aspect-[3/4]",
+          "lg:[mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]",
+          "lg:[-webkit-mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]"
+        )}
+      >
         {member.image ? (
           /* ShimmerImage, not a hand-rolled onLoad fade: it reads `complete` on
              mount, so a browser-cached portrait can't stay stuck at opacity 0
              behind the shimmer. No `priority` — the founders row sits well below
              the fold, so eager-loading it would compete with the hero's LCP on
-             mobile. */
+             mobile. The 1.14x scale + off-center origin (design file values,
+             transform-origin 50% 32%) only applies at lg+, matching the desktop
+             split framing; the mobile square crop needs no zoom. */
           <ShimmerImage
             src={member.image}
             alt={`${member.name}, ${member.title}`}
             width={TEAM_IMAGE_WIDTH}
             height={TEAM_IMAGE_HEIGHT}
-            sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(min-width: 1024px) 420px, 92vw"
             loading="lazy"
-            className="relative z-[1] h-full w-full object-cover object-top"
+            className="relative z-[1] h-full w-full origin-[50%_32%] object-cover object-top lg:scale-[1.14]"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-card via-muted/60 to-card">
@@ -200,69 +212,89 @@ function FounderCard({
           </div>
         )}
       </div>
-      <div className="p-5 md:p-7 flex-1 flex flex-col justify-between">
-        <div>
-          <div className="mb-1.5 flex items-center gap-2">
-            <MapPin size={14} className="shrink-0 text-accent" aria-hidden />
-            <span className="text-xs tracking-normal text-muted-foreground">{member.location}</span>
-          </div>
-          <h3 className="font-condensed text-2xl font-bold tracking-tight text-foreground md:text-3xl">
-            {member.name}
-          </h3>
-          <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
-          {/* Bio paragraphs (owner restructure, 2026-08-28: Will's 5-paragraph
-             bio) — a blank line in YAML splits into separate <p>s; a
-             single-paragraph bio (Eliott) renders exactly as before.
-             Capped height + internal scroll (owner request, 2026-08-29:
-             "Dont let the founder text go long - it needs to fit... then
-             scroll within that") so a long bio can't push the quote/stats
-             or the card itself taller — it scrolls in place instead. The
-             site hides scrollbars globally (app/globals.css), matching the
-             roster card's own in-place bio overlow-y-auto pattern above. */}
-          <div className="mt-4 max-h-[176px] space-y-3 overflow-y-auto sm:max-h-[200px]">
-            {member.bio
-              .split(/\n\s*\n/)
-              .map((s) => s.trim())
-              .filter(Boolean)
-              .map((paragraph, i) => (
-                <p key={i} className="text-sm leading-relaxed text-muted-foreground">
-                  {paragraph}
-                </p>
-              ))}
-          </div>
-          {/* Pull quote + stats (owner restructure, 2026-08-28: "Design each
-             founder post area like the claude file, with the cool text/
-             structure"), ported from the design canvas's founder layout. */}
-          {member.quote ? (
-            <blockquote className="mt-5 border-l-2 border-accent pl-4 text-sm italic leading-relaxed text-foreground">
-              {member.quote}
-            </blockquote>
-          ) : null}
-          {member.stats && member.stats.length > 0 ? (
-            <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4">
-              {member.stats.map((stat) => (
-                <div key={stat.label}>
-                  <p className="font-condensed text-xl font-extrabold text-accent md:text-2xl">{stat.value}</p>
-                  <p className="mt-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : null}
+
+      <div>
+        {/* Two-tone stacked name: outlined first name + solid-gold last name
+           (design file values). Tailwind has no text-stroke utility, so the
+           stroke color is the one inline style on this component — kept
+           theme-aware via color-mix on the accent token rather than the
+           design file's literal rgba(201,168,105,...). */}
+        <h3 className="whitespace-nowrap font-condensed text-[clamp(34px,11.2vw,68px)] font-bold uppercase leading-[0.92] tracking-[-0.03em] lg:text-[clamp(30px,4.4vw,68px)] lg:tracking-[-0.02em]">
+          <span
+            className="text-transparent"
+            style={{ WebkitTextStroke: "1px color-mix(in oklch, var(--accent) 55%, transparent)" }}
+          >
+            {firstName}
+          </span>{" "}
+          {lastName ? <span className="text-accent">{lastName}</span> : null}
+        </h3>
+
+        <div className="mt-5 flex items-center gap-3.5 lg:mt-6">
+          <span className="h-px w-12 shrink-0 bg-accent" aria-hidden />
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            {member.title}
+          </span>
+          <span className="text-muted-foreground/40" aria-hidden>
+            ·
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground/70">
+            {member.location}
+          </span>
         </div>
-        <div className="mt-4 flex flex-wrap gap-1.5 pt-2">
-          {member.badges.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-xs border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground"
-            >
-              {tag}
-            </span>
+
+        {/* Bio paragraphs (owner restructure, 2026-08-28: Will's 5-paragraph
+           bio) — a blank line in YAML splits into separate <p>s; a
+           single-paragraph bio (Eliott) renders exactly as before.
+           Capped height + internal scroll (owner request, 2026-08-29:
+           "Dont let the founder text go long - it needs to fit... then
+           scroll within that") so a long bio can't push the quote/stats
+           taller — it scrolls in place instead, deliberately NOT the design
+           file's uncapped flex-grow bio column. The site hides scrollbars
+           globally (app/globals.css), matching the roster card's own
+           in-place bio overflow-y-auto pattern above. */}
+        <div className="mt-6 max-h-[176px] space-y-3.5 overflow-y-auto sm:max-h-[200px]">
+          {paragraphs.map((paragraph, i) => (
+            <p key={i} className="text-[15px] leading-[1.7] text-muted-foreground sm:text-base">
+              {paragraph}
+            </p>
           ))}
         </div>
+
+        {/* Pull quote + stats (owner restructure, 2026-08-28: "Design each
+           founder post area like the claude file, with the cool text/
+           structure"), ported from the design canvas's founder layout. */}
+        {member.quote ? (
+          <blockquote className="mt-6 border-l-2 border-accent pl-5 text-[15px] italic leading-relaxed text-foreground sm:text-base">
+            {member.quote}
+          </blockquote>
+        ) : null}
+        {member.stats && member.stats.length > 0 ? (
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {member.stats.map((stat) => (
+              <div key={stat.label} className="rounded-[3px] border border-border px-4 py-3 text-center sm:text-left">
+                <div className="font-condensed text-2xl font-bold leading-none text-accent">{stat.value}</div>
+                <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {member.badges.length > 0 ? (
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {member.badges.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-xs border border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
-    </GoldCard>
+    </>
   )
 }
 
@@ -306,23 +338,18 @@ export function Team() {
         </h2>
 
         {/* Founders row (owner request 2026-08-04: "a dedicated section for the
-            founders … three larger images / description below"). Sits above the
-            roster and adapts from two to three cards as founders are added. */}
+            founders … three larger images / description below"; rebuilt
+            2026-08-29 to match the design file's split layout exactly — see
+            FounderCard). A single CSS grid holds every founder's portrait+copy
+            pair as direct children, so additional founders auto-flow into new
+            rows below (matching the design file's own `sc-for` repetition)
+            with one shared divider under the whole block, not one per founder. */}
         {founders.length > 0 && (
-          <div
-            role="region"
-            aria-label="Founders"
-            className="mb-12 sm:mb-16"
-          >
+          <div role="region" aria-label="Founders" className="mb-12 border-b border-border pb-12 sm:mb-16 sm:pb-16">
             <p className="lupfr-section-kicker mb-5">The Founders</p>
-            <div className="flex flex-wrap justify-center gap-5 sm:gap-7 items-stretch">
-              {founders.map((member, i) => (
-                <div
-                  key={member.name}
-                  className="basis-full sm:basis-[calc(50%-0.875rem)] lg:basis-[calc(33.333%-1.17rem)] sm:grow max-w-[520px]"
-                >
-                  <FounderCard member={member} index={i} isInView={isInView} isMobile={isMobile} />
-                </div>
+            <div className="grid grid-cols-1 gap-7 lg:grid-cols-[420px_minmax(0,1fr)] lg:items-start lg:gap-11">
+              {founders.map((member) => (
+                <FounderCard key={member.name} member={member} />
               ))}
             </div>
           </div>

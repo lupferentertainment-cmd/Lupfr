@@ -2,14 +2,18 @@
  * Founder portrait scale (owner report 2026-08-10: "make sure that heads are
  * fitting in properly and are not overtaking the whole space").
  *
- * The founder card is deliberately larger than a roster card, but its portrait
- * was `aspect-[5/4]` with no ceiling. Aspect ratio derives height from width,
- * so on a wide two-up desktop row an ~800px card produced a ~640px-tall image
- * that swallowed the card and pushed the bio below the fold.
+ * Originally fixed by capping a card-header portrait's height with `max-h`,
+ * since an `aspect-[5/4]` frame with no ceiling scaled its height off the
+ * card's own (unbounded) width on a wide two-up desktop row.
  *
- * The aspect still governs narrow screens; a `max-h` caps it once the card is
- * wide. Because a capped box crops via `object-cover`, the crop is anchored to
- * the top so faces survive rather than being sliced at the forehead.
+ * The 2026-08-29 founder-layout rebuild ("rebuild to match design file
+ * exactly") replaced that whole mechanism: founders no longer sit in
+ * variable-width cards at all — the portrait is now a column in a shared
+ * grid with a *fixed* pixel width at desktop (`420px`, the design file's own
+ * value), so its height can never scale up with viewport/container width the
+ * way the original bug required. The mobile portrait is a plain square, also
+ * incapable of the original tall-crop failure mode. This file now guards the
+ * replacement invariant instead of the retired `max-h` mechanism.
  */
 import fs from "node:fs"
 import path from "node:path"
@@ -19,37 +23,28 @@ import { describe, expect, it } from "vitest"
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const team = fs.readFileSync(path.join(rootDir, "components", "team.tsx"), "utf8")
 
-/** The FounderCard portrait frame — the one carrying `shrink-0`. */
-const frame =
-  /<div className="relative aspect-\[5\/4\][^"]*shrink-0[^"]*">/.exec(team)?.[0] ?? ""
-
-describe("founder portrait does not swallow the card", () => {
-  it("caps the portrait height so it cannot scale with card width", () => {
-    expect(frame, "founder portrait frame not found").not.toBe("")
-    expect(frame).toMatch(/max-h-\[\d+px\]/)
+describe("founder portrait does not swallow the layout", () => {
+  it("gives the founder portrait a fixed-width desktop column instead of letting it scale with container width", () => {
+    // The founders grid's desktop track is a literal 420px, not a fraction —
+    // the portrait's rendered width (and therefore its aspect-derived height)
+    // is bounded regardless of how wide the section gets.
+    expect(team).toContain("lg:grid-cols-[420px_minmax(0,1fr)]")
   })
 
-  it("keeps the cap within a sane header height", () => {
-    const caps = [...frame.matchAll(/max-h-\[(\d+)px\]/g)].map((m) => Number(m[1]))
-    expect(caps.length).toBeGreaterThan(0)
-    for (const cap of caps) {
-      // Taller than this and the portrait is the card again.
-      expect(cap, `max-h-[${cap}px] is too tall for a card header`).toBeLessThanOrEqual(420)
-      expect(cap).toBeGreaterThanOrEqual(240)
-    }
+  it("keeps the founder portrait's own aspect bounded (square on mobile, 3/4 at desktop — never open-ended)", () => {
+    expect(team).toMatch(/aspect-square[^"]*"[\s\S]{0,40}lg:aspect-\[3\/4\]/)
   })
 
   it("anchors the crop to the top so a capped frame never cuts heads off", () => {
-    // With a cap in play the frame crops; object-center would trim foreheads.
     const founderImg =
-      /aspect-\[5\/4\][\s\S]{0,900}?className="relative z-\[1\][^"]*"/.exec(team)?.[0] ?? ""
+      /aspect-square[\s\S]{0,1800}?className="relative z-\[1\][^"]*"/.exec(team)?.[0] ?? ""
     expect(founderImg).toContain("object-top")
     expect(founderImg).not.toContain("object-center")
   })
 
-  it("leaves the roster card's portrait uncapped — it is already small", () => {
+  it("leaves the roster card's portrait uncapped and unaffected — it is already small", () => {
     // Roster cards render 2–4 up, so their 5:4 frame never gets wide enough to
-    // need a ceiling. Capping them too would letterbox those portraits.
+    // need a ceiling. This mechanism is untouched by the founder rebuild.
     const rosterFrame = /<div className="relative aspect-\[5\/4\] w-full overflow-hidden bg-muted">/.exec(team)
     expect(rosterFrame, "roster portrait frame should stay uncapped").not.toBeNull()
   })
