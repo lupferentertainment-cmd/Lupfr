@@ -10,7 +10,9 @@ export const LINKS = {
   linkedin: "https://www.linkedin.com/company/lupfr/",
   /** LinkedIn "Life" tab — behind-the-scenes + open roles. */
   linkedinLife: "https://www.linkedin.com/company/lupfr/life/",
-  tiktok: "https://www.tiktok.com/@lupfer_entertainment",
+  // Owner punch list: "TikTok link https://www.tiktok.com/@lupfr_" (2026-08-29)
+  // — corrects the previous @lupfer_entertainment handle.
+  tiktok: "https://www.tiktok.com/@lupfr_",
   youtube: "https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew",
   /** Watch Reel – hero CTA (Instagram). */
   watchReel: "https://www.instagram.com/lupfr_/",

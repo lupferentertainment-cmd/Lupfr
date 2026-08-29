@@ -1,13 +1,18 @@
 /**
- * Media Hub (`/media`) — the company's channels, websites, and press in one
- * place, cycled per brand. Ported from the owner's July 24 restructure mockup.
+ * News & Media (`/media`) — rebuilt 2026-08-29 (owner punch list: "Add News
+ * tab back in; Pull exact News/Media sub-page from claude file") to match
+ * `LUPFR_Restructure.dc.html`'s `isMediaPage` layout: a combined news feed
+ * plus a "follow each brand" channel matrix, instead of the earlier
+ * per-brand tab UI this file used to back.
  *
- * The mockup shipped placeholder socials (`@lupfr.entertainment`, `@lupfr`) and
- * invented headlines. Those are deliberately NOT used: this page links a real
- * business's real accounts, so every URL here comes from `lib/links.ts`,
- * `data/brands.yml`, or `data/press.yml`. A brand with no website simply has no
- * website row, and no per-brand handle is fabricated — the repo has none, so
- * brand tabs surface the company channels flagged via `socialsAreCompanyWide`.
+ * The design file's own channel matrix invents specific per-brand handles
+ * (`@SEASIDE.LA`, a `highrise-co` LinkedIn page, etc.) — some marked "LIVE"
+ * for brands `data/brands.yml` itself flags `comingSoon: true`. This is a
+ * real business, so none of that ports: every URL here comes from
+ * `lib/links.ts`, `data/brands.yml`, or `data/press.yml`/`data/news.yml`.
+ * Where a brand has no verified account of its own, its row honestly says
+ * so — routed "via" LUPFR's real account, or "soon" for a brand that hasn't
+ * launched yet — rather than inventing a handle.
  */
 import { getBrands } from "@/lib/data/brands"
 import { getNews } from "@/lib/data/news"
@@ -15,13 +20,6 @@ import { getPress } from "@/lib/data/press"
 import { LINKS } from "@/lib/links"
 
 export const LUPFR_MEDIA_KEY = "lupfr"
-
-export interface MediaSocial {
-  name: string
-  /** Display handle, derived from the verified URL so the two cannot drift. */
-  handle: string
-  url: string
-}
 
 export interface MediaNews {
   source: string
@@ -33,35 +31,37 @@ export interface MediaNews {
   url: string
 }
 
-export interface MediaChannel {
+export type MediaChannelState = "live" | "via" | "soon"
+
+export interface MediaChannelCell {
+  platform: "Instagram" | "TikTok" | "LinkedIn" | "YouTube"
+  state: MediaChannelState
+  /** Set for "live" and "via" — the real URL to follow on that platform. */
+  href?: string
+}
+
+export interface MediaBrandRow {
   key: string
   label: string
-  /** Short eyebrow above the label — brand tag, or the group descriptor. */
-  tagline: string
-  blurb: string
   accent: string
-  website?: string
-  websiteLabel?: string
-  socials: MediaSocial[]
-  /** True when these are LUPFR's accounts shown on a brand tab, not the brand's own. */
-  socialsAreCompanyWide: boolean
-  news: MediaNews[]
+  status: "LIVE" | "VIA LUPFR" | "COMING SOON"
+  channels: MediaChannelCell[]
 }
 
-/** `https://www.instagram.com/lupfr_/` → `@lupfr_`; LinkedIn keeps its path. */
-function handleFromUrl(url: string, style: "at" | "path"): string {
-  const path = url.replace(/^https?:\/\/(www\.)?[^/]+/, "").replace(/\/+$/, "")
-  if (style === "path") return path || url
-  const last = path.split("/").filter(Boolean).pop() ?? ""
-  return last.startsWith("@") ? last : `@${last}`
+export interface MediaStats {
+  /** LUPFR + every sub-brand row shown below. */
+  brandCount: number
+  /** Real, verified accounts only — never a per-brand estimate. */
+  liveChannelCount: number
+  /** Newest real news item's human date; empty when there is no news yet. */
+  updatedLabel: string
 }
 
-const COMPANY_SOCIALS: MediaSocial[] = [
-  { name: "Instagram", handle: handleFromUrl(LINKS.instagram, "at"), url: LINKS.instagram },
-  { name: "LinkedIn", handle: handleFromUrl(LINKS.linkedin, "path"), url: LINKS.linkedin },
-  { name: "TikTok", handle: handleFromUrl(LINKS.tiktok, "at"), url: LINKS.tiktok },
-  { name: "YouTube", handle: handleFromUrl(LINKS.youtube, "path"), url: LINKS.youtube },
-]
+export interface MediaOverview {
+  newsFeed: MediaNews[]
+  brandRows: MediaBrandRow[]
+  stats: MediaStats
+}
 
 const MONTH_YEAR = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -72,9 +72,9 @@ const MONTH_YEAR = new Intl.DateTimeFormat("en-US", {
 
 /**
  * Editorial coverage (`data/press.yml`) plus owner-reviewed company news
- * (`data/news.yml`, the home News strip), newest first and de-duplicated by URL
- * — the San Francisco Post feature is legitimately present in both files, and
- * the Media Hub should list it once.
+ * (`data/news.yml`, the home News strip), newest first and de-duplicated by
+ * URL — the San Francisco Post feature is legitimately present in both files,
+ * and the feed should list it once.
  */
 function pressAsNews(): MediaNews[] {
   const fromPress: MediaNews[] = getPress().map((item) => ({
@@ -102,44 +102,63 @@ function pressAsNews(): MediaNews[] {
   return [...byUrl.values()].sort((a, b) => b.dateISO.localeCompare(a.dateISO))
 }
 
-/** Strip the brand-slash divider for plain-text contexts (`SEA//SIDE` → `SEA/SIDE`). */
-function websiteLabel(url: string): string {
-  return url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/+$/, "")
+const COMPANY_CHANNELS: Record<MediaChannelCell["platform"], string> = {
+  Instagram: LINKS.instagram,
+  TikTok: LINKS.tiktok,
+  LinkedIn: LINKS.linkedin,
+  YouTube: LINKS.youtube,
 }
 
-export function getMediaChannels(): MediaChannel[] {
-  const news = pressAsNews()
+const PLATFORM_ORDER: MediaChannelCell["platform"][] = ["Instagram", "TikTok", "LinkedIn", "YouTube"]
 
-  const lupfr: MediaChannel = {
-    key: LUPFR_MEDIA_KEY,
-    label: "LUPFR",
-    tagline: "Entertainment Group",
-    blurb:
-      "The parent company behind five distinct music experiences across California — live events, corporate programming, and original media, produced out of Los Angeles and San Francisco.",
-    accent: "#c9a869",
-    socials: COMPANY_SOCIALS,
-    socialsAreCompanyWide: false,
-    news,
-  }
+function liveRow(): MediaChannelCell[] {
+  return PLATFORM_ORDER.map((platform) => ({
+    platform,
+    state: "live",
+    href: COMPANY_CHANNELS[platform],
+  }))
+}
 
-  const brandChannels: MediaChannel[] = getBrands().map((brand) => ({
+/** Every sub-brand currently follows through LUPFR's own verified account — no per-brand handle exists yet. */
+function viaLupfrRow(): MediaChannelCell[] {
+  return PLATFORM_ORDER.map((platform) => ({
+    platform,
+    state: "via",
+    href: COMPANY_CHANNELS[platform],
+  }))
+}
+
+function soonRow(): MediaChannelCell[] {
+  return PLATFORM_ORDER.map((platform) => ({ platform, state: "soon" }))
+}
+
+export function getMediaOverview(): MediaOverview {
+  const newsFeed = pressAsNews()
+  const brands = getBrands()
+
+  const brandRows: MediaBrandRow[] = brands.map((brand) => ({
     key: brand.key,
     label: brand.title,
-    tagline: brand.tag,
-    blurb: brand.description,
     accent: brand.accent,
-    ...(brand.externalUrl
-      ? { website: brand.externalUrl, websiteLabel: websiteLabel(brand.externalUrl) }
-      : {}),
-    socials: COMPANY_SOCIALS,
-    // No per-brand handles exist in the repo, so the UI must say whose these are
-    // rather than implying the brand runs its own accounts.
-    socialsAreCompanyWide: true,
-    // Press is company-level; only the parent tab claims it.
-    news: [],
+    status: brand.comingSoon ? "COMING SOON" : "VIA LUPFR",
+    channels: brand.comingSoon ? soonRow() : viaLupfrRow(),
   }))
 
-  return [lupfr, ...brandChannels]
-}
+  const lupfrRow: MediaBrandRow = {
+    key: LUPFR_MEDIA_KEY,
+    label: "LUPFR",
+    accent: "#c9a869",
+    status: "LIVE",
+    channels: liveRow(),
+  }
 
-export const MEDIA_CHANNELS: MediaChannel[] = getMediaChannels()
+  return {
+    newsFeed,
+    brandRows: [lupfrRow, ...brandRows],
+    stats: {
+      brandCount: brandRows.length + 1,
+      liveChannelCount: PLATFORM_ORDER.length,
+      updatedLabel: newsFeed[0]?.date ?? "",
+    },
+  }
+}

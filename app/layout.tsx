@@ -10,6 +10,7 @@ import { PhoneListPopup } from '@/components/phone-list-popup'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SITE_URL } from '@/lib/site'
+import { LINKS } from '@/lib/links'
 import './globals.css'
 
 const playfairDisplay = Playfair_Display({
@@ -144,11 +145,10 @@ const jsonLd = {
       url: SITE_URL,
       logo: `${SITE_URL}/logos/will_logo.png`,
       description: defaultDescription,
-      sameAs: [
-        'https://www.instagram.com/lupfr_/',
-        'https://www.tiktok.com/@lupfer_entertainment',
-        'https://www.youtube.com/channel/UCHuxbMyxPTeQn29q32lXOew',
-      ],
+      // Owner punch list (2026-08-29) corrected the TikTok handle in
+      // lib/links.ts; sourcing this list from LINKS instead of a second
+      // literal copy means the two can no longer drift apart.
+      sameAs: [LINKS.instagram, LINKS.tiktok, LINKS.youtube],
     },
     {
       '@type': 'WebSite',
