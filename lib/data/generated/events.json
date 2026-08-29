@@ -194,26 +194,30 @@
     "subtitle": "feat. Zusebi",
     "date": "September 12th, 2026",
     "dateISO": "2026-09-12",
-    "time": "TBD",
-    "location": "San Francisco, CA",
+    "time": "9 PM - Close",
+    "location": "Paris 75, North Beach, SF",
     "brandTag": "IN//SIDE",
     "city": "SF",
-    "ticketStatus": "tbd",
-    "description": "Zusebi opens a three-night California run live from San Francisco."
+    "image": "/events/zusebi_001_paris75.webp",
+    "partifulLink": "https://partiful.com/e/drYhIvma80yugIaGzI1Y",
+    "ticketLabel": "RSVP on Partiful",
+    "description": "Zusebi opens a three-night California run at Paris 75 in North Beach."
   },
   {
     "id": 17,
     "slug": "zusebi-002-live-from-golden-gate",
-    "title": "Zusebi 002: Live from Golden Gate",
+    "title": "Zusebi 002: Golden Gate Live",
     "subtitle": "feat. Zusebi",
     "date": "September 13th, 2026",
     "dateISO": "2026-09-13",
-    "time": "TBD",
-    "location": "San Francisco, CA",
+    "time": "6 - 8 PM",
+    "location": "Lands End, San Francisco, CA",
     "brandTag": "OUT//SIDE",
     "city": "SF",
-    "ticketStatus": "tbd",
-    "description": "A sundown open-air set at the Golden Gate — night two of the Zusebi run."
+    "image": "/events/zusebi_002_golden_gate_live.webp",
+    "partifulLink": "https://partiful.com/e/yJrhsgHGp17dR9RgiBrK",
+    "ticketLabel": "RSVP on Partiful",
+    "description": "A sundown open-air set at Lands End — night two of the Zusebi run."
   },
   {
     "id": 19,
@@ -222,12 +226,14 @@
     "subtitle": "feat. PLS&TY + Zusebi",
     "date": "September 19th, 2026",
     "dateISO": "2026-09-19",
-    "time": "TBD",
+    "time": "Boarding 6 PM",
     "location": "Marina del Rey, CA",
     "brandTag": "SEA//SIDE",
     "city": "LA",
-    "ticketStatus": "tbd",
-    "description": "SEA//SIDE returns for a Marina del Rey waterfront night. Lineup to be announced."
+    "image": "/events/seaside_002.webp",
+    "partifulLink": "https://partiful.com/e/cx771MFGlnsQqoL3i8vO",
+    "ticketLabel": "RSVP on Partiful",
+    "description": "SEA//SIDE returns for a Marina del Rey waterfront night, an offshore music experience with PLS&TY and Zusebi."
   },
   {
     "id": 2,

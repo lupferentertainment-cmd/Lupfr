@@ -6,6 +6,9 @@
 
 - icon: PartyPopper
   title: Owned Events
+  # Re-encoded from the owner's HQ original (2026-08-29: "the services images
+  # are not HQ - uploaded them here") — same boat-party/DJ-booth photo, higher
+  # source resolution.
   image: "/services/owned-events.webp"
   description: "Our signature branded music experiences — venue, talent, production, and promotion, fully handled from concept to load-out."
   features:
@@ -35,6 +38,9 @@
 
 - icon: Building2
   title: Event Programming
+  # Photo corrected to the owner's reference screenshot (2026-08-29): an
+  # aerial yacht/deck-yoga shot, replacing an unrelated boat-party interior
+  # photo that had been standing in here.
   image: "/services/venue-programming.webp"
   description: "Curated, recurring event programming for venues or brands looking to elevate their community presence and drive consistent foot traffic."
   features:
@@ -52,6 +58,8 @@
   # thumbPosition 'center 34%') — re-encoded from that same high-res source, crop keeps both
   # faces high in frame per the design file's own position hint. Previously stood in with the
   # BAL MASQUE event poster; that was an interim substitute, not the owner's choice.
+  # Re-encoded again 2026-08-29 from a higher-resolution version of the same
+  # photo the owner uploaded directly.
   image: "/services/private-events.webp"
   description: "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment."
   features:

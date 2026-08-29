@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 const PARTIFUL_PROFILE_URL = "https://partiful.com/u/0SHzuWD8fZTwWwVJixNo"
 
 /**
@@ -16,14 +18,21 @@ export function PartifulBand({ className = "" }: { className?: string }) {
       className={`mt-10 flex flex-wrap items-center justify-between gap-5 rounded-sm border border-border bg-card px-5 py-5 sm:px-6 transition-colors hover:border-accent/50 ${className}`}
     >
       <span className="flex min-w-0 items-center gap-4">
-        {/* No Partiful brand asset ships in this repo — a plain glyph mark
-           avoids reproducing their logo without a supplied file. */}
+        {/* Owner request 2026-08-29: swap the placeholder "P" glyph for the
+           real transparent Partiful mark — the same asset already used in
+           the Team section's partnership band (components/team.tsx). */}
         <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-condensed text-lg font-extrabold text-foreground"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: "rgba(201,168,105,0.14)" }}
           aria-hidden
         >
-          P
+          <Image
+            src="/corporate_partners/partiful.webp"
+            alt=""
+            width={40}
+            height={40}
+            className="partner-logo partner-logo--natural h-5 w-5 object-contain"
+          />
         </span>
         <span className="min-w-0">
           <span className="block font-condensed text-lg font-extrabold uppercase tracking-tight text-foreground sm:text-xl">

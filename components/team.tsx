@@ -212,8 +212,14 @@ function FounderCard({
           <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">{member.title}</p>
           {/* Bio paragraphs (owner restructure, 2026-08-28: Will's 5-paragraph
              bio) — a blank line in YAML splits into separate <p>s; a
-             single-paragraph bio (Eliott) renders exactly as before. */}
-          <div className="mt-4 space-y-3">
+             single-paragraph bio (Eliott) renders exactly as before.
+             Capped height + internal scroll (owner request, 2026-08-29:
+             "Dont let the founder text go long - it needs to fit... then
+             scroll within that") so a long bio can't push the quote/stats
+             or the card itself taller — it scrolls in place instead. The
+             site hides scrollbars globally (app/globals.css), matching the
+             roster card's own in-place bio overlow-y-auto pattern above. */}
+          <div className="mt-4 max-h-[176px] space-y-3 overflow-y-auto sm:max-h-[200px]">
             {member.bio
               .split(/\n\s*\n/)
               .map((s) => s.trim())
