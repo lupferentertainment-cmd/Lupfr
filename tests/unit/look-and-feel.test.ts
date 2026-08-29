@@ -516,6 +516,21 @@ describe("home page section structure", () => {
   it("uses a tight mobile observer margin to avoid premature loads", () => {
     expect(deferredSection).toContain("DEFERRED_SECTION_ROOT_MARGIN_MOBILE")
   })
+
+  // Owner report, 2026-08-29: "there is a delay and black screen" scrolling
+  // from About into Team. DeferredHomeSection swaps its estimated-height
+  // placeholder for the real dynamic-imported component the instant it
+  // should mount; with no `loading` fallback, next/dynamic renders nothing
+  // until the chunk resolves, collapsing the section to zero height for
+  // that window. Locks that About/Team both keep a same-sized placeholder
+  // up through that gap, and that it matches their DeferredHomeSection
+  // height so the two can never drift apart.
+  it("About and Team dynamic imports keep a same-sized placeholder while their chunk loads (no black-screen collapse)", () => {
+    expect(homePage).toMatch(/loading:\s*\(\)\s*=>\s*<div className=\{ABOUT_MIN_HEIGHT\}/)
+    expect(homePage).toMatch(/loading:\s*\(\)\s*=>\s*<div className=\{TEAM_MIN_HEIGHT\}/)
+    expect(homePage).toContain('estimatedHeightClassName={ABOUT_MIN_HEIGHT}')
+    expect(homePage).toContain('estimatedHeightClassName={TEAM_MIN_HEIGHT}')
+  })
 })
 
 // ── footer ────────────────────────────────────────────────────────────────────

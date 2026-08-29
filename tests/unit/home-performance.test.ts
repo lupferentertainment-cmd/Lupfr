@@ -99,8 +99,13 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("keeps lazy home placeholders compact so scrolling between sections stays short", () => {
+        // The About/Team heights now live in shared ABOUT_MIN_HEIGHT/TEAM_MIN_HEIGHT
+        // constants (2026-08-29 black-screen fix, see docs/DESIGN.md Phase 45) so the
+        // DeferredHomeSection placeholder and the dynamic() loading fallback can never
+        // drift apart — assert the constant's own value instead of an inline literal.
         expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
-        expect(homePage).toContain('estimatedHeightClassName="min-h-[1100px] lg:min-h-[640px]"')
+        expect(homePage).toMatch(/const ABOUT_MIN_HEIGHT = "min-h-\[1100px\] lg:min-h-\[640px\]"/)
+        expect(homePage).toContain("estimatedHeightClassName={ABOUT_MIN_HEIGHT}")
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
