@@ -239,9 +239,8 @@ describe("gold visual system", () => {
 // ── hero visual system ────────────────────────────────────────────────────────
 
 describe("hero visual system", () => {
-  it("defines .hero-title-lupfr and .hero-title-entertainment classes", () => {
+  it("defines .hero-title-lupfr (single font-size for the whole wordmark line)", () => {
     expect(css).toContain(".hero-title-lupfr {")
-    expect(css).toContain(".hero-title-entertainment {")
   })
 
   it("does not define the dead .hero-entertainment-text/.hero-entertainment-gradient classes or their gradient tokens (phase 22 — Entertainment line dropped its gold gradient to match the comp's plain text)", () => {
@@ -253,19 +252,25 @@ describe("hero visual system", () => {
   })
 
   // Owner restructure (2026-08-28): the wordmark moved from a full-width centered
-  // hero title into a shared `HeroBrandLockup` (hero-shared.tsx) rendered bottom-left
-  // beside the LE mark, used by both hero-desktop.tsx and hero-mobile-static.tsx —
-  // so the treatment itself now lives in one place instead of being duplicated.
+  // hero title into a shared `HeroBrandLockup` (hero-shared.tsx) rendered bottom-left,
+  // used by both hero-desktop.tsx and hero-mobile-static.tsx — so the treatment itself
+  // now lives in one place instead of being duplicated.
   it("hero desktop and mobile both render the shared brand lockup", () => {
     expect(heroDesktop).toContain("HeroBrandLockup")
     expect(heroMobile).toContain("HeroBrandLockup")
   })
 
-  it("hero wordmark (LUPFR + Entertainment) uses the comp's condensed/uppercase/extrabold treatment (phase 22, ported from the comp's bound titleFont/titleTransform/titleWeight; now sized for the corner lockup, phase restructure 2026-08-28)", () => {
-    expect(heroShared).toMatch(/font-condensed hero-title-lupfr font-extrabold tracking-normal/)
-    expect(heroShared).toMatch(/hero-title-entertainment font-medium uppercase tracking-normal/)
+  // Owner design-file punch list (2026-08-29): "fix the LUPFR Entertainment text
+  // (and remove the LE) how we have it on the new design claude file" — matches
+  // LUPFR_Restructure.dc.html's hero <h1> exactly: one line, no separate LE mark
+  // beside it (the LE asset itself still exists, used elsewhere as a watermark),
+  // "LUPFR" in the plain foreground color, "Entertainment" in solid gold.
+  it("hero wordmark is a single line: no LE mark image, plain LUPFR + gold Entertainment", () => {
+    expect(heroShared).toMatch(/font-condensed hero-title-lupfr font-extrabold uppercase tracking-normal/)
+    expect(heroShared).not.toContain("le-logo.webp")
+    expect(heroShared).toMatch(/text-foreground">LUPFR/)
+    expect(heroShared).toMatch(/font-medium text-gold-accent[^>]*>Entertainment/)
     expect(heroShared).not.toMatch(/hero-title-lupfr[^"]*font-serif|font-serif[^"]*hero-title-lupfr/)
-    expect(heroShared).not.toContain("hero-entertainment-text")
     expect(heroShared).not.toContain("normal-case")
   })
 

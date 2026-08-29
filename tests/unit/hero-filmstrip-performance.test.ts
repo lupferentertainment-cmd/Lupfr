@@ -76,4 +76,21 @@ describe("hero filmstrip performance guardrails", () => {
     it("keeps the mobile hero framer-motion-free (matches home-performance.test.ts budget)", () => {
         expect(heroMobile).not.toContain('from "framer-motion"')
     })
+
+    // Owner design-file punch list (2026-08-29): "make ability for me to scroll
+    // through images manually too (both desktop and mobile)". Desktop already had
+    // hover/click-selectable slats; this adds an explicit prev/next affordance to
+    // both shells on top of that, plus a swipe gesture on mobile.
+    it("both hero shells render the shared manual prev/next arrows", () => {
+        expect(heroShared).toContain("export function HeroFilmstripArrows")
+        expect(heroDesktop).toContain("<HeroFilmstripArrows activeIndex={activeIndex} onSelect={selectSlat} />")
+        expect(heroMobile).toContain("<HeroFilmstripArrows activeIndex={activeIndex} onSelect={selectSlide} />")
+    })
+
+    it("mobile hero supports a plain touch swipe (no gesture library)", () => {
+        expect(heroMobile).toContain("onTouchStart={handleTouchStart}")
+        expect(heroMobile).toContain("onTouchEnd={handleTouchEnd}")
+        expect(heroMobile).not.toContain("react-swipeable")
+        expect(heroMobile).not.toContain("use-gesture")
+    })
 })

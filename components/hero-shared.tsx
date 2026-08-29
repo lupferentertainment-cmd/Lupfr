@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { memo } from "react"
 
 /** Shared hero copy rotation (mounted in parent for phrase interval). */
@@ -46,55 +46,70 @@ export const HERO_FILMSTRIP_PHOTOS: readonly HeroFilmstripPhoto[] = [
 
 export const HERO_FILMSTRIP_INTERVAL_MS = 5000
 
-/** LUPFR: same-size letters with a static gold shine (no animated background-position, so it never repaints/flickers over the hero media). */
-export const HeroLupfrText = memo(function HeroLupfrText({
-  prefersReducedMotion,
-}: {
-  prefersReducedMotion: boolean | null
-}) {
-  const shineClass = prefersReducedMotion ? "hero-gold-shine-static" : "hero-gold-shine-stable"
-
+/**
+ * The bottom-left brand lockup (owner design-file punch list, 2026-08-29:
+ * "fix the LUPFR Entertainment text (and remove the LE) how we have it on the
+ * new design claude file"). Matches LUPFR_Restructure.dc.html's hero `<h1>`
+ * exactly: a single line reading "LUPFR Entertainment" — no separate LE mark
+ * image beside it (the 2026-08-28 restructure had briefly paired the wordmark
+ * with an LE logo and stacked "Entertainment" on its own line underneath;
+ * both are retired here), plain foreground "LUPFR" plus gold "Entertainment"
+ * in the same weight/size family, same line. The LE mark itself isn't
+ * deleted — it's still used as a watermark on the Brands page and Team page,
+ * just no longer here. Shared by both the desktop and mobile hero shells.
+ */
+export const HeroBrandLockup = memo(function HeroBrandLockup() {
   return (
-    <span
-      className={`inline-block overflow-visible hero-gold-shine-scroll ${shineClass}`}
-    >
-      LUPFR
-    </span>
+    <h1 className="font-condensed hero-title-lupfr font-extrabold uppercase tracking-normal leading-[0.95] flex flex-wrap items-baseline gap-x-3">
+      <span className="text-foreground">LUPFR</span>
+      <span className="font-medium text-gold-accent tracking-[0.02em]">Entertainment</span>
+    </h1>
   )
 })
 
 /**
- * The bottom-left brand lockup (owner restructure, 2026-08-28): LE mark image beside
- * the "LUPFR / Entertainment" wordmark, replacing the old full-width centered hero
- * title. Reuses the existing `.hero-title-lupfr` / `.hero-title-entertainment`
- * treatment (now sized for a corner lockup, see app/globals.css) so the same
- * condensed/uppercase/extrabold identity carries over — just smaller and left-aligned.
- * Shared by both the desktop and mobile hero shells.
+ * Manual prev/next controls for the hero filmstrip (owner design-file punch
+ * list, 2026-08-29: "make ability for me to scroll through images manually
+ * too (both desktop and mobile)"). Desktop already lets a hover/click/focus
+ * on any of the six slats jump straight to it, and mobile already has
+ * tap-dots — this adds an explicit, discoverable prev/next affordance on top
+ * of both, wired to each shell's existing activeIndex state (no new state
+ * model). Visual language matches the site's other carousel arrows
+ * (events.tsx's CAROUSEL_ARROW_CLASS), adapted for sitting over a photo
+ * instead of a card background.
  */
-export const HeroBrandLockup = memo(function HeroBrandLockup({
-  prefersReducedMotion,
+export function HeroFilmstripArrows({
+  activeIndex,
+  onSelect,
 }: {
-  prefersReducedMotion: boolean | null
+  activeIndex: number
+  onSelect: (index: number) => void
 }) {
+  const count = HERO_FILMSTRIP_PHOTOS.length
+  const goPrev = () => onSelect((activeIndex - 1 + count) % count)
+  const goNext = () => onSelect((activeIndex + 1) % count)
+
   return (
-    <div className="flex items-center gap-3 sm:gap-4">
-      <Image
-        src="/images/le-logo.webp"
-        alt=""
-        width={64}
-        height={64}
-        className="h-10 w-10 shrink-0 object-contain sm:h-12 sm:w-12"
-        aria-hidden
-      />
-      <h1 className="font-condensed hero-title-lupfr font-extrabold tracking-normal leading-none flex flex-col items-start gap-0.5">
-        <HeroLupfrText prefersReducedMotion={prefersReducedMotion} />
-        <span className="block hero-title-entertainment font-medium uppercase tracking-normal text-foreground">
-          Entertainment
-        </span>
-      </h1>
-    </div>
+    <>
+      <button
+        type="button"
+        onClick={goPrev}
+        aria-label="Show previous hero photo"
+        className="hero-filmstrip-arrow absolute left-3 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white shadow backdrop-blur-sm transition-all duration-200 hover:border-accent/60 hover:bg-black/55 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:left-5 sm:size-11"
+      >
+        <ArrowLeft className="size-5" aria-hidden />
+      </button>
+      <button
+        type="button"
+        onClick={goNext}
+        aria-label="Show next hero photo"
+        className="hero-filmstrip-arrow absolute right-3 top-1/2 z-20 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white shadow backdrop-blur-sm transition-all duration-200 hover:border-accent/60 hover:bg-black/55 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 sm:right-5 sm:size-11"
+      >
+        <ArrowRight className="size-5" aria-hidden />
+      </button>
+    </>
   )
-})
+}
 
 /**
  * Desktop-only decorative corner bracket + the "LOS ANGELES · SAN FRANCISCO / EST.

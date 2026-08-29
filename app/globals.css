@@ -536,20 +536,6 @@
 }
 
 @layer components {
-  /* Poster-agnostic card frame: a dual-tone hairline (light line outside a
-   * darker line) drawn in code so it reads on BOTH light and dark poster art.
-   * Only rendered on posters that do not bake their own border — see
-   * `bakedFrame` in data/events.yml — so bordered flyers never double up. */
-  .event-card-frame {
-    border-radius: 2px;
-    /* Light line on top for dark posters, darker line just inside it for light
-     * ones (Third Thursday's bakes a cream border into the art — a faint dark
-     * line there was invisible, so both hairlines stay ≥0.45 alpha). */
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-      inset 0 0 0 2px rgba(0, 0, 0, 0.55);
-  }
-
   /* Poster-tile grid (owner restructure note, 2026-08-28): Our Brands + the
    * home Our Services tease. Full-bleed photo, 3:4 on desktop; the owner's
    * design canvas swaps to a shorter 5:3 tile under 480px so a phone gets a
@@ -1197,17 +1183,13 @@ html:not(.dark) .stat-tile-surface:hover {
     0 20px 42px oklch(0.3 0.01 255 / 0.07);
 }
 
-/* Hero brand lockup (owner restructure, 2026-08-28): LUPFR + Entertainment now sit
-   beside the LE mark in the hero's bottom-left corner instead of as a full-width
-   centered title, so the scale is a corner-lockup size rather than a hero-filling one. */
+/* Hero brand lockup (owner design-file punch list, 2026-08-29): "LUPFR
+   Entertainment" as a single line in the hero's bottom-left corner, matching
+   LUPFR_Restructure.dc.html's hero <h1> — one font-size for both words (the
+   LE mark and the old stacked-caption "Entertainment" size are retired). */
 .hero-title-lupfr {
-  font-size: clamp(1.75rem, 2.4vw + 1rem, 3rem);
-  line-height: 1;
-}
-
-.hero-title-entertainment {
-  font-size: clamp(0.7rem, 0.9vw + 0.45rem, 1.05rem);
-  line-height: 1.2;
+  font-size: clamp(1.75rem, 2.4vw + 1rem, 3.4rem);
+  line-height: 0.95;
 }
 
 /* Media-legibility layer: preserve the existing gold/mono styling while giving
@@ -1327,32 +1309,11 @@ html:not(.dark) .stat-tile-surface:hover {
   background-position: 0% 50%;
 }
 
-/* Hero gold text – stable metallic shine (logo-matched gold, no repaint-heavy animation) */
+/* Hero gold: the phrase/tagline rotation still gets the metallic gold treatment. */
 @layer components {
-  .hero-gold-shine-scroll {
-    @apply bg-clip-text text-transparent;
-    -webkit-background-clip: text;
-    background-image: var(--gradient-hero-gold);
-    background-size: 220% 100%;
-    background-position: 50% 50%;
-    filter: drop-shadow(0 1px 2px var(--gold-filter-shadow));
-    transform: translateZ(0);
-    backface-visibility: hidden;
-  }
-
   .lupfr-hero .heading-metallic-gold {
     background-image: var(--gradient-hero-gold);
     filter: var(--filter-hero-gold);
-  }
-
-  /* Static position for reduced-motion (no animation); LUPFR renders once, no inline style updates */
-  .hero-gold-shine-static {
-    background-position: 50% 50%;
-  }
-
-  /* Stable default: keep the shine look without animating `background-position` over video. */
-  .hero-gold-shine-stable {
-    background-position: 50% 50%;
   }
 }
 

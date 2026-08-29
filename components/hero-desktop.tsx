@@ -11,6 +11,7 @@ import {
   FADE_DURATION_S,
   HeroBrandLockup,
   HeroCornerReadout,
+  HeroFilmstripArrows,
   HERO_FILMSTRIP_INTERVAL_MS,
   HERO_FILMSTRIP_PHOTOS,
   HERO_PHRASES,
@@ -125,6 +126,7 @@ function HeroDesktopParallaxSection({
         <div className="absolute inset-0 lupfr-hero-media-wash z-10 pointer-events-none" aria-hidden />
       </div>
 
+      <HeroFilmstripArrows activeIndex={activeIndex} onSelect={selectSlat} />
       <HeroCornerReadout />
 
       {/*
@@ -143,7 +145,7 @@ function HeroDesktopParallaxSection({
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-start gap-5 sm:gap-6"
         >
-          <HeroBrandLockup prefersReducedMotion={prefersReducedMotion} />
+          <HeroBrandLockup />
 
           <div
             className="min-h-[1.75rem] flex items-center"

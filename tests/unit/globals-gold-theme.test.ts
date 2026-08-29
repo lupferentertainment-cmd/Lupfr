@@ -90,13 +90,22 @@ describe("app/globals.css gold theme (canonical tokens)", () => {
     expect(darkMatch![0]).toContain("  --lupfr-heading-subline-fg: var(--foreground);")
   })
 
-  it("keeps hero LUPFR metallic shine (CSS + keyframes)", () => {
+  it("keeps the hero phrase's metallic gold treatment (CSS + keyframes)", () => {
     expect(css).toContain("var(--gradient-hero-gold)")
     expect(css).toContain("background: var(--gradient-heading-gold);")
-    expect(css).toContain("filter: drop-shadow(0 1px 2px var(--gold-filter-shadow));")
     expect(css).toContain(".lupfr-hero .heading-metallic-gold")
-    expect(css).toContain("hero-gold-shine-stable")
     expect(css).not.toContain("@keyframes hero-shine-pass")
     expect(css).not.toContain("hero-gold-shine-periodic")
+  })
+
+  // Owner design-file punch list (2026-08-29): the LUPFR wordmark's own gradient
+  // shine (.hero-gold-shine-scroll/-static/-stable) is retired in favor of the
+  // design file's plain-LUPFR/gold-Entertainment treatment — see
+  // tests/unit/look-and-feel.test.ts's hero wordmark spec. The phrase/tagline
+  // rotation above still uses .lupfr-hero .heading-metallic-gold, untouched.
+  it("no longer defines the retired hero wordmark shine classes", () => {
+    expect(css).not.toContain("hero-gold-shine-scroll")
+    expect(css).not.toContain("hero-gold-shine-static")
+    expect(css).not.toContain("hero-gold-shine-stable")
   })
 })

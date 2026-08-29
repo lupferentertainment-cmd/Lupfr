@@ -7,7 +7,6 @@ import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { PosterTile } from "@/components/poster-tile"
-import { PartifulBand } from "@/components/partiful-band"
 import { brandPath, brandPlainTitle, getBrands } from "@/lib/data/brands"
 
 const brands = getBrands()
@@ -51,8 +50,6 @@ export function Brands() {
             />
           ))}
         </div>
-
-        <PartifulBand />
       </ScrollReveal>
     </section>
   )

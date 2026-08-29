@@ -32,9 +32,6 @@ export interface EventItem {
   /** Optional compact-card presentation metadata. */
   brandTag?: string
   city?: string
-  /** Poster art already bakes in its own rectangular border — skip the code-drawn
-   * card frame so it does not show a double border (e.g. Gas Money, Shamrock). */
-  bakedFrame?: boolean
   /** Local WebP path under public/events/. Optional when partifulLink is set. */
   image?: string
   ticketLink?: string

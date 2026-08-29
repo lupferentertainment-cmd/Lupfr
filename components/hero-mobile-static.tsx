@@ -2,11 +2,12 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, type TouchEvent } from "react"
 
 import { SkeletonShimmerLayer } from "@/components/skeleton-shimmer-layer"
 import {
   HeroBrandLockup,
+  HeroFilmstripArrows,
   HERO_FILMSTRIP_INTERVAL_MS,
   HERO_FILMSTRIP_PHOTOS,
   HERO_PHRASES,
@@ -34,6 +35,7 @@ export function HeroMobileStaticSection({
   const [activeIndex, setActiveIndex] = useState(0)
   const [ready, setReady] = useState(false)
   const timeoutRef = useRef<number | undefined>(undefined)
+  const touchStartXRef = useRef<number | null>(null)
   const autoAdvance = prefersReducedMotion !== true
 
   useEffect(() => {
@@ -49,11 +51,37 @@ export function HeroMobileStaticSection({
     setActiveIndex(index)
   }, [])
 
+  // Swipe gesture (owner request 2026-08-29: "scroll through images manually
+  // too... both desktop and mobile") — a plain touchstart/touchend delta, no
+  // library, so the mobile hero stays framer-motion-free per
+  // tests/unit/hero-filmstrip-performance.test.ts.
+  const SWIPE_THRESHOLD_PX = 40
+  const handleTouchStart = useCallback((e: TouchEvent) => {
+    touchStartXRef.current = e.touches[0]?.clientX ?? null
+  }, [])
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      const startX = touchStartXRef.current
+      touchStartXRef.current = null
+      if (startX === null) return
+      const endX = e.changedTouches[0]?.clientX ?? startX
+      const deltaX = endX - startX
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX) return
+      const count = HERO_FILMSTRIP_PHOTOS.length
+      selectSlide(deltaX < 0 ? (activeIndex + 1) % count : (activeIndex - 1 + count) % count)
+    },
+    [activeIndex, selectSlide]
+  )
+
   const activePhoto = HERO_FILMSTRIP_PHOTOS[activeIndex]
 
   return (
     <>
-      <div className="absolute inset-0 bg-black">
+      <div
+        className="absolute inset-0 bg-black"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <SkeletonShimmerLayer show={!ready} />
         <Image
           key={activePhoto.src}
@@ -71,6 +99,8 @@ export function HeroMobileStaticSection({
         />
         <div className="absolute inset-0 bg-black/25 z-[5]" aria-hidden />
         <div className="absolute inset-0 lupfr-hero-media-wash z-10" aria-hidden />
+
+        <HeroFilmstripArrows activeIndex={activeIndex} onSelect={selectSlide} />
 
         <div
           className="absolute bottom-[calc(1.75rem+env(safe-area-inset-bottom))] left-1/2 z-[15] flex -translate-x-1/2 gap-2"
@@ -100,7 +130,7 @@ export function HeroMobileStaticSection({
           bottom-pinned. */}
       <div className="absolute inset-0 z-20 flex flex-col justify-end px-4 sm:px-6 pb-16 sm:pb-[4.5rem]">
         <div className="flex flex-col items-start gap-5 motion-safe:animate-[fade-up_600ms_cubic-bezier(0.22,1,0.36,1)_100ms_both]">
-          <HeroBrandLockup prefersReducedMotion={prefersReducedMotion} />
+          <HeroBrandLockup />
 
           <div className="min-h-[1.75rem] flex items-center">
             <div

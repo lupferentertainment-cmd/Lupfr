@@ -116,15 +116,9 @@ function EventPosterMedia({ event, pill, city }: { event: EventItem; pill: strin
           </span>
         </div>
       )}
-      {/* Poster-agnostic frame: borderless posters get the code-drawn dual-tone
-         inset frame; posters that bake their own border opt out via `bakedFrame`
-         (data/events.yml) so they never show a double border. */}
-      {event.image && !event.bakedFrame ? (
-        <div
-          className="event-card-frame pointer-events-none absolute inset-[10px] z-[2]"
-          aria-hidden
-        />
-      ) : null}
+      {/* Inset poster frame retired (owner 2026-08-29: "Remove the border line
+         around each event image - have it look just like the claude design
+         file"). */}
       <span
         suppressHydrationWarning
         className="absolute left-[14px] top-[14px] rounded-full border border-white/15 bg-[#0b0a08]/75 px-[10px] py-[6px] font-mono text-[10px] uppercase tracking-[0.08em] text-[#f3efe6] backdrop-blur-sm"

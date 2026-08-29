@@ -61,10 +61,13 @@ describe("Brands", () => {
     expect(container.textContent).toContain("Explore")
   })
 
-  it("renders a Partiful band linking to the owner's Partiful profile", () => {
+  // The Partiful band used to also render here, duplicating the one under
+  // Events (owner note, 2026-08-29: "Remove the every ticket lives on
+  // partiful box below the brands as its already below events"). It now
+  // renders once, in components/events.tsx only.
+  it("does not render a duplicate Partiful band (that lives under Events only)", () => {
     const { container } = render(<Brands />)
     const link = container.querySelector('a[href="https://partiful.com/u/0SHzuWD8fZTwWwVJixNo"]')
-    expect(link).not.toBeNull()
-    expect(link?.textContent).toContain("Every ticket lives on Partiful")
+    expect(link).toBeNull()
   })
 })
