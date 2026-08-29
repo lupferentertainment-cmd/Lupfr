@@ -21,6 +21,34 @@ function fetchWithTimeout(url: string): Promise<Response> {
   })
 }
 
+// Partiful's HTML source escapes meta-tag attribute values (e.g. Zusebi&#x27;s,
+// setup &amp; run) the way any HTML document must. Our own regex just lifts the
+// raw attribute text — it doesn't run an HTML parser — so without this decode
+// step those entities render literally in the browser instead of as ' and &.
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+}
+
+function decodeHtmlEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z]+);/g, (match, entity: string) => {
+    if (entity[0] === "#") {
+      // The regex only ever captures digit runs here, so parseInt can't
+      // return NaN — no fallback branch needed.
+      const codePoint =
+        entity[1] === "x" || entity[1] === "X"
+          ? Number.parseInt(entity.slice(2), 16)
+          : Number.parseInt(entity.slice(1), 10)
+      return String.fromCodePoint(codePoint)
+    }
+    return NAMED_ENTITIES[entity] ?? match
+  })
+}
+
 function parseOgTag(html: string, property: string): string {
   const rePropFirst = new RegExp(
     `<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']*?)["']`,
@@ -30,7 +58,8 @@ function parseOgTag(html: string, property: string): string {
     `<meta[^>]+content=["']([^"']*?)["'][^>]+property=["']${property}["']`,
     "i"
   )
-  return (html.match(rePropFirst) ?? html.match(reContentFirst))?.[1]?.trim() ?? ""
+  const raw = (html.match(rePropFirst) ?? html.match(reContentFirst))?.[1]?.trim() ?? ""
+  return decodeHtmlEntities(raw)
 }
 
 export async function fetchPartifulMeta(partifulLink: string): Promise<PartifulMeta> {

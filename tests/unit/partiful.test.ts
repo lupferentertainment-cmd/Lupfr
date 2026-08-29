@@ -111,6 +111,25 @@ describe("fetchPartifulMeta", () => {
     const meta = await fetchPartifulMeta("https://partiful.com/e/contentfirst")
     expect(meta.image).toBe("https://cdn.partiful.com/img.jpg")
   })
+
+  it("decodes HTML entities in og:description so text doesn't render as raw markup", async () => {
+    stubFetchOk(
+      mockHtml({
+        description:
+          "Zusebi&#x27;s SF tour &amp; a &quot;private&quot; set &mdash; not &lt;public&gt;.",
+      })
+    )
+    const meta = await fetchPartifulMeta("https://partiful.com/e/entities")
+    expect(meta.description).toBe(
+      `Zusebi's SF tour & a "private" set &mdash; not <public>.`
+    )
+  })
+
+  it("decodes numeric decimal entities as well as hex", async () => {
+    stubFetchOk(mockHtml({ description: "Rock &#38; Roll" }))
+    const meta = await fetchPartifulMeta("https://partiful.com/e/numeric")
+    expect(meta.description).toBe("Rock & Roll")
+  })
 })
 
 // ── resolveEventImage ─────────────────────────────────────────────────────────

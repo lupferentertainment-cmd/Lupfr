@@ -11,8 +11,11 @@ import { ShimmerImage } from "@/components/shimmer-image"
 import { getBrands } from "@/lib/data/brands"
 import { getPress } from "@/lib/data/press"
 
-const PRESS_IMAGE_WIDTH = 1200
-const PRESS_IMAGE_HEIGHT = 600
+// Matches the re-encoded HQ source (owner-supplied original, 2026-08-29) —
+// intrinsic size hints for next/image; the carousel's aspect-[4/5] frame +
+// object-cover is what actually keeps this slide's crop uniform with the rest.
+const PRESS_IMAGE_WIDTH = 2560
+const PRESS_IMAGE_HEIGHT = 1920
 
 const MONTH_NAMES = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
