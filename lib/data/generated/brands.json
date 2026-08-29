@@ -8,6 +8,10 @@
     "description": "An off-shore music series taking the experience aboard yachts, cruises, and sailboats.",
     "format": "Yacht sessions · LA & SF · 21+",
     "externalUrl": "https://seaside.la",
+    "social": {
+      "instagram": "https://www.instagram.com/seaside.la/",
+      "tiktok": "https://www.tiktok.com/@seaside.la"
+    },
     "gallery": [
       "/brands/seaside-gallery-1.webp",
       "/brands/seaside-gallery-2.webp",

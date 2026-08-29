@@ -13,8 +13,15 @@
  * Where a brand has no verified account of its own, its row honestly says
  * so — routed "via" LUPFR's real account, or "soon" for a brand that hasn't
  * launched yet — rather than inventing a handle.
+ *
+ * Per-platform, not all-or-nothing (owner-confirmed real handles, 2026-08-29:
+ * "SEA//SIDE's IG is @seaside.la and then the tiktok is the same"): a brand
+ * can have its own verified account on some platforms and route the rest
+ * "via" LUPFR — `data/brands.yml`'s optional `social` field drives this per
+ * platform. A row's `status` reads "LIVE" the moment any one of its
+ * channels is its own real account, not only when all four are.
  */
-import { getBrands } from "@/lib/data/brands"
+import { getBrands, type BrandItem } from "@/lib/data/brands"
 import { getNews } from "@/lib/data/news"
 import { getPress } from "@/lib/data/press"
 import { LINKS } from "@/lib/links"
@@ -111,6 +118,14 @@ const COMPANY_CHANNELS: Record<MediaChannelCell["platform"], string> = {
 
 const PLATFORM_ORDER: MediaChannelCell["platform"][] = ["Instagram", "TikTok", "LinkedIn", "YouTube"]
 
+/** Maps a channel's display platform to `BrandItem.social`'s lowercase key. */
+const SOCIAL_KEY_BY_PLATFORM: Record<MediaChannelCell["platform"], keyof NonNullable<BrandItem["social"]>> = {
+  Instagram: "instagram",
+  TikTok: "tiktok",
+  LinkedIn: "linkedin",
+  YouTube: "youtube",
+}
+
 function liveRow(): MediaChannelCell[] {
   return PLATFORM_ORDER.map((platform) => ({
     platform,
@@ -119,30 +134,46 @@ function liveRow(): MediaChannelCell[] {
   }))
 }
 
-/** Every sub-brand currently follows through LUPFR's own verified account — no per-brand handle exists yet. */
-function viaLupfrRow(): MediaChannelCell[] {
-  return PLATFORM_ORDER.map((platform) => ({
-    platform,
-    state: "via",
-    href: COMPANY_CHANNELS[platform],
-  }))
-}
-
 function soonRow(): MediaChannelCell[] {
   return PLATFORM_ORDER.map((platform) => ({ platform, state: "soon" }))
+}
+
+/**
+ * One brand's four platform cells: a platform with a confirmed `social` URL
+ * of its own is "live" with that real link; every other platform routes
+ * "via" LUPFR's real account, since that's genuinely where that content
+ * lives today. A `comingSoon` brand gets `soonRow()` instead — it has no
+ * accounts to point anyone at yet.
+ */
+function brandChannels(brand: BrandItem): MediaChannelCell[] {
+  if (brand.comingSoon) return soonRow()
+  return PLATFORM_ORDER.map((platform) => {
+    const ownHref = brand.social?.[SOCIAL_KEY_BY_PLATFORM[platform]]
+    return ownHref
+      ? { platform, state: "live" as const, href: ownHref }
+      : { platform, state: "via" as const, href: COMPANY_CHANNELS[platform] }
+  })
+}
+
+function brandStatus(brand: BrandItem, channels: MediaChannelCell[]): MediaBrandRow["status"] {
+  if (brand.comingSoon) return "COMING SOON"
+  return channels.some((c) => c.state === "live") ? "LIVE" : "VIA LUPFR"
 }
 
 export function getMediaOverview(): MediaOverview {
   const newsFeed = pressAsNews()
   const brands = getBrands()
 
-  const brandRows: MediaBrandRow[] = brands.map((brand) => ({
-    key: brand.key,
-    label: brand.title,
-    accent: brand.accent,
-    status: brand.comingSoon ? "COMING SOON" : "VIA LUPFR",
-    channels: brand.comingSoon ? soonRow() : viaLupfrRow(),
-  }))
+  const brandRows: MediaBrandRow[] = brands.map((brand) => {
+    const channels = brandChannels(brand)
+    return {
+      key: brand.key,
+      label: brand.title,
+      accent: brand.accent,
+      status: brandStatus(brand, channels),
+      channels,
+    }
+  })
 
   const lupfrRow: MediaBrandRow = {
     key: LUPFR_MEDIA_KEY,
@@ -152,12 +183,17 @@ export function getMediaOverview(): MediaOverview {
     channels: liveRow(),
   }
 
+  const allRows = [lupfrRow, ...brandRows]
+
   return {
     newsFeed,
-    brandRows: [lupfrRow, ...brandRows],
+    brandRows: allRows,
     stats: {
       brandCount: brandRows.length + 1,
-      liveChannelCount: PLATFORM_ORDER.length,
+      // Every real, verified live channel across LUPFR + every brand row —
+      // not a per-brand estimate, and not capped at LUPFR's own 4 anymore
+      // now that a brand (SEA//SIDE) has confirmed accounts of its own.
+      liveChannelCount: allRows.flatMap((r) => r.channels).filter((c) => c.state === "live").length,
       updatedLabel: newsFeed[0]?.date ?? "",
     },
   }

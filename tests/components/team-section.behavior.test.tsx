@@ -63,7 +63,9 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
     render(<Team />)
     const founders = foundersRegion()
     const srcs = Array.from(founders.querySelectorAll("img")).map((i) => i.getAttribute("src"))
-    expect(srcs).toContain("/images/team/will.webp")
+    // Owner supplied a new outdoor portrait for Will on 2026-08-29 (the old
+    // will.webp stays on disk for an easy revert).
+    expect(srcs).toContain("/images/team/will-2026.webp")
     // Owner supplied a square portrait for Eliott on 2026-08-08.
     expect(srcs).toContain("/images/team/eliott-square.webp")
   })

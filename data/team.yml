@@ -11,7 +11,14 @@
   location: Los Angeles & San Francisco
   teams: [Exec]
   founder: true
-  image: /images/team/will.webp
+  # New outdoor portrait (owner, 2026-08-29: "update Will's image with this
+  # (and scale as shown in screenshot)"), replacing the old studio-style
+  # will.webp — which stays on disk for an easy revert, same precedent as
+  # eliott.webp below. Uncropped: the source is already a near-3:4 portrait
+  # (1206x1603), so FounderCard's own object-cover/object-top + lg:scale-[1.14]
+  # treatment reproduces the owner's reference screenshot crop on its own —
+  # no manual crop needed (verified locally against the screenshot).
+  image: /images/team/will-2026.webp
   # Five-paragraph bio, quote, and stats from the AUG 28 restructure design
   # file's founders[0] object (owner note: "New Will bio, five paragraphs").
   # Paragraph 2 references Nike/Phil Knight — previously barred by a 2026-08-08

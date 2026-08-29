@@ -10,8 +10,15 @@ type RevealVariant = "up" | "down" | "left" | "right" | "scale" | "none"
 interface ScrollRevealProps {
   children: ReactNode
   className?: string
-  /** How much of the section (0-1) triggers "in" state. 0.2 = animate in when 20% visible. */
-  amountIn?: number
+  /**
+   * How much of the section triggers "in" state: a 0-1 fraction of the
+   * wrapped element's own height (0.2 = animate in when 20% visible), or
+   * framer-motion's `"some"` (any single pixel) / `"all"` (fully visible).
+   * A fraction is fine for a section whose height stays well under the
+   * viewport; a very tall section needs `"some"` or it won't cross a large
+   * fraction until scrolled deep past its top (see Team's usage).
+   */
+  amountIn?: number | "some" | "all"
   /** How much of the section (0-1) triggers "out" state when leaving. */
   amountOut?: number
   variant?: RevealVariant

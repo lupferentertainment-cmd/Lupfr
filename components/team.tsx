@@ -330,7 +330,18 @@ export function Team() {
       ref={ref}
       className="lupfr-section-pad px-4 sm:px-6 lg:px-12 relative overflow-hidden"
     >
-      <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px] relative z-10">
+      {/* amountIn="some" (not the site's usual 0.2 fraction): since Phase 46
+          stacked two full-bleed founder cards on mobile, this section's real
+          mobile height runs 3600px+, well over 4x the viewport — 20% of that
+          doesn't cross into view until the user has scrolled ~450-500px past
+          the section's own top edge, so the whole section (correct height,
+          just opacity:0) reads as a large blank gap the whole way there
+          (owner report, 2026-08-29: "the Founder/Team section is blank area
+          on mobile"). "some" reveals on first intersection instead, so the
+          section fades in as soon as its top approaches the viewport,
+          matching every other (much shorter) section's felt timing without
+          the multi-hundred-pixel blank scroll window. */}
+      <ScrollReveal variant="up" amountIn="some" className="container mx-auto max-w-[1400px] relative z-10">
         <p className="lupfr-section-kicker mb-4">Who We Are</p>
         <h2 className="lupfr-heading--compact lupfr-heading-stack">
           <GoldShineText scrollTargetRef={ref}>Our</GoldShineText>{" "}

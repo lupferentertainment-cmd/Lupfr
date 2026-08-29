@@ -41,16 +41,32 @@ describe("media overview brand rows", () => {
     }
   })
 
-  it("marks LUPFR live and every launched brand 'via LUPFR' — no per-brand handle is fabricated", () => {
+  it("marks LUPFR live and every launched brand with no confirmed account 'via LUPFR' — no handle is fabricated", () => {
     const lupfr = overview.brandRows.find((r) => r.key === LUPFR_MEDIA_KEY)!
     expect(lupfr.status).toBe("LIVE")
     expect(lupfr.channels.every((c) => c.state === "live")).toBe(true)
 
-    for (const brand of getBrands().filter((b) => !b.comingSoon)) {
+    for (const brand of getBrands().filter((b) => !b.comingSoon && !b.social)) {
       const row = overview.brandRows.find((r) => r.key === brand.key)!
       expect(row.status, brand.key).toBe("VIA LUPFR")
       expect(row.channels.every((c) => c.state === "via"), brand.key).toBe(true)
     }
+  })
+
+  it("gives SEA//SIDE its own confirmed IG + TikTok, routing LinkedIn/YouTube via LUPFR (owner-confirmed, 2026-08-29)", () => {
+    const seaside = getBrands().find((b) => b.key === "seaside")!
+    expect(seaside.social).toEqual({
+      instagram: "https://www.instagram.com/seaside.la/",
+      tiktok: "https://www.tiktok.com/@seaside.la",
+    })
+
+    const row = overview.brandRows.find((r) => r.key === "seaside")!
+    expect(row.status).toBe("LIVE")
+    const byPlatform = Object.fromEntries(row.channels.map((c) => [c.platform, c]))
+    expect(byPlatform.Instagram).toEqual({ platform: "Instagram", state: "live", href: seaside.social!.instagram })
+    expect(byPlatform.TikTok).toEqual({ platform: "TikTok", state: "live", href: seaside.social!.tiktok })
+    expect(byPlatform.LinkedIn).toEqual({ platform: "LinkedIn", state: "via", href: LINKS.linkedin })
+    expect(byPlatform.YouTube).toEqual({ platform: "YouTube", state: "via", href: LINKS.youtube })
   })
 
   it("marks a comingSoon brand's row as coming soon with no links at all", () => {
@@ -81,12 +97,13 @@ describe("media overview links are real, never invented", () => {
     expect(urls).toContain(LINKS.tiktok)
     expect(urls).toContain(LINKS.youtube)
     // The design file's own invented per-brand handles must never ship.
+    // (SEA//SIDE's Instagram/TikTok are excluded here — the owner confirmed
+    // those two as real on 2026-08-29, so they now ship deliberately; see
+    // the dedicated SEA//SIDE test above.)
     for (const fake of [
-      "instagram.com/seaside.la",
       "instagram.com/high.rise.la",
       "linkedin.com/company/seaside-la",
       "linkedin.com/company/highrise-co",
-      "tiktok.com/@seaside.la",
     ]) {
       expect(urls.some((u) => u!.includes(fake)), fake).toBe(false)
     }
@@ -142,8 +159,14 @@ describe("media overview stats", () => {
     expect(overview.stats.brandCount).toBe(getBrands().length + 1)
   })
 
-  it("counts only the real, verified company channels — never a per-brand estimate", () => {
-    expect(overview.stats.liveChannelCount).toBe(4)
+  it("counts every real, verified live channel sitewide — LUPFR's 4 plus each brand's own confirmed accounts, never an estimate", () => {
+    // LUPFR's own 4 platforms, plus SEA//SIDE's 2 confirmed accounts
+    // (Instagram + TikTok, 2026-08-29) — recomputed from the rows
+    // themselves rather than re-hardcoding a total that would silently go
+    // stale the next time a brand confirms a new account.
+    const expected = overview.brandRows.flatMap((r) => r.channels).filter((c) => c.state === "live").length
+    expect(expected).toBe(6)
+    expect(overview.stats.liveChannelCount).toBe(expected)
   })
 
   it("derives 'updated' from the newest real news item, not a hardcoded date", () => {

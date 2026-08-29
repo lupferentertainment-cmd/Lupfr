@@ -16,6 +16,11 @@
 # per-brand deck ("THE SERIES · ..." info cards) — seaside/inside/outside
 # only, ported verbatim from LUPFR_Restructure.dc.html's deckConfig
 # (owner design-file punch list, 2026-08-29).
+# social (optional) = the brand's own verified account URLs, keyed by
+# platform (instagram/tiktok/linkedin/youtube — any subset). Only set this
+# when the owner has confirmed a real, live handle; lib/data/media.ts's
+# /media channel matrix uses it to show that one platform as this brand's
+# own live account instead of "via LUPFR". Never invent one.
 
 - key: seaside
   title: "SEA//SIDE"
@@ -29,6 +34,11 @@
   description: "An off-shore music series taking the experience aboard yachts, cruises, and sailboats."
   format: "Yacht sessions · LA & SF · 21+"
   externalUrl: "https://seaside.la"
+  # Owner-confirmed real accounts (2026-08-29: "SEA//SIDE's IG is @seaside.la
+  # and then the tiktok is the same").
+  social:
+    instagram: "https://www.instagram.com/seaside.la/"
+    tiktok: "https://www.tiktok.com/@seaside.la"
   gallery:
     - "/brands/seaside-gallery-1.webp"
     - "/brands/seaside-gallery-2.webp"

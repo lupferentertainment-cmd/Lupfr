@@ -8,6 +8,20 @@ export interface BrandConcept {
   body: string
 }
 
+/**
+ * The brand's own verified account URLs, keyed by platform — any subset.
+ * Only ever set for a real, owner-confirmed handle (see data/brands.yml's
+ * doc comment); a platform with no entry here has no confirmed account of
+ * its own yet, and `lib/data/media.ts` routes it "via" LUPFR's account
+ * instead rather than inventing one.
+ */
+export interface BrandSocial {
+  instagram?: string
+  tiktok?: string
+  linkedin?: string
+  youtube?: string
+}
+
 export interface BrandItemRaw {
   key: string
   title: string
@@ -21,6 +35,7 @@ export interface BrandItemRaw {
   gallery?: string[]
   deck?: string[]
   concepts?: BrandConcept[]
+  social?: BrandSocial
 }
 
 export interface BrandItem {
@@ -41,6 +56,8 @@ export interface BrandItem {
    * SERIES · ..." info cards) — seaside/inside/outside only; highrise/
    * soundcheck use the slide-deck format instead. */
   concepts?: BrandConcept[]
+  /** This brand's own verified accounts, when any have been confirmed. */
+  social?: BrandSocial
 }
 
 function normalizePath(path: string): string {
