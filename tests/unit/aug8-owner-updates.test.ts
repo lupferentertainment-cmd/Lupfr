@@ -111,7 +111,8 @@ describe("Laylo drop embed (owner 2026-08-08)", () => {
 describe("section headers render on one line (owner 2026-08-08)", () => {
   const splitHeadings: Array<[string, string]> = [
     ["components/artists.tsx", "Artists"],
-    ["components/team.tsx", "Team"],
+    // "Our Team" -> "The Founders" (owner punch list, 2026-09-02).
+    ["components/team.tsx", "Founders"],
     ["components/contact.tsx", "Something"],
   ]
 

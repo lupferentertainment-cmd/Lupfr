@@ -84,9 +84,14 @@
   title: "IN//SIDE"
   tag: INDOORS
   accent: "#e8e4da"
-  # Owner-supplied brand header photo (2026-08-29: "first image - IN//SIDE
-  # brand header image").
-  image: "/brands/inside.webp"
+  # Owner design-file punch list, 2026-09-02: "IN//SIDE brand image →
+  # masque-stage DJ shot, cropped in on the DJ" — assets/brands/inside-bg-v5.jpg
+  # in "LUPFR Website Design v3" (a closer crop on the performer with hands
+  # raised than the wider `-v4`/`-v6` variants at the same event, which read
+  # as a stage-wide or crowd-wide shot instead of "cropped in on the DJ").
+  # New filename (not overwriting inside.webp), which stays on disk for an
+  # easy revert.
+  image: "/brands/inside-2026.webp"
   description: "Indoor live music experiences redefining what nights out mean in California."
   format: "Indoor sessions · LA & SF"
   concepts:

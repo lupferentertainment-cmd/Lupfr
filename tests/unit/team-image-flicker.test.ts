@@ -20,8 +20,9 @@ const shimmerSource = fs.readFileSync(
 describe("team portraits reuse the cached-image-safe shimmer", () => {
   it("renders portraits through ShimmerImage", () => {
     expect(teamSource).toContain('from "@/components/shimmer-image"')
-    // Both the roster card and the founder card.
-    expect(teamSource.match(/<ShimmerImage/g) ?? []).toHaveLength(2)
+    // Founder card only — the roster card/grid was removed 2026-09-02 (owner
+    // punch list: Zac/Kylie/Cianna gone, founders-only section).
+    expect(teamSource.match(/<ShimmerImage/g) ?? []).toHaveLength(1)
   })
 
   it("has no hand-rolled onLoad opacity gate left in the team section", () => {
@@ -38,24 +39,26 @@ describe("founder portraits stay cheap on mobile", () => {
   it("does not eager-load the below-the-fold founders row", () => {
     // `priority` here would fight the hero for LCP on a phone.
     expect(teamSource).not.toMatch(/^\s*priority(=|\s*\/?>)/m)
-    expect(teamSource.match(/loading="lazy"/g) ?? []).toHaveLength(2)
+    // Founder card only — see the ShimmerImage-count note above.
+    expect(teamSource.match(/loading="lazy"/g) ?? []).toHaveLength(1)
   })
 
   it("asks for a phone-sized portrait rather than a full-width one", () => {
     // Founder portrait: the 2026-08-29 design-file split layout switches from
-    // a stacked mobile column to a fixed 420px desktop column at `lg` (1024px),
-    // not the roster grid's `sm` (640px) breakpoint, so its `sizes` hint's
-    // threshold moved with it — still a conservative phone-width estimate
-    // (92vw), not a naive 100vw.
+    // a stacked mobile column to a fixed 420px desktop column at `lg` (1024px)
+    // — still a conservative phone-width estimate (92vw), not a naive 100vw.
+    // (The roster grid's own `sm` (640px)-breakpoint `sizes` hint was removed
+    // along with the roster grid itself, 2026-09-02.)
     expect(teamSource).toContain("(min-width: 1024px) 420px, 92vw")
-    expect(teamSource).toContain("(max-width: 640px) 50vw")
   })
 
-  it("keeps tilt springs off touch devices", () => {
-    // Roster cards only. The 2026-08-29 founder-layout rebuild moved
-    // FounderCard off the shared `GoldCard` tilt-card shell entirely — the
-    // design file's founder split is a flat editorial layout, not a
-    // hover-tilt card, so there is nothing left to gate off touch there.
-    expect(teamSource.match(/enableTilt=\{!isMobile\}/g) ?? []).toHaveLength(1)
+  it("has no tilt-card mechanism left at all", () => {
+    // The 2026-08-29 founder-layout rebuild had already moved FounderCard off
+    // the shared `GoldCard` tilt-card shell — the design file's founder split
+    // is a flat editorial layout, not a hover-tilt card. The roster grid
+    // (the only remaining `GoldCard`/tilt consumer) was removed 2026-09-02,
+    // so the whole mechanism is gone from this component now.
+    expect(teamSource).not.toContain("enableTilt")
+    expect(teamSource).not.toContain("GoldCard")
   })
 })

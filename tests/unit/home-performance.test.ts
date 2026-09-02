@@ -103,8 +103,10 @@ describe("home page mobile transfer guardrails", () => {
         // constants (2026-08-29 black-screen fix, see docs/DESIGN.md Phase 45) so the
         // DeferredHomeSection placeholder and the dynamic() loading fallback can never
         // drift apart — assert the constant's own value instead of an inline literal.
+        // Re-measured 2026-09-02 (Vercel CLS regression fix, see docs/DESIGN.md) —
+        // the placeholders grew to match real measured section heights.
         expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
-        expect(homePage).toMatch(/const ABOUT_MIN_HEIGHT = "min-h-\[1100px\] lg:min-h-\[640px\]"/)
+        expect(homePage).toMatch(/const ABOUT_MIN_HEIGHT = "min-h-\[1150px\] lg:min-h-\[920px\]"/)
         expect(homePage).toContain("estimatedHeightClassName={ABOUT_MIN_HEIGHT}")
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })

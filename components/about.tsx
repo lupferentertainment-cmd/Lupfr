@@ -113,7 +113,16 @@ export function About() {
     <section id="about" ref={ref} className="pt-8 sm:pt-9 md:pt-11 pb-(--lupfr-section-pad) px-4 sm:px-6 lg:px-12 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
         <div className="container mx-auto max-w-[1400px] relative z-10">
-          <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16 items-start">
+          {/* items-stretch (was items-start): owner design-file punch list,
+              2026-09-02: "ABOUT LUPFR: story carousel stretches to match the
+              copy column (no dead space)" — the right column's fixed
+              aspect-[4/5] media frame used to leave the carousel shorter
+              than the (usually taller) left text column, stranding empty
+              space below it at lg+. Stretching both columns to the row's
+              height, combined with the media frame switching from a fixed
+              aspect ratio to `flex-1` below, lets the carousel grow to fill
+              that height instead. */}
+          <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16 items-stretch">
             {/* Left - Story */}
             <motion.div
               initial={{ opacity: 0, x: -32 }}
@@ -159,7 +168,15 @@ export function About() {
               aria-label="LUPFR story"
               className="group relative flex h-full flex-col overflow-hidden rounded-sm border bg-card transition-colors duration-200 ease-snap hover:border-accent/40"
             >
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted">
+              {/* aspect-[4/5] -> flex-1 (fills the stretched column's actual
+                  height instead of a fixed ratio, so there's no dead space
+                  below it when the left copy column runs taller) and
+                  object-cover -> object-contain ("slides now `contain` so the
+                  full image shows" — a fixed-height flexible frame can crop a
+                  cover-fit image differently at every viewport height, so the
+                  owner asked to letterbox instead of crop). bg-muted fills
+                  the letterbox bars. */}
+              <div className="relative w-full flex-1 overflow-hidden bg-muted">
                 {STORY_SLIDES.map((slide, i) => (
                   <div
                     key={slide.image}
@@ -175,7 +192,7 @@ export function About() {
                       height={1350}
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       loading={i === 0 ? "eager" : "lazy"}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </div>
                 ))}
@@ -197,7 +214,7 @@ export function About() {
                     height={PRESS_IMAGE_HEIGHT}
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent opacity-60" />
                 </a>
@@ -228,7 +245,11 @@ export function About() {
                 </span>
               </div>
 
-              <div className="flex flex-1 flex-col justify-between gap-4 p-5 md:p-6">
+              {/* flex-none (was flex-1): the media area above is now the flex
+                  item that grows to fill the stretched column's height —
+                  this footer keeps its own natural content height instead of
+                  competing with it for space. */}
+              <div className="flex flex-none flex-col justify-between gap-4 p-5 md:p-6">
                 {activeSlide === PRESS_SLIDE_INDEX ? (
                   <a
                     href={featuredPress.url}

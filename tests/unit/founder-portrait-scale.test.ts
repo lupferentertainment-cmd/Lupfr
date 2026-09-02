@@ -42,10 +42,10 @@ describe("founder portrait does not swallow the layout", () => {
     expect(founderImg).not.toContain("object-center")
   })
 
-  it("leaves the roster card's portrait uncapped and unaffected — it is already small", () => {
-    // Roster cards render 2–4 up, so their 5:4 frame never gets wide enough to
-    // need a ceiling. This mechanism is untouched by the founder rebuild.
-    const rosterFrame = /<div className="relative aspect-\[5\/4\] w-full overflow-hidden bg-muted">/.exec(team)
-    expect(rosterFrame, "roster portrait frame should stay uncapped").not.toBeNull()
+  it("has no roster card left to worry about (roster removed 2026-09-02)", () => {
+    // The 5:4 roster-card portrait frame this test used to guard was removed
+    // along with the roster grid/filter chips (owner punch list, 2026-09-02:
+    // Zac/Kylie/Cianna gone, founders-only section) — nothing left to assert.
+    expect(team).not.toContain('aspect-[5/4] w-full overflow-hidden bg-muted')
   })
 })

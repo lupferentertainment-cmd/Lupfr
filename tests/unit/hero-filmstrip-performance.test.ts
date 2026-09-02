@@ -29,7 +29,9 @@ describe("hero filmstrip performance guardrails", () => {
 
     it("defines exactly six filmstrip photos in the owner-specified order", () => {
         expect(heroShared).toContain("export const HERO_FILMSTRIP_PHOTOS")
-        const order = ["neon-dj", "crowd", "masquerade", "band", "sunset-deck", "seaside-step-repeat"]
+        // Slat 5 was "sunset-deck" until the 2026-09-02 masque-stage swap (see
+        // components/hero-shared.tsx) — the id changed with the content.
+        const order = ["neon-dj", "crowd", "masquerade", "band", "masque-stage", "seaside-step-repeat"]
         const idIndexes = order.map((id) => heroShared.indexOf(`id: "${id}"`))
         for (const idx of idIndexes) expect(idx).toBeGreaterThan(-1)
         for (let i = 1; i < idIndexes.length; i++) {

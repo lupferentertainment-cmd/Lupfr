@@ -84,6 +84,46 @@ export function getBrands(): BrandItem[] {
   return BRANDS
 }
 
+/**
+ * The two operating divisions, same grouping/keys/copy as `components/brand-tree.tsx`'s
+ * corporate-structure diagram — reused here (owner design-file punch list,
+ * 2026-09-02: "operating tab keeps the poster grid with division dividers") so
+ * the home Our Brands operating tab groups its cards by division instead of
+ * introducing a second, differently-worded grouping concept.
+ */
+export const LIVE_EVENTS_BRAND_KEYS = ["seaside", "inside", "outside"] as const
+export const CORPORATE_MEDIA_BRAND_KEYS = ["highrise", "soundcheck"] as const
+
+/** Brands split into the two operating divisions, each in its own YAML order. */
+export function getBrandsByDivision(): { liveEvents: BrandItem[]; corporateMedia: BrandItem[] } {
+  const byKey = new Map(BRANDS.map((b) => [b.key, b]))
+  const liveEvents = LIVE_EVENTS_BRAND_KEYS.map((k) => byKey.get(k)).filter((b): b is BrandItem => !!b)
+  const corporateMedia = CORPORATE_MEDIA_BRAND_KEYS.map((k) => byKey.get(k)).filter((b): b is BrandItem => !!b)
+  return { liveEvents, corporateMedia }
+}
+
+/**
+ * The five company-wide "platform" programs — from the owner's design-canvas
+ * data ("Our Brands Ideas.dc.html"'s `platforms[]` array, "LUPFR Website
+ * Design v3"), real owner-authored copy, not fabricated. No background photos
+ * are included: none were supplied in that source for these five cards, so
+ * the PLATFORM tab renders them as flat bordered panels rather than guessing
+ * at imagery (see docs/CHANGELOG.md, 2026-09-02).
+ */
+export interface PlatformProgram {
+  num: string
+  name: string
+  line: string
+}
+
+export const PLATFORM_PROGRAMS: PlatformProgram[] = [
+  { num: "06", name: "LUPFR VIP", line: "Membership tier — early access, tables, hosted invites." },
+  { num: "07", name: "LUPFR Promoter Program", line: "Promoters host their own nights on our infrastructure." },
+  { num: "08", name: "LUPFR Media", line: "In-house content studio — recaps, film, editorial." },
+  { num: "09", name: "LUPFR Hospitality", line: "Venue partnerships and resident programming." },
+  { num: "10", name: "LUPFR Ventures", line: "Capital and concepts across nightlife and hospitality." },
+]
+
 /** Dedicated per-brand detail route (`/brands/<key>`); slug = the YAML `key`. */
 export function brandPath(brand: Pick<BrandItem, "key">): string {
   return `/brands/${brand.key}`

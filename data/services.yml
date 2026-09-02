@@ -54,13 +54,13 @@
 
 - icon: Users
   title: Private Events
-  # Owner's actual chosen thumbnail (design canvas, 2026-08-28: assets/services/private-events.jpg,
-  # thumbPosition 'center 34%') — re-encoded from that same high-res source, crop keeps both
-  # faces high in frame per the design file's own position hint. Previously stood in with the
-  # BAL MASQUE event poster; that was an interim substitute, not the owner's choice.
-  # Re-encoded again 2026-08-29 from a higher-resolution version of the same
-  # photo the owner uploaded directly.
-  image: "/services/private-events.webp"
+  # Owner design-file punch list, 2026-09-02: "Private Events → aerialist
+  # photo" (assets/services/private-events-aerialist.png in the owner's
+  # "LUPFR Website Design v3" desktop folder) — an aerialist performing over
+  # the masquerade-ball crowd, replacing the prior two-women masquerade photo.
+  # New filename (not overwriting private-events.webp), which stays on disk
+  # for an easy revert.
+  image: "/services/private-events-2026.webp"
   description: "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment."
   features:
     - Custom Concepts
@@ -73,7 +73,11 @@
 
 - icon: Music
   title: Event Production
-  image: "/services/event-production.webp"
+  # Owner design-file punch list, 2026-09-02: "Event Production → ballroom
+  # laser shot" (assets/services/event-production-v4.jpg) — a wide ballroom
+  # shot with crossed laser beams over the dance floor. New filename (not
+  # overwriting event-production.webp), which stays on disk for an easy revert.
+  image: "/services/event-production-2026.webp"
   description: "End-to-end production — sound, lighting, staging, decor, and day-of coordination so the details never fall on you."
   features:
     - Sound & Lighting
@@ -83,7 +87,14 @@
 
 - icon: Sparkles
   title: Brand Partnerships
-  image: "/services/brand-partnerships.webp"
+  # Owner design-file punch list, 2026-09-02: "Brand Partnerships → VYBES
+  # banner photo, then cropped ~1.4x to zoom in" — used the owner's already
+  # -cropped `brand-partnerships-v6.jpg` directly (its pixel dimensions are
+  # ~1.4x tighter than the uncropped `-v5` source, matching the "cropped
+  # ~1.4x" instruction), a VYBES-branded banner aboard a SEA//SIDE-style
+  # yacht event. New filename (not overwriting brand-partnerships.webp),
+  # which stays on disk for an easy revert.
+  image: "/services/brand-partnerships-2026.webp"
   description: "Activations that reach the LA & SF nightlife and events community through our brands, events, and platform."
   features:
     - Event Sponsorships

@@ -36,25 +36,20 @@ describe("team list", () => {
     }
   })
 
-  it("images are root-relative when present; Cianna has her portrait and LA+SF tags", () => {
+  it("images are root-relative when present", () => {
     const team = getTeam()
     for (const member of team) {
       if (member.image) expect(member.image.startsWith("/")).toBe(true)
     }
-    const cianna = team.find((m) => m.name.includes("Cianna"))
-    expect(cianna).toBeDefined()
-    expect(cianna?.name).toBe("Cianna Foppoli")
-    expect(cianna?.title).toBe("Marketing & Strategy Intern")
-    expect(cianna?.image).toBe("/images/team/cianna.webp")
-    expect(cianna?.teams.sort()).toEqual(["LA", "SF"])
   })
 
-  it("Exec is the founders; LA and SF each have members", () => {
+  // Roster removed 2026-09-02 (owner punch list: "Removed Zac, Kylie, and
+  // Cianna" — Will and Eliott, both founders, are the only members left).
+  it("Exec is the founders; the roster is empty", () => {
     const team = getTeam()
     const exec = team.filter((m) => m.teams.includes("Exec"))
     expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian"])
-    expect(team.filter((m) => m.teams.includes("LA")).length).toBeGreaterThanOrEqual(3)
-    expect(team.filter((m) => m.teams.includes("SF")).length).toBeGreaterThanOrEqual(1)
+    expect(getRoster()).toEqual([])
   })
 
   it("founders and roster partition the team, and every founder has a bio", () => {

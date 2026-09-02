@@ -51,36 +51,5 @@
         "label": "HOME MARKET"
       }
     ]
-  },
-  {
-    "name": "Zac Brosky",
-    "title": "Event Manager",
-    "location": "Los Angeles, CA",
-    "teams": [
-      "LA"
-    ],
-    "image": "/images/team/zac.webp",
-    "bio": "A recent graduate of Loyola Marymount University, Zac spent the last few years as the singer and builder of Midfield Avenue, an LA based band that has also hosted events with emerging artists across California. As both a producer and performer, he's seen firsthand how thoughtfully designed environments elevate the experience for artists and fans alike. Zac handles everything from event production and contractor management to artist relations. He is also a key lead in building out the Los Angeles market, with a focus on our sub-brand \"SEA//SIDE\"."
-  },
-  {
-    "name": "Kylie Cortez",
-    "title": "Legal & Events Intern",
-    "location": "Los Angeles, CA",
-    "teams": [
-      "LA"
-    ],
-    "image": "/images/team/kylie.webp",
-    "bio": "Kylie, a rising Senior at USC's Gould School of Law, has long been drawn to music's unique ability to curate spaces for connection and exploration, an interest that has shaped her academic and professional path. She brings an interdisciplinary lens to her work, combining an interest in the legal and operational sides of event production with a genuine passion for the creative and community-building power of live experiences. She assists with everything in SF related to events, contracts, or venue operations."
-  },
-  {
-    "name": "Cianna Foppoli",
-    "title": "Marketing & Strategy Intern",
-    "location": "Los Angeles & San Francisco",
-    "teams": [
-      "LA",
-      "SF"
-    ],
-    "image": "/images/team/cianna.webp",
-    "bio": "A current student at UC Santa Barbara, Cianna brings a sharp eye for storytelling to LUPFR, blending creative instinct with strategic thinking to build meaningful connections between brands and their audiences. She assists in content creation and social media efforts for the team, developing innovative ways to bring each brand's story to life. Cianna plays a key role in growing LUPFR's presence and delivering standout events across the SF and LA markets."
   }
 ]

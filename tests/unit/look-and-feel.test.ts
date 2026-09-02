@@ -328,7 +328,11 @@ describe("artists card corporate polish", () => {
 
 describe("team card corporate polish", () => {
   it("member name uses font-condensed at a larger size (owner redesign 2026-07-16)", () => {
-    expect(team.match(/font-condensed text-xl md:text-2xl font-bold tracking-tight/g)).toHaveLength(2)
+    // The roster card + its bio-overlay heading (the two matches this used to
+    // guard) were removed with the roster grid itself (owner punch list,
+    // 2026-09-02: Zac/Kylie/Cianna gone, founders-only section) — the
+    // founder heading uses its own two-tone stacked-name treatment instead.
+    expect(team.match(/font-condensed text-xl md:text-2xl font-bold tracking-tight/g)).toBeNull()
   })
 })
 

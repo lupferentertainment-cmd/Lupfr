@@ -2,6 +2,7 @@
 
 import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
+import userEvent from "@testing-library/user-event"
 import { Brands } from "@/components/brands"
 
 /**
@@ -36,9 +37,34 @@ describe("Brands", () => {
     const { container } = render(<Brands />)
     const slashes = Array.from(container.querySelectorAll(".lupfr-brand-slash")) as HTMLElement[]
     const accents = slashes.map((s) => s.style.color)
-    // Comp: SEA//SIDE #6fb8c9, HIGH//RISE #e08a4a, SOUND//CHECK #c9a869,
-    // IN//SIDE #e8e4da, OUT//SIDE #8aa878 — same hex as each card's tag/dot.
-    expect(accents).toEqual(["#6fb8c9", "#e08a4a", "#c9a869", "#e8e4da", "#8aa878"])
+    // Owner design-file punch list, 2026-09-02: the operating tab now groups
+    // cards by division (Live/Events, then Corporate/Media — see
+    // getBrandsByDivision), so DOM order is seaside, inside, outside,
+    // highrise, soundcheck rather than the raw YAML order.
+    // SEA//SIDE #6fb8c9, IN//SIDE #e8e4da, OUT//SIDE #8aa878, HIGH//RISE
+    // #e08a4a, SOUND//CHECK #c9a869 — same hex as each card's tag/dot.
+    expect(accents).toEqual(["#6fb8c9", "#e8e4da", "#8aa878", "#e08a4a", "#c9a869"])
+  })
+
+  it("groups operating cards into Live/Events and Corporate/Media divisions", () => {
+    const { container } = render(<Brands />)
+    expect(screen.getByText("Live · Events")).toBeInTheDocument()
+    expect(screen.getByText("Corporate · Media")).toBeInTheDocument()
+    // Both group labels sit inside the same grid as the cards, in card order.
+    const grid = container.querySelector("#brands .grid")
+    const labels = Array.from(grid?.children ?? []).filter((el) => el.tagName === "P").map((el) => el.textContent)
+    expect(labels).toEqual(["Live · Events", "Corporate · Media"])
+  })
+
+  it("switches to the PLATFORM tab and shows the five program cards", async () => {
+    const user = userEvent.setup()
+    render(<Brands />)
+    await user.click(screen.getByRole("button", { name: "Platform" }))
+    for (const name of ["LUPFR VIP", "LUPFR Promoter Program", "LUPFR Media", "LUPFR Hospitality", "LUPFR Ventures"]) {
+      expect(screen.getByText(name)).toBeInTheDocument()
+    }
+    // The operating cards are gone while the platform tab is active.
+    expect(screen.queryByText("YACHTS")).toBeNull()
   })
 
   // The home poster tile itself no longer carries a raw external link (owner

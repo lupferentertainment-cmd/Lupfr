@@ -28,6 +28,14 @@ export const FADE_DURATION_S = 0.6
  * from the site's existing photo library. "seaside-step-repeat" is a real SEA//SIDE
  * step-and-repeat photo (assets/hero-ideas/slat-seaside-step.jpg in the canvas), so
  * despite the id name it is not a placeholder.
+ *
+ * Slat 5 (owner design-file punch list, 2026-09-02: "Masque-stage photo swapped
+ * into slat 5") swapped from the golden-hour yacht-deck photo to a wide
+ * masquerade-ball dance-floor shot (assets/hero-ideas/slat-masque-stage.jpg in
+ * "LUPFR Website Design v3"), re-encoded down from the owner's source (which
+ * arrived at full-bleed landscape size, well over the per-slat budget) to a
+ * 1600px-wide/quality-80 WebP to stay under the 400KB per-slat cap. The old
+ * `hero-slat-sunset-deck.webp` stays on disk, unreferenced, for an easy revert.
  */
 export type HeroFilmstripPhoto = {
   id: string
@@ -40,7 +48,7 @@ export const HERO_FILMSTRIP_PHOTOS: readonly HeroFilmstripPhoto[] = [
   { id: "crowd", src: "/hero/hero-slat-crowd.webp", alt: "Crowd dancing around the DJ booth on a yacht" },
   { id: "masquerade", src: "/hero/hero-slat-masquerade.webp", alt: "Two guests in masquerade makeup and lace masks" },
   { id: "band", src: "/hero/hero-slat-band.webp", alt: "Live band performing with the city skyline behind them" },
-  { id: "sunset-deck", src: "/hero/hero-slat-sunset-deck.webp", alt: "Golden-hour crowd on a yacht deck" },
+  { id: "masque-stage", src: "/hero/hero-slat-masque-stage.webp", alt: "Masquerade ball dance floor lit with red and blue stage lighting" },
   { id: "seaside-step-repeat", src: "/hero/hero-slat-seaside-step.webp", alt: "SEA//SIDE guests at the step-and-repeat" },
 ] as const
 
