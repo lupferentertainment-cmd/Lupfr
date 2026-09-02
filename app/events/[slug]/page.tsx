@@ -259,13 +259,25 @@ export default async function EventPage({ params }: EventPageParams) {
                     <span className="underline-offset-4 hover:underline">{event.location}</span>
                   </a>
                 </div>
+                {/* Split into its own Date row + Time row (owner punch list,
+                   2026-09-02, iPhone screenshot: "Each event page should
+                   have its own row for when and time. Not both on the
+                   same") — was one "When" row cramming both onto one line;
+                   now matches the Lineup/Location row pattern above. */}
                 <div className="flex items-start justify-between gap-4">
                   <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
-                    When
+                    Date
                   </span>
                   <span className="inline-flex items-center gap-2 text-right text-[15px] text-foreground">
                     <Calendar size={14} className="text-accent shrink-0" aria-hidden />
                     {event.date}
+                  </span>
+                </div>
+                <div className="flex items-start justify-between gap-4">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground pt-0.5">
+                    Time
+                  </span>
+                  <span className="inline-flex items-center gap-2 text-right text-[15px] text-foreground">
                     <Clock size={14} className="text-accent shrink-0" aria-hidden />
                     {event.time}
                   </span>

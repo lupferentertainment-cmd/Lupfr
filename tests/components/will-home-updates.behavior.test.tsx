@@ -53,9 +53,12 @@ describe("Will homepage update edge cases", () => {
     expect(names).not.toContain("Soundcheck")
   })
 
-  it("brands header links View all brands to /brands", () => {
+  it("brands header links Explore LUPFR to /brands", () => {
+    // Copy changed from "View all brands" (owner punch list, 2026-09-02,
+    // iPhone screenshot: "The 'view all brands' button should be 'Explore
+    // LUPFR'").
     render(<Brands />)
-    expect(screen.getByRole("link", { name: /View all brands/i })).toHaveAttribute("href", "/brands")
+    expect(screen.getByRole("link", { name: /Explore LUPFR/i })).toHaveAttribute("href", "/brands")
   })
 
   it("services exposes Explore all + Learn more without feature bullets", () => {

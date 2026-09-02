@@ -56,8 +56,10 @@ describe("Team — founders row (owner request 2026-08-04)", () => {
     // Owner supplied a new outdoor portrait for Will on 2026-08-29 (the old
     // will.webp stays on disk for an easy revert).
     expect(srcs).toContain("/images/team/will-2026.webp")
-    // Owner supplied a square portrait for Eliott on 2026-08-08.
-    expect(srcs).toContain("/images/team/eliott-square.webp")
+    // Owner supplied a higher-resolution portrait for Eliott on 2026-09-02
+    // (the old eliott-square.webp turned out to be a downsized crop; see
+    // data/team.yml's doc comment).
+    expect(srcs).toContain("/images/team/eliott-2026.webp")
   })
 
   it("adapts to a third founder without a code change", async () => {

@@ -46,23 +46,20 @@ describe("Brands", () => {
     expect(accents).toEqual(["#6fb8c9", "#e8e4da", "#8aa878", "#e08a4a", "#c9a869"])
   })
 
-  it("renders all five operating cards in a single row, no division row-break (owner correction, 2026-09-02)", () => {
+  it("renders all five operating cards in division order, no full row-break", () => {
     const { container } = render(<Brands />)
-    // No division-label headings inside the grid — a row-breaking label was
-    // the bug ("these should not be rows. It should be on one row"); the
-    // Live/Events vs Corporate/Media grouping still exists but lives only on
-    // the corporate structure tree (components/brand-tree.tsx) now.
-    expect(screen.queryByText("Live · Events")).toBeNull()
-    expect(screen.queryByText("Corporate · Media")).toBeNull()
     const grid = container.querySelector("#brands .grid")
-    // Every grid child is a card (article), in division order: seaside,
-    // inside, outside, highrise, soundcheck.
-    const children = Array.from(grid?.children ?? [])
-    expect(children).toHaveLength(5)
-    expect(children.every((el) => el.tagName === "ARTICLE")).toBe(true)
+    // Cards (articles) still render in division order: seaside, inside,
+    // outside, highrise, soundcheck — the row-breaking bug from before was a
+    // `col-span-full` *heading*; the two inline division-label rows added
+    // 2026-09-02 are deliberately `col-span-full` (they're meant to break
+    // the row, at every breakpoint below the single-row xl one — see the
+    // next test), so this only asserts on the actual card nodes.
+    const cards = Array.from(grid?.children ?? []).filter((el) => el.tagName === "ARTICLE")
+    expect(cards).toHaveLength(5)
   })
 
-  it("shows a Live//Events + Corporate//Media rule bar above the single-row grid (owner correction, 2026-09-02)", () => {
+  it("shows a Live//Events + Corporate//Media rule bar above the single-row (xl) grid (owner correction, 2026-09-02)", () => {
     const { getByTestId } = render(<Brands />)
     const liveEvents = getByTestId("division-label-live-events")
     const corporateMedia = getByTestId("division-label-corporate-media")
@@ -71,6 +68,29 @@ describe("Brands", () => {
     // Each label is colored, not left at the default foreground.
     expect(liveEvents.style.color).not.toBe("")
     expect(corporateMedia.style.color).not.toBe("")
+  })
+
+  it("also shows the two division labels inline in the grid, between their own card groups, for the stacked (below-xl) layout (owner correction, 2026-09-02, iPhone screenshot)", () => {
+    const { getByTestId, container } = render(<Brands />)
+    const grid = container.querySelector("#brands .grid")
+    const inlineLive = getByTestId("division-label-live-events-inline")
+    const inlineCorporate = getByTestId("division-label-corporate-media-inline")
+    expect(inlineLive.textContent?.replace(/\s+/g, " ").trim()).toBe("Live // Events")
+    expect(inlineCorporate.textContent?.replace(/\s+/g, " ").trim()).toBe("Corporate // Media")
+
+    // Order in the grid: Live/Events label, its 3 cards, then the
+    // Corporate/Media label, then its 2 cards — so on a stacked (mobile/
+    // tablet) layout each label sits directly above the cards it names,
+    // matching the owner's "move the corporate // media down below between
+    // OUT//SIDE and HIGH//RISE" correction.
+    const children = Array.from(grid?.children ?? [])
+    const liveIdx = children.indexOf(inlineLive)
+    const corporateIdx = children.indexOf(inlineCorporate)
+    expect(liveIdx).toBe(0)
+    const cardsBetween = children.slice(liveIdx + 1, corporateIdx).filter((el) => el.tagName === "ARTICLE")
+    expect(cardsBetween).toHaveLength(3)
+    const cardsAfter = children.slice(corporateIdx + 1).filter((el) => el.tagName === "ARTICLE")
+    expect(cardsAfter).toHaveLength(2)
   })
 
   it("switches to the PLATFORM tab and shows the five program cards", async () => {

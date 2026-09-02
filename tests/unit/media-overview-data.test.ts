@@ -10,7 +10,7 @@
  * websites, real press — with an honest "via LUPFR" or "coming soon" state
  * standing in for anything unverified, never a fabricated handle.
  */
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { getMediaOverview, LUPFR_MEDIA_KEY } from "@/lib/data/media"
 import { LINKS } from "@/lib/links"
 import { getBrands } from "@/lib/data/brands"
@@ -128,9 +128,12 @@ describe("media overview links are real, never invented", () => {
 
 describe("media overview news comes from real press", () => {
   it("surfaces press and company news together, de-duplicated", () => {
-    // showOnMedia: false entries (e.g. the home-only BAL MASQUE carousel
-    // item, 2026-09-02) are excluded from this feed — see
-    // lib/data/media.ts's pressAsNews().
+    // No current news.yml entry sets showOnMedia: false (the one that
+    // briefly did, the BAL MASQUE carousel item, was reverted to shown-
+    // everywhere 2026-09-02 — see the dedicated mock-based test below for
+    // the exclusion mechanism itself), so this is equivalent to the plain
+    // union today, but keeps matching lib/data/media.ts's pressAsNews()
+    // filter in case a future entry uses the flag again.
     const urls = new Set([
       ...getPress().map((p) => p.url),
       ...getNews()
@@ -161,12 +164,22 @@ describe("media overview news comes from real press", () => {
     expect(titles.some((t) => /opens its first full HQ/i.test(t))).toBe(false)
   })
 
-  it("excludes showOnMedia: false items (home-only news) from the /media feed", () => {
-    const homeOnly = getNews().filter((n) => n.showOnMedia === false)
-    expect(homeOnly.length).toBeGreaterThan(0)
-    for (const item of homeOnly) {
-      expect(overview.newsFeed.some((n) => n.url === item.url)).toBe(false)
-    }
+  it("excludes showOnMedia: false items (home-only news) from the /media feed", async () => {
+    // No real news.yml entry uses showOnMedia: false today (see the note
+    // above), so the mechanism is exercised here with a mocked news item
+    // rather than real data — vi.doMock only applies within this dynamic
+    // import, not the static `getNews`/`getMediaOverview` imports above.
+    vi.resetModules()
+    vi.doMock("@/lib/data/news", () => ({
+      getNews: () => [
+        { id: 999, source: "Test", dateISO: "2026-01-01", title: "Home-only item", url: "https://example.com/home-only", showOnMedia: false },
+      ],
+    }))
+    const { getMediaOverview: getMediaOverviewMocked } = await import("@/lib/data/media")
+    const mockedOverview = getMediaOverviewMocked()
+    expect(mockedOverview.newsFeed.some((n) => n.url === "https://example.com/home-only")).toBe(false)
+    vi.doUnmock("@/lib/data/news")
+    vi.resetModules()
   })
 })
 

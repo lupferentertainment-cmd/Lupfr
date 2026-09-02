@@ -136,12 +136,17 @@ function FounderCard({ member }: { member: TeamMember }) {
             {member.quote}
           </blockquote>
         ) : null}
+        {/* grid-cols-3 (was flex flex-wrap): on mobile the 3 pills wrapped to
+           2 rows (owner punch list, 2026-09-02, iPhone screenshot: "should
+           fit across one row, not be two rows. Same goes for Eliott") —
+           equal thirds guarantee one row at every width instead of wrapping
+           once the pills' natural size no longer fits the column. */}
         {member.stats && member.stats.length > 0 ? (
-          <div className="mt-6 flex flex-wrap gap-2.5">
+          <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-2.5">
             {member.stats.map((stat) => (
-              <div key={stat.label} className="rounded-[3px] border border-border px-4 py-3 text-center sm:text-left">
-                <div className="font-condensed text-2xl font-bold leading-none text-accent">{stat.value}</div>
-                <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+              <div key={stat.label} className="rounded-[3px] border border-border px-2 py-2.5 text-center sm:px-4 sm:py-3">
+                <div className="font-condensed text-lg font-bold leading-none text-accent sm:text-2xl">{stat.value}</div>
+                <div className="mt-1.5 font-mono text-[7.5px] uppercase leading-tight tracking-[0.06em] text-muted-foreground sm:text-[9px] sm:tracking-[0.12em]">
                   {stat.label}
                 </div>
               </div>

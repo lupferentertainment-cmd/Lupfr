@@ -7,10 +7,13 @@ import { News } from "@/components/news"
 import { getNews } from "@/lib/data/news"
 
 /**
- * Home-page News strip: a horizontal scrolling carousel (owner request
+ * Home-page News strip: a vertical scrolling carousel (owner request
  * 2026-09-02: "make it a scrolling carousel - just on home page not sub
- * page"), not the /media page's own static feed. Every real news item —
- * including entries flagged showOnMedia: false — still shows here.
+ * page", then corrected the same day to scroll top-to-bottom rather than
+ * side-to-side — confirmed via a clarifying question), not the /media
+ * page's own static feed. Every real news item shows here, including the
+ * BAL MASQUÉ item (which briefly had showOnMedia: false before the owner
+ * reversed that the same day too).
  */
 describe("News", () => {
   it("renders the #news section with every news item as a safe external link", () => {
@@ -28,9 +31,17 @@ describe("News", () => {
     }
   })
 
-  it("includes the home-only BAL MASQUE item (showOnMedia: false still shows here)", () => {
+  it("includes the BAL MASQUÉ item", () => {
     render(<News />)
-    expect(screen.getByText(/BAL MASQUÉ SELLS OUT/i)).toBeInTheDocument()
+    expect(screen.getByText(/Bal Masqué sells out/i)).toBeInTheDocument()
+  })
+
+  it("renders every item as its own top-to-bottom row (list item), not side-by-side cards", () => {
+    const { container } = render(<News />)
+    const list = container.querySelector("ul")
+    expect(list).not.toBeNull()
+    expect(list?.children.length).toBe(getNews().length)
+    expect(Array.from(list?.children ?? []).every((el) => el.tagName === "LI")).toBe(true)
   })
 
   it("links 'News & media' to the Media Hub", () => {
@@ -38,7 +49,7 @@ describe("News", () => {
     expect(screen.getByRole("link", { name: /News & media/i })).toHaveAttribute("href", "/media")
   })
 
-  it("scrolls the strip left/right via the prev/next arrows (native scroll-snap carousel)", async () => {
+  it("scrolls the list up/down via the prev/next arrows (native vertical scroll-snap carousel)", async () => {
     const scrollBy = vi.fn()
     // happy-dom doesn't implement scrollBy; stub it to assert direction/behavior.
     Element.prototype.scrollBy = scrollBy as unknown as typeof Element.prototype.scrollBy
@@ -47,13 +58,13 @@ describe("News", () => {
 
     await user.click(screen.getByRole("button", { name: /scroll to next news/i }))
     expect(scrollBy).toHaveBeenCalledTimes(1)
-    const nextArg = scrollBy.mock.calls[0][0] as { left: number; behavior: string }
-    expect(nextArg.left).toBeGreaterThan(0)
+    const nextArg = scrollBy.mock.calls[0][0] as { top: number; behavior: string }
+    expect(nextArg.top).toBeGreaterThan(0)
     expect(nextArg.behavior).toBe("smooth")
 
     await user.click(screen.getByRole("button", { name: /scroll to previous news/i }))
     expect(scrollBy).toHaveBeenCalledTimes(2)
-    const prevArg = scrollBy.mock.calls[1][0] as { left: number; behavior: string }
-    expect(prevArg.left).toBeLessThan(0)
+    const prevArg = scrollBy.mock.calls[1][0] as { top: number; behavior: string }
+    expect(prevArg.top).toBeLessThan(0)
   })
 })

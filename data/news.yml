@@ -13,8 +13,11 @@
 # showOnMedia: false keeps an entry out of the /media "News & Updates" feed
 # (lib/data/media.ts's pressAsNews()) while it still shows in the home-page
 # News strip/carousel — added 2026-09-02 (owner: "add a new one ... just on
-# home page not sub page"). Omit the field (or set true) for the default,
-# shown-everywhere behavior every existing entry below already has.
+# home page not sub page"), then reversed the same day for the one entry
+# that used it (owner: "make sure the maison noir announcement gets added
+# to the sub page") — kept as a general mechanism for a future home-only
+# item, but no entry below currently sets it. Omit the field (or set true)
+# for the default, shown-everywhere behavior every entry below has.
 - id: 1
   source: Company News
   dateISO: "2026-08-07"
@@ -43,16 +46,23 @@
   url: https://sanfranciscopost.com/from-energy-projects-to-yacht-parties-how-lupfr-entertainment-is-redefining-the-music-experience-in-san-francisco/
 
 # Owner-supplied 2026-09-02 ("add a new one ... make it a scrolling
-# carousel - just on home page not sub page"), headline and URL verbatim
-# from the owner's LinkedIn post. dateISO uses the BAL MASQUE event's own
-# date (data/events.yml, "bal-masque", 2026-08-29) — the LinkedIn post's
+# carousel - just on home page not sub page"), headline and URL from the
+# owner's LinkedIn post; URL verbatim. dateISO uses the BAL MASQUE event's
+# own date (data/events.yml, "bal-masque", 2026-08-29) — the LinkedIn post's
 # exact publish date isn't independently verifiable from the URL itself,
 # and the event date keeps ordering correct without inventing one.
+# Casing corrected 2026-09-02 (owner: "we want the maison noir announcement
+# to be lower case and designed like the others") — the LinkedIn post itself
+# renders this headline in all-caps, but every other entry here uses normal
+# sentence case (proper nouns capitalized), so this one is recast to match
+# rather than kept shouting; wording/facts are unchanged. Also now shown on
+# /media too (owner correction, same day: "make sure the maison noir
+# announcement gets added to the sub page") — showOnMedia dropped back to
+# the default (shown everywhere).
 - id: 4
   source: LinkedIn
   dateISO: "2026-08-29"
   title: >-
-    MUSIC, MYSTERY, AND 750 GUESTS: BAL MASQUÉ SELLS OUT SAN FRANCISCO'S
-    HIBERNIA BANK WITH LUPFR AND MAISON NOIR
+    Music, mystery, and 750 guests: Bal Masqué sells out San Francisco's
+    Hibernia Bank with LUPFR and Maison Noir.
   url: https://www.linkedin.com/posts/lupfr_another-unforgettable-night-brought-to-life-activity-7500746547123638272-MTHi?utm_source=share&utm_medium=member_desktop&rcm=ACoAACLOr20BXxc4HU0rjokwhelb71w5gy_9IRU
-  showOnMedia: false

@@ -168,15 +168,24 @@ export function About() {
               aria-label="LUPFR story"
               className="group relative flex h-full flex-col overflow-hidden rounded-sm border bg-card transition-colors duration-200 ease-snap hover:border-accent/40"
             >
-              {/* aspect-[4/5] -> flex-1 (fills the stretched column's actual
-                  height instead of a fixed ratio, so there's no dead space
-                  below it when the left copy column runs taller) and
-                  object-cover -> object-contain ("slides now `contain` so the
-                  full image shows" — a fixed-height flexible frame can crop a
-                  cover-fit image differently at every viewport height, so the
-                  owner asked to letterbox instead of crop). bg-muted fills
-                  the letterbox bars. */}
-              <div className="relative w-full flex-1 overflow-hidden bg-muted">
+              {/* aspect-[4/5] -> flex-1 only at lg+ (fills the stretched
+                  column's actual height instead of a fixed ratio, so there's
+                  no dead space below it when the left copy column runs
+                  taller) and object-cover -> object-contain ("slides now
+                  `contain` so the full image shows" — a fixed-height flexible
+                  frame can crop a cover-fit image differently at every
+                  viewport height, so the owner asked to letterbox instead of
+                  crop). bg-muted fills the letterbox bars.
+                  `flex-1` alone only resolves against the lg+ 2-column
+                  `items-stretch` grid row — below lg the grid is a single
+                  stacked column, so each item's row is sized by its own
+                  content and `flex-1` has no height to grow into, collapsing
+                  the whole carousel to 0px (owner punch list, 2026-09-02,
+                  iPhone screenshot: "The LUPFR Story is not showing on
+                  mobile"). `aspect-[4/5]` is the mobile/tablet fallback;
+                  `lg:aspect-auto lg:flex-1` restores the exact lg+ behavior
+                  from the fix above unchanged. */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-muted lg:aspect-auto lg:flex-1">
                 {STORY_SLIDES.map((slide, i) => (
                   <div
                     key={slide.image}

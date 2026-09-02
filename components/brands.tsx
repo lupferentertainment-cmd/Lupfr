@@ -13,12 +13,10 @@ import {
   brandPlainTitle,
   getBrandsByDivision,
   PLATFORM_PROGRAMS,
-  type BrandItem,
 } from "@/lib/data/brands"
 import { cn } from "@/lib/utils"
 
 const { liveEvents, corporateMedia } = getBrandsByDivision()
-const orderedBrands: BrandItem[] = [...liveEvents, ...corporateMedia]
 
 /**
  * Division rule-bar colors for the Operating tab (owner correction,
@@ -133,7 +131,7 @@ export function Brands() {
                 href="/brands"
                 className="inline-block whitespace-nowrap border-b border-accent pb-1 text-sm font-medium text-accent transition-colors hover:text-foreground"
               >
-                View all brands →
+                Explore LUPFR →
               </Link>
             </div>
           </div>
@@ -148,8 +146,16 @@ export function Brands() {
                 label + rule bar *above* the row rather than a `col-span-full`
                 heading that would force a second row. Proportioned 3:2 to match
                 the 3 Live/Events + 2 Corporate/Media card count, so it lines up
-                with the card row at the `xl:grid-cols-5` single-row breakpoint. */}
-            <div className="mb-3 flex items-center gap-4 sm:mb-4">
+                with the card row at the `xl:grid-cols-5` single-row breakpoint —
+                the ONLY breakpoint where all 5 cards actually sit in one row.
+                Below xl the grid is 1/2/3 columns (cards stack into multiple
+                rows), so this single top bar reads as disconnected from the
+                groups it labels (owner correction, 2026-09-02, iPhone
+                screenshot: "the live // events should be there, then move the
+                corporate // media down below between OUT//SIDE and
+                HIGH//RISE"). Hidden below xl in favor of the inline in-grid
+                labels below. */}
+            <div className="mb-3 hidden items-center gap-4 sm:mb-4 xl:flex">
               <div className="flex min-w-0 items-center gap-2.5" style={{ flex: 3 }}>
                 <span
                   data-testid="division-label-live-events"
@@ -180,11 +186,26 @@ export function Brands() {
                 (BrandSlashText white names + each brand's own accent "//", not
                 the design file's logo-image lockup names — owner explicitly
                 said to keep this treatment: "reverted to white text names with
-                colored //"). Renders as a single flat row of five cards — no
-                `col-span-full` division heading inside the grid itself, so
-                nothing forces a row break here. */}
+                colored //"). Below xl, the two division labels are inline
+                `col-span-full` rows spliced between their own brand groups
+                (Live/Events' 3 cards, then Corporate/Media's 2), so each label
+                sits directly above the cards it describes at every stacked
+                (1/2/3-column) breakpoint; `xl:hidden` on both hands off to the
+                single top bar once all 5 cards share one row. */}
             <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
-              {orderedBrands.map((brand, i) => (
+              <div
+                data-testid="division-label-live-events-inline"
+                className="col-span-full flex min-w-0 items-center gap-2.5 xl:hidden"
+              >
+                <span
+                  className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]"
+                  style={{ color: DIVISION_ACCENTS.liveEvents }}
+                >
+                  Live <span aria-hidden>{"//"}</span> Events
+                </span>
+                <span className="h-px flex-1" style={{ backgroundColor: DIVISION_ACCENTS.liveEvents }} aria-hidden />
+              </div>
+              {liveEvents.map((brand, i) => (
                 <PosterTile
                   key={brand.key}
                   href={brandPath(brand)}
@@ -193,6 +214,37 @@ export function Brands() {
                   accent={brand.accent}
                   tagLabel={brand.tag}
                   index={i}
+                  title={<BrandSlashText text={brand.title} color={brand.accent} />}
+                  description={brand.description}
+                  ctaLabel="Explore"
+                  isInView={isInView}
+                />
+              ))}
+              <div
+                data-testid="division-label-corporate-media-inline"
+                className="col-span-full flex min-w-0 items-center gap-2.5 xl:hidden"
+              >
+                <span
+                  className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]"
+                  style={{ color: DIVISION_ACCENTS.corporateMedia }}
+                >
+                  Corporate <span aria-hidden>{"//"}</span> Media
+                </span>
+                <span
+                  className="h-px flex-1"
+                  style={{ backgroundColor: DIVISION_ACCENTS.corporateMedia }}
+                  aria-hidden
+                />
+              </div>
+              {corporateMedia.map((brand, i) => (
+                <PosterTile
+                  key={brand.key}
+                  href={brandPath(brand)}
+                  ariaLabel={`View ${brandPlainTitle(brand)} brand`}
+                  image={brand.image}
+                  accent={brand.accent}
+                  tagLabel={brand.tag}
+                  index={liveEvents.length + i}
                   title={<BrandSlashText text={brand.title} color={brand.accent} />}
                   description={brand.description}
                   ctaLabel="Explore"

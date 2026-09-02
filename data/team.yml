@@ -60,9 +60,21 @@
   founder: true
   # Square portrait + bio delivered in the AUG 8 restructure zip; the owner asked
   # for "this exact design + the descriptions I added", so the bio below is the
-  # design file's `founders[1].bio` verbatim. The previous 1000x800 eliott.webp
-  # stays on disk for an easy revert.
-  image: /images/team/eliott-square.webp
+  # design file's `founders[1].bio` verbatim.
+  # Portrait upgraded 2026-09-02 (owner: "Eliott Nazarian Founder Image quality
+  # got worse. Keep it HQ" / "eliott nazarian image is too [poor quality]").
+  # eliott-square.webp (1254x1254) turned out to be a pre-cropped, downsized
+  # export from the design tool's own "AUG 8 restructure zip" — not the actual
+  # delivered photo at full resolution. The same underlying photo also exists
+  # as `assets/team/eliott.jpeg` in the owner's design folder at 3623x5434
+  # (a real studio headshot, EXIF-tagged), previously missed because only the
+  # square crop had been checked. Re-encoded uncropped at 1200px wide (matching
+  # Will's own portrait's resolution, /images/team/will-2026.webp) — FounderCard's
+  # existing object-cover/object-top treatment (same as Will's) crops it into
+  # both the mobile square and lg: 3:4 frames without any manual crop needed.
+  # eliott-square.webp and the older eliott.webp (1000x800, a different 5:4
+  # crop from an earlier pass) both stay on disk for an easy revert.
+  image: /images/team/eliott-2026.webp
   bio: "Eliott is a co-founder of LUPFR, helping shape the company's strategy, partnerships, and expansion across Los Angeles and beyond. A licensed attorney, actor, entrepreneur, and entertainment professional, he brings a multidisciplinary perspective to building the brand — developing partnerships, structuring opportunities, and turning ambitious ideas into scalable ventures. With roots in LA's creative community spanning music, nightlife, film, fashion, and media, Eliott is focused on growing LUPFR into a platform where culture, community, and business intersect."
   # Quote + stats from the AUG 28 restructure design file's founders[1] object.
   quote: "\"The best way to predict the future is to invent it.\" — Alan Kay"
