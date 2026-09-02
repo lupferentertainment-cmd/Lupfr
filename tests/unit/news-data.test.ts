@@ -26,8 +26,8 @@ const GENERIC_LANDING = [
 ]
 
 describe("company news data", () => {
-  it("ships the three owner-delivered items", () => {
-    expect(news).toHaveLength(3)
+  it("ships the four owner-delivered items", () => {
+    expect(news).toHaveLength(4)
   })
 
   it("orders newest first", () => {

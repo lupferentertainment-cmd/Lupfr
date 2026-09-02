@@ -560,7 +560,9 @@ export function Events() {
         >
           <div>
             <p className="lupfr-section-kicker mb-[14px]">Upcoming</p>
-            <h2 className="text-foreground">Events</h2>
+            <h2 className="text-foreground">
+              <GoldShineText scrollTargetRef={ref}>Events</GoldShineText>
+            </h2>
           </div>
           <Link
             href="/events"

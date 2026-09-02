@@ -27,7 +27,7 @@ const EXCLUDE_DIR_PREFIXES = ["favicon", "logos"]
 const EXCLUDE_FILE_NAMES = new Set(["apple-touch-icon.png", "favicon-16x16.png", "favicon-32x32.png"])
 
 /** Card image folders shown at ~300–600 CSS px — keep sources lean for mobile decode. */
-const CARD_DIRS = new Set(["events", "artists", "brands"])
+const CARD_DIRS = new Set(["events", "artists", "brands", "platforms"])
 
 const RASTER_IN = new Set([".png", ".jpg", ".jpeg"])
 const RASTER_OK = new Set([".webp"])

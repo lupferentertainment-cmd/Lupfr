@@ -128,7 +128,15 @@ describe("media overview links are real, never invented", () => {
 
 describe("media overview news comes from real press", () => {
   it("surfaces press and company news together, de-duplicated", () => {
-    const urls = new Set([...getPress().map((p) => p.url), ...getNews().map((n) => n.url)])
+    // showOnMedia: false entries (e.g. the home-only BAL MASQUE carousel
+    // item, 2026-09-02) are excluded from this feed — see
+    // lib/data/media.ts's pressAsNews().
+    const urls = new Set([
+      ...getPress().map((p) => p.url),
+      ...getNews()
+        .filter((n) => n.showOnMedia !== false)
+        .map((n) => n.url),
+    ])
     // Union of both sources, each URL once — the San Francisco Post feature is
     // legitimately in press.yml AND news.yml and must not list twice.
     expect(overview.newsFeed).toHaveLength(urls.size)
@@ -151,6 +159,14 @@ describe("media overview news comes from real press", () => {
     expect(titles.some((t) => /Biggest SEA\/\/SIDE season yet/i.test(t))).toBe(false)
     expect(titles.some((t) => /six sold-out/i.test(t))).toBe(false)
     expect(titles.some((t) => /opens its first full HQ/i.test(t))).toBe(false)
+  })
+
+  it("excludes showOnMedia: false items (home-only news) from the /media feed", () => {
+    const homeOnly = getNews().filter((n) => n.showOnMedia === false)
+    expect(homeOnly.length).toBeGreaterThan(0)
+    for (const item of homeOnly) {
+      expect(overview.newsFeed.some((n) => n.url === item.url)).toBe(false)
+    }
   })
 })
 

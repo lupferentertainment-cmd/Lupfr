@@ -46,25 +46,50 @@ describe("Brands", () => {
     expect(accents).toEqual(["#6fb8c9", "#e8e4da", "#8aa878", "#e08a4a", "#c9a869"])
   })
 
-  it("groups operating cards into Live/Events and Corporate/Media divisions", () => {
+  it("renders all five operating cards in a single row, no division row-break (owner correction, 2026-09-02)", () => {
     const { container } = render(<Brands />)
-    expect(screen.getByText("Live · Events")).toBeInTheDocument()
-    expect(screen.getByText("Corporate · Media")).toBeInTheDocument()
-    // Both group labels sit inside the same grid as the cards, in card order.
+    // No division-label headings inside the grid — a row-breaking label was
+    // the bug ("these should not be rows. It should be on one row"); the
+    // Live/Events vs Corporate/Media grouping still exists but lives only on
+    // the corporate structure tree (components/brand-tree.tsx) now.
+    expect(screen.queryByText("Live · Events")).toBeNull()
+    expect(screen.queryByText("Corporate · Media")).toBeNull()
     const grid = container.querySelector("#brands .grid")
-    const labels = Array.from(grid?.children ?? []).filter((el) => el.tagName === "P").map((el) => el.textContent)
-    expect(labels).toEqual(["Live · Events", "Corporate · Media"])
+    // Every grid child is a card (article), in division order: seaside,
+    // inside, outside, highrise, soundcheck.
+    const children = Array.from(grid?.children ?? [])
+    expect(children).toHaveLength(5)
+    expect(children.every((el) => el.tagName === "ARTICLE")).toBe(true)
+  })
+
+  it("shows a Live//Events + Corporate//Media rule bar above the single-row grid (owner correction, 2026-09-02)", () => {
+    const { getByTestId } = render(<Brands />)
+    const liveEvents = getByTestId("division-label-live-events")
+    const corporateMedia = getByTestId("division-label-corporate-media")
+    expect(liveEvents.textContent?.replace(/\s+/g, " ").trim()).toBe("Live // Events")
+    expect(corporateMedia.textContent?.replace(/\s+/g, " ").trim()).toBe("Corporate // Media")
+    // Each label is colored, not left at the default foreground.
+    expect(liveEvents.style.color).not.toBe("")
+    expect(corporateMedia.style.color).not.toBe("")
   })
 
   it("switches to the PLATFORM tab and shows the five program cards", async () => {
     const user = userEvent.setup()
     render(<Brands />)
     await user.click(screen.getByRole("button", { name: "Platform" }))
-    for (const name of ["LUPFR VIP", "LUPFR Promoter Program", "LUPFR Media", "LUPFR Hospitality", "LUPFR Ventures"]) {
+    for (const name of ["LUPFR VIP", "LP Program", "LUPFR Media", "LUPFR Hospitality", "LUPFR Ventures"]) {
       expect(screen.getByText(name)).toBeInTheDocument()
     }
     // The operating cards are gone while the platform tab is active.
     expect(screen.queryByText("YACHTS")).toBeNull()
+  })
+
+  it("gives every platform program card a real background photo (owner correction, 2026-09-02)", async () => {
+    const user = userEvent.setup()
+    const { container } = render(<Brands />)
+    await user.click(screen.getByRole("button", { name: "Platform" }))
+    const images = Array.from(container.querySelectorAll('img[src*="%2Fplatforms%2F"]'))
+    expect(images).toHaveLength(5)
   })
 
   // The home poster tile itself no longer carries a raw external link (owner

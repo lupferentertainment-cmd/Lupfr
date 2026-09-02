@@ -13,6 +13,10 @@ export interface NewsItem {
   dateISO: string
   title: string
   url: string
+  /** false hides this item from the /media "News & Updates" feed while it
+   *  still shows in the home-page News strip; omitted/true = shown everywhere
+   *  (see data/news.yml's doc comment). */
+  showOnMedia?: boolean
 }
 
 /** Newest first. */

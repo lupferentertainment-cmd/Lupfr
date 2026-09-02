@@ -10,6 +10,11 @@
 # NOT shipped, matching the same call made for the Media Hub.
 #
 # url: canonical permalink. dateISO drives ordering (newest first).
+# showOnMedia: false keeps an entry out of the /media "News & Updates" feed
+# (lib/data/media.ts's pressAsNews()) while it still shows in the home-page
+# News strip/carousel — added 2026-09-02 (owner: "add a new one ... just on
+# home page not sub page"). Omit the field (or set true) for the default,
+# shown-everywhere behavior every existing entry below already has.
 - id: 1
   source: Company News
   dateISO: "2026-08-07"
@@ -36,3 +41,18 @@
     "From Energy Projects to Yacht Parties: How LUPFR Entertainment Is
     Redefining the Music Experience in San Francisco"
   url: https://sanfranciscopost.com/from-energy-projects-to-yacht-parties-how-lupfr-entertainment-is-redefining-the-music-experience-in-san-francisco/
+
+# Owner-supplied 2026-09-02 ("add a new one ... make it a scrolling
+# carousel - just on home page not sub page"), headline and URL verbatim
+# from the owner's LinkedIn post. dateISO uses the BAL MASQUE event's own
+# date (data/events.yml, "bal-masque", 2026-08-29) — the LinkedIn post's
+# exact publish date isn't independently verifiable from the URL itself,
+# and the event date keeps ordering correct without inventing one.
+- id: 4
+  source: LinkedIn
+  dateISO: "2026-08-29"
+  title: >-
+    MUSIC, MYSTERY, AND 750 GUESTS: BAL MASQUÉ SELLS OUT SAN FRANCISCO'S
+    HIBERNIA BANK WITH LUPFR AND MAISON NOIR
+  url: https://www.linkedin.com/posts/lupfr_another-unforgettable-night-brought-to-life-activity-7500746547123638272-MTHi?utm_source=share&utm_medium=member_desktop&rcm=ACoAACLOr20BXxc4HU0rjokwhelb71w5gy_9IRU
+  showOnMedia: false

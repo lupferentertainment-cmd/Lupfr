@@ -104,24 +104,53 @@ export function getBrandsByDivision(): { liveEvents: BrandItem[]; corporateMedia
 
 /**
  * The five company-wide "platform" programs — from the owner's design-canvas
- * data ("Our Brands Ideas.dc.html"'s `platforms[]` array, "LUPFR Website
- * Design v3"), real owner-authored copy, not fabricated. No background photos
- * are included: none were supplied in that source for these five cards, so
- * the PLATFORM tab renders them as flat bordered panels rather than guessing
- * at imagery (see docs/CHANGELOG.md, 2026-09-02).
+ * data (`LUPFR Restructure.dc.html`'s `platforms[]` array, "LUPFR Website
+ * Design v3"), real owner-authored copy verbatim, not paraphrased. Corrected
+ * 2026-09-02 (owner: "see how we have pics and captions for each section of
+ * the platform") — an earlier pass here both paraphrased this copy and
+ * wrongly claimed no photos existed for these cards; each program does have
+ * a real photo, base64-embedded per slot in that design file's own
+ * `.image-slots.state.json` sidecar (not visible from the markup alone).
+ * Extracted and optimized into `public/platforms/`.
  */
 export interface PlatformProgram {
   num: string
   name: string
   line: string
+  image: string
 }
 
 export const PLATFORM_PROGRAMS: PlatformProgram[] = [
-  { num: "06", name: "LUPFR VIP", line: "Membership tier — early access, tables, hosted invites." },
-  { num: "07", name: "LUPFR Promoter Program", line: "Promoters host their own nights on our infrastructure." },
-  { num: "08", name: "LUPFR Media", line: "In-house content studio — recaps, film, editorial." },
-  { num: "09", name: "LUPFR Hospitality", line: "Venue partnerships and resident programming." },
-  { num: "10", name: "LUPFR Ventures", line: "Capital and concepts across nightlife and hospitality." },
+  {
+    num: "06",
+    name: "LUPFR VIP",
+    line: "Our VIP network of influencers, models, athletes, and founders who exemplify the brand.",
+    image: "/platforms/platform-vip.webp",
+  },
+  {
+    num: "07",
+    name: "LP Program",
+    line: "LUPFR Promoter Program (LPP) where promoters earn healthy commissions for ticket sales.",
+    image: "/platforms/platform-promoter.webp",
+  },
+  {
+    num: "08",
+    name: "LUPFR Media",
+    line: "Our in-house content and media team — from recaps, film, photo, and design.",
+    image: "/platforms/platform-media.webp",
+  },
+  {
+    num: "09",
+    name: "LUPFR Hospitality",
+    line: "Our in-house hospitality team — personal service, VIP assistants, and experience managers.",
+    image: "/platforms/platform-hospitality.webp",
+  },
+  {
+    num: "10",
+    name: "LUPFR Ventures",
+    line: "Capital and Brand Development arm of LUPFR for live events, hospitality, and more.",
+    image: "/platforms/platform-ventures.webp",
+  },
 ]
 
 /** Dedicated per-brand detail route (`/brands/<key>`); slug = the YAML `key`. */

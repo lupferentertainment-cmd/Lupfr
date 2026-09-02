@@ -92,13 +92,15 @@ function pressAsNews(): MediaNews[] {
     url: item.url,
   }))
 
-  const fromNews: MediaNews[] = getNews().map((item) => ({
-    source: item.source,
-    dateISO: item.dateISO,
-    date: MONTH_YEAR.format(new Date(`${item.dateISO}T00:00:00Z`)),
-    title: item.title,
-    url: item.url,
-  }))
+  const fromNews: MediaNews[] = getNews()
+    .filter((item) => item.showOnMedia !== false)
+    .map((item) => ({
+      source: item.source,
+      dateISO: item.dateISO,
+      date: MONTH_YEAR.format(new Date(`${item.dateISO}T00:00:00Z`)),
+      title: item.title,
+      url: item.url,
+    }))
 
   const byUrl = new Map<string, MediaNews>()
   for (const item of [...fromPress, ...fromNews]) {
