@@ -3,12 +3,13 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { m } from "framer-motion"
-import { CalendarDays, History, MapPin, Ticket } from "lucide-react"
+import { CalendarDays, Clock, History, MapPin, Ticket } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { getBrands } from "@/lib/data/brands"
 import { LINKS } from "@/lib/links"
+import { resolveEventTicket } from "@/lib/partiful"
 import {
   EVENTS,
   type EventItem,
@@ -155,28 +156,73 @@ function EventBrandTag({ event }: { event: EventItem }) {
   )
 }
 
-function UpcomingEventCard({ event, todayISO }: { event: EventItem; todayISO: string }) {
+// Owner request 2026-09-07: each upcoming card carries its venue + start time
+// and a direct ticket button. The ticket link is a real <a> to Partiful, so the
+// card shell can no longer be one big <Link> (an anchor can't nest inside an
+// anchor) — the detail link now wraps the poster/title block only.
+// Exported so the ticket/venue/time branches (TBD, no ticket, missing time)
+// stay covered independently of what the live roster happens to contain.
+export function UpcomingEventCard({ event, todayISO }: { event: EventItem; todayISO: string }) {
+  const ticket = resolveEventTicket(event)
+
   return (
-    <Link
-      href={eventDetailPath(event.slug)}
-      className="event-card-depth event-card-depth--lift group relative block h-full overflow-hidden rounded-sm border border-border bg-card hover:border-accent/50"
-      aria-label={`View event: ${event.title}`}
-    >
-      <EventPosterMedia event={event} pill={upcomingPillLabel(event, todayISO)} city={event.city} />
-      <div className="p-5">
-        <div className="mb-2 flex items-center justify-between gap-3">
-          <EventBrandTag event={event} />
-          <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
-            <CalendarDays size={11} className="shrink-0 text-accent" aria-hidden />
-            {shortDate(event.dateISO)}
-          </span>
+    <article className="event-card-depth event-card-depth--lift group relative flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card transition-colors hover:border-accent/50">
+      <Link
+        href={eventDetailPath(event.slug)}
+        className="block rounded-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+        aria-label={`View event: ${event.title}`}
+      >
+        <EventPosterMedia event={event} pill={upcomingPillLabel(event, todayISO)} city={event.city} />
+        <div className="px-5 pb-4 pt-5">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <EventBrandTag event={event} />
+            <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.06em] text-muted-foreground">
+              <CalendarDays size={11} className="shrink-0 text-accent" aria-hidden />
+              {shortDate(event.dateISO)}
+            </span>
+          </div>
+          <h3 className="mb-2 font-condensed text-2xl font-extrabold uppercase leading-tight tracking-normal text-foreground">
+            <BrandSlashText text={event.title} />
+          </h3>
+          <p className="m-0 text-[13px] text-gold-accent">{event.subtitle}</p>
         </div>
-        <h3 className="mb-2 font-condensed text-2xl font-extrabold uppercase leading-tight tracking-normal text-foreground">
-          <BrandSlashText text={event.title} />
-        </h3>
-        <p className="m-0 text-[13px] text-gold-accent">{event.subtitle}</p>
+      </Link>
+
+      <div className="mt-auto px-5 pb-5">
+        <div className="mb-4 flex flex-col gap-1.5 border-t border-border/70 pt-3.5">
+          {event.location ? (
+            <span className="flex items-start gap-1.5 font-mono text-[10px] uppercase leading-relaxed tracking-[0.06em] text-muted-foreground">
+              <MapPin size={11} className="mt-[3px] shrink-0 text-accent" aria-hidden />
+              <span className="min-w-0">{event.location}</span>
+            </span>
+          ) : null}
+          {event.time ? (
+            <span className="flex items-start gap-1.5 font-mono text-[10px] uppercase leading-relaxed tracking-[0.06em] text-muted-foreground">
+              <Clock size={11} className="mt-[3px] shrink-0 text-accent" aria-hidden />
+              <span className="min-w-0">{event.time}</span>
+            </span>
+          ) : null}
+        </div>
+
+        {ticket === "tbd" ? (
+          <span className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-border px-4 text-[13px] font-medium text-muted-foreground">
+            <Ticket size={14} className="shrink-0" aria-hidden />
+            Tickets TBA
+          </span>
+        ) : ticket ? (
+          <a
+            href={ticket.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-accent bg-accent px-4 text-[13px] font-medium text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+            aria-label={`Get tickets for ${event.title}`}
+          >
+            <Ticket size={14} className="shrink-0" aria-hidden />
+            Get Tickets
+          </a>
+        ) : null}
       </div>
-    </Link>
+    </article>
   )
 }
 

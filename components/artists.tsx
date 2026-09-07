@@ -53,9 +53,9 @@ function FeaturedTrackEmbed({
   const height = platform === "spotify" ? "80" : "166"
 
   return (
-    <div ref={embedRef} className="mt-3.5 w-full pt-3.5 border-t border-accent/30">
+    <div ref={embedRef} className="mt-1 w-full min-w-0 pt-3.5 border-t border-accent/30">
       <span className="font-mono text-[9px] tracking-[0.1em] uppercase text-muted-foreground">Listen</span>
-      <div className="mt-1.5 rounded-md overflow-hidden bg-muted/90 border border-accent/40 shadow-[0_0_12px_rgba(212,175,55,0.08)] hover:border-accent/70 transition-colors w-full">
+      <div className="mt-1.5 rounded-md overflow-hidden bg-muted/90 border border-accent/40 shadow-[0_0_12px_rgba(212,175,55,0.08)] hover:border-accent/70 transition-colors w-full min-w-0 max-w-full">
         {isInView ? (
           <iframe
             src={featuredTrackEmbedUrl}
@@ -67,7 +67,7 @@ function FeaturedTrackEmbed({
                 ? "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 : "autoplay; encrypted-media; fullscreen"
             }
-            className="border-0 block"
+            className="border-0 block w-full max-w-full"
             title={`Listen to ${artistName} on ${label}`}
           />
         ) : (
@@ -227,7 +227,7 @@ const ArtistCard = memo(function ArtistCard({
         )}
       </div>
 
-      {/* Name, links, and inline side-by-side player */}
+      {/* Name, links, and stacked track player */}
       <div className="flex-1 p-4 md:p-5 rounded-b-sm bg-card flex flex-col justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -235,10 +235,10 @@ const ArtistCard = memo(function ArtistCard({
             <span className="text-xs tracking-[0.08em] text-muted-foreground">{artist.genre}</span>
           </div>
 
-          {/* Header row with Artist Name, Social Icons, and compact right-aligned Spotify/SoundCloud player */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Artist name + social icons, with the player stacked underneath at full card width */}
+          <div className="flex flex-col gap-3 min-w-0">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 min-w-0">
-              <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground whitespace-nowrap">
+              <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground break-words">
                 {artist.name}
               </h3>
               <div className="flex items-center gap-1.5 shrink-0">
@@ -310,9 +310,9 @@ const ArtistCard = memo(function ArtistCard({
               </div>
             </div>
 
-            {/* Inline player right beside artist name */}
+            {/* Player stacked below the artist name, full card width */}
             {artist.featuredTrack && featuredTrackEmbedUrl && (
-              <div className="shrink-0 w-full sm:w-[220px]">
+              <div className="w-full min-w-0">
                 <FeaturedTrackEmbed
                   featuredTrackEmbedUrl={featuredTrackEmbedUrl}
                   platform={artist.featuredTrack.platform}
