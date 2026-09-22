@@ -74,7 +74,7 @@ export function News() {
               News &amp; media →
             </a>
             {news.length > 1 ? (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden items-center gap-1.5 sm:flex">
                 <button
                   type="button"
                   onClick={() => scrollByRow(-1)}
@@ -101,7 +101,7 @@ export function News() {
           initial={{ opacity: 0, y: 14 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="scrollbar-hide m-0 max-h-[320px] list-none snap-y snap-mandatory overflow-y-auto scroll-smooth border-t border-border p-0 sm:max-h-[280px]"
+          className="scrollbar-hide m-0 max-h-none list-none snap-y snap-mandatory overflow-y-auto scroll-smooth border-t border-border p-0 sm:max-h-[280px]"
         >
           {news.map((item) => (
             <li key={item.id} className="snap-start border-b border-border">
@@ -109,13 +109,13 @@ export function News() {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col gap-2 py-4 transition-colors hover:bg-accent/5 sm:flex-row sm:items-center sm:gap-6 sm:py-5"
+                className="group flex flex-col-reverse gap-[10px] py-[18px] transition-colors hover:bg-accent/5 sm:flex-row sm:items-center sm:gap-6 sm:py-5"
               >
-                <span className="flex shrink-0 items-center gap-3 sm:w-[230px]">
-                  <span className="text-gold-accent font-mono text-[10px] uppercase tracking-[0.16em]">
+                <span className="flex flex-row-reverse items-baseline justify-between gap-3 sm:w-[230px] sm:shrink-0 sm:flex-row sm:items-center sm:justify-start">
+                  <span className="text-gold-accent shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]">
                     {item.source}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+                  <span className="shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
                     {newsDateLabel(item)}
                   </span>
                 </span>
