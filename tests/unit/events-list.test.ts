@@ -52,6 +52,7 @@ describe("events list ordering", () => {
       "zusebi-001-live-from-sf",
       "zusebi-002-live-from-golden-gate",
       "seaside-002",
+      "zusebi-003-venice-pop-up",
     ])
   })
 
@@ -59,6 +60,7 @@ describe("events list ordering", () => {
     const now = la("2027-01-15T20:00:00-08:00")
     const slugs = getPastEvents(now).map((e) => e.slug)
     expect(slugs).toEqual([
+      "zusebi-003-venice-pop-up",
       "seaside-002",
       "zusebi-002-live-from-golden-gate",
       "zusebi-001-live-from-sf",

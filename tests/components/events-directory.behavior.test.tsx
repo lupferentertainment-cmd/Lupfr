@@ -35,7 +35,9 @@ describe("EventsDirectory (/events, comp All Events page)", () => {
   it("hides the Past grid when the Upcoming status pill is active", () => {
     render(<EventsDirectory />)
     fireEvent.click(screen.getByRole("button", { name: "Upcoming" }))
-    expect(screen.getAllByRole("link", { name: /^View event: / }).length).toBe(getUpcomingEvents().length)
+    // queryAll, not getAll: an empty upcoming roster (every dated event now past)
+    // is a legitimate state and must not throw — the count assertion still holds.
+    expect(screen.queryAllByRole("link", { name: /^View event: / }).length).toBe(getUpcomingEvents().length)
     expect(screen.queryByRole("link", { name: /^View past event: / })).toBeNull()
   })
 

@@ -213,7 +213,22 @@
   ticketLabel: RSVP on Partiful
   description: A sundown open-air set at Lands End — night two of the Zusebi run.
 
-# Zusebi 003 removed entirely (owner restructure note, 2026-08-28).
+- id: 20
+  # Zusebi 003 reinstated (owner, 2026-09-22). The 2026-08-28 restructure removed
+  # it as a TBD-shaped row; it is now a real dated listing on Partiful.
+  slug: zusebi-003-venice-pop-up
+  title: "Zusebi 003: Venice Pop-Up"
+  subtitle: feat. Zusebi
+  date: September 27th, 2026
+  dateISO: "2026-09-27"
+  time: 5 PM
+  location: Amigos Birria Tacos, 46 Windward Ave, Venice
+  brandTag: IN//SIDE
+  city: LA
+  image: /events/zusebi_003_venice_popup.webp
+  partifulLink: https://partiful.com/e/YRdfkqqP6vluzQ39DrDO
+  ticketLabel: RSVP on Partiful
+  description: A free Sunday DJ set at Amigos Birria Tacos on Windward Ave — tacos, music, and a Venice sunset to close the weekend.
 
 - id: 19
   # Date/location updated (owner restructure note, 2026-08-28): Sept 19, 2026, Marina del Rey.
