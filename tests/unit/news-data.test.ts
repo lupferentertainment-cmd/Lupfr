@@ -26,8 +26,10 @@ const GENERIC_LANDING = [
 ]
 
 describe("company news data", () => {
-  it("ships the four owner-delivered items", () => {
-    expect(news).toHaveLength(4)
+  it("ships the five owner-delivered items", () => {
+    // 4 from the 2026-08-08 delivery + the VoyageLA "Hidden Gems" founder
+    // interview (owner-supplied 2026-09-22, published 2026-09-21).
+    expect(news).toHaveLength(5)
   })
 
   it("orders newest first", () => {
