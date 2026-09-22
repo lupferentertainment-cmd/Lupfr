@@ -1055,9 +1055,30 @@
  * renders as a skewed gold accent. See `components/brand-slash-text.tsx`.
  */
 .lupfr-brand-slash {
+  /* `color` stays the source of truth: it sets --gold by default, is overridden
+     per brand by BrandSlashText's inline style, and feeds currentColor into the
+     gradient below. Owner direction 2026-09-22 (slash-mark artwork supplied):
+     the "//" carries a fade in its own brand colour — deeper at the lower-left
+     of the stroke, lifting toward near-white at the upper-right — instead of a
+     flat fill. `-webkit-text-fill-color` (not `color: transparent`) reveals the
+     gradient so currentColor survives; browsers without background-clip: text
+     fall back to the flat `color` fill, which is the previous treatment. */
   color: var(--gold);
   display: inline-block;
   transform: skewX(-12deg);
+  /* Owner direction 2026-09-22: tighter than the full space on each side that
+     the component renders — the spaces stay in the DOM (screen readers and
+     string matching still see "SEA // SIDE"), pulled in visually. */
+  margin: 0 -0.1em;
+  background-image: linear-gradient(
+    to top right,
+    color-mix(in oklch, currentColor 78%, black) 0%,
+    currentColor 45%,
+    color-mix(in oklch, currentColor 55%, white) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Gold accent for labels and small caps (no animation) */

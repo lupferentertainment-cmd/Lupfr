@@ -39,11 +39,6 @@
   image: /corporate_partners/seaside.webp
   logoTreatment: natural
 
-- name: City Cruises
-  url: https://www.cityexperiences.com/city-cruises/
-  image: /corporate_partners/city_cruises.webp
-  logoTreatment: natural
-
 - name: Mutuals
   url: https://apps.apple.com/us/app/mutuals-experiences-plans/id6760976464
   image: /corporate_partners/mutuals.webp

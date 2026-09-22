@@ -1,16 +1,24 @@
 # Featured artists. Images go in public/artists/; reference as /artists/filename.webp. `bun run test` enforces WebP.
 #
-# Featured order (owner restructure note, 2026-08-28): PLS//TY, Auguste, fromclay
-# on the first row, then Zusebi, Where's West?, thatfranco on the second — PLS//TY
-# is not yet in the roster (no portrait/bio/links delivered), so the first row
-# temporarily holds Auguste + fromclay only and Devvy Dub keeps the 6th featured
-# slot. Move Devvy Dub back out of the featured six and slot PLS//TY in at the
-# very front the moment its artist entry is added.
+# Featured order (owner restructure note, 2026-08-28; completed 2026-09-22):
+# PLS&TY, Auguste, fromclay on the first row, then Zusebi, Where's West?,
+# thatfranco on the second. PLS&TY's entry landed 2026-09-22 (portrait from the
+# owner's design folder, links verified), so it now sits at the very front and
+# Devvy Dub falls out of the featured six into the 7th slot as planned.
 
 # Featured track (optional): embed a Spotify or SoundCloud player on the artist card.
 # Spotify: use any spotify.com/track/... URL.
 # SoundCloud: use the FULL track page URL (https://soundcloud.com/username/track-slug), NOT on.soundcloud.com short links.
 # featuredTrack: { url: <track URL>, platform: spotify | soundcloud }
+
+- id: 19
+  name: PLS&TY
+  genre: Tropical House
+  image: /artists/plsandty.webp
+  bio: Producer and DJ known for sun-soaked tropical house and melodic bass, built on a remix catalogue that broke through on streaming. Headlining SEA//SIDE 002 in Marina del Rey.
+  spotify: https://open.spotify.com/artist/14byx2nRysWNtgauCXscKT
+  youtube: https://www.youtube.com/channel/UCf3yYxT39G28LocXpUCtG9g
+  instagram: https://www.instagram.com/plsandty/
 
 - id: 9
   name: Auguste

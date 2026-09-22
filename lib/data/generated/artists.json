@@ -1,5 +1,15 @@
 [
   {
+    "id": 19,
+    "name": "PLS&TY",
+    "genre": "Tropical House",
+    "image": "/artists/plsandty.webp",
+    "bio": "Producer and DJ known for sun-soaked tropical house and melodic bass, built on a remix catalogue that broke through on streaming. Headlining SEA//SIDE 002 in Marina del Rey.",
+    "spotify": "https://open.spotify.com/artist/14byx2nRysWNtgauCXscKT",
+    "youtube": "https://www.youtube.com/channel/UCf3yYxT39G28LocXpUCtG9g",
+    "instagram": "https://www.instagram.com/plsandty/"
+  },
+  {
     "id": 9,
     "name": "Auguste",
     "genre": "Afro House",

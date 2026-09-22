@@ -126,9 +126,15 @@ describe("corporate section eyebrows", () => {
 // ── brand-slash divider (owner redesign 2026-07-16) ────────────────────────────
 
 describe("brand-slash divider", () => {
-  it("defines .lupfr-brand-slash as a skewed gold accent", () => {
-    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[^}]*color:\s*var\(--gold\)/)
-    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[^}]*transform:\s*skewX\(-12deg\)/)
+  it("defines .lupfr-brand-slash as a skewed brand-colour fade", () => {
+    // `color` remains the gold default and the per-brand override hook, and is
+    // what currentColor in the gradient resolves to.
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[\s\S]*?color:\s*var\(--gold\)/)
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[\s\S]*?transform:\s*skewX\(-12deg\)/)
+    // Owner direction 2026-09-22: brand-colour fade, not a flat fill.
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[\s\S]*?background-clip:\s*text/)
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[\s\S]*?-webkit-text-fill-color:\s*transparent/)
+    expect(css).toMatch(/\.lupfr-brand-slash\s*\{[\s\S]*?linear-gradient\(\s*to top right/)
   })
 
   it("event card and detail-page titles render through BrandSlashText (e.g. SEA//SIDE)", () => {

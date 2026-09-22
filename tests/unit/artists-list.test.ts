@@ -22,6 +22,7 @@ function getPublicImageHash(imagePath: string): string {
 describe("featured artist data", () => {
   it("keeps the requested front artist order (owner restructure note, 2026-08-28)", () => {
     expect(getArtists().map((artist) => artist.name)).toEqual([
+      "PLS&TY",
       "Auguste",
       "fromclay",
       "Zusebi",
