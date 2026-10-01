@@ -514,7 +514,8 @@ describe("home page section structure", () => {
   })
 
   it("mounts Events eagerly for instant #events navigation", () => {
-    expect(homePage).toContain('import { Events } from "@/components/events"')
+    // Oct 1 2026 redesign: new claude-home-experiences.tsx sibling, still eager.
+    expect(homePage).toContain('import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"')
     expect(homePage).toContain("<Events />")
   })
 

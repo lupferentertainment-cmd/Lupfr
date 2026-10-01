@@ -31,6 +31,17 @@ const navLinksBase = [
 const navLinks = navLinksBase.filter((link) => BLOG_PUBLIC_ACCESS_ENABLED || link.href !== "/blog")
 const SECTION_IDS = navLinks.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1))
 
+// Claude redesign: simplified primary navigation.
+// Keep navLinksBase above intact because the rest of the site + tests rely on
+// those canonical section anchors.
+const primaryNavLinks = [
+  { name: "Services", href: "#services" },
+  { name: "Experiences", href: "#events" },
+  { name: "Brands", href: "#brands" },
+  { name: "Media", href: "#news" },
+  { name: "About", href: "#about" },
+] as const
+
 function isPlainLeftClick(e: MouseEvent<HTMLAnchorElement>): boolean {
   return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey
 }
@@ -107,7 +118,7 @@ export function Navigation() {
     return false
   }
   const bookHref = CONTACT_PAGE_PATH
-  const bookLabel = "Book an Event"
+  const bookLabel = "Plan Your Event"
   /**
    * The transparent, white-on-video nav treatment is only correct while the bar
    * actually sits over the home hero. On every other route the page starts on
@@ -190,7 +201,7 @@ export function Navigation() {
         className="lupfr-site-header fixed top-0 left-0 right-0 z-[60] transition-[background-color,backdrop-filter,border-color,box-shadow] duration-200 ease-snap"
       >
         <nav
-          className="container relative z-10 mx-auto flex w-full min-w-0 max-w-[1400px] items-center justify-between gap-x-3 gap-y-2 px-4 py-2 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(max-content,1.15fr)] lg:items-center lg:justify-normal lg:gap-x-3 lg:gap-y-0 xl:gap-x-4 2xl:gap-x-5 lg:py-3"
+          className="container relative z-10 mx-auto flex w-full min-w-0 max-w-[1440px] items-center justify-between gap-x-4 px-5 py-2 sm:px-7 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(max-content,1fr)] lg:items-center lg:gap-x-6 lg:py-2"
           aria-label="Primary"
         >
           {/* Col 1: logo top-left. Center links use a separate auto column (grid) so they stay viewport-centered, not nudged by justify-end. */}
@@ -205,7 +216,7 @@ export function Navigation() {
                 width={360}
                 height={120}
                 sizes="(max-width: 640px) 140px, (max-width: 768px) 180px, 220px"
-                className="h-12 sm:h-16 md:h-16 lg:h-20 xl:h-24 w-auto object-contain"
+                className="h-11 sm:h-12 lg:h-14 w-auto object-contain"
                 priority
               />
             </Link>
@@ -214,12 +225,12 @@ export function Navigation() {
           <div className="hidden min-h-[2.5rem] min-w-0 items-center justify-center self-center px-0.5 sm:px-1 lg:flex">
             <div
               role="list"
-              className="m-0 flex min-w-0 max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 p-0 sm:gap-x-4 md:gap-x-5 lg:gap-x-5 xl:gap-x-6 2xl:gap-x-8"
+              className="m-0 flex min-w-0 max-w-full items-center justify-center gap-x-7 p-0 xl:gap-x-9"
             >
-              {navLinks.map((link) => {
+              {primaryNavLinks.map((link) => {
                 const isActive = isNavLinkActive(link.href)
                 const href = linkHref(link.href)
-                const linkClass = `inline-flex shrink-0 items-center text-sm font-medium leading-tight tracking-normal transition-colors duration-200 ease-snap relative group py-1 whitespace-nowrap ${isActive
+                const linkClass = `inline-flex shrink-0 items-center font-mono text-[11px] font-medium uppercase leading-tight tracking-[0.12em] transition-colors duration-200 ease-snap relative group py-1 whitespace-nowrap ${isActive
                   ? "text-accent"
                   : overHero
                     ? "text-white/90 hover:text-white"
@@ -313,7 +324,7 @@ export function Navigation() {
             <nav
               className="flex flex-col items-center justify-start min-h-[100dvh] pt-[max(5.5rem,env(safe-area-inset-top,0px)+4rem)] pb-[max(1.5rem,env(safe-area-inset-bottom,0px))] px-4 overflow-y-auto gap-6 sm:gap-8"
             >
-              {navLinks.map((link) => {
+              {primaryNavLinks.map((link) => {
                 const isActive = isNavLinkActive(link.href)
                 const href = linkHref(link.href)
                 const mobileClass = `font-serif text-2xl sm:text-3xl font-bold tracking-tight transition-colors py-1 ${isActive ? "text-accent" : "text-foreground hover:text-accent"

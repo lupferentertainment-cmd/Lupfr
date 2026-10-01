@@ -60,7 +60,10 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("mounts the events section eagerly so #events navigation is instant", () => {
-        expect(homePage).toContain('import { Events } from "@/components/events"')
+        // Oct 1 2026 redesign: Events renders via the new claude-home-experiences.tsx
+        // sibling component, still a plain top-of-file import (not next/dynamic) —
+        // the eager-mount guarantee this test protects is unchanged.
+        expect(homePage).toContain('import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"')
         expect(homePage).toContain("<Events />")
         expect(homePage).not.toContain('<DeferredHomeSection id="events"')
     })
@@ -79,13 +82,17 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("mounts the services section eagerly so fast scrolling from events never lands on a blank deferred placeholder", () => {
-        expect(homePage).toContain('import { Services } from "@/components/services"')
+        // Oct 1 2026 redesign: new claude-home-services.tsx sibling, still a plain
+        // eager import — components/services.tsx itself is retired from the home
+        // page (it's still used nowhere else; the eager-mount contract is unchanged).
+        expect(homePage).toContain('import { ClaudeHomeServices as Services } from "@/components/claude-home-services"')
         expect(homePage).toContain("<Services />")
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
     })
 
     it("mounts the brands section eagerly, just under the partners strip and news", () => {
-        expect(homePage).toContain('import { Brands } from "@/components/brands"')
+        // Oct 1 2026 redesign: new claude-home-brands.tsx sibling, still eager.
+        expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
         // The guardrail here is *eager* mounting — fast scrolling from the top
         // must never land on a blank deferred placeholder. The owner's News
         // strip (2026-08-08) sits between the partners marquee and Brands, so
@@ -121,7 +128,8 @@ describe("home page mobile transfer guardrails", () => {
     })
 
     it("mounts the artists section eagerly to avoid blank placeholders on fast laptop navigation", () => {
-        expect(homePage).toContain('import { Artists } from "@/components/artists"')
+        // Oct 1 2026 redesign: new claude-home-artists.tsx sibling, still eager.
+        expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
         expect(homePage).toContain("<Artists />")
         expect(homePage).not.toContain('<DeferredHomeSection id="artists"')
         expect(homePage).not.toContain('<DeferredHomeSection\n        id="artists"')

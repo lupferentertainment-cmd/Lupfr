@@ -27,7 +27,6 @@
 # read as a random photo in the strip. Label-only until a real logo lands
 # (same treatment as Maison Noir below).
 - name: FredEx Entertainment
-  url: https://www.fredexentertainment.com/
 
 - name: Nazarian Law
   url: https://nazarianfirm.com
@@ -57,3 +56,4 @@
 # logo asset but hasn't delivered it yet (2026-07-17) — when it lands, add
 # image: /corporate_partners/maison_noir.webp (+ url if one exists).
 - name: Maison Noir
+
