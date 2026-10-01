@@ -1,8 +1,5 @@
 /** @vitest-environment happy-dom */
 
-import fs from "node:fs"
-import path from "node:path"
-import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
@@ -23,8 +20,14 @@ import { getFounders } from "@/lib/data/team"
  * Navbar/Hero/News/Brands/Events/Services/Artists/Team become the new
  * claude-home-*.tsx sibling components; Partners/About/Follow the
  * Momentum/Contact/Footer are untouched. These are render-level contracts
- * for the new sections, plus a source-string lock on home-page.tsx so a
- * future edit can't silently widen or narrow that scope.
+ * for the new sections. The source-string "scope lock" on home-page.tsx
+ * lives in tests/unit/homepage-redesign-scope-lock.test.ts instead of here:
+ * this file runs under happy-dom (environmentMatchGlobs in vitest.config.ts
+ * forces that on every *.test.tsx), and node:fs/path/url reads crash there
+ * on Vercel's build machine ("No such built-in module: node:") even though
+ * they're fine under plain Node — the same reason the two sibling guardrail
+ * files (home-performance.test.ts, look-and-feel.test.ts) are .test.ts, not
+ * .test.tsx.
  */
 
 describe("new homepage sections render their real data", () => {
@@ -115,32 +118,5 @@ describe("new homepage sections render their real data", () => {
     await user.click(screen.getByRole("button", { name: "operating" }))
     const { liveEvents, corporateMedia } = getBrandsByDivision()
     expect(screen.getAllByText([...liveEvents, ...corporateMedia][0].tag).length).toBeGreaterThan(0)
-  })
-})
-
-describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
-  const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
-  const homePage = fs.readFileSync(path.join(rootDir, "components", "home-page.tsx"), "utf8")
-
-  it("swaps in the new design for every NEW section", () => {
-    expect(homePage).toContain('import { ClaudeHomeNavigation as Navigation } from "@/components/claude-home-navigation"')
-    expect(homePage).toContain('import { ClaudeHomeHero as Hero } from "@/components/claude-home-hero"')
-    expect(homePage).toContain('import { ClaudeHomeServices as Services } from "@/components/claude-home-services"')
-    expect(homePage).toContain('import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"')
-    expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
-    expect(homePage).toContain('import { ClaudeHomeMedia as News } from "@/components/claude-home-media"')
-    expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
-    expect(homePage).toMatch(/import\("@\/components\/claude-home-team"\)/)
-    expect(homePage).toContain('resolveDynamicComponent(m, "ClaudeHomeTeam", "@/components/claude-home-team")')
-  })
-
-  it("leaves every CURRENT section on its original component", () => {
-    expect(homePage).toContain('import { PartnersStrip } from "@/components/partners-strip"')
-    expect(homePage).toContain('import { FollowTheMomentum } from "@/components/follow-the-momentum"')
-    expect(homePage).toMatch(/import\("@\/components\/about"\)/)
-    expect(homePage).toContain('resolveDynamicComponent(m, "About", "@/components/about")')
-    expect(homePage).toMatch(/import\("@\/components\/contact"\)/)
-    expect(homePage).toMatch(/import\("@\/components\/footer"\)/)
-    expect(homePage).toContain("<LayloEmbed />")
   })
 })
