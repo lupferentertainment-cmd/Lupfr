@@ -218,7 +218,7 @@ function HeroDesktopParallaxSection({
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 500, damping: 28 }}
             >
-              Upcoming Events
+              Explore Experiences
             </motion.a>
           </motion.div>
         </motion.div>
