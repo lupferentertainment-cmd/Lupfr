@@ -1,138 +1,86 @@
 "use client"
 
+import Image from "next/image"
 import { useRef } from "react"
-import { m, useInView } from "framer-motion"
-import { ArrowUpRight, ChevronDown, ChevronUp } from "lucide-react"
 
 import { GoldShineText } from "@/components/gold-shine-text"
+import { ScrollReveal } from "@/components/scroll-reveal"
 import { getNews, newsDateLabel } from "@/lib/data/news"
+import { getPress } from "@/lib/data/press"
 
-const news = getNews()
+const news = getNews().slice(0, 4)
+const lead = news[0]
+const rest = news.slice(1)
+const leadImage = getPress()[0]?.image
 
-const CHEVRON_CLASS =
-  "flex size-8 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-200 hover:border-accent/50 hover:bg-accent/20 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 disabled:pointer-events-none disabled:opacity-40"
-
-/**
- * Home-page company-news strip, mounted directly below the Hero
- * (owner request 2026-08-08: "Added a few company news items below the Hero").
- *
- * Vertical scrolling carousel (owner request 2026-09-02: "make it a
- * scrolling carousel - just on home page not sub page", then corrected the
- * same day — "I liked the top to bottom, not side to side of the
- * announcements" — confirmed via a clarifying question: still a scrollable
- * carousel, but rows stack top-to-bottom and scroll vertically, not cards
- * side-to-side). Row markup matches the original pre-carousel static list
- * exactly (date/source | title | outbound-link arrow, full-width hairline
- * rows) — only the container is now a capped-height, vertically snap-
- * scrolling strip with up/down controls next to "News & media →" instead of
- * every row always being on-screen. `/media`'s own "News & Updates" feed
- * (lib/data/media.ts) keeps its own separate, untouched static layout.
- *
- * Every row is an external permalink, so each opens in a new tab with
- * `rel="noopener noreferrer"` and carries a visible ↗ affordance — matching
- * the treatment already used for outbound brand/partner links.
- */
 export function News() {
   const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once: true, margin: "-80px" })
-  const scrollerRef = useRef<HTMLUListElement>(null)
-
-  if (news.length === 0) return null
-
-  function scrollByRow(direction: 1 | -1) {
-    const node = scrollerRef.current
-    if (!node) return
-    const measured = node.firstElementChild instanceof HTMLElement ? node.firstElementChild.offsetHeight : 0
-    // Floor of 64px: a real row is always taller than this, and it keeps the
-    // scroll meaningful (and its direction testable) in environments — like
-    // jsdom/happy-dom — that don't compute real layout, where offsetHeight is 0.
-    node.scrollBy({ top: Math.max(64, measured) * direction, behavior: "smooth" })
-  }
+  if (!lead) return null
 
   return (
-    <section
-      ref={ref}
-      id="news"
-      aria-labelledby="news-section-title"
-      className="relative border-b border-border px-4 py-12 sm:px-6 sm:py-14 lg:px-12"
-    >
-      <div className="container relative z-10 mx-auto max-w-[1400px]">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+    <section ref={ref} className="border-b border-border px-4 py-20 sm:px-6 lg:px-12 lg:py-24">
+      <ScrollReveal variant="up" amountIn={0.18} className="container mx-auto max-w-[1400px]">
+        <div className="mb-10 flex items-end gap-5">
           <div>
-            <p id="news-section-title" className="lupfr-section-kicker mb-3">
-              The Latest · Company News
-            </p>
-            <h2 className="lupfr-heading--compact">
-              <GoldShineText scrollTargetRef={ref}>News</GoldShineText>
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">Press & Updates</p>
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-[clamp(34px,4vw,52px)] font-extrabold uppercase leading-[0.95]">
+              <GoldShineText scrollTargetRef={ref}>LUPFR in the News</GoldShineText>
             </h2>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/media"
-              className="text-gold-accent border-b border-[var(--gold)] pb-0.5 text-sm transition-colors hover:text-foreground"
-            >
-              News &amp; media →
-            </a>
-            {news.length > 1 ? (
-              <div className="hidden items-center gap-1.5 sm:flex">
-                <button
-                  type="button"
-                  onClick={() => scrollByRow(-1)}
-                  aria-label="Scroll to previous news"
-                  className={CHEVRON_CLASS}
-                >
-                  <ChevronUp className="size-4" aria-hidden />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollByRow(1)}
-                  aria-label="Scroll to next news"
-                  className={CHEVRON_CLASS}
-                >
-                  <ChevronDown className="size-4" aria-hidden />
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <span className="mb-2 hidden h-px flex-1 bg-gradient-to-r from-accent/50 to-transparent md:block" aria-hidden />
         </div>
 
-        <m.ul
-          ref={scrollerRef}
-          initial={{ opacity: 0, y: 14 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="scrollbar-hide m-0 max-h-none list-none snap-y snap-mandatory overflow-y-auto scroll-smooth border-t border-border p-0 sm:max-h-[280px]"
-        >
-          {news.map((item) => (
-            <li key={item.id} className="snap-start border-b border-border">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+          <a
+            href={lead.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative min-h-[360px] overflow-hidden rounded-sm border border-border bg-card"
+          >
+            {leadImage ? (
+              <Image
+                src={leadImage}
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 58vw, 100vw"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.025]"
+              />
+            ) : null}
+            <span className="absolute inset-0 bg-gradient-to-t from-[#080706]/95 via-[#080706]/35 to-[#080706]/35" aria-hidden />
+            <span className="absolute left-4 top-4 bg-accent px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-accent-foreground">
+              Latest
+            </span>
+            <span className="absolute inset-x-6 bottom-6 flex flex-col gap-3">
+              <span className="text-[13px] font-medium text-[#e8caa0]">
+                {lead.source} <span className="font-normal text-white/55">· {newsDateLabel(lead)}</span>
+              </span>
+              <span className="max-w-[22ch] text-balance font-[family-name:var(--font-work-sans)] text-[clamp(22px,2.4vw,32px)] font-semibold leading-[1.15] text-[#fdf6e8]">
+                {lead.title}
+              </span>
+              <span className="text-sm font-medium text-accent">Read more ↗</span>
+            </span>
+          </a>
+
+          <div className="flex flex-col border-t border-border">
+            {rest.map((item) => (
               <a
+                key={item.id}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col-reverse gap-[10px] py-[18px] transition-colors hover:bg-accent/5 sm:flex-row sm:items-center sm:gap-6 sm:py-5"
+                className="flex flex-1 flex-col justify-center gap-2 border-b border-border px-1 py-5 transition-colors hover:bg-accent/[0.04] sm:px-4"
               >
-                <span className="flex flex-row-reverse items-baseline justify-between gap-3 sm:w-[230px] sm:shrink-0 sm:flex-row sm:items-center sm:justify-start">
-                  <span className="text-gold-accent shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]">
-                    {item.source}
-                  </span>
-                  <span className="shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
-                    {newsDateLabel(item)}
-                  </span>
+                <span className="text-[12.5px] font-medium text-accent">
+                  {item.source} <span className="font-normal text-muted-foreground">· {newsDateLabel(item)}</span>
                 </span>
-
-                <span className="flex min-w-0 flex-1 items-start gap-2 text-[15px] leading-snug text-foreground transition-colors group-hover:text-accent sm:items-center">
-                  <span className="min-w-0">{item.title}</span>
-                  <ArrowUpRight
-                    size={14}
-                    className="mt-1 shrink-0 text-muted-foreground transition-colors group-hover:text-accent sm:mt-0"
-                    aria-hidden
-                  />
+                <span className="max-w-[46ch] text-[16px] font-medium leading-[1.4] text-foreground">
+                  {item.title} <span className="text-accent">↗</span>
                 </span>
               </a>
-            </li>
-          ))}
-        </m.ul>
-      </div>
+            ))}
+          </div>
+        </div>
+      </ScrollReveal>
     </section>
   )
 }
