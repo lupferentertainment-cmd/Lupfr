@@ -39,8 +39,8 @@ import { resolveDynamicComponent } from "@/lib/dynamic-component"
 // shift IS the CLS score. These values are each rounded up from the worst
 // observed width in their tier, not exact, so a bit of one-time shrink on
 // mount is expected and fine; a multi-thousand-pixel one is not.
-const ABOUT_MIN_HEIGHT = "min-h-[1150px] lg:min-h-[920px]"
-const TEAM_MIN_HEIGHT = "min-h-[3100px] sm:min-h-[3700px] lg:min-h-[1950px]"
+const ABOUT_MIN_HEIGHT = "min-h-[980px] lg:min-h-[780px]"
+const TEAM_MIN_HEIGHT = "min-h-[1800px] sm:min-h-[2000px] lg:min-h-[1450px]"
 
 /**
  * Owner report (2026-08-29): "there is a delay and black screen" scrolling
