@@ -24,10 +24,8 @@
   image: /corporate_partners/eria.webp
 
 # Delivered asset (fredex.webp) is a stage photograph with no wordmark, so it
-# read as a random photo in the strip. Label-only until a real logo lands
-# (same treatment as Maison Noir below).
+# read as a random photo in the strip. Label-only until a real logo lands.
 - name: FredEx Entertainment
-  url: https://www.fredexentertainment.com/
 
 - name: Nazarian Law
   url: https://nazarianfirm.com
