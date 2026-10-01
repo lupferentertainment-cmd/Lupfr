@@ -70,9 +70,21 @@ describe("new homepage sections render their real data", () => {
     }
   })
 
-  it("ClaudeHomeExperiences and ClaudeHomeMedia render without crashing on real data", () => {
-    expect(() => render(<ClaudeHomeExperiences />)).not.toThrow()
-    expect(() => render(<ClaudeHomeMedia />)).not.toThrow()
+  it("ClaudeHomeExperiences renders the 3 curated case studies with real event links", () => {
+    render(<ClaudeHomeExperiences />)
+    expect(screen.getByRole("heading", { name: /SEA.*SIDE Series/ })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "BAL MASQUE" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Zusebi 002: Golden Gate Live" })).toBeInTheDocument()
+    expect(screen.getAllByRole("link", { name: "View experience →" }).length).toBe(2)
+  })
+
+  it("ClaudeHomeMedia renders the lead event film and 3 real side clips", () => {
+    render(<ClaudeHomeMedia />)
+    expect(screen.getByText("Event Film")).toBeInTheDocument()
+    for (const title of ["Artist podcast", "SEA//SIDE 002", "Bal Masque"]) {
+      expect(screen.getByText(title)).toBeInTheDocument()
+    }
+    expect(screen.getByRole("link", { name: "See all videos →" })).toHaveAttribute("href", "/media")
   })
 
   it("ClaudeHomeArtists renders without crashing on real artist data", () => {
