@@ -24,8 +24,9 @@ export function Services() {
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.2em] text-accent">
               What We Do
             </p>
-            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-[clamp(44px,5.4vw,76px)] font-extrabold uppercase leading-[0.9] tracking-[-0.025em]">
-              <GoldShineText scrollTargetRef={ref}>Our Services</GoldShineText>
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-[clamp(44px,5.4vw,76px)] font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-foreground">
+              <span>Idea to </span>
+              <GoldShineText scrollTargetRef={ref}>Execution</GoldShineText>
             </h2>
           </div>
           <Link
