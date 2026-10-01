@@ -5,7 +5,7 @@ import { memo } from "react"
 
 /** Shared hero copy rotation (mounted in parent for phrase interval). */
 export const HERO_PHRASES = [
-  "Redefining the Music Experience",
+  "Real Experiences. Music-Led. Built for You.",
 ]
 
 export const PHRASE_DURATION_MS = 4500
