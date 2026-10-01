@@ -120,9 +120,9 @@ export function Brands() {
     <section id="brands" ref={ref} className="lupfr-section-pad px-4 sm:px-6 lg:px-12">
       <ScrollReveal variant="up" amountIn={0.2} className="container mx-auto max-w-[1400px]">
         <div className="mb-10 sm:mb-12 md:mb-14">
-          <p className="lupfr-section-kicker mb-4">The Portfolio · Five Series</p>
+          <p className="lupfr-section-kicker mb-4">Ten Platforms. One Company.</p>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <h2>
+            <h2 className="font-[family-name:var(--font-barlow-condensed)] text-[clamp(44px,5vw,68px)] font-extrabold uppercase leading-[0.92] tracking-[-0.025em]">
               <GoldShineText scrollTargetRef={ref}>Our Brands</GoldShineText>
             </h2>
             <div className="flex flex-wrap items-center gap-4 sm:gap-6">
