@@ -172,7 +172,7 @@ export function HeroMobileStaticSection({
               href="#events"
               className="hero-outline-cta group flex items-center gap-2 px-6 py-3 border font-semibold tracking-normal rounded-full hover:border-accent hover:text-accent transition-[color,border-color,transform] duration-150 ease-out max-w-full min-w-0 justify-center whitespace-nowrap [font-size:var(--lupfr-pill-cta-fs)] leading-snug hover:scale-[1.03] active:scale-[0.98]"
             >
-              Upcoming Events
+              Explore Experiences
             </a>
           </div>
         </div>
