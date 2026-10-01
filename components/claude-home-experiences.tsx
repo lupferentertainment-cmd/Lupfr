@@ -73,7 +73,7 @@ const caseStudies: CaseStudy[] = [
     video: { mp4: "/events/seaside_series.mp4", webm: "/events/seaside_series.webm" },
     main: { src: "/events/seaside_series_dj.webp", alt: "DJ set aboard a SEA//SIDE Series sailing" },
     side1: { src: "/events/seaside_series_interview.webp", alt: "SEA//SIDE Series guest interview on the water" },
-    side2: { src: "/events/seaside_series_dj.webp", alt: "DJ set aboard a SEA//SIDE Series sailing" },
+    side2: { src: "/events/seaside_series_dj2.webp", alt: "DJ performing aboard a SEA//SIDE Series sailing, Golden Gate Bridge behind" },
   },
   {
     title: balMasque.title,
@@ -83,7 +83,6 @@ const caseStudies: CaseStudy[] = [
     delivered: ["Creative direction", "Full production suite", "Performers & DJs", "Photography"],
     href: eventDetailPath("bal-masque"),
     linkLabel: "View experience →",
-    video: { mp4: "/events/bal_masque_loop.mp4", webm: "/events/bal_masque_loop.webm" },
     main: { src: "/events/bal_masque_wings.webp", alt: "Bal Masque — feathered wings installation" },
     side1: { src: "/events/bal_masque_acrobat.webp", alt: "Bal Masque — aerial acrobat performance" },
     side2: { src: "/events/bal_masque_masque_detail.webp", alt: "Bal Masque — masquerade detail" },
