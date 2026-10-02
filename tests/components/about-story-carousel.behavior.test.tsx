@@ -3,8 +3,12 @@
 /**
  * Story carousel regression coverage (owner restructure, 2026-08-29): the
  * About section's right column moved from a single static press card to a
- * 6-slide carousel (5 story graphics + the SF Post press card). See
+ * carousel of story graphics + the SF Post press card. See
  * components/about.tsx and docs/DESIGN.md phase 39.
+ *
+ * 2026-10-02 round 5: a new lead slide (h-01.webp, the "Built From the
+ * Ground Up" boat-DJ photo) was added ahead of the original 5, making this
+ * a 7-slide carousel (6 story graphics + the press card) instead of 6.
  */
 
 import { describe, it, expect, vi } from "vitest"
@@ -25,11 +29,11 @@ function carousel(): HTMLElement {
 }
 
 describe("About — story carousel", () => {
-  it("starts on slide 1 of 6 with the first story graphic visible", () => {
+  it("starts on slide 1 of 7 with the new lead story graphic visible", () => {
     render(<About />)
     const region = carousel()
-    expect(region.textContent).toContain("01 / 06")
-    expect(region.querySelector('img[src="/story/h-02.webp"]')).not.toBeNull()
+    expect(region.textContent).toContain("01 / 07")
+    expect(region.querySelector('img[src="/story/h-01.webp"]')).not.toBeNull()
   })
 
   it("advances to the next slide via the arrow button", async () => {
@@ -37,7 +41,7 @@ describe("About — story carousel", () => {
     render(<About />)
     await user.click(screen.getByRole("button", { name: "Next slide" }))
     const region = carousel()
-    expect(region.textContent).toContain("02 / 06")
+    expect(region.textContent).toContain("02 / 07")
   })
 
   it("wraps from the first slide back to the last via the previous arrow", async () => {
@@ -45,21 +49,21 @@ describe("About — story carousel", () => {
     render(<About />)
     await user.click(screen.getByRole("button", { name: "Previous slide" }))
     const region = carousel()
-    expect(region.textContent).toContain("06 / 06")
+    expect(region.textContent).toContain("07 / 07")
   })
 
-  it("jumps straight to the press card (slide 6) via its dot", async () => {
+  it("jumps straight to the press card (slide 7) via its dot", async () => {
     const user = userEvent.setup()
     render(<About />)
     const dots = screen.getAllByRole("tab", { name: /Show slide/ })
-    expect(dots).toHaveLength(6)
-    await user.click(dots[5])
+    expect(dots).toHaveLength(7)
+    await user.click(dots[6])
     const region = carousel()
-    expect(region.textContent).toContain("06 / 06")
+    expect(region.textContent).toContain("07 / 07")
     expect(screen.getByRole("link", { name: /Read ".*" on/ })).toBeInTheDocument()
   })
 
-  it("renders all 6 dots with the active one marked aria-selected", async () => {
+  it("renders all 7 dots with the active one marked aria-selected", async () => {
     const user = userEvent.setup()
     render(<About />)
     const dots = screen.getAllByRole("tab", { name: /Show slide/ })
@@ -73,15 +77,15 @@ describe("About — story carousel", () => {
     render(<About />)
     const region = carousel()
     fireEvent.keyDown(region, { key: "ArrowRight" })
-    expect(region.textContent).toContain("02 / 06")
+    expect(region.textContent).toContain("02 / 07")
     fireEvent.keyDown(region, { key: "ArrowLeft" })
-    expect(region.textContent).toContain("01 / 06")
+    expect(region.textContent).toContain("01 / 07")
   })
 
   it("ignores non-arrow keys", () => {
     render(<About />)
     const region = carousel()
     fireEvent.keyDown(region, { key: "Enter" })
-    expect(region.textContent).toContain("01 / 06")
+    expect(region.textContent).toContain("01 / 07")
   })
 })

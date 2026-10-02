@@ -171,11 +171,16 @@ export function Footer() {
                 </span>
                 <span className="group-hover:underline underline-offset-4">will@lupfr.com</span>
               </motion.a>
+              {/* 2026-10-02 (owner, explicit direct instruction): "update our
+                  business address at the bottom to '87 N Raymond Ave, Floor
+                  6, Pasadena, CA'". footer.tsx is otherwise exempt from the
+                  literal-design-port effort (see tmp/plan.md) — this one
+                  field is a named exception, not a reversal of that rule. */}
               <p className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">
                   <MapPin size={15} aria-hidden />
                 </span>
-                <span>Old Town Pasadena — 6th Floor</span>
+                <span>87 N Raymond Ave, Floor 6, Pasadena, CA</span>
               </p>
               <p className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-secondary/60 text-accent">

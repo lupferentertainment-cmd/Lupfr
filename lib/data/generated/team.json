@@ -51,5 +51,16 @@
         "label": "HOME MARKET"
       }
     ]
+  },
+  {
+    "name": "Sky Terrell",
+    "title": "Co-Founder, CBO, Managing Partner",
+    "location": "Los Angeles, CA",
+    "teams": [
+      "Exec",
+      "LA"
+    ],
+    "founder": true,
+    "bio": "Sky is a co-founder of LUPFR, serving as Chief Business Officer and Managing Partner."
   }
 ]

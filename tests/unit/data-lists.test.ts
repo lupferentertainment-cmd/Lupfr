@@ -45,23 +45,28 @@ describe("team list", () => {
 
   // Roster removed 2026-09-02 (owner punch list: "Removed Zac, Kylie, and
   // Cianna" — Will and Eliott, both founders, are the only members left).
+  // Sky Terrell added 2026-10-02 (owner: "Sky has signed, he can go on
+  // site") as a third founder, still Exec/roster-empty.
   it("Exec is the founders; the roster is empty", () => {
     const team = getTeam()
     const exec = team.filter((m) => m.teams.includes("Exec"))
-    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian"])
+    expect(exec.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian", "Sky Terrell"])
     expect(getRoster()).toEqual([])
   })
 
   it("founders and roster partition the team, and every founder has a bio", () => {
     const founders = getFounders()
     const roster = getRoster()
-    expect(founders.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian"])
+    expect(founders.map((m) => m.name)).toEqual(["Will Lupfer", "Eliott Nazarian", "Sky Terrell"])
     expect(founders.length + roster.length).toBe(getTeam().length)
     expect(founders.some((m) => roster.includes(m))).toBe(false)
     for (const f of founders) {
       // The founders row shows the bio inline, so an empty one would render blank.
       expect(f.bio.length, f.name).toBeGreaterThan(80)
-      expect(f.image, f.name).toBeTruthy()
+      // Every founder *except* one still pending a real portrait (Sky
+      // Terrell, added 2026-10-02 — no headshot supplied yet) has an image;
+      // FounderCard's own placeholder ("Portrait coming soon") covers the gap.
+      if (f.name !== "Sky Terrell") expect(f.image, f.name).toBeTruthy()
     }
   })
 })

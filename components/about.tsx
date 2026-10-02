@@ -39,6 +39,19 @@ const featuredPress = getPress()[0]
  */
 const STORY_SLIDES = [
   {
+    // 2026-10-02 fix (owner: "Add the built from the ground up photo from
+    // the new design file (see screenshot for reference) and file attached
+    // for imge" — a real nighttime DJ set aboard a boat, city skyline and a
+    // Ferris wheel behind). Added as the lead slide since it's the new
+    // headline asset for this section; the design file's own revised copy
+    // for this section separately describes the brand's origin as "a single
+    // event on a 50-person fishing boat" — this looks like that same real
+    // event, though the body copy itself wasn't part of this request and is
+    // left as-is pending a direct confirmation.
+    image: "/story/h-01.webp",
+    alt: "LUPFR story graphic: a DJ set aboard a boat at night, city skyline and a lit Ferris wheel behind.",
+  },
+  {
     image: "/story/h-02.webp",
     alt: "LUPFR story graphic: Redefining the Music Experience — The Mission, a DJ booth aboard a LUPFR yacht set.",
   },

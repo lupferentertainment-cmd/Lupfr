@@ -590,9 +590,9 @@ describe("contact structure", () => {
 describe("footer contact info", () => {
   it("footer carries email, location, and the protected phone", () => {
     expect(footer).toContain("will@lupfr.com")
-    // HQ copy updated (owner restructure note, 2026-08-28): "Old Town Pasadena — 6th Floor".
-    expect(footer).toContain("Old Town Pasadena")
-    expect(footer).toContain("6th Floor")
+    // HQ copy updated (owner's direct instruction, 2026-10-02): the full
+    // street address, replacing the prior "Old Town Pasadena — 6th Floor".
+    expect(footer).toContain("87 N Raymond Ave, Floor 6, Pasadena, CA")
     expect(footer).toContain("ProtectedPhone")
   })
 })

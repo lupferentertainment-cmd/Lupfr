@@ -110,8 +110,15 @@ export function ClaudeHomeHero() {
              * canvas around it. A plain <img> is used instead of
              * next/image here since the crop needs direct, pixel-exact
              * width/position control next/image's `fill` mode doesn't
-             * allow. */}
-            <div className="relative aspect-[534/578] w-[clamp(100px,12vw,180px)] flex-none overflow-hidden drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]">
+             * allow.
+             *
+             * Round 5 fix (owner, after seeing the crop live: "much better -
+             * logo is too big on hero"). The crop itself was right — just
+             * the box it's sized into came in too large relative to the
+             * LUPFR wordmark beside it. Scaled the clamp() down (~35-40%
+             * smaller at every breakpoint) so the mark reads as a companion
+             * to the wordmark instead of competing with/outsizing it. */}
+            <div className="relative aspect-[534/578] w-[clamp(64px,7.2vw,112px)] flex-none overflow-hidden drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]">
               {/* eslint-disable-next-line @next/next/no-img-element -- precise crop of the source canvas's internal padding; next/image's `fill` can't offset by percentages like this */}
               <img
                 src="/images/le-logo.webp"

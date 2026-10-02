@@ -85,3 +85,20 @@
       label: PARTNERSHIPS & GROWTH
     - value: LA
       label: HOME MARKET
+
+# 2026-10-02 (owner: "On Founder, add Sky Terrell as shown in the current
+# design file" — see that screenshot for the exact name/role/bio text below,
+# transcribed verbatim). Owner confirmed directly before this was added:
+# "Sky has signed, he can go on site." No `image` yet — no headshot has been
+# supplied, and the design tool's own current state agrees ("Sky's card no
+# longer has a spot to drop a photo in. When you have his headshot, I'll
+# switch it back to a portrait.") — FounderCard renders its placeholder
+# ("Portrait coming soon") until a real photo exists, same as any other
+# member pending a portrait. No quote or stat-pill row shown for Sky in the
+# design file, so none are added here.
+- name: Sky Terrell
+  title: Co-Founder, CBO, Managing Partner
+  location: Los Angeles, CA
+  teams: [Exec, LA]
+  founder: true
+  bio: "Sky is a co-founder of LUPFR, serving as Chief Business Officer and Managing Partner."

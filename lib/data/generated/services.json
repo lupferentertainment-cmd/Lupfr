@@ -2,7 +2,7 @@
   {
     "icon": "Hospitality",
     "title": "Private Events",
-    "image": "/services/private-events-2026.webp",
+    "image": "/services/private-events-2026-ballroom.webp",
     "description": "Celebrations and company gatherings, start to finish.",
     "features": [
       "Celebrations & birthdays",
@@ -76,7 +76,7 @@
   {
     "icon": "Camera",
     "title": "Content & Media",
-    "image": "/platforms/platform-media.webp",
+    "image": "/seaside/dj-arms.webp",
     "description": "Photo, video and social media management.",
     "features": [
       "Photography",

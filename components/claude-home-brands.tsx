@@ -69,11 +69,20 @@ function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: 
           {brand.tag}
         </span>
         <span className="absolute right-4 top-[18px] font-mono text-[10px] text-white/45">{numeral}</span>
-        <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
+        <div className="absolute inset-x-0 bottom-0 flex flex-col p-5 pb-6">
+          {/* 2026-10-02 fix (owner: "make sure all brand/platform titles are
+              at the same height level"). This block anchors to the card's
+              bottom edge as one unit, so a 2-line description vs. a
+              line-clamp-3'd 3-line one used to change the whole block's
+              height and push each card's title to a different Y — titles
+              only lined up by coincidence. Reserving a fixed 3-line height
+              for the description (whether it needs all 3 lines or not) keeps
+              the block's total height constant across every card, so every
+              title sits the same distance above its card's bottom edge. */}
           <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white">
             <BrandSlashText text={brand.title} color={brand.accent} />
           </h3>
-          <p className="mt-2.5 line-clamp-3 text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
+          <p className="mt-2.5 line-clamp-3 min-h-[61px] text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
           <div className="mt-3.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: brand.accent }}>
             Explore <span aria-hidden>→</span>
           </div>

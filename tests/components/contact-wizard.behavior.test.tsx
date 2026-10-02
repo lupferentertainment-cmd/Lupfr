@@ -110,7 +110,7 @@ describe("Contact — Start Planning wizard", () => {
     await user.click(screen.getByRole("button", { name: "Next" }))
     await user.click(screen.getByRole("button", { name: /^150–400/ }))
     await user.click(screen.getByRole("button", { name: "Next" }))
-    await user.click(screen.getByRole("button", { name: /^\$15K–50K/ }))
+    await user.click(screen.getByRole("button", { name: /^\$25K–50K/ }))
     await user.click(screen.getByRole("button", { name: "Next" }))
     await user.type(screen.getByLabelText("Date"), "2026-12-05")
     await user.click(screen.getByRole("button", { name: "Flexible" }))
@@ -137,7 +137,7 @@ describe("Contact — Start Planning wizard", () => {
       phone: "5551234567",
       services: [firstService],
       guestCount: "150–400",
-      budget: "$15K–50K",
+      budget: "$25K–50K",
       city: "Los Angeles",
       eventDate: "2026-12-05",
       flexibleDate: true,

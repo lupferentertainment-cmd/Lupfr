@@ -77,11 +77,14 @@ const GUEST_BUCKETS = [
   { label: "400+", sub: "Flagship" },
 ] as const
 
+// 2026-10-02 fix, round 5 (owner: "on budget, put lowest budget at $10-25k,
+// then $25-50k, then 50-150k, then 150k+") — 4 tiers replacing the prior 5;
+// the removed "Under $5K" floor and the old "$5K-15K" tier are folded into
+// the new $10K-25K starting tier.
 const BUDGET_BUCKETS = [
-  { label: "Under $5K", sub: "Starter" },
-  { label: "$5K–15K", sub: "Standard" },
-  { label: "$15K–50K", sub: "Premium" },
-  { label: "$50K–150K", sub: "Large-scale" },
+  { label: "$10K–25K", sub: "Starter" },
+  { label: "$25K–50K", sub: "Standard" },
+  { label: "$50K–150K", sub: "Premium" },
   { label: "$150K+", sub: "Flagship" },
 ] as const
 
@@ -504,7 +507,7 @@ export function Contact() {
                       <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                         What&apos;s the budget?
                       </h3>
-                      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                         {BUDGET_BUCKETS.map(({ label, sub }) => {
                           const isActive = budget === label
                           return (

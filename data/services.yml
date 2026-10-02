@@ -26,10 +26,27 @@
 # prior services.yml equivalent; reuses public/platforms/platform-media.webp
 # (LUPFR's real media team on a shoot), already used elsewhere on the site
 # for the same "media/content" meaning, rather than inventing a new asset.
+#
+# 2026-10-02 fix, round 5 (owner screenshots of the Claude design tool's own
+# Services tabs: "change the images I have selected for services"):
+# - Private Events now uses the owner's own attached photo (the real Bal
+#   Masque ballroom crowd shot, Martineau Arts credit) — matches the design
+#   tool's Private tab photo exactly (same venue, same angle, same EXIT
+#   sign/speaker stacks). The old acrobat/hexagon-rig photo stays on disk.
+# - Content & Media swapped to public/seaside/dj-arms.webp — a real,
+#   already-on-site SEA//SIDE DJ-booth/crowd photo that matches the design
+#   tool's Media tab photo far more closely than the old two-person camera
+#   portrait (which doesn't match that reference at all).
+# - Brand Activations: NOT changed. The design tool's Brand tab shows a
+#   VYBES-branded banner on a boat — the current brand-partnerships-2026.webp
+#   is already a real, different-angle photo of that same VYBES boat
+#   activation, so it already matches; no replacement file was attached for
+#   a different VYBES shot, so swapping would mean guessing instead of using
+#   real owner-verified media.
 
 - icon: Hospitality
   title: Private Events
-  image: "/services/private-events-2026.webp"
+  image: "/services/private-events-2026-ballroom.webp"
   description: "Celebrations and company gatherings, start to finish."
   features:
     - Celebrations & birthdays
@@ -93,7 +110,7 @@
 
 - icon: Camera
   title: Content & Media
-  image: "/platforms/platform-media.webp"
+  image: "/seaside/dj-arms.webp"
   description: "Photo, video and social media management."
   features:
     - Photography

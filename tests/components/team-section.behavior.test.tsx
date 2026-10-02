@@ -94,8 +94,9 @@ describe("Team — founder layout matches the design file's split layout (owner 
     // no per-founder wrapper card, no click-to-expand affordance.
     const grid = founders.querySelector(":scope > div.grid")
     expect(grid).not.toBeNull()
-    // 2 founders × (portrait + copy) = 4 direct grid children.
-    expect(grid!.children).toHaveLength(4)
+    // 3 founders × (portrait + copy) = 6 direct grid children (Sky Terrell
+    // added 2026-10-02 as a third founder).
+    expect(grid!.children).toHaveLength(6)
     // No click-to-expand buttons inside the founders region — the roster grid
     // that used to sit below (with its own toggle buttons) is gone (owner
     // punch list, 2026-09-02: Zac/Kylie/Cianna removed, founders-only now).

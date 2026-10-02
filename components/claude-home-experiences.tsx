@@ -108,7 +108,11 @@ interface CaseStudy {
   video?: { mp4: string; webm: string }
   main: { src: string; alt: string }
   side1: { src: string; alt: string }
-  side2: { src: string; alt: string }
+  /**
+   * `position` is an optional CSS object-position override (default center).
+   * SEA//SIDE's side2 uses it — see that photo's own comment below.
+   */
+  side2: { src: string; alt: string; position?: string }
 }
 
 const caseStudies: CaseStudy[] = [
@@ -132,7 +136,18 @@ const caseStudies: CaseStudy[] = [
     video: { mp4: "/events/seaside_series.mp4", webm: "/events/seaside_series.webm" },
     main: { src: "/events/seaside_series_dj.webp", alt: "DJ set aboard a SEA//SIDE Series sailing" },
     side1: { src: "/events/seaside_series_interview.webp", alt: "SEA//SIDE Series guest interview on the water" },
-    side2: { src: "/events/seaside_series_dj2.webp", alt: "DJ performing aboard a SEA//SIDE Series sailing, Golden Gate Bridge behind" },
+    // 2026-10-02 fix (owner: "this should be the bottom right photo for
+    // SEA//SIDE Series (get their full heads in)" — a new on-deck interview
+    // photo). This side2 slot is a near-square crop, but the source photo is
+    // portrait (1117x1408), so object-cover's default center position would
+    // clip the tallest guest's hair at the very top (verified by rendering
+    // the actual crop math before/after). Anchoring to the top keeps all
+    // three full heads in frame with clean headroom.
+    side2: {
+      src: "/events/seaside_series_group_interview.webp",
+      alt: "Guests interviewed on deck during a SEA//SIDE Series sailing",
+      position: "center top",
+    },
   },
   {
     title: balMasque.title,
@@ -201,7 +216,14 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
           <Image src={study.side1.src} alt={study.side1.alt} fill sizes="(min-width:1024px) 20vw, 50vw" className="object-cover" />
         </div>
         <div className="relative overflow-hidden bg-[#0d0c0a]">
-          <Image src={study.side2.src} alt={study.side2.alt} fill sizes="(min-width:1024px) 20vw, 50vw" className="object-cover" />
+          <Image
+            src={study.side2.src}
+            alt={study.side2.alt}
+            fill
+            sizes="(min-width:1024px) 20vw, 50vw"
+            className="object-cover"
+            style={study.side2.position ? { objectPosition: study.side2.position } : undefined}
+          />
         </div>
       </div>
       <div className="mt-[-4px] flex min-w-0 max-w-[560px] flex-col gap-[18px]">
