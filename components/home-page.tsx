@@ -70,14 +70,23 @@ export function HomePage() {
       <Navigation />
       <Hero />
       <PartnersStrip />
-      {/* Owner 2026-08-08: "company news items below the Hero". Placed after the
-          partners marquee rather than before it, because an earlier owner
-          request (2026-07-11) pins that strip *directly* under the hero — this
-          order satisfies both. */}
-      <News />
-      <Brands />
-      <Events />
+      {/* Section order below Partners follows the real design file (LUPFR
+          Website v3.dc.html / claude-redesign-reference.html) section-marker
+          outline verbatim: Services -> Featured Experiences (Events) ->
+          Our Brands (Brands) -> Media & News (News) -> Past Artists (Artists).
+          The previous order here (News/Brands/Events/Services) carried over a
+          stale "company news items below the Hero" comment from the OLD,
+          since-retired components/news.tsx home strip (owner 2026-08-08) —
+          that component is no longer rendered on home at all (News here is
+          ClaudeHomeMedia, a different, later-positioned section in the real
+          design), so that ordering rationale no longer applies and the
+          sections are restored to the design's actual sequence (owner report
+          2026-10-01, "didnt come out in right order... still well off from
+          the claude design"). */}
       <Services />
+      <Events />
+      <Brands />
+      <News />
       <Artists />
       <DeferredHomeSection id="about" estimatedHeightClassName={ABOUT_MIN_HEIGHT}>
         <About />

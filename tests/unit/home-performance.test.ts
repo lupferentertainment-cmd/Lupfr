@@ -81,7 +81,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(deferredSection).toContain("deferredSectionShouldMountForHash")
     })
 
-    it("mounts the services section eagerly so fast scrolling from events never lands on a blank deferred placeholder", () => {
+    it("mounts the services section eagerly so fast scrolling into or out of it never lands on a blank deferred placeholder", () => {
         // Oct 1 2026 redesign: new claude-home-services.tsx sibling, still a plain
         // eager import — components/services.tsx itself is retired from the home
         // page (it's still used nowhere else; the eager-mount contract is unchanged).
@@ -90,17 +90,20 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
     })
 
-    it("mounts the brands section eagerly, just under the partners strip and news", () => {
+    it("mounts the brands section eagerly, in the design file's real order under the partners strip", () => {
         // Oct 1 2026 redesign: new claude-home-brands.tsx sibling, still eager.
         expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
         // The guardrail here is *eager* mounting — fast scrolling from the top
-        // must never land on a blank deferred placeholder. The owner's News
-        // strip (2026-08-08) sits between the partners marquee and Brands, so
-        // the order allows it while the eager-mount contract stays exact.
-        // News is a short, image-free text list, so it does not reintroduce the
-        // above-the-fold cost this suite exists to bound; the mobile-perf
-        // budgets in verify-mobile-perf remain the enforcing gate.
-        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<News \/>\s*<Brands \/>\s*<Events \/>/)
+        // must never land on a blank deferred placeholder. 2026-10-01 fix:
+        // the order itself was wrong (News/Brands were sitting directly under
+        // Partners, ahead of Services/Events, the reverse of the real design
+        // file's section-marker order) — see docs/DESIGN.md's "Home section
+        // order corrected" entry. Order is now Services -> Events -> Brands ->
+        // News, matching LUPFR Website v3.dc.html exactly. News (ClaudeHomeMedia)
+        // is a video reel, not the old short text list the stale comment here
+        // used to describe; the mobile-perf budgets in verify-mobile-perf
+        // remain the enforcing gate for above-the-fold cost either way.
+        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<News \/>/)
         expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     })
