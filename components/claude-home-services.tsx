@@ -9,6 +9,16 @@ import { getServices, servicePath } from "@/lib/data/services"
 
 const services = getServices()
 
+// 2026-10-02 fix (owner: "change music and entertainment to Music (so it
+// fits on the row same as others)"). "Music & Entertainment" is the only
+// one of the 6 tab labels long enough to wrap to a 2nd line in this timeline
+// row — a shorter display label for the row only, not a data rename, so the
+// detail heading/description/features and every other reference to the full
+// "Music & Entertainment" service name (lib/data/services.ts, the services
+// directory page, claude-home-experiences.tsx's "Services Delivered" tags)
+// are unaffected.
+const TAB_LABEL_OVERRIDES: Record<string, string> = { "Music & Entertainment": "Music" }
+
 /**
  * 2026-10-02 fix — full-site literal port (owner instruction: "how can we
  * get the actual claude file I built onto the website"). The design file's
@@ -64,7 +74,7 @@ export function ClaudeHomeServices() {
                       <Icon size={18} strokeWidth={1.6} className={isActive ? "text-[#1a1408]" : "text-[#c9a869]"} />
                     </span>
                   ) : null}
-                  <span className={`font-condensed text-[13px] font-extrabold uppercase leading-none sm:text-[15px] ${isActive ? "text-[#e8caa0]" : "text-[#bdb6a9]"}`}>{service.title}</span>
+                  <span className={`font-condensed text-[13px] font-extrabold uppercase leading-none sm:text-[15px] ${isActive ? "text-[#e8caa0]" : "text-[#bdb6a9]"}`}>{TAB_LABEL_OVERRIDES[service.title] ?? service.title}</span>
                 </button>
               )
             })}

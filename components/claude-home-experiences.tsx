@@ -57,6 +57,18 @@ function monthYear(dateISO: string): string {
 // instead of a static frame, which reads as a different (smaller/quieter) card.
 const seasideAccent = getBrandBySlug("seaside")?.accent
 
+// 2026-10-02 fix (owner, Claude design app screenshot: "on the bal masque
+// and zusebi golden gate live add the IN//SIDE and OUT//SIDE in just like
+// the screenshot from claude i included"). The design file shows each case
+// study with its own brand eyebrow above the title — SEA//SIDE Series
+// already carries its brand identity in the title itself (BrandSlashText).
+// Bal Masque (an indoor masquerade at SF's Hibernia Bank) is a real
+// IN//SIDE event and Golden Gate Live (an open-air sunset pop-up at Lands
+// End) is a real OUT//SIDE event — both already-verified LUPFR brands
+// (data/brands.yml), not fabricated tags.
+const insideAccent = getBrandBySlug("inside")?.accent
+const outsideAccent = getBrandBySlug("outside")?.accent
+
 // 2026-10-02 fix, round 2 (owner screenshots of the Claude design file:
 // "it should align everything to that"). Each case study's "Services
 // Delivered" list (icon-badge + bold category label + one-line detail) is
@@ -94,6 +106,9 @@ interface DeliveredItem {
 
 interface CaseStudy {
   title: React.ReactNode
+  /** Per-card brand eyebrow (IN//SIDE, OUT//SIDE) — omitted for SEA//SIDE
+   * Series, whose title already carries its own brand identity. */
+  brand?: { label: string; accent?: string }
   meta: string
   mediaLabel: string
   desc: string
@@ -152,6 +167,7 @@ const caseStudies: CaseStudy[] = [
   },
   {
     title: balMasque.title,
+    brand: { label: "IN//SIDE", accent: insideAccent },
     meta: `SAN FRANCISCO · ${monthYear(balMasque.dateISO!)}`,
     mediaLabel: "PHOTOGRAPHY",
     desc: "A masquerade evening in San Francisco with Maison Noir, where dress code, design and music set a new standard for events.",
@@ -173,6 +189,7 @@ const caseStudies: CaseStudy[] = [
   },
   {
     title: goldenGateLive.title,
+    brand: { label: "OUT//SIDE", accent: outsideAccent },
     meta: `LANDS END, SAN FRANCISCO · ${monthYear(goldenGateLive.dateISO!)}`,
     mediaLabel: "FULL SET",
     desc: "An open-air sunset pop up at Lands End. Zusebi played live to the city, with the setting doing the rest.",
@@ -211,7 +228,13 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
               <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} className="h-full w-full object-cover" />
             </div>
           ) : null}
-          <span className="absolute bottom-3.5 left-3.5 rounded-sm border border-white/20 bg-black/60 px-2.5 py-1.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-[#f3efe6]">{study.mediaLabel}</span>
+          {/* 2026-10-02 fix (owner: "Hero headers - no black background,
+              just fit into the hero videos as is"): the design file's own
+              media-type label (e.g. "PHOTOGRAPHY") sits directly on the
+              photo as plain mono text — no bordered black chip. Dropped the
+              border/bg-black box; a drop-shadow keeps it legible over any
+              photo instead. */}
+          <span className="absolute bottom-3.5 left-3.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]">{study.mediaLabel}</span>
         </div>
         <div className="relative overflow-hidden bg-[#0d0c0a]">
           <Image src={study.side1.src} alt={study.side1.alt} fill sizes="(min-width:1024px) 20vw, 50vw" className="object-cover" />
@@ -228,6 +251,11 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
         </div>
       </div>
       <div className="mt-[-4px] flex min-w-0 max-w-[560px] flex-col gap-[18px]">
+        {study.brand ? (
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#8f887c]">
+            <BrandSlashText text={study.brand.label} color={study.brand.accent} />
+          </p>
+        ) : null}
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c]">{study.meta}</p>
         <h3 className="font-condensed text-[clamp(32px,4vw,52px)] font-extrabold uppercase leading-[0.94] text-[#f3efe6]">{study.title}</h3>
         <p className="text-base leading-relaxed text-[#bdb6a9]">{study.desc}</p>

@@ -72,8 +72,12 @@ export function ClaudeHomeArtists() {
             as the design's `:last-child:nth-child(odd)` rule.
             2026-10-02 fix (owner: "this should fit better / be smaller"):
             tightened the row-height clamp ~25% (200-280px -> 150-220px) so
-            the wall takes up less vertical real estate. */}
-        <div className="grid auto-rows-[clamp(150px,14vw,220px)] grid-cols-2 gap-3 [grid-auto-flow:dense] lg:grid-cols-4">
+            the wall takes up less vertical real estate.
+            Round 2 (owner: "they still dont fit on the screen fully. we
+            want it to be a bit smaller on desktop so we can see it all"):
+            the 220px desktop ceiling was still too tall — capped further to
+            170px, with the floor/scaling trimmed to match. */}
+        <div className="grid auto-rows-[clamp(120px,11vw,170px)] grid-cols-2 gap-3 [grid-auto-flow:dense] lg:grid-cols-4">
           {artists.map((artist, i) => {
             const href = artist.spotify ?? `/artists?artist=${artistSlug(artist.name)}`
             const external = Boolean(artist.spotify)

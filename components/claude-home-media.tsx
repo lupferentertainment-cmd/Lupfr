@@ -104,12 +104,22 @@ export function ClaudeHomeMedia() {
               {/* 2026-10-02 fix (owner: "LUPFR in the news - make it square
                   so image of me can be seen fully"): the short, wide
                   min-h-[260px] card cropped most of the photo out — square
-                  gives the lead photo its full frame instead. */}
+                  gave the lead photo its full frame.
+                  Round 2 (owner: "the image of VoyageLA article is too
+                  large. See how we did it in the claude file and size down
+                  similar to that"): `aspect-square` against this grid's wide
+                  1.25fr column scaled the card to ~700px tall on desktop —
+                  far bigger than the design file's own modest lead-photo
+                  size. Swapped the width-driven aspect ratio for a fixed,
+                  capped height so the card's size no longer scales with the
+                  column's width; still tall enough to show the photo
+                  properly (not the old short strip), just not viewport-
+                  dominating. */}
               <a
                 href={newsLead.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex aspect-square flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
+                className="relative flex h-[280px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:h-[320px] sm:p-7"
               >
                 {newsLead.image ? (
                   <Image src={newsLead.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />

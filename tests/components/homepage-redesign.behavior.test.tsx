@@ -51,8 +51,24 @@ describe("new homepage sections render their real data", () => {
     const services = getServices()
     render(<ClaudeHomeServices />)
     for (const service of services) {
-      expect(screen.getAllByText(service.title).length).toBeGreaterThan(0)
+      // 2026-10-02 fix (owner: "change music and entertainment to Music (so
+      // it fits on the row same as others)") — the tab row shows a shortened
+      // label for this one service; everywhere else still uses its real
+      // full title (`current.title` once it's the active service's
+      // heading), so that's covered separately below.
+      const tabLabel = service.title === "Music & Entertainment" ? "Music" : service.title
+      expect(screen.getAllByText(tabLabel).length).toBeGreaterThan(0)
     }
+  })
+
+  it("ClaudeHomeServices still shows the real full title once a service is active", async () => {
+    const user = userEvent.setup()
+    const services = getServices()
+    const musicService = services.find((s) => s.title === "Music & Entertainment")
+    if (!musicService) return
+    render(<ClaudeHomeServices />)
+    await user.click(screen.getByRole("button", { name: "Music" }))
+    expect(screen.getByRole("heading", { level: 3, name: "Music & Entertainment" })).toBeInTheDocument()
   })
 
   it("ClaudeHomeBrands renders real operating brands, not fabricated ones", () => {

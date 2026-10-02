@@ -103,28 +103,32 @@ export function About() {
             {/* Right - a single static photo (owner, 2026-10-02: "remove the
                carousel, it should have the attached image, faded in like we
                did on the hero" — the carousel this replaced is documented
-               above STORY_IMAGE). */}
+               above STORY_IMAGE). Round 2 (owner: "the page should be
+               designed similar to the our services section in the sense
+               that the image is faded into the text"): claude-home-
+               services.tsx's own photo panel has no card chrome at all — no
+               border, no background box — it's just the photo, masked so
+               its edge fades out rather than being cropped by a visible
+               frame. Dropped this article's `border`/`bg-card`/`rounded-sm`
+               and the boxed footer to match that same bare, bled-to-the-
+               edge treatment; the mask gradient now matches Services'
+               own values too. */}
             <motion.article
               initial={{ opacity: 0, x: 32 }}
               animate={hasRevealed ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
               aria-label="LUPFR story"
-              className="relative flex h-full flex-col overflow-hidden rounded-sm border bg-card transition-colors duration-200 ease-snap hover:border-accent/40"
+              className="relative flex h-full flex-col overflow-hidden"
             >
-              {/* aspect-[4/5] below lg (fixed ratio, same reasoning as the
-                  old carousel: `flex-1` alone has no height to grow into in
-                  the single-column mobile layout), lg:flex-1 fills the
-                  stretched column's actual height. The mask is the exact
-                  gradient claude-home-hero.tsx uses on its own media panel —
-                  Hero also runs copy-left/media-right, so the same left-edge
-                  fade blends this photo into the text column the same way. */}
-              <div
-                className="relative aspect-[4/5] w-full overflow-hidden bg-muted lg:aspect-auto lg:flex-1"
-                style={{
-                  WebkitMaskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)",
-                  maskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)",
-                }}
-              >
+              {/* aspect-[4/5] below lg (fixed ratio: `flex-1` alone has no
+                  height to grow into in the single-column mobile layout),
+                  lg:flex-1 fills the stretched column's actual height. The
+                  left-edge fade only applies at lg+, where this column
+                  actually sits beside the text column — below lg the layout
+                  stacks (photo above/below copy, not side by side), so
+                  there's no seam for a fade to blend into; a mask there
+                  would just clip the photo's left side for no reason. */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:flex-1 lg:[mask-image:linear-gradient(90deg,transparent,#000_40%)] lg:[-webkit-mask-image:linear-gradient(90deg,transparent,#000_40%)]">
                 <ShimmerImage
                   src={STORY_IMAGE.src}
                   alt={STORY_IMAGE.alt}
@@ -136,9 +140,7 @@ export function About() {
                 />
               </div>
 
-              <div className="flex flex-none flex-col gap-4 p-5 md:p-6">
-                <p className="font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">The LUPFR Story</p>
-              </div>
+              <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.08em] text-muted-foreground">The LUPFR Story</p>
             </motion.article>
           </div>
         </div>
