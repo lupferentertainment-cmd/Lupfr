@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
+import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
 import { brandPath, getBrandBySlug } from "@/lib/data/brands"
 import { eventDetailPath, getEventBySlug } from "@/lib/events"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
@@ -55,17 +56,47 @@ function monthYear(dateISO: string): string {
 // instead of a static frame, which reads as a different (smaller/quieter) card.
 const seasideAccent = getBrandBySlug("seaside")?.accent
 
+// 2026-10-02 fix, round 2 (owner screenshots of the Claude design file:
+// "it should align everything to that"). Each case study's "Services
+// Delivered" list (icon-badge + bold category label + one-line detail) is
+// transcribed verbatim from the design file's own `feat` + `SVC` data
+// tables in LUPFR Website v3.dc.html — not the earlier screenshot-read
+// pass, which had gotten Bal Masque's 2nd item wrong (guessed "Event
+// Management"; the design file's own data says `brand` → "Brand
+// Activations", same label/icon as the home Services category) and in the
+// wrong order. Icons are the design's own SVG path keys
+// (components/lupfr-service-icons.tsx) via the `SVC` table's icon-per-
+// category mapping: private→hospitality, brand→spark, music→music,
+// mgmt→production, content→camera.
+const DELIVERED_LABELS: Record<string, ServiceIconKey> = {
+  "PRIVATE EVENTS": "hospitality",
+  "BRAND ACTIVATIONS": "spark",
+  "MUSIC & ENTERTAINMENT": "music",
+  PRODUCTION: "production",
+  "CONTENT & MEDIA": "camera",
+}
+
+function delivered(items: Array<[label: keyof typeof DELIVERED_LABELS, description: string]>): DeliveredItem[] {
+  return items.map(([label, description]) => ({ icon: DELIVERED_LABELS[label], label, description }))
+}
+
 const balMasque = requireEvent("bal-masque")
 const goldenGateLive = requireEvent("zusebi-002-live-from-golden-gate")
 const seasideLongBeach = requireEvent("seaside-001-long-beach-harbor")
 const seasideMarinaDelRey = requireEvent("seaside-002")
+
+interface DeliveredItem {
+  icon: ServiceIconKey
+  label: string
+  description: string
+}
 
 interface CaseStudy {
   title: React.ReactNode
   meta: string
   mediaLabel: string
   desc: string
-  delivered: string[]
+  delivered: DeliveredItem[]
   href: string
   linkLabel: string
   /** Real, already-verified external "watch the full film" link (design
@@ -86,7 +117,12 @@ const caseStudies: CaseStudy[] = [
     meta: `${seasideLongBeach.location.split(",")[0].toUpperCase()} · ${seasideMarinaDelRey.location.split(",")[0].toUpperCase()}`,
     mediaLabel: "EVENT FILM",
     desc: "Public and private yacht events built around music and hospitality. From sold-out public sailings to private charters, company outings and brand activations on the water, we handle the yacht, talent, boarding, production and content.",
-    delivered: ["Public & private sailings", "Yacht sourcing, sound, lighting", "Artist bookings", "Photo & film"],
+    delivered: delivered([
+      ["PRIVATE EVENTS", "Public & private sailings"],
+      ["PRODUCTION", "Yacht sourcing, sound, lighting"],
+      ["MUSIC & ENTERTAINMENT", "Artist Bookings"],
+      ["CONTENT & MEDIA", "Photo & film"],
+    ]),
     href: brandPath({ key: "seaside" }),
     linkLabel: "View SEA//SIDE →",
     // Same "SEA//SIDE 002" Instagram recap already used (and verified real)
@@ -103,7 +139,12 @@ const caseStudies: CaseStudy[] = [
     meta: `SAN FRANCISCO · ${monthYear(balMasque.dateISO!)}`,
     mediaLabel: "PHOTOGRAPHY",
     desc: "A masquerade evening in San Francisco with Maison Noir, where dress code, design and music set a new standard for events.",
-    delivered: ["Creative direction", "Full production suite", "Performers & DJs", "Photography"],
+    delivered: delivered([
+      ["BRAND ACTIVATIONS", "Creative direction"],
+      ["PRODUCTION", "Full Production Suite"],
+      ["MUSIC & ENTERTAINMENT", "Performers & DJs"],
+      ["CONTENT & MEDIA", "Photography"],
+    ]),
     href: eventDetailPath("bal-masque"),
     linkLabel: "View experience →",
     // Same Bal Masque YouTube recap already used (and verified real) as
@@ -119,7 +160,11 @@ const caseStudies: CaseStudy[] = [
     meta: `LANDS END, SAN FRANCISCO · ${monthYear(goldenGateLive.dateISO!)}`,
     mediaLabel: "FULL SET",
     desc: "An open-air sunset pop up at Lands End. Zusebi played live to the city, with the setting doing the rest.",
-    delivered: ["Set up, lighting & crowd", "Artist & sound", "Full media kit"],
+    delivered: delivered([
+      ["PRODUCTION", "Set up, lighting & crowd"],
+      ["MUSIC & ENTERTAINMENT", "Artist & sound"],
+      ["CONTENT & MEDIA", "Full media kit"],
+    ]),
     href: eventDetailPath("zusebi-002-live-from-golden-gate"),
     linkLabel: "View experience →",
     main: { src: "/events/ggl_main_dj.webp", alt: "Zusebi 002: Golden Gate Live — DJ set at Lands End" },
@@ -152,9 +197,17 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
         <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c]">{study.meta}</p>
         <h3 className="font-condensed text-[clamp(32px,4vw,52px)] font-extrabold uppercase leading-[0.94] text-[#f3efe6]">{study.title}</h3>
         <p className="text-base leading-relaxed text-[#bdb6a9]">{study.desc}</p>
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-2.5 border-t border-white/10 pt-5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#c9a869]">
+        <ul className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-5">
           {study.delivered.map((item) => (
-            <li key={item} className="leading-snug text-[#bdb6a9]">{item}</li>
+            <li key={item.label} className="flex items-start gap-3">
+              <span className="mt-0.5 flex size-8 flex-none items-center justify-center rounded-full border border-[#c9a869]/40 bg-[#c9a869]/10 text-[#c9a869]">
+                <ServiceIcon icon={item.icon} size={16} />
+              </span>
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#c9a869]">{item.label}</span>
+                <span className="text-[13px] leading-snug text-[#bdb6a9]">{item.description}</span>
+              </span>
+            </li>
           ))}
         </ul>
         <div className="mt-1 flex flex-wrap items-center gap-3">

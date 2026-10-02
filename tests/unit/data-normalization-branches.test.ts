@@ -91,7 +91,7 @@ describe("data-layer normalization fallback branches", () => {
     vi.doMock("@/lib/data/generated/services.json", () => ({
       default: [
         {
-          icon: "Music",
+          icon: "ServiceMusic",
           title: "Fixture Service",
           description: "Fixture.",
           features: ["One"],

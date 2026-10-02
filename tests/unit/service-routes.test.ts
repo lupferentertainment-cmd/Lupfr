@@ -6,8 +6,8 @@ describe("service routes", () => {
     const services = getServices()
     const paths = services.map(servicePath)
 
-    expect(paths).toContain("/services/owned-events")
-    expect(paths).toContain("/services/brand-partnerships")
+    expect(paths).toContain("/services/private-events")
+    expect(paths).toContain("/services/brand-activations")
     expect(new Set(paths).size).toBe(services.length)
   })
 

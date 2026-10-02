@@ -69,7 +69,10 @@ const services = getServices()
  * data — `lib/data/services.ts` and the existing inquiry-type list.
  */
 
-const STEP_LABELS = ["Type", "Services", "Size", "Budget", "When & Where", "Contact"] as const
+// 2026-10-02 fix, round 2: matches the design file's own `stepLabels` array
+// verbatim (LUPFR Website v3.dc.html: `const stepLabels = ['EVENT',
+// 'SERVICES', 'SIZE', 'BUDGET', 'PLACE & DATE', 'CONTACT'];`).
+const STEP_LABELS = ["Event", "Services", "Size", "Budget", "Place & Date", "Contact"] as const
 type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 const GUEST_BUCKETS = [

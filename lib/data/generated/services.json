@@ -1,59 +1,14 @@
 [
   {
-    "icon": "PartyPopper",
-    "title": "Owned Events",
-    "image": "/services/owned-events.webp",
-    "description": "Our signature branded music experiences — venue, talent, production, and promotion, fully handled from concept to load-out.",
-    "features": [
-      "Full Production",
-      "Curated Lineups",
-      "Premium Venues",
-      "Marketing & Promotion"
-    ],
-    "relatedBrands": [
-      "seaside",
-      "inside",
-      "outside"
-    ]
-  },
-  {
-    "icon": "Mic2",
-    "title": "Talent Booking",
-    "image": "/hero/hero-slat-band.webp",
-    "description": "Connect with the right artists through our network. We source, negotiate contracts, and coordinate riders, travel, and logistics.",
-    "features": [
-      "Artist Discovery",
-      "Contract Negotiation",
-      "Schedule Coordination",
-      "On-Site Management"
-    ]
-  },
-  {
-    "icon": "Building2",
-    "title": "Event Programming",
-    "image": "/services/venue-programming.webp",
-    "description": "Curated, recurring event programming for venues or brands looking to elevate their community presence and drive consistent foot traffic.",
-    "features": [
-      "Monthly DJ Nights",
-      "Music Curation",
-      "Event Management",
-      "Audience Development"
-    ],
-    "relatedBrands": [
-      "inside",
-      "outside"
-    ]
-  },
-  {
-    "icon": "Users",
+    "icon": "Hospitality",
     "title": "Private Events",
     "image": "/services/private-events-2026.webp",
-    "description": "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment.",
+    "description": "Celebrations and company gatherings, start to finish.",
     "features": [
-      "Custom Concepts",
-      "Full Service",
-      "Premium Sound",
-      "Exclusive Access"
+      "Celebrations & birthdays",
+      "Company gatherings",
+      "Campus events",
+      "Private yacht charters"
     ],
     "relatedBrands": [
       "highrise",
@@ -61,31 +16,73 @@
     ]
   },
   {
-    "icon": "Music",
-    "title": "Event Production",
-    "image": "/services/event-production-2026.webp",
-    "description": "End-to-end production — sound, lighting, staging, decor, and day-of coordination so the details never fall on you.",
-    "features": [
-      "Sound & Lighting",
-      "Staging & Decor",
-      "Vendor Management",
-      "Day-Of Coordination"
-    ]
-  },
-  {
-    "icon": "Sparkles",
-    "title": "Brand Partnerships",
+    "icon": "Spark",
+    "title": "Brand Activations",
     "image": "/services/brand-partnerships-2026.webp",
-    "description": "Activations that reach the LA & SF nightlife and events community through our brands, events, and platform.",
+    "description": "Bringing your brand into the room.",
     "features": [
-      "Event Sponsorships",
-      "Brand Activations",
-      "Content Creation",
-      "Influencer Access"
+      "Creative concept",
+      "Experiential design",
+      "Launches & pop-ups",
+      "Guest engagement"
     ],
     "relatedBrands": [
       "soundcheck",
       "highrise"
+    ]
+  },
+  {
+    "icon": "ServiceMusic",
+    "title": "Music & Entertainment",
+    "image": "/hero/hero-slat-band.webp",
+    "description": "DJs, live acts and performance direction.",
+    "features": [
+      "Talent & Artist booking",
+      "Musical direction",
+      "Performances",
+      "Recorded live sets"
+    ]
+  },
+  {
+    "icon": "Pin",
+    "title": "Venue Programming",
+    "image": "/services/venue-programming.webp",
+    "description": "Recurring nights for venues, brands and companies.",
+    "features": [
+      "Recurring series",
+      "Hotels & restaurants",
+      "Residential properties",
+      "Seasonal programming"
+    ],
+    "relatedBrands": [
+      "inside",
+      "outside"
+    ]
+  },
+  {
+    "icon": "Production",
+    "title": "Production",
+    "image": "/services/event-production-2026.webp",
+    "description": "Venues, vendors, sound, lighting and on-site execution.",
+    "features": [
+      "Event management",
+      "Venue sourcing",
+      "Vendor coordination",
+      "Sound & lighting",
+      "Permits & logistics",
+      "On-site execution"
+    ]
+  },
+  {
+    "icon": "Camera",
+    "title": "Content & Media",
+    "image": "/platforms/platform-media.webp",
+    "description": "Photo, video and social media management.",
+    "features": [
+      "Photography",
+      "Event films",
+      "Short-form video",
+      "Social media"
     ]
   }
 ]

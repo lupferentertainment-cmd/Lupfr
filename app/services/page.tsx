@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Services",
   description:
-    "Explore LUPFR Entertainment services for owned events, talent booking, venue programming, private events, production, and brand partnerships.",
+    "Explore LUPFR Entertainment services: private events, brand activations, music & entertainment, venue programming, production, and content & media.",
   alternates: { canonical: `${SITE_URL}/services` },
 }
 

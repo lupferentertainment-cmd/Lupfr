@@ -1,26 +1,30 @@
 /**
  * Services data from data/services.yml (build-time generated to generated/services.json).
- * Maps icon name string to Lucide icon component.
+ * Maps icon name string to an icon component shaped like Lucide's (size/strokeWidth/className props).
+ *
+ * 2026-10-02 fix, round 2: the icon set below is the design file's own 6
+ * hand-drawn SVG paths (components/lupfr-service-icons.tsx), not Lucide
+ * icons — see that file's doc comment for why.
  */
 import {
-  Music,
-  Users,
-  Mic2,
-  PartyPopper,
-  Building2,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react"
+  HospitalityIcon,
+  ServiceCameraIcon,
+  ServiceMusicIcon,
+  ServicePinIcon,
+  ServiceProductionIcon,
+  SparkIcon,
+  type ServiceIconComponent,
+} from "@/components/lupfr-service-icons"
 import servicesJson from "@/lib/data/generated/services.json"
 import { getBrands, type BrandItem } from "@/lib/data/brands"
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  PartyPopper,
-  Mic2,
-  Building2,
-  Users,
-  Music,
-  Sparkles,
+const ICON_MAP: Record<string, ServiceIconComponent> = {
+  Hospitality: HospitalityIcon,
+  Spark: SparkIcon,
+  ServiceMusic: ServiceMusicIcon,
+  Pin: ServicePinIcon,
+  Production: ServiceProductionIcon,
+  Camera: ServiceCameraIcon,
 }
 
 export interface ServiceItemRaw {
@@ -33,7 +37,7 @@ export interface ServiceItemRaw {
 }
 
 export interface ServiceItem {
-  icon: LucideIcon
+  icon: ServiceIconComponent
   title: string
   image?: string
   description: string

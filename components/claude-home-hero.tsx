@@ -5,37 +5,72 @@ import Link from "next/link"
 import { useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
-import { HERO_FILMSTRIP_PHOTOS } from "@/components/hero-shared"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
-const slides = HERO_FILMSTRIP_PHOTOS.slice(0, 3)
-
 /**
- * 2026-10-02 fix (owner report: "the hero videos arent there, the LUPFR logo
- * on hero is not there"). The design file's `#hero` (`heroStack`) is a real
- * looping video behind the lockup, plus a small `assets/le-logo.png` mark
- * beside the LUPFR wordmark (`lp-hero-mark`) — the first pass here dropped
- * both in favor of a photo-only filmstrip with a text-only lockup.
+ * 2026-10-02 fix, round 2 (owner report, screenshots of the Claude design
+ * file attached: "Still wrong videos. Should be the SEA//SIDE one, Bal
+ * Masque, and Golden Gate."). The design file's `#hero` picker is literally
+ * the same 3 flagship case studies as "Featured Experiences"
+ * (claude-home-experiences.tsx) — "01 · BAL MASQUE / 02 · SEA//SIDE /
+ * 03 · GOLDEN GATE" — and each tab swaps the hero's background to that case
+ * study's own real media, not a single generic video with cosmetic photo
+ * captions (the previous pass here, now corrected).
  *
- * Video: `/hero/hero_yacht_001.mp4` is reused rather than re-decided here —
- * it's the one hero video asset in `public/hero/` the owner explicitly kept
- * (see docs/CHANGELOG.md "hero drone video" / "hero video reviewed, no
- * gap" entries, 2026-07-17), before the 2026-08-28 restructure retired the
- * single-video hero for the photo filmstrip. No .webm sibling exists for it
- * (it predates this redesign's webm-pair convention), so `LazyLoopVideo`'s
- * `srcWebm` is left optional for this one caller. The 3-photo picker below
- * stays real photos — the design's own 3-item `heroTabs` picker is a caption
- * index over the hero media, not a claim that 3 distinct videos exist.
+ * Media is the same already-verified-real assets Experiences uses:
+ * - Bal Masque: `/events/bal_masque_loop.{mp4,webm}` (real loop video).
+ * - SEA//SIDE: `/events/seaside_series.{mp4,webm}` (real loop video).
+ * - Golden Gate (Zusebi 002): no real video asset exists anywhere in
+ *   `public/` for this case study — only photos — so per the "never
+ *   fabricate media" rule its tab uses the real photo
+ *   `/events/ggl_main_dj.webp` instead of inventing a video.
+ *
+ * Not importing `caseStudies` from claude-home-experiences.tsx directly:
+ * that array's shape (meta/desc/delivered/links) is specific to the case
+ * study cards and would drag unrelated content into the hero. Keeping a
+ * small hero-only media list here, with the same source paths, is less
+ * coupling for the same "no drift" effect — if an asset path ever changes,
+ * both files reference the identical real file on disk.
  *
  * Logo: `/images/le-logo.webp` is the same real LE mark already used as a
  * watermark on Team/Brands (see tests/unit/brands-le-watermark.test.ts) —
  * not a new asset.
  */
-const HERO_VIDEO_SRC = "/hero/hero_yacht_001.mp4"
+type HeroTab = {
+  id: string
+  label: string
+  video?: { mp4: string; webm: string }
+  poster: string
+  alt: string
+}
+
+const HERO_TABS: readonly HeroTab[] = [
+  {
+    id: "bal-masque",
+    label: "Bal Masque",
+    video: { mp4: "/events/bal_masque_loop.mp4", webm: "/events/bal_masque_loop.webm" },
+    poster: "/events/bal_masque_wings.webp",
+    alt: "Bal Masque — feathered wings installation",
+  },
+  {
+    id: "seaside",
+    label: "SEA//SIDE",
+    video: { mp4: "/events/seaside_series.mp4", webm: "/events/seaside_series.webm" },
+    poster: "/events/seaside_series_dj.webp",
+    alt: "DJ set aboard a SEA//SIDE Series sailing",
+  },
+  {
+    id: "golden-gate",
+    label: "Golden Gate",
+    poster: "/events/ggl_main_dj.webp",
+    alt: "Zusebi 002: Golden Gate Live — DJ set at Lands End",
+  },
+] as const
 
 export function ClaudeHomeHero() {
   const ref = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
+  const activeTab = HERO_TABS[active]
 
   return (
     <section ref={ref} id="hero" className="relative min-h-[100svh] overflow-hidden border-b border-white/10 bg-[#070605] pt-[76px] text-[#f3efe6]">
@@ -43,7 +78,17 @@ export function ClaudeHomeHero() {
         className="absolute inset-y-0 right-0 w-full md:w-[72%] lg:w-[66%]"
         style={{ WebkitMaskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)", maskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)" }}
       >
-        <LazyLoopVideo srcMp4={HERO_VIDEO_SRC} poster={slides[0].src} className="absolute inset-0 h-full w-full object-cover" />
+        {activeTab.video ? (
+          <LazyLoopVideo
+            key={activeTab.id}
+            srcMp4={activeTab.video.mp4}
+            srcWebm={activeTab.video.webm}
+            poster={activeTab.poster}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <Image key={activeTab.id} src={activeTab.poster} alt={activeTab.alt} fill priority sizes="(min-width:1024px) 66vw, 100vw" className="object-cover" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-[#070605]/60 via-transparent to-[#070605]/75" />
       </div>
 
@@ -75,9 +120,9 @@ export function ClaudeHomeHero() {
       </div>
 
       <div className="absolute bottom-8 right-8 z-20 hidden w-[440px] grid-cols-3 gap-4 lg:grid">
-        {slides.map((slide, i) => (
-          <button key={slide.id} type="button" onClick={() => setActive(i)} className="min-w-0 text-left">
-            <span className={`block truncate font-mono text-[9.5px] tracking-[0.12em] ${active === i ? "text-[#e8caa0]" : "text-white/45"}`}>0{i + 1} · {slide.alt}</span>
+        {HERO_TABS.map((tab, i) => (
+          <button key={tab.id} type="button" onClick={() => setActive(i)} className="min-w-0 text-left">
+            <span className={`block truncate font-mono text-[9.5px] uppercase tracking-[0.12em] ${active === i ? "text-[#e8caa0]" : "text-white/45"}`}>0{i + 1} · {tab.label}</span>
             <span className="mt-2 block h-[2px] bg-white/20"><span className={`block h-full bg-[#c9a869] transition-all ${active === i ? "w-full" : "w-0"}`} /></span>
           </button>
         ))}

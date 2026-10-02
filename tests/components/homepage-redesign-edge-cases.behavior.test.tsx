@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { act, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ThemeProvider } from "@/components/theme-provider"
+import { ClaudeHomeHero } from "@/components/claude-home-hero"
 
 /**
  * Optional-field branches on the new homepage sections (missing image,
@@ -23,6 +24,19 @@ afterEach(() => {
   vi.doUnmock("@/lib/data/services")
   vi.doUnmock("@/lib/data/artists")
   vi.doUnmock("@/lib/data/brands")
+})
+
+describe("ClaudeHomeHero's background picker", () => {
+  // 2026-10-02 fix, round 2: the hero's 3-item picker (Bal Masque / SEA//SIDE
+  // / Golden Gate) defaults to Bal Masque's real video; this exercises the
+  // no-video branch (Golden Gate has no real video asset, only a photo — see
+  // the file's own doc comment) by switching to it.
+  it("switches to the real photo when the Golden Gate tab (no video asset) is picked", async () => {
+    const user = userEvent.setup()
+    render(<ClaudeHomeHero />)
+    await user.click(screen.getByText(/Golden Gate/))
+    expect(screen.getByAltText(/Golden Gate Live/)).toBeInTheDocument()
+  })
 })
 
 describe("claude-home-experiences' requireEvent guard", () => {

@@ -1,106 +1,102 @@
-# Services offered. icon = Lucide icon name (PartyPopper, Mic2, Building2, Users, Music, Sparkles)
+# Services offered. icon = design-file icon key (Hospitality, Spark, ServiceMusic,
+# Pin, Production, Camera — see components/lupfr-service-icons.tsx).
 # image = optional thumbnail path (site-root, WebP under public/services/); ported from the
 # "LUPFR Website Restructure" comp's per-service thumbnail header (owner redesign 2026-07-16).
 # relatedBrands = brand keys from data/brands.yml (comp's per-service related-brand pills,
 # owner restructure 2026-07-17); label/accent resolve from brands data at build time.
+#
+# 2026-10-02 fix, round 2 (owner screenshots of the Claude design file: "the
+# services are still the old ones" / "services - still not what the claude
+# design file has" / "it should align everything to that"). The 6 services
+# below, their order, titles, descriptions and features are transcribed
+# verbatim from the design file's own `svcV3` + `SVC` data tables in
+# "LUPFR Website v3.dc.html" (not the Coda-templated markup, which only
+# shows `{{ }}` placeholders — the literal JS data array further down the
+# same file, where this content is hardcoded, not templated). This replaces
+# the prior 6 services (Owned Events, Talent Booking, Event Programming,
+# Private Events, Event Production, Brand Partnerships), which had drifted
+# from the design file's real category set over several redesign passes.
+#
+# Photos: the design file's own photo paths (assets/services/*.jpg, its
+# local design-canvas folder) don't exist in this site's public/ — each
+# service below instead reuses the closest real, already-on-site photo by
+# content match (confirmed by filename lineage in the prior services.yml's
+# own comments, e.g. "event-production-2026.webp" was already sourced from
+# the design's own "event-production-v4.jpg"). "Content & Media" has no
+# prior services.yml equivalent; reuses public/platforms/platform-media.webp
+# (LUPFR's real media team on a shoot), already used elsewhere on the site
+# for the same "media/content" meaning, rather than inventing a new asset.
 
-- icon: PartyPopper
-  title: Owned Events
-  # Re-encoded from the owner's HQ original (2026-08-29: "the services images
-  # are not HQ - uploaded them here") — same boat-party/DJ-booth photo, higher
-  # source resolution.
-  image: "/services/owned-events.webp"
-  description: "Our signature branded music experiences — venue, talent, production, and promotion, fully handled from concept to load-out."
-  features:
-    - Full Production
-    - Curated Lineups
-    - Premium Venues
-    - Marketing & Promotion
-  relatedBrands:
-    - seaside
-    - inside
-    - outside
-
-- icon: Mic2
-  title: Talent Booking
-  # Owner restructure note, 2026-08-28: "Talent Booking uses the live-band-at-mic
-  # shot" — reuses the same night-lit stage photo as the hero's "band" filmstrip
-  # slat (design canvas assets/hero-ideas/slat-band-night.jpg), matching the
-  # owner's reference screenshot. Previously a different (daylight, waterfront)
-  # band photo.
-  image: "/hero/hero-slat-band.webp"
-  description: "Connect with the right artists through our network. We source, negotiate contracts, and coordinate riders, travel, and logistics."
-  features:
-    - Artist Discovery
-    - Contract Negotiation
-    - Schedule Coordination
-    - On-Site Management
-
-- icon: Building2
-  title: Event Programming
-  # Photo corrected to the owner's reference screenshot (2026-08-29): an
-  # aerial yacht/deck-yoga shot, replacing an unrelated boat-party interior
-  # photo that had been standing in here.
-  image: "/services/venue-programming.webp"
-  description: "Curated, recurring event programming for venues or brands looking to elevate their community presence and drive consistent foot traffic."
-  features:
-    - Monthly DJ Nights
-    - Music Curation
-    - Event Management
-    - Audience Development
-  relatedBrands:
-    - inside
-    - outside
-
-- icon: Users
+- icon: Hospitality
   title: Private Events
-  # Owner design-file punch list, 2026-09-02: "Private Events → aerialist
-  # photo" (assets/services/private-events-aerialist.png in the owner's
-  # "LUPFR Website Design v3" desktop folder) — an aerialist performing over
-  # the masquerade-ball crowd, replacing the prior two-women masquerade photo.
-  # New filename (not overwriting private-events.webp), which stays on disk
-  # for an easy revert.
   image: "/services/private-events-2026.webp"
-  description: "From corporate galas to luxury celebrations, we customize the full experience for our partners — venue, design, and entertainment."
+  description: "Celebrations and company gatherings, start to finish."
   features:
-    - Custom Concepts
-    - Full Service
-    - Premium Sound
-    - Exclusive Access
+    - Celebrations & birthdays
+    - Company gatherings
+    - Campus events
+    - Private yacht charters
   relatedBrands:
     - highrise
     - seaside
 
-- icon: Music
-  title: Event Production
-  # Owner design-file punch list, 2026-09-02: "Event Production → ballroom
-  # laser shot" (assets/services/event-production-v4.jpg) — a wide ballroom
-  # shot with crossed laser beams over the dance floor. New filename (not
-  # overwriting event-production.webp), which stays on disk for an easy revert.
-  image: "/services/event-production-2026.webp"
-  description: "End-to-end production — sound, lighting, staging, decor, and day-of coordination so the details never fall on you."
-  features:
-    - Sound & Lighting
-    - Staging & Decor
-    - Vendor Management
-    - Day-Of Coordination
-
-- icon: Sparkles
-  title: Brand Partnerships
-  # Owner design-file punch list, 2026-09-02: "Brand Partnerships → VYBES
-  # banner photo, then cropped ~1.4x to zoom in" — used the owner's already
-  # -cropped `brand-partnerships-v6.jpg` directly (its pixel dimensions are
-  # ~1.4x tighter than the uncropped `-v5` source, matching the "cropped
-  # ~1.4x" instruction), a VYBES-branded banner aboard a SEA//SIDE-style
-  # yacht event. New filename (not overwriting brand-partnerships.webp),
-  # which stays on disk for an easy revert.
+- icon: Spark
+  title: Brand Activations
   image: "/services/brand-partnerships-2026.webp"
-  description: "Activations that reach the LA & SF nightlife and events community through our brands, events, and platform."
+  description: "Bringing your brand into the room."
   features:
-    - Event Sponsorships
-    - Brand Activations
-    - Content Creation
-    - Influencer Access
+    - Creative concept
+    - Experiential design
+    - Launches & pop-ups
+    - Guest engagement
   relatedBrands:
     - soundcheck
     - highrise
+
+- icon: ServiceMusic
+  title: Music & Entertainment
+  # Reuses the same real stage photo "Talent Booking" (the prior service
+  # covering this ground) used — a live band under warm stage lighting,
+  # design canvas's own closest equivalent (assets/hero-ideas/slat-band-night.jpg).
+  image: "/hero/hero-slat-band.webp"
+  description: "DJs, live acts and performance direction."
+  features:
+    - Talent & Artist booking
+    - Musical direction
+    - Performances
+    - Recorded live sets
+
+- icon: Pin
+  title: Venue Programming
+  image: "/services/venue-programming.webp"
+  description: "Recurring nights for venues, brands and companies."
+  features:
+    - Recurring series
+    - Hotels & restaurants
+    - Residential properties
+    - Seasonal programming
+  relatedBrands:
+    - inside
+    - outside
+
+- icon: Production
+  title: Production
+  image: "/services/event-production-2026.webp"
+  description: "Venues, vendors, sound, lighting and on-site execution."
+  features:
+    - Event management
+    - Venue sourcing
+    - Vendor coordination
+    - Sound & lighting
+    - Permits & logistics
+    - On-site execution
+
+- icon: Camera
+  title: Content & Media
+  image: "/platforms/platform-media.webp"
+  description: "Photo, video and social media management."
+  features:
+    - Photography
+    - Event films
+    - Short-form video
+    - Social media
