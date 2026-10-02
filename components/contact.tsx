@@ -2,20 +2,7 @@
 
 import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
-import {
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  CalendarHeart,
-  Briefcase,
-  Mic2,
-  Disc3,
-  Handshake,
-  PartyPopper,
-  Megaphone,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react"
+import { ArrowRight, ArrowLeft, Check } from "lucide-react"
 import { toast } from "sonner"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
 import {
@@ -30,50 +17,58 @@ import { GoldShineText } from "@/components/gold-shine-text"
 import { TextReveal } from "@/components/text-reveal"
 import { getServices } from "@/lib/data/services"
 
-const inquiryOptions: { label: string; icon: LucideIcon }[] = [
-  { label: "Book an Event", icon: CalendarHeart },
-  { label: "Corporate Event", icon: Briefcase },
-  { label: "Talent Booking", icon: Mic2 },
-  { label: "Submit Your Mix", icon: Disc3 },
-  { label: "Venue Partnership", icon: Handshake },
-  { label: "Private Event", icon: PartyPopper },
-  { label: "Sponsorship", icon: Megaphone },
-  { label: "Other", icon: Sparkles },
+// 2026-10-02 fix, round 4 (owner: "remove event, the first should just be
+// service") — this used to be the tile-picker labels for a dedicated "What
+// are you planning?" step 1; that step is gone (see STEP_LABELS below), but
+// the label set is kept to validate the preset-inquiry event artists.tsx's
+// "Submit Your Mix" link still dispatches — that's an external preset, not
+// a wizard step, and still works without the step it used to land on.
+const inquiryTypes = [
+  "Book an Event",
+  "Corporate Event",
+  "Talent Booking",
+  "Submit Your Mix",
+  "Venue Partnership",
+  "Private Event",
+  "Sponsorship",
+  "Other",
 ]
-
-const inquiryTypes = inquiryOptions.map((option) => option.label)
 const services = getServices()
 
 /**
  * 2026-10-02 — "Start Planning" literal design-file port (owner: "how can
  * we get the actual claude file I built onto the website" / "continue on
- * everything"). The design's `#contact` section is a 6-step guided intake
- * wizard (type → services → size → budget → when/where → contact info)
- * with a progress nav and a live "brief" summary sentence, ending in a
- * confirmation screen — not the single-step form this used to be. Rebuilt
- * as that wizard, kept wired to the same real `/api/contact` endpoint (now
- * additively extended with the new optional fields below) with the same
- * mailto fallback on failure, and kept the "What can we help with?" inquiry
- * types, the preset-inquiry event (`components/artists.tsx`'s "Submit Your
- * Mix" link), and the separate "Join the contact list" card untouched.
- * Header kicker/heading/subtext are deliberately left as they were — the
- * design's own copy change there isn't a functional gap, just a word
- * choice, so it's not worth the churn of re-verifying every test that
+ * everything"). The design's `#contact` section is a guided intake wizard
+ * (services → size → budget → when/where → contact info) with a progress
+ * nav and a live "brief" summary sentence, ending in a confirmation screen
+ * — not the single-step form this used to be. Rebuilt as that wizard, kept
+ * wired to the same real `/api/contact` endpoint (now additively extended
+ * with the new optional fields below) with the same mailto fallback on
+ * failure, and kept the preset-inquiry event (`components/artists.tsx`'s
+ * "Submit Your Mix" link) and the separate "Join the contact list" card
+ * untouched. Header kicker/heading/subtext are deliberately left as they
+ * were — the design's own copy change there isn't a functional gap, just a
+ * word choice, so it's not worth the churn of re-verifying every test that
  * pins today's exact heading text.
  *
  * Guest-count and budget are presented as generic ranges (not real figures
  * from anywhere) — the design's own tiles are Coda template placeholders
  * too, so a reasonable generic bucket is not a fabricated fact, just a
  * UI convenience, same reasoning as the artists bento grid's size cycle.
- * "Services needed" (step 2) and "What are you planning" (step 1) ARE real
- * data — `lib/data/services.ts` and the existing inquiry-type list.
+ * "Services needed" IS real data — `lib/data/services.ts`.
+ *
+ * Round 4 fix (owner report: "remove event, the first should just be
+ * service") — the design file's own `stepLabels` (LUPFR Website v3.dc.html:
+ * `['EVENT','SERVICES','SIZE','BUDGET','PLACE & DATE','CONTACT']`) still
+ * leads with a dedicated "What are you planning?" tile-picker step; the
+ * owner is deliberately overriding that here, so it's dropped and Services
+ * is now step 1 of 5 (was step 2 of 6). See resolveInquiryType() below for
+ * what replaced that step's job of setting the required `inquiryType`
+ * field the backend/email template still needs.
  */
 
-// 2026-10-02 fix, round 2: matches the design file's own `stepLabels` array
-// verbatim (LUPFR Website v3.dc.html: `const stepLabels = ['EVENT',
-// 'SERVICES', 'SIZE', 'BUDGET', 'PLACE & DATE', 'CONTACT'];`).
-const STEP_LABELS = ["Event", "Services", "Size", "Budget", "Place & Date", "Contact"] as const
-type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7
+const STEP_LABELS = ["Services", "Size", "Budget", "Place & Date", "Contact"] as const
+type Step = 1 | 2 | 3 | 4 | 5 | 6
 
 const GUEST_BUCKETS = [
   { label: "1–50", sub: "Intimate" },
@@ -132,6 +127,22 @@ function openContactMailto(payload: WizardPayload) {
   ].filter((line): line is string => Boolean(line))
   const body = encodeURIComponent(`${lines.join("\n")}\n\nMessage:\n${payload.message}`)
   window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
+}
+
+/**
+ * Round 4 fix — `/api/contact` requires a non-empty `inquiryType` (see
+ * app/api/contact/route.ts), which used to come straight from the removed
+ * "What are you planning?" step. `planType` can still arrive directly from
+ * the "Submit Your Mix" preset-inquiry event (artists.tsx), which bypasses
+ * the wizard steps entirely and keeps working unchanged. Otherwise this
+ * falls back to the real services the visitor picked in the new step 1 —
+ * still a genuine category, not a fabricated one — and only reaches the
+ * generic label if they skipped that too.
+ */
+function resolveInquiryType(planType: string | null, planServices: string[]): string {
+  if (planType) return planType
+  if (planServices.length) return planServices.join(", ")
+  return "Event Inquiry"
 }
 
 /** The design's live-updating "brief" sentence, built only from the visitor's own answers. */
@@ -213,14 +224,8 @@ export function Contact() {
     setNotes("")
   }
 
-  const canAdvance = step !== 1 || Boolean(planType)
-
   function goNext() {
-    if (!canAdvance) {
-      toast.error("Please choose what you're planning.")
-      return
-    }
-    setStep((s) => (s < 6 ? ((s + 1) as Step) : s))
+    setStep((s) => (s < 5 ? ((s + 1) as Step) : s))
   }
 
   function goBack() {
@@ -230,10 +235,6 @@ export function Contact() {
   async function handleWizardSubmit() {
     const cleanName = name.trim()
     const cleanEmail = email.trim().toLowerCase()
-    if (!planType) {
-      toast.error("Please choose what you're planning.")
-      return
-    }
     if (!cleanName || !cleanEmail) {
       toast.error("Name and email are required.")
       return
@@ -245,7 +246,7 @@ export function Contact() {
 
     const brief = buildBrief({ planType, planServices, guestCount, budget, eventDate, flexibleDate, city, venue })
     const payload: WizardPayload = {
-      inquiryType: planType,
+      inquiryType: resolveInquiryType(planType, planServices),
       name: cleanName,
       email: cleanEmail,
       company: company.trim() || undefined,
@@ -273,7 +274,7 @@ export function Contact() {
         return
       }
       toast.success("Your brief is on its way!")
-      setStep(7)
+      setStep(6)
     } catch {
       toast.error("Network error. Opening your email client to send to LUPFR instead.")
       openContactMailto(payload)
@@ -378,7 +379,7 @@ export function Contact() {
             className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
           />
           <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
-            Six quick steps. We&apos;ll take it from there.
+            Five quick steps. We&apos;ll take it from there.
           </div>
         </motion.div>
 
@@ -390,13 +391,13 @@ export function Contact() {
             className="space-y-6"
           >
             <div className="rounded-md border border-border/80 bg-card/70 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
-              {step !== 7 ? (
-                <div role="tablist" aria-label="Start Planning steps" className="relative mb-7 grid grid-cols-3 gap-y-5 sm:grid-cols-6">
+              {step !== 6 ? (
+                <div role="tablist" aria-label="Start Planning steps" className="relative mb-7 grid grid-cols-3 gap-y-5 sm:grid-cols-5">
                   <span aria-hidden className="absolute left-0 right-0 top-5 h-px bg-border" />
                   <span
                     aria-hidden
                     className="absolute left-0 top-5 h-px bg-[var(--gold)] transition-[width] duration-300"
-                    style={{ width: `${((step - 1) / 5) * 100}%` }}
+                    style={{ width: `${((step - 1) / 4) * 100}%` }}
                   />
                   {STEP_LABELS.map((label, i) => {
                     const n = i + 1
@@ -431,33 +432,6 @@ export function Contact() {
                 className="min-h-[220px]"
               >
                   {step === 1 ? (
-                    <div>
-                      <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                        What are you planning?
-                      </h3>
-                      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                        {inquiryOptions.map(({ label, icon: Icon }) => {
-                          const isActive = planType === label
-                          return (
-                            <button
-                              key={label}
-                              type="button"
-                              onClick={() => setPlanType(label)}
-                              aria-pressed={isActive}
-                              className={`flex min-h-[88px] flex-col items-start justify-between gap-2 rounded-sm border px-3 py-3 text-left transition-colors ${
-                                isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
-                              }`}
-                            >
-                              <Icon size={16} className="text-gold-accent" aria-hidden />
-                              <span className="text-sm text-foreground">{label}</span>
-                            </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {step === 2 ? (
                     <div>
                       <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
                         <h3 className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -495,7 +469,7 @@ export function Contact() {
                     </div>
                   ) : null}
 
-                  {step === 3 ? (
+                  {step === 2 ? (
                     <div>
                       <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                         How big is it?
@@ -525,7 +499,7 @@ export function Contact() {
                     </div>
                   ) : null}
 
-                  {step === 4 ? (
+                  {step === 3 ? (
                     <div>
                       <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                         What&apos;s the budget?
@@ -552,7 +526,7 @@ export function Contact() {
                     </div>
                   ) : null}
 
-                  {step === 5 ? (
+                  {step === 4 ? (
                     <div className="space-y-6">
                       <div>
                         <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -619,7 +593,7 @@ export function Contact() {
                     </div>
                   ) : null}
 
-                  {step === 6 ? (
+                  {step === 5 ? (
                     <div className="space-y-4">
                       <h3 className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                         Who should we talk to?
@@ -678,7 +652,7 @@ export function Contact() {
                     </div>
                   ) : null}
 
-                  {step === 7 ? (
+                  {step === 6 ? (
                     <div className="flex flex-col items-start gap-4">
                       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] text-background">
                         <Check size={22} aria-hidden />
@@ -705,14 +679,14 @@ export function Contact() {
                   ) : null}
                 </motion.div>
 
-              {step !== 7 && step >= 2 ? (
+              {step !== 6 ? (
                 <div className="mt-6 rounded-sm border border-gold-accent/30 bg-gold-accent/5 p-4">
                   <p className="mb-1 font-mono text-[9.5px] uppercase tracking-[0.16em] text-gold-accent">Your brief</p>
                   <p className="text-sm leading-relaxed text-muted-foreground">{brief}</p>
                 </div>
               ) : null}
 
-              {step !== 7 ? (
+              {step !== 6 ? (
                 <div className="mt-7 flex items-center justify-between gap-4 border-t border-border pt-5">
                   <button
                     type="button"
@@ -721,14 +695,13 @@ export function Contact() {
                   >
                     <ArrowLeft size={13} aria-hidden /> Back
                   </button>
-                  {step < 6 ? (
+                  {step < 5 ? (
                     <motion.button
                       type="button"
                       onClick={goNext}
-                      disabled={!canAdvance}
-                      className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal transition-opacity disabled:opacity-50"
-                      whileHover={canAdvance ? { scale: 1.03 } : undefined}
-                      whileTap={canAdvance ? { scale: 0.98 } : undefined}
+                      className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal transition-opacity"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
                       transition={{ type: "spring", stiffness: 500, damping: 28 }}
                     >
                       Next <ArrowRight size={16} aria-hidden />

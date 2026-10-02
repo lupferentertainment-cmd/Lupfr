@@ -17,6 +17,10 @@ export interface NewsItem {
    *  still shows in the home-page News strip; omitted/true = shown everywhere
    *  (see data/news.yml's doc comment). */
   showOnMedia?: boolean
+  /** Optional background photo for the home "LUPFR in the News" lead card
+   *  (components/claude-home-media.tsx) — see data/news.yml's doc comment.
+   *  Site-root path under public/. */
+  image?: string
 }
 
 /** Newest first. */

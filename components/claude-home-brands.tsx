@@ -99,12 +99,12 @@ export function ClaudeHomeBrands() {
   const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" })
   const [tab, setTab] = useState<"operating" | "platform">("operating")
   return (
-    <section id="brands" ref={ref} className="border-b border-white/10 bg-[#070605] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="brands" ref={ref} className="border-b border-white/10 bg-[#070605] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Ten Platforms. One Company.</p>
-            <h2 className="mt-3 font-condensed text-[clamp(54px,7vw,96px)] font-extrabold uppercase leading-[0.88]">Our Brands</h2>
+            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Our Brands</h2>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex overflow-hidden rounded-full border border-white/15">

@@ -70,9 +70,19 @@
 # Owner-supplied 2026-09-22 — VoyageLA "Hidden Gems" founder interview. Headline
 # and publish date (2026-09-21) read off the live article; URL verbatim. Newest
 # dateISO, so it leads the home strip and the /media feed.
+#
+# image (2026-10-02 fix, round 4 — owner: "LUPFR in the news... does not
+# size right or have the image of me for the hidden gems"): the lead card
+# on home was deliberately left photo-less (see claude-home-media.tsx's doc
+# comment) since no real photo had been confirmed for this specific article.
+# The owner has now explicitly asked for his own photo here, so this uses
+# the same real, already-verified headshot his Team card uses
+# (/images/team/will-2026.webp, data/team.yml) — fitting for a founder
+# profile piece, not a fabricated or stock image.
 - id: 5
   source: Voyage LA
   dateISO: "2026-09-21"
   title: >-
     "Hidden Gems: Meet Will Lupfer of LUPFR Entertainment"
   url: https://voyagela.com/interview/hidden-gems-meet-will-lupfer-of-lupfr-entertainment/
+  image: /images/team/will-2026.webp

@@ -38,12 +38,12 @@ export function ClaudeHomeServices() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/55" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-24 sm:px-8 lg:px-12 lg:py-[120px]">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-12 sm:px-8 lg:px-12 lg:py-16">
         <div className="max-w-[760px]">
-          <div className="mb-6 flex gap-3 font-mono text-[11px] tracking-[0.2em] text-[#8f887c]"><span className="text-[#c9a869]">(01)</span><span>SERVICES</span></div>
-          <h2 className="font-condensed text-[clamp(54px,7vw,100px)] font-extrabold uppercase leading-[0.86] tracking-[0.005em] text-[#fdf6e8]">Idea to <GoldShineText scrollTargetRef={ref}>execution.</GoldShineText></h2>
-          <div className="my-8 h-[3px] w-[130px] bg-[#c9a869]" />
-          <p className="mb-10 text-lg text-[#e6e0d4]">All an event needs in one place.</p>
+          <div className="mb-4 flex gap-3 font-mono text-[11px] tracking-[0.2em] text-[#8f887c]"><span className="text-[#c9a869]">(01)</span><span>SERVICES</span></div>
+          <h2 className="font-condensed text-[clamp(36px,4vw,60px)] font-extrabold uppercase leading-[0.9] tracking-[0.005em] text-[#fdf6e8]">Idea to <GoldShineText scrollTargetRef={ref}>execution.</GoldShineText></h2>
+          <div className="my-5 h-[3px] w-[110px] bg-[#c9a869]" />
+          <p className="mb-6 text-base text-[#e6e0d4]">All an event needs in one place.</p>
 
           <div className="relative grid grid-cols-3 gap-y-6 sm:grid-cols-6">
             <span aria-hidden className="absolute left-[8.33%] right-[8.33%] top-5 h-px bg-[#c9a869]/30" />
@@ -70,11 +70,11 @@ export function ClaudeHomeServices() {
             })}
           </div>
 
-          <div className="mt-10 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
+          <div className="mt-6 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
 
-          <div className="mt-8 grid gap-8 md:grid-cols-2 md:items-start">
-            <div className="flex flex-col items-start gap-3">
-              <h3 className="font-condensed text-[clamp(30px,3vw,44px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
+          <div className="mt-6 grid gap-6 md:grid-cols-2 md:items-start">
+            <div className="flex flex-col items-start gap-2.5">
+              <h3 className="font-condensed text-[clamp(22px,2.2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
               <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{current.description}</p>
               <Link href={CONTACT_PAGE_PATH} className="mt-1.5 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
                 Plan Your Event <span aria-hidden>→</span>

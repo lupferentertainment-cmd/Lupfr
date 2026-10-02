@@ -10,11 +10,14 @@ import { ClaudeHomeHero } from "@/components/claude-home-hero"
  * Optional-field branches on the new homepage sections (missing image,
  * no quote/stats) that never occur in today's real content — mocked here
  * so they're exercised once instead of only ever running the "every field
- * present" path. ClaudeHomeExperiences/ClaudeHomeMedia (Oct 1 2026 redesign
- * v2: curated case studies / video reel, see claude-home-experiences.tsx and
- * claude-home-media.tsx) have no such optional-field branches of their own —
- * their video/no-video split is already covered by the 3 real case studies
- * in homepage-redesign.behavior.test.tsx.
+ * present" path. ClaudeHomeExperiences (Oct 1 2026 redesign v2: curated
+ * case studies, see claude-home-experiences.tsx) has no such optional-field
+ * branch of its own — its video/no-video split is already covered by the 3
+ * real case studies in homepage-redesign.behavior.test.tsx.
+ *
+ * ClaudeHomeMedia's "LUPFR in the News" lead card gained an optional
+ * `image` field (2026-10-02 fix, round 4) whose real data always has one on
+ * the newest/lead item today — covered below with the imageless branch.
  */
 
 afterEach(() => {
@@ -24,6 +27,7 @@ afterEach(() => {
   vi.doUnmock("@/lib/data/services")
   vi.doUnmock("@/lib/data/artists")
   vi.doUnmock("@/lib/data/brands")
+  vi.doUnmock("@/lib/data/news")
 })
 
 describe("ClaudeHomeHero's background picker", () => {
@@ -121,14 +125,17 @@ describe("ClaudeHomeServices with an imageless service", () => {
 })
 
 describe("ClaudeHomeArtists with an imageless artist", () => {
+  // The component now picks its 7 cards by name from the design file's own
+  // home-wall list (round 4 fix) rather than slicing the roster, so a mock
+  // roster entry has to use one of those 7 names (HLWA here) to render.
   it("renders the name without an image", async () => {
     vi.doMock("@/lib/data/artists", () => ({
-      getArtists: () => [{ id: "bare", name: "Bare Artist", genre: "House" }],
+      getArtists: () => [{ id: "bare", name: "HLWA", genre: "House" }],
       artistSlug: (name: string) => name.toLowerCase().replace(/\s+/g, "-"),
     }))
     const { ClaudeHomeArtists } = await import("@/components/claude-home-artists")
     render(<ClaudeHomeArtists />)
-    expect(screen.getByText("Bare Artist")).toBeInTheDocument()
+    expect(screen.getByText("HLWA")).toBeInTheDocument()
   })
 })
 
@@ -146,6 +153,24 @@ describe("ClaudeHomeBrands with an imageless brand", () => {
     const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
     render(<ClaudeHomeBrands />)
     expect(screen.getAllByText("BARE").length).toBeGreaterThan(0)
+  })
+})
+
+describe("ClaudeHomeMedia's 'LUPFR in the News' lead card with no image", () => {
+  it("renders the lead card without a background photo", async () => {
+    vi.doMock("@/lib/data/news", () => ({
+      getNews: () => [
+        { id: 1, source: "Bare Source", dateISO: "2026-01-01", title: "Bare Headline", url: "https://example.com/bare" },
+      ],
+      newsDateLabel: () => "JAN 1, 2026",
+    }))
+    const { ClaudeHomeMedia } = await import("@/components/claude-home-media")
+    render(<ClaudeHomeMedia />)
+    expect(screen.getByText("Bare Headline")).toBeInTheDocument()
+    // 3 side-clip posters always render (sideClips is fixed, not news data);
+    // the lead card's own photo is the only `image` that's conditional, so
+    // its absence here means exactly 3 decorative images, not 4.
+    expect(screen.getAllByAltText("")).toHaveLength(3)
   })
 })
 

@@ -125,10 +125,10 @@ function FounderCard({ member }: { member: TeamMember }) {
 
 export function ClaudeHomeTeam() {
   return (
-    <section id="team" className="border-b border-white/10 bg-[#0b0a08] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="team" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Who We Are</p>
-        <h2 className="mt-3 font-condensed text-[clamp(54px,7vw,96px)] font-extrabold uppercase leading-[0.88]">The Founders</h2>
+        <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">The Founders</h2>
 
         {founders.length > 0 && (
           <div role="region" aria-label="Founders" className="mt-10 sm:mt-12">

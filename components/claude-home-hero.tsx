@@ -95,13 +95,31 @@ export function ClaudeHomeHero() {
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-76px)] max-w-[1440px] items-center px-6 py-20 sm:px-8 lg:px-12 xl:px-[72px]">
         <div className="max-w-[720px]">
           <div className="flex items-center gap-5 sm:gap-7">
-            <Image
-              src="/images/le-logo.webp"
-              alt=""
-              width={96}
-              height={100}
-              className="h-[clamp(52px,6.5vw,88px)] w-auto flex-none object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]"
-            />
+            {/* 2026-10-02 fix, round 4 (owner: "LE logo should be bigger to
+             * align with the margins of page"). The source file
+             * (public/images/le-logo.webp) is a 1024x1024 canvas with the
+             * actual gold mark inked into only its center ~52%x56% — lots of
+             * transparent padding on every side. Sizing the <Image> itself
+             * bigger (the first pass here) grows that invisible padding
+             * along with the glyph, so the visible mark's left edge never
+             * actually reaches the container's left edge (where "LUPFR"
+             * below it does) — reading as both too small and misaligned.
+             * Cropping out that padding (scale the image up, shift it by
+             * the measured offset) makes the visible glyph itself fill and
+             * left-align with this box, instead of just the invisible
+             * canvas around it. A plain <img> is used instead of
+             * next/image here since the crop needs direct, pixel-exact
+             * width/position control next/image's `fill` mode doesn't
+             * allow. */}
+            <div className="relative aspect-[534/578] w-[clamp(100px,12vw,180px)] flex-none overflow-hidden drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]">
+              {/* eslint-disable-next-line @next/next/no-img-element -- precise crop of the source canvas's internal padding; next/image's `fill` can't offset by percentages like this */}
+              <img
+                src="/images/le-logo.webp"
+                alt=""
+                className="absolute"
+                style={{ width: "191.76%", height: "191.76%", left: "-46.82%", top: "-41.23%", maxWidth: "none" }}
+              />
+            </div>
             <span className="h-[120px] w-px bg-gradient-to-b from-transparent via-[#e8caa0] to-transparent" />
             <div>
               <h1 className="font-condensed text-[clamp(70px,9vw,132px)] font-extrabold uppercase leading-[0.78] tracking-[0.01em] text-[#fdf6e8]">LUPFR</h1>

@@ -4,7 +4,38 @@ import Image from "next/image"
 import Link from "next/link"
 import { artistSlug, getArtists } from "@/lib/data/artists"
 
-const artists = getArtists().slice(0, 12)
+/**
+ * 2026-10-02 fix, round 4 (owner report: "still includes artist I do not
+ * want and does not size right. should be only like the claude file."):
+ * the design file's home "Past Artists" wall is NOT the full roster — its
+ * own literal JS (`pick` array feeding `artistsV3`, LUPFR Website
+ * v3.dc.html ~line 2420) hardcodes exactly these 7 names in this order:
+ * PLS&TY, fromclay, Where's West?, AUGUSTE, thatfranco, Devvy Dub, HLWA.
+ * The prior pass instead sliced the first 12 roster entries, which pulled
+ * in Zusebi (not in the design's pick list — the unwanted artist) plus
+ * Nick Rosen/Admiral/LUPFR/Alex Rayne the design never shows here at all.
+ * Rebuilt to pick these exact 7, by name, off the real roster (never a
+ * fabricated subset), in the design's own order.
+ */
+const WALL_PICK = ["PLS&TY", "fromclay", "Where's West?", "Auguste", "thatfranco", "Devvy Dub", "HLWA"]
+
+/** Same source (`wallPat`, ~line 2426) as the colSpan/rowSpan cycle for the
+ *  7 cards above, in order — a 4-col `grid-auto-flow:dense` bento, not a
+ *  uniform grid. */
+const WALL_SPAN: { col: 1 | 2; row: 1 | 2 }[] = [
+  { col: 2, row: 2 }, // PLS&TY
+  { col: 1, row: 1 }, // fromclay
+  { col: 1, row: 1 }, // Where's West?
+  { col: 1, row: 2 }, // Auguste
+  { col: 1, row: 1 }, // thatfranco
+  { col: 2, row: 1 }, // Devvy Dub
+  { col: 1, row: 1 }, // HLWA
+]
+
+const allArtists = getArtists()
+const artists = WALL_PICK.map((name) => allArtists.find((a) => a.name.toLowerCase() === name.toLowerCase())).filter(
+  (a): a is NonNullable<typeof a> => Boolean(a),
+)
 
 /**
  * 2026-10-02 fix (owner report, screenshots: "a lot of the features and
@@ -28,37 +59,50 @@ function SpotifyGlyph() {
 
 export function ClaudeHomeArtists() {
   return (
-    <section id="artists" className="border-b border-white/10 bg-[#070605] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="artists" className="border-b border-white/10 bg-[#070605] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">The Sound</p><h2 className="mt-3 font-condensed text-[clamp(54px,7vw,96px)] font-extrabold uppercase leading-[0.88]">Past Artists</h2></div><Link href="/artists" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all artists →</Link></div>
-        {/* Design file's "art wall" (`lp-art-wall`) is a dense bento grid —
-            `grid-auto-flow:dense` with a per-card rowSpan/colSpan the Coda
-            prototype assigns arbitrarily for visual variety, not from any
-            real fact about the artist. Approximated here the same way:
-            [grid-auto-flow:dense] plus a deterministic size cycle (never a
-            claim about any specific artist being "bigger"). */}
-        <div className="grid auto-rows-[minmax(0,1fr)] grid-cols-2 gap-2 [grid-auto-flow:dense] sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">The Sound</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Past Artists</h2></div><Link href="/artists" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all artists →</Link></div>
+        {/* Design file's "art wall" (`lp-art-wall`, line 800): 4 columns,
+            `grid-auto-rows:clamp(200px,19vw,280px)`, `grid-auto-flow:dense`,
+            12px gap — each card's real colSpan/rowSpan from WALL_SPAN above.
+            Mobile collapses to 2 columns with every card 1x1 (design's own
+            `.lp-art-wall` media-query override, line 360), except the last
+            card of this odd-length (7) set spans both columns there, same
+            as the design's `:last-child:nth-child(odd)` rule. */}
+        <div className="grid auto-rows-[clamp(200px,19vw,280px)] grid-cols-2 gap-3 [grid-auto-flow:dense] lg:grid-cols-4">
           {artists.map((artist, i) => {
             const href = artist.spotify ?? `/artists?artist=${artistSlug(artist.name)}`
             const external = Boolean(artist.spotify)
-            const span = i % 7 === 3 ? "col-span-2 row-span-2 aspect-square" : i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"
+            const { col, row } = WALL_SPAN[i] ?? { col: 1, row: 1 }
+            const isLastOdd = i === artists.length - 1 && artists.length % 2 === 1
+            const colClass = col === 2 ? `${isLastOdd ? "col-span-2" : "col-span-1"} lg:col-span-2` : "col-span-1"
+            const rowClass = row === 2 ? "row-span-1 lg:row-span-2" : "row-span-1"
             return (
               <Link
                 key={artist.id}
                 href={href}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                className={`group relative overflow-hidden bg-[#141210] ${span}`}
+                className={`group relative overflow-hidden rounded-[3px] border border-white/[0.08] bg-[#0d0c0a] ${colClass} ${rowClass}`}
               >
-                {artist.image ? <Image src={artist.image} alt={artist.name} fill sizes="(min-width:1280px) 16vw, 50vw" className="object-cover transition duration-700 group-hover:scale-105" /> : null}
+                {artist.image ? (
+                  <Image
+                    src={artist.image}
+                    alt={artist.name}
+                    fill
+                    sizes="(min-width:1024px) 25vw, 50vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                    style={{ objectPosition: "center 25%" }}
+                  />
+                ) : null}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
-                <span className="absolute left-3 top-3 font-mono text-[10px] text-white/65">{String(i + 1).padStart(2, "0")}</span>
-                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4">
-                  <h3 className="font-condensed text-xl font-extrabold uppercase text-white">{artist.name}</h3>
+                <span className="absolute left-3.5 top-3.5 font-mono text-[10px] text-white/65">{String(i + 1).padStart(2, "0")}</span>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-4">
+                  <h3 className="font-condensed text-xl font-extrabold uppercase leading-[0.92] text-white">{artist.name}</h3>
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-mono text-[8px] uppercase tracking-[0.12em] text-[#e8caa0]">{artist.genre}</p>
+                    <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-[#e8caa0]">{artist.genre}</p>
                     {external ? (
-                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[8px] uppercase tracking-[0.12em] text-white/75">
+                      <span className="inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.14em] text-white/75">
                         <SpotifyGlyph />SPOTIFY ↗
                       </span>
                     ) : null}

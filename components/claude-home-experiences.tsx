@@ -174,8 +174,19 @@ const caseStudies: CaseStudy[] = [
 ]
 
 function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean }) {
+  // 2026-10-02 fix, round 4 (owner: "the Bal Masque section should be the
+  // same size as the others. It shouldnt be smaller"). Bal Masque is the
+  // only one of the 3 case studies with `reverse` true (alternating
+  // layout, every 2nd card). Reversing only reordered the two children
+  // (`order-2` on the media block) without also swapping which grid track
+  // they land in — grid-template-columns stayed a fixed `1.35fr .65fr`
+  // regardless, so the reordered media block got auto-placed into the
+  // narrower .65fr track instead of the wide 1.35fr one, rendering it
+  // visibly smaller than SEA//SIDE's and Golden Gate's (both not
+  // reversed). The column proportions now flip along with the visual
+  // order, so the media block is always the ~1.35fr-wide one.
   return (
-    <article className={`grid gap-6 lg:grid-cols-[1.35fr_.65fr] lg:items-stretch ${reverse ? "lg:[&>*:first-child]:order-2" : ""}`}>
+    <article className={`grid gap-6 lg:items-stretch ${reverse ? "lg:grid-cols-[.65fr_1.35fr] lg:[&>*:first-child]:order-2" : "lg:grid-cols-[1.35fr_.65fr]"}`}>
       <div className="grid aspect-[16/11] min-w-0 grid-cols-[2fr_1fr] grid-rows-2 gap-2">
         <div className="relative row-span-2 overflow-hidden bg-[#0d0c0a]">
           <Image src={study.main.src} alt={study.main.alt} fill sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
@@ -237,10 +248,10 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
 
 export function ClaudeHomeExperiences() {
   return (
-    <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Our Work</p><h2 className="mt-3 font-condensed text-[clamp(54px,7vw,96px)] font-extrabold uppercase leading-[0.88]">Featured Experiences</h2></div>
+          <div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Our Work</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Featured Experiences</h2></div>
           <Link href="/events" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all experiences →</Link>
         </div>
         <div className="space-y-20 lg:space-y-28">

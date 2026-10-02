@@ -32,12 +32,12 @@ export function ClaudeHomeMedia() {
   const [newsLead, ...rest] = news
   const newsRest = rest.slice(0, 3)
   return (
-    <section id="news" className="border-b border-white/10 bg-[#0b0a08] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="news" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Event Films · Sound//Check · Live Sets</p>
-            <h2 className="mt-3 font-condensed text-[clamp(54px,7vw,96px)] font-extrabold uppercase leading-[0.88]">Media &amp; News</h2>
+            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Media &amp; News</h2>
           </div>
           <a href="/media" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">See all videos →</a>
         </div>
@@ -83,15 +83,16 @@ export function ClaudeHomeMedia() {
             pass of this component dropped that block entirely. Rebuilt here
             from the same real, already-verified data getNews() uses
             elsewhere (home's old news strip, /media) — every link a real
-            permalink, nothing invented. The design's lead card has a photo
-            background; the only press item with a real photo on file
-            (San Francisco Post) isn't the newest story, so labeling it
-            "LATEST" would be inaccurate — the lead card here is the actual
-            newest item instead, without a fabricated photo. */}
+            permalink, nothing invented.
+            Round 4 (owner: "...does not size right or have the image of me
+            for the hidden gems"): the lead card now renders the newest
+            item's real photo (newsLead.image, when set — see data/news.yml)
+            as a background instead of a flat gradient; sizing tightened to
+            match the rest of this pass's section-height reductions. */}
         {news.length > 0 ? (
-          <div className="mt-20">
+          <div className="mt-14">
             <div className="mb-[18px] flex items-center gap-4">
-              <h3 className="font-condensed text-[clamp(26px,2.6vw,36px)] font-extrabold uppercase leading-none text-[#f3efe6]">LUPFR in the News</h3>
+              <h3 className="font-condensed text-[clamp(24px,2.4vw,32px)] font-extrabold uppercase leading-none text-[#f3efe6]">LUPFR in the News</h3>
               <span className="h-px flex-1 bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
             </div>
             <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
@@ -99,14 +100,18 @@ export function ClaudeHomeMedia() {
                 href={newsLead.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex min-h-[320px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
+                className="relative flex min-h-[260px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
               >
-                <span className="absolute left-4 top-4 rounded-[2px] bg-[#c9a869] px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#1a1408]">Latest</span>
-                <span className="text-[13px] font-medium text-[#e8caa0]">
+                {newsLead.image ? (
+                  <Image src={newsLead.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />
+                ) : null}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+                <span className="relative z-[1] self-start rounded-[2px] bg-[#c9a869] px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#1a1408]">Latest</span>
+                <span className="relative z-[1] mt-auto text-[13px] font-medium text-[#e8caa0]">
                   {newsLead.source} <span className="font-normal text-white/60">· {newsDateLabel(newsLead)}</span>
                 </span>
-                <span className="mt-2.5 text-balance font-sans text-[clamp(20px,2.2vw,28px)] font-semibold leading-tight text-[#fdf6e8]">{newsLead.title}</span>
-                <span className="mt-2.5 text-[13.5px] font-medium text-[#c9a869]">Read the interview ↗</span>
+                <span className="relative z-[1] mt-2.5 text-balance font-sans text-[clamp(20px,2.2vw,28px)] font-semibold leading-tight text-[#fdf6e8]">{newsLead.title}</span>
+                <span className="relative z-[1] mt-2.5 text-[13.5px] font-medium text-[#c9a869]">Read the interview ↗</span>
               </a>
               <div className="flex flex-col border-t border-white/10">
                 {newsRest.map((item) => (

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { m } from "framer-motion"
 import { CalendarDays, Clock, History, MapPin, Ticket } from "lucide-react"
@@ -252,15 +253,28 @@ function PastEventCard({ event, todayISO }: { event: EventItem; todayISO: string
 // so a band pointing to the LUPFR Partiful profile sits under the full events
 // grid on this page (per-event "Get tickets" links already use ticketLink from
 // data/events.yml, which are Partiful URLs where set).
+//
+// 2026-10-02 fix, round 4 (owner: "For tickets on partiful - that should be
+// the Partiful Logo") — this band's icon badge was a generic lucide `Ticket`
+// glyph; swapped for the real transparent Partiful mark, same asset and
+// treatment already used by components/partiful-band.tsx and team.tsx's
+// partnership band.
 function PartifulTicketingBand() {
   return (
     <div className="mt-14 flex flex-col items-start gap-4 rounded-sm border border-border bg-card px-6 py-8 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:px-8">
       <div className="flex items-center gap-4">
         <span
-          className="flex size-11 shrink-0 items-center justify-center rounded-full border border-accent/30 bg-accent/10 text-accent"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full"
+          style={{ backgroundColor: "rgba(201,168,105,0.14)" }}
           aria-hidden
         >
-          <Ticket size={18} />
+          <Image
+            src="/corporate_partners/partiful.webp"
+            alt=""
+            width={44}
+            height={44}
+            className="partner-logo partner-logo--natural h-6 w-6 object-contain"
+          />
         </span>
         <div>
           <p className="lupfr-section-kicker mb-1 leading-none">All Ticketing</p>

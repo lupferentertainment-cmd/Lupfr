@@ -7,11 +7,14 @@ import { Contact } from "@/components/contact"
 import { getServices } from "@/lib/data/services"
 
 /**
- * "Start Planning" wizard (2026-10-02 literal design-file port). Covers the
- * 6-step flow end to end: step gating, the real inquiry-type/services data,
- * the live brief sentence, the real /api/contact submission payload, the
- * confirmation screen + reset, and the preset-inquiry event artists.tsx
- * dispatches for "Submit Your Mix".
+ * "Start Planning" wizard (2026-10-02 literal design-file port; round 4 fix,
+ * owner: "remove event, the first should just be service"). Covers the
+ * 5-step flow end to end: the real services/size/budget/when-where/contact
+ * data, the live brief sentence, the real /api/contact submission payload
+ * (including the services-derived `inquiryType` fallback that replaced the
+ * removed "What are you planning?" step), the confirmation screen + reset,
+ * and the preset-inquiry event artists.tsx dispatches for "Submit Your Mix"
+ * (which still sets `inquiryType` directly, bypassing the wizard steps).
  */
 
 beforeAll(() => {
@@ -38,31 +41,20 @@ function stubFetch(ok: boolean) {
 }
 
 async function advanceToContactStep(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /Book an Event/ }))
-  await user.click(screen.getByRole("button", { name: "Next" }))
-  await user.click(screen.getByRole("button", { name: "Next" })) // services (step 2) optional
-  await user.click(screen.getByRole("button", { name: "Next" })) // size (step 3) optional
-  await user.click(screen.getByRole("button", { name: "Next" })) // budget (step 4) optional
-  await user.click(screen.getByRole("button", { name: "Next" })) // when/where (step 5) optional
+  await user.click(screen.getByRole("button", { name: "Next" })) // services (step 1) optional
+  await user.click(screen.getByRole("button", { name: "Next" })) // size (step 2) optional
+  await user.click(screen.getByRole("button", { name: "Next" })) // budget (step 3) optional
+  await user.click(screen.getByRole("button", { name: "Next" })) // when/where (step 4) optional
 }
 
 describe("Contact — Start Planning wizard", () => {
-  it("step 1 requires a plan type before Next is enabled", async () => {
+  it("step 1 is Services, with Next enabled immediately (no plan-type gate)", async () => {
     const user = userEvent.setup()
     render(<Contact />)
-    expect(screen.getByRole("heading", { name: "What are you planning?" })).toBeInTheDocument()
-    const next = screen.getByRole("button", { name: "Next" })
-    expect(next).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: /Corporate Event/ }))
-    expect(next).toBeEnabled()
-  })
-
-  it("step 2 lists every real service from lib/data/services.ts as a toggleable tile", async () => {
-    const user = userEvent.setup()
-    render(<Contact />)
-    await user.click(screen.getByRole("button", { name: /Book an Event/ }))
-    await user.click(screen.getByRole("button", { name: "Next" }))
     expect(screen.getByRole("heading", { name: "What do you need from us?" })).toBeInTheDocument()
+    expect(screen.queryByRole("heading", { name: "What are you planning?" })).not.toBeInTheDocument()
+    const next = screen.getByRole("button", { name: "Next" })
+    expect(next).toBeEnabled()
     for (const service of getServices()) {
       expect(screen.getByText(service.title)).toBeInTheDocument()
     }
@@ -75,37 +67,44 @@ describe("Contact — Start Planning wizard", () => {
   it("Back returns to the previous step without losing the selection", async () => {
     const user = userEvent.setup()
     render(<Contact />)
-    await user.click(screen.getByRole("button", { name: /Talent Booking/ }))
+    const firstService = getServices()[0]!.title
+    await user.click(screen.getByText(firstService).closest("button")!)
     await user.click(screen.getByRole("button", { name: "Next" }))
-    expect(screen.getByRole("heading", { name: "What do you need from us?" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "How big is it?" })).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: "Back" }))
-    expect(screen.getByRole("heading", { name: "What are you planning?" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /Talent Booking/ })).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByRole("heading", { name: "What do you need from us?" })).toBeInTheDocument()
+    expect(screen.getByText(firstService).closest("button")).toHaveAttribute("aria-pressed", "true")
   })
 
   it("the step nav tabs jump directly to any step", async () => {
     const user = userEvent.setup()
     render(<Contact />)
-    await user.click(screen.getByRole("button", { name: /Private Event/ }))
-    await user.click(screen.getByRole("tab", { name: /06.*Contact/ }))
+    await user.click(screen.getByRole("tab", { name: /05.*Contact/ }))
     expect(screen.getByRole("heading", { name: "Who should we talk to?" })).toBeInTheDocument()
   })
 
-  it("the preset-inquiry event (artists.tsx 'Submit Your Mix') preselects the matching tile", () => {
+  it("the preset-inquiry event (artists.tsx 'Submit Your Mix') sets the inquiry type directly, bypassing the removed type step", async () => {
+    const fetchMock = stubFetch(true)
+    const user = userEvent.setup()
     render(<Contact />)
     act(() => {
       window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
     })
-    expect(screen.getByRole("button", { name: /Submit Your Mix/ })).toHaveAttribute("aria-pressed", "true")
+    await advanceToContactStep(user)
+    await user.type(screen.getByPlaceholderText("Your name"), "Jane Doe")
+    await user.type(screen.getByPlaceholderText("you@company.com"), "jane@example.com")
+    await user.click(screen.getByRole("button", { name: /Send Brief/ }))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
+    const body = JSON.parse(fetchMock.mock.calls[0]![1].body as string)
+    expect(body.inquiryType).toBe("Submit Your Mix")
   })
 
-  it("submits the real wizard payload to /api/contact and shows the confirmation + live brief", async () => {
+  it("submits the real wizard payload to /api/contact, deriving inquiryType from the chosen services, and shows the confirmation + live brief", async () => {
     const fetchMock = stubFetch(true)
     const user = userEvent.setup()
     render(<Contact />)
 
-    await user.click(screen.getByRole("button", { name: /Corporate Event/ }))
-    await user.click(screen.getByRole("button", { name: "Next" }))
+    expect(screen.getByRole("heading", { name: "What do you need from us?" })).toBeInTheDocument()
     const firstService = getServices()[0]!.title
     await user.click(screen.getByText(firstService).closest("button")!)
     await user.click(screen.getByRole("button", { name: "Next" }))
@@ -131,7 +130,7 @@ describe("Contact — Start Planning wizard", () => {
     expect(fetchMock).toHaveBeenCalledWith("/api/contact", expect.objectContaining({ method: "POST" }))
     const body = JSON.parse(fetchMock.mock.calls[0]![1].body as string)
     expect(body).toMatchObject({
-      inquiryType: "Corporate Event",
+      inquiryType: firstService,
       name: "Jane Doe",
       email: "jane@example.com",
       company: "Acme Co",
@@ -146,11 +145,24 @@ describe("Contact — Start Planning wizard", () => {
       message: "Make it unforgettable",
     })
 
-    expect(screen.getByText(/We're planning corporate event/)).toBeInTheDocument()
+    expect(screen.getByText(/We're planning an event/)).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: "Start another brief" }))
-    expect(screen.getByRole("heading", { name: "What are you planning?" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /Corporate Event/ })).toHaveAttribute("aria-pressed", "false")
+    expect(screen.getByRole("heading", { name: "What do you need from us?" })).toBeInTheDocument()
+    expect(screen.getByText(firstService).closest("button")).toHaveAttribute("aria-pressed", "false")
+  })
+
+  it("falls back to a generic inquiryType when no services were picked either", async () => {
+    const fetchMock = stubFetch(true)
+    const user = userEvent.setup()
+    render(<Contact />)
+    await advanceToContactStep(user)
+    await user.type(screen.getByPlaceholderText("Your name"), "Jane Doe")
+    await user.type(screen.getByPlaceholderText("you@company.com"), "jane@example.com")
+    await user.click(screen.getByRole("button", { name: /Send Brief/ }))
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
+    const body = JSON.parse(fetchMock.mock.calls[0]![1].body as string)
+    expect(body.inquiryType).toBe("Event Inquiry")
   })
 
   it("requires name and email before the brief can be sent", async () => {
