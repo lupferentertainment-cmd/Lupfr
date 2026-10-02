@@ -357,10 +357,17 @@ export function Contact() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-8 max-w-4xl text-center sm:mb-10 md:mb-12"
         >
-          <p className="lupfr-section-kicker mb-4">Get in touch</p>
+          {/* 2026-10-02 fix (owner report: "lets create something needs to be
+              fixed"): the design file's real `#contact` ("Start Planning")
+              kicker/heading is "INQUIRIES" / "Start Planning" — this had kept
+              the pre-redesign "Get in touch" / "Let's Create Something" copy
+              on purpose (see docs/DESIGN.md) to avoid breaking a couple of
+              pinned copy assertions, but the owner is now flagging that copy
+              directly against the design file, which overrides that call. */}
+          <p className="lupfr-section-kicker mb-4">Inquiries</p>
           <h2 className="mb-5 lupfr-heading-split-leading">
-            <GoldShineText scrollTargetRef={ref}>Let&apos;s Create</GoldShineText>{" "}
-            <span className="lupfr-heading-subline">Something</span>
+            <GoldShineText scrollTargetRef={ref}>Start</GoldShineText>{" "}
+            <span className="lupfr-heading-subline">Planning</span>
           </h2>
           {/* "Ready to elevate" card retired; its copy lives here under the heading (owner request, 2026-07-02). */}
           <TextReveal
@@ -368,7 +375,7 @@ export function Contact() {
             className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
           />
           <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
-            Six quick steps — we&apos;ll take it from there
+            Six quick steps. We&apos;ll take it from there.
           </div>
         </motion.div>
 

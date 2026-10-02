@@ -21,7 +21,10 @@ export function LazyLoopVideo({
   className,
 }: {
   srcMp4: string
-  srcWebm: string
+  /** Optional — omitted for clips that only exist as .mp4 (e.g. the Hero's
+   * real video assets under public/hero/, which predate this redesign's
+   * webm-pair convention and have no re-encoded webm sibling). */
+  srcWebm?: string
   poster: string
   className?: string
 }) {
@@ -55,7 +58,7 @@ export function LazyLoopVideo({
       poster={poster}
       className={className}
     >
-      <source src={srcWebm} type="video/webm" />
+      {srcWebm ? <source src={srcWebm} type="video/webm" /> : null}
       <source src={srcMp4} type="video/mp4" />
     </video>
   )

@@ -112,7 +112,9 @@ describe("corporate section eyebrows", () => {
   })
 
   it("Contact's section eyebrow (above the h2) uses the kicker class; the popup copy stays untouched", () => {
-    expect(contact).toMatch(/className="lupfr-section-kicker[^"]*">Get in touch/)
+    // 2026-10-02: eyebrow/heading now match the design file's real
+    // "INQUIRIES" / "Start Planning" copy (owner report, see docs/DESIGN.md).
+    expect(contact).toMatch(/className="lupfr-section-kicker[^"]*">Inquiries/)
     // Newsletter-popup line is not a section eyebrow — leave its existing treatment alone.
     expect(contact).toContain('className="mb-2 text-xs tracking-tight text-gold-accent"')
   })

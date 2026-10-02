@@ -2,7 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
+import { m, useInView } from "framer-motion"
+import { useRef, useState } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } from "@/lib/data/brands"
 
@@ -21,50 +22,70 @@ import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } fro
  * importing that component, which is wired to the sitewide light/dark theme
  * tokens the Oct 1 redesign deliberately opts out of — see docs/DESIGN.md's
  * "Homepage redesign" entry) with this redesign's own fixed dark palette.
+ *
+ * 2026-10-02 second fix (owner report: "the OUR Brands looks off - should be
+ * pretty similar to how it was in the current website"): the first fix above
+ * still read as flatter than `components/brands.tsx` — no entrance animation,
+ * and both division dividers spanned the full grid width equally instead of
+ * the real design file's proportioned single-row bar (`#experiences`'s own
+ * `lp-brands-divider`: `grid-column:span 3` for Live//Events next to `span 2`
+ * for Corporate//Media, a 3:2 split matching the 3+2 card count). Restored
+ * that proportioned top bar (xl+, where all 5 cards actually share one row)
+ * with the design file's own literal divider colors — Live//Events blue
+ * (`rgba(63,124,191)` / `#7aa7dc`), independent of any one brand's own accent
+ * — falling back to per-group inline labels below xl exactly as
+ * `components/brands.tsx` already does, plus that component's ScrollReveal-
+ * style staggered entrance.
  */
 const { liveEvents, corporateMedia } = getBrandsByDivision()
-const DIVISION_ACCENTS = { liveEvents: liveEvents[0].accent, corporateMedia: "#c9a869" }
+const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
 
-function BrandPosterTile({ brand, index }: { brand: BrandItem; index: number }) {
+function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: number; isInView: boolean }) {
   const numeral = String(index + 1).padStart(2, "0")
   return (
-    <Link
-      href={brandPath(brand)}
-      className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-[#141210]"
+    <m.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
-      {brand.image ? (
-        <Image
-          src={brand.image}
-          alt=""
-          fill
-          sizes="(min-width:1280px) 20vw, (min-width:1024px) 33vw, 50vw"
-          className="object-cover transition duration-700 group-hover:scale-[1.06]"
-        />
-      ) : null}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/55" />
-      <span
-        className="absolute left-4 top-4 rounded-[2px] border px-2 py-1 font-mono text-[9px] uppercase tracking-wider"
-        style={{ borderColor: brand.accent, color: brand.accent, backgroundColor: "rgba(8,7,6,0.5)" }}
+      <Link
+        href={brandPath(brand)}
+        className="group relative block aspect-[3/4] overflow-hidden border border-white/10 bg-[#141210]"
       >
-        {brand.tag}
-      </span>
-      <span className="absolute right-4 top-[18px] font-mono text-[10px] text-white/45">{numeral}</span>
-      <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
-        <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white">
-          <BrandSlashText text={brand.title} color={brand.accent} />
-        </h3>
-        <p className="mt-2.5 line-clamp-3 text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
-        <div className="mt-3.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: brand.accent }}>
-          Explore <span aria-hidden>→</span>
+        {brand.image ? (
+          <Image
+            src={brand.image}
+            alt=""
+            fill
+            sizes="(min-width:1280px) 20vw, (min-width:1024px) 33vw, 50vw"
+            className="object-cover transition duration-700 group-hover:scale-[1.06]"
+          />
+        ) : null}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/55" />
+        <span
+          className="absolute left-4 top-4 rounded-[2px] border px-2 py-1 font-mono text-[9px] uppercase tracking-wider"
+          style={{ borderColor: brand.accent, color: brand.accent, backgroundColor: "rgba(8,7,6,0.5)" }}
+        >
+          {brand.tag}
+        </span>
+        <span className="absolute right-4 top-[18px] font-mono text-[10px] text-white/45">{numeral}</span>
+        <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
+          <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white">
+            <BrandSlashText text={brand.title} color={brand.accent} />
+          </h3>
+          <p className="mt-2.5 line-clamp-3 text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
+          <div className="mt-3.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: brand.accent }}>
+            Explore <span aria-hidden>→</span>
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </m.div>
   )
 }
 
-function DivisionLabel({ before, after, accent }: { before: string; after: string; accent: string }) {
+function DivisionLabel({ before, after, accent, inline }: { before: string; after: string; accent: string; inline?: boolean }) {
   return (
-    <div className="col-span-full flex min-w-0 items-center gap-2.5">
+    <div className={inline ? "col-span-full flex min-w-0 items-center gap-2.5 xl:hidden" : "flex min-w-0 items-center gap-2.5"}>
       <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>
         {before} <span aria-hidden>{"//"}</span> {after}
       </span>
@@ -74,9 +95,11 @@ function DivisionLabel({ before, after, accent }: { before: string; after: strin
 }
 
 export function ClaudeHomeBrands() {
+  const ref = useRef<HTMLElement>(null)
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" })
   const [tab, setTab] = useState<"operating" | "platform">("operating")
   return (
-    <section id="brands" className="border-b border-white/10 bg-[#070605] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
+    <section id="brands" ref={ref} className="border-b border-white/10 bg-[#070605] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
@@ -96,12 +119,22 @@ export function ClaudeHomeBrands() {
         </div>
 
         {tab === "operating" ? (
-          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} />
-            {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} />)}
-            <DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} />
-            {corporateMedia.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} />)}
-          </div>
+          <>
+            {/* Single proportioned bar — only where all 5 cards actually share
+                one row (xl+); below that the grid wraps into 1/2/3 columns, so
+                this top bar would sit far above the groups it labels and the
+                inline per-group labels in the grid below take over instead. */}
+            <div className="mb-3 hidden items-center gap-4 sm:mb-4 xl:flex">
+              <div style={{ flex: 3 }}><DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} /></div>
+              <div style={{ flex: 2 }}><DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} /></div>
+            </div>
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
+              <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} inline />
+              {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
+              <DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} inline />
+              {corporateMedia.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} isInView={isInView} />)}
+            </div>
+          </>
         ) : (
           <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
             {PLATFORM_PROGRAMS.map((program) => (

@@ -38,14 +38,59 @@ describe("claude-home-experiences' requireEvent guard", () => {
 })
 
 describe("ClaudeHomeTeam with a bare-minimum founder", () => {
-  it("skips the image, quote, and stats blocks", async () => {
+  it("skips the image, quote, badge, and stats blocks, and a single-word name renders with no last-name span", async () => {
+    // Single-word name ("Jane", not "Jane Doe") exercises FounderCard's
+    // spaceIndex === -1 branches — every real founder has a "First Last"
+    // name, so that split path otherwise never runs.
     vi.doMock("@/lib/data/team", () => ({
-      getFounders: () => [{ name: "Jane Doe", title: "Founder", location: "LA", bio: "A short bio." }],
+      getFounders: () => [{ name: "Jane", title: "Founder", location: "LA", bio: "A short bio." }],
     }))
     const { ClaudeHomeTeam } = await import("@/components/claude-home-team")
     const { container } = render(<ClaudeHomeTeam />)
     expect(screen.getByText("Founder")).toBeInTheDocument()
+    expect(screen.getByText("Jane")).toBeInTheDocument()
     expect(container.querySelector("blockquote")).toBeNull()
+  })
+})
+
+describe("ClaudeHomeBrands' entrance animation", () => {
+  /** Same MockIntersectionObserver pattern as the LazyLoopVideo describe
+   * below — framer-motion's useInView needs a real IntersectionObserver,
+   * which happy-dom doesn't implement. Exercises the `isInView` branch of
+   * BrandPosterTile's `animate={isInView ? {...} : {}}` that a plain render
+   * (never intersecting) never takes. */
+  type IoEntry = { isIntersecting: boolean; target: Element }
+  let ioInstances: Array<{ fire: (entries: IoEntry[]) => void }> = []
+
+  beforeEach(() => {
+    ioInstances = []
+    class MockIntersectionObserver {
+      private readonly cb: IntersectionObserverCallback
+      constructor(cb: IntersectionObserverCallback) {
+        this.cb = cb
+      }
+      observe(target: Element) {
+        ioInstances.push({
+          fire: (entries) => this.cb(entries as unknown as IntersectionObserverEntry[], this as unknown as IntersectionObserver),
+        })
+      }
+      unobserve() {}
+      disconnect() {}
+      takeRecords(): IntersectionObserverEntry[] {
+        return []
+      }
+    }
+    globalThis.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
+  })
+
+  it("animates the poster tiles in once the section scrolls into view", async () => {
+    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
+    const { container } = render(<ClaudeHomeBrands />)
+    expect(ioInstances.length).toBeGreaterThan(0)
+    act(() => {
+      ioInstances[0]!.fire([{ isIntersecting: true, target: container }])
+    })
+    expect(container.querySelectorAll("a[href^='/brands/']").length).toBeGreaterThan(0)
   })
 })
 

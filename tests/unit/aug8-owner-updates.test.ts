@@ -113,7 +113,9 @@ describe("section headers render on one line (owner 2026-08-08)", () => {
     ["components/artists.tsx", "Artists"],
     // "Our Team" -> "The Founders" (owner punch list, 2026-09-02).
     ["components/team.tsx", "Founders"],
-    ["components/contact.tsx", "Something"],
+    // "Let's Create Something" -> "Start Planning" (owner report, 2026-10-02:
+    // matches the design file's real "#contact" heading — see docs/DESIGN.md).
+    ["components/contact.tsx", "Planning"],
   ]
 
   for (const [file, subline] of splitHeadings) {

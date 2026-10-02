@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
-import { brandPath } from "@/lib/data/brands"
+import { brandPath, getBrandBySlug } from "@/lib/data/brands"
 import { eventDetailPath, getEventBySlug } from "@/lib/events"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
@@ -43,6 +43,18 @@ function monthYear(dateISO: string): string {
   return new Date(`${dateISO}T00:00:00`).toLocaleDateString("en-US", { month: "short", year: "numeric" }).toUpperCase()
 }
 
+// 2026-10-02 fix (owner report: "SEA//SIDE is not the // blue, bal masque
+// is not the same size and does not have the videos"). `seaside.accent`
+// (#6fb8c9, data/brands.yml) is the real verified brand blue — BrandSlashText
+// was being called with no `color` at all for this title, so its "//" fell
+// back to the shared gold default instead. Bal Masque already has a real,
+// already-encoded loop video on disk (`public/events/bal_masque_loop.{mp4,webm}`,
+// re-encoded from the design canvas's own `assets/events/bal-masque-loop.mp4`)
+// that this section simply never wired up — SEA//SIDE was the only case study
+// with a `video` set, so its media block was the only one playing a loop
+// instead of a static frame, which reads as a different (smaller/quieter) card.
+const seasideAccent = getBrandBySlug("seaside")?.accent
+
 const balMasque = requireEvent("bal-masque")
 const goldenGateLive = requireEvent("zusebi-002-live-from-golden-gate")
 const seasideLongBeach = requireEvent("seaside-001-long-beach-harbor")
@@ -70,7 +82,7 @@ interface CaseStudy {
 
 const caseStudies: CaseStudy[] = [
   {
-    title: <BrandSlashText text="SEA//SIDE Series" />,
+    title: <BrandSlashText text="SEA//SIDE Series" color={seasideAccent} />,
     meta: `${seasideLongBeach.location.split(",")[0].toUpperCase()} · ${seasideMarinaDelRey.location.split(",")[0].toUpperCase()}`,
     mediaLabel: "EVENT FILM",
     desc: "Public and private yacht events built around music and hospitality. From sold-out public sailings to private charters, company outings and brand activations on the water, we handle the yacht, talent, boarding, production and content.",
@@ -97,6 +109,7 @@ const caseStudies: CaseStudy[] = [
     // Same Bal Masque YouTube recap already used (and verified real) as
     // claude-home-media.tsx's side-clip link.
     filmUrl: "https://www.youtube.com/watch?v=Xt6zGwZ7jKg",
+    video: { mp4: "/events/bal_masque_loop.mp4", webm: "/events/bal_masque_loop.webm" },
     main: { src: "/events/bal_masque_wings.webp", alt: "Bal Masque — feathered wings installation" },
     side1: { src: "/events/bal_masque_acrobat.webp", alt: "Bal Masque — aerial acrobat performance" },
     side2: { src: "/events/bal_masque_masque_detail.webp", alt: "Bal Masque — masquerade detail" },

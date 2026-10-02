@@ -2,21 +2,40 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
+import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { HERO_FILMSTRIP_PHOTOS } from "@/components/hero-shared"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 const slides = HERO_FILMSTRIP_PHOTOS.slice(0, 3)
 
+/**
+ * 2026-10-02 fix (owner report: "the hero videos arent there, the LUPFR logo
+ * on hero is not there"). The design file's `#hero` (`heroStack`) is a real
+ * looping video behind the lockup, plus a small `assets/le-logo.png` mark
+ * beside the LUPFR wordmark (`lp-hero-mark`) — the first pass here dropped
+ * both in favor of a photo-only filmstrip with a text-only lockup.
+ *
+ * Video: `/hero/hero_yacht_001.mp4` is reused rather than re-decided here —
+ * it's the one hero video asset in `public/hero/` the owner explicitly kept
+ * (see docs/CHANGELOG.md "hero drone video" / "hero video reviewed, no
+ * gap" entries, 2026-07-17), before the 2026-08-28 restructure retired the
+ * single-video hero for the photo filmstrip. No .webm sibling exists for it
+ * (it predates this redesign's webm-pair convention), so `LazyLoopVideo`'s
+ * `srcWebm` is left optional for this one caller. The 3-photo picker below
+ * stays real photos — the design's own 3-item `heroTabs` picker is a caption
+ * index over the hero media, not a claim that 3 distinct videos exist.
+ *
+ * Logo: `/images/le-logo.webp` is the same real LE mark already used as a
+ * watermark on Team/Brands (see tests/unit/brands-le-watermark.test.ts) —
+ * not a new asset.
+ */
+const HERO_VIDEO_SRC = "/hero/hero_yacht_001.mp4"
+
 export function ClaudeHomeHero() {
   const ref = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
-
-  useEffect(() => {
-    const id = window.setInterval(() => setActive((i) => (i + 1) % slides.length), 6500)
-    return () => window.clearInterval(id)
-  }, [])
 
   return (
     <section ref={ref} id="hero" className="relative min-h-[100svh] overflow-hidden border-b border-white/10 bg-[#070605] pt-[76px] text-[#f3efe6]">
@@ -24,17 +43,20 @@ export function ClaudeHomeHero() {
         className="absolute inset-y-0 right-0 w-full md:w-[72%] lg:w-[66%]"
         style={{ WebkitMaskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)", maskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)" }}
       >
-        {slides.map((slide, i) => (
-          <div key={slide.id} className={`absolute inset-0 transition-opacity duration-[1100ms] ${active === i ? "opacity-100" : "opacity-0"}`}>
-            <Image src={slide.src} alt={slide.alt} fill priority={i === 0} sizes="(min-width:1024px) 66vw, 100vw" className="object-cover" />
-          </div>
-        ))}
+        <LazyLoopVideo srcMp4={HERO_VIDEO_SRC} poster={slides[0].src} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#070605]/60 via-transparent to-[#070605]/75" />
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-76px)] max-w-[1440px] items-center px-6 py-20 sm:px-8 lg:px-12 xl:px-[72px]">
         <div className="max-w-[720px]">
           <div className="flex items-center gap-5 sm:gap-7">
+            <Image
+              src="/images/le-logo.webp"
+              alt=""
+              width={96}
+              height={100}
+              className="h-[clamp(52px,6.5vw,88px)] w-auto flex-none object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]"
+            />
             <span className="h-[120px] w-px bg-gradient-to-b from-transparent via-[#e8caa0] to-transparent" />
             <div>
               <h1 className="font-condensed text-[clamp(70px,9vw,132px)] font-extrabold uppercase leading-[0.78] tracking-[0.01em] text-[#fdf6e8]">LUPFR</h1>
