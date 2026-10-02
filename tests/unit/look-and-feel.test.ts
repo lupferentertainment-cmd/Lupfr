@@ -604,15 +604,28 @@ describe("about structure", () => {
     expect(about).not.toContain("will_lupfer.webp")
   })
 
-  it("carries the comp's restructured copy: heading, quote attribution, and the featured press card", () => {
+  it("carries the comp's restructured copy: heading and quote attribution", () => {
     expect(about).toContain("Built From the Ground Up")
     expect(about).toContain("exclusive partnership with Partiful")
     expect(about).toContain("— Will Lupfer, Founder &amp; CEO")
-    expect(about).toContain("getPress()[0]")
     // Old split-section copy is gone: byline/address block and value cards.
     expect(about).not.toContain("CEO &amp; Founder of LUPFR Entertainment")
     expect(about).not.toContain("87 N Raymond")
     expect(about).not.toContain("Curation")
+  })
+
+  // 2026-10-02 fix (owner: "remove the carousel, it should have the attached
+  // image, faded in like we did on the hero"): the 6-slide story/press
+  // carousel is gone, replaced by a single static photo with Hero's own
+  // edge-mask gradient. The press card this used to surface is still live
+  // elsewhere (Follow the Momentum, /media) — just not sourced from here.
+  it("replaced the story carousel with a single static, hero-style faded photo", () => {
+    expect(about).not.toContain("getPress()[0]")
+    expect(about).not.toContain("STORY_SLIDES")
+    expect(about).not.toContain("aria-roledescription")
+    expect(about).toContain("/story/h-01.webp")
+    expect(about).toContain("WebkitMaskImage")
+    expect(about).toContain("claude-home-hero.tsx")
   })
 
   it("rolls the five brands into the story with per-brand accent slashes", () => {

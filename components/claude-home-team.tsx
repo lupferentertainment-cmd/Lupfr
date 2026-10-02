@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { GoldShineText } from "@/components/gold-shine-text"
 import { getFounders, type TeamMember } from "@/lib/data/team"
 import { LINKS } from "@/lib/links"
 
@@ -34,15 +35,15 @@ function FounderCard({ member }: { member: TeamMember }) {
 
   return (
     <>
-      <div
-        className={cn(
-          "relative aspect-square w-full self-start overflow-hidden bg-[#141210]",
-          "lg:aspect-[3/4]",
-          "lg:[mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]",
-          "lg:[-webkit-mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]"
-        )}
-      >
-        {member.image ? (
+      {member.image ? (
+        <div
+          className={cn(
+            "relative aspect-square w-full self-start overflow-hidden bg-[#141210]",
+            "lg:aspect-[3/4]",
+            "lg:[mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]",
+            "lg:[-webkit-mask-image:linear-gradient(to_right,#000_0%,#000_52%,rgba(0,0,0,0.45)_82%,transparent_100%)]"
+          )}
+        >
           <Image
             src={member.image}
             alt={`${member.name}, ${member.title}`}
@@ -52,15 +53,23 @@ function FounderCard({ member }: { member: TeamMember }) {
             loading="lazy"
             className="relative z-[1] h-full w-full origin-[50%_32%] object-cover object-top lg:scale-[1.14]"
           />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#141210] via-[#1c1916] to-[#141210]">
+        </div>
+      ) : (
+        // 2026-10-02 fix (owner: "Make Sky Terrell Image smaller so it
+        // doesn't take up all the empty space on the page"). The placeholder
+        // used to share Will/Eliott's full 420px/aspect-[3/4] real-portrait
+        // box, leaving a tall slab of empty gradient next to Sky's copy. Any
+        // founder without a photo now gets a capped, self-contained box
+        // instead — real portraits above are untouched.
+        <div className="relative aspect-square w-full max-w-[220px] self-start overflow-hidden rounded-sm bg-gradient-to-br from-[#141210] via-[#1c1916] to-[#141210] sm:max-w-[260px]">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2">
             <span className="font-condensed text-5xl font-bold text-[#c9a869]/50" aria-hidden>
               {member.name.charAt(0)}
             </span>
             <span className="text-xs tracking-normal text-[#8f887c]">Portrait coming soon</span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div>
         <h3 className="whitespace-nowrap font-condensed text-[clamp(34px,11.2vw,68px)] font-bold uppercase leading-[0.92] tracking-[-0.03em] lg:text-[clamp(30px,4.4vw,68px)] lg:tracking-[-0.02em]">
@@ -128,7 +137,9 @@ export function ClaudeHomeTeam() {
     <section id="team" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Who We Are</p>
-        <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">The Founders</h2>
+        <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">
+          <GoldShineText>The Founders</GoldShineText>
+        </h2>
 
         {founders.length > 0 && (
           <div role="region" aria-label="Founders" className="mt-10 sm:mt-12">

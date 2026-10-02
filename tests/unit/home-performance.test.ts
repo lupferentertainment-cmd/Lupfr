@@ -52,11 +52,11 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("id=\"contact\"")
     })
 
-    it("has no standalone Press section — the press card lives inside About (owner restructure 2026-07-17)", () => {
+    it("has no standalone Press section (owner restructure 2026-07-17) — and About no longer carries the press card either (owner, 2026-10-02: carousel removed for a single static photo)", () => {
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
         expect(homePage).not.toContain("<Press />")
         const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
-        expect(about).toContain('getPress()[0]')
+        expect(about).not.toContain('getPress()[0]')
     })
 
     it("mounts the events section eagerly so #events navigation is instant", () => {

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { m, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
+import { GoldShineText } from "@/components/gold-shine-text"
 import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } from "@/lib/data/brands"
 
 /**
@@ -113,7 +114,9 @@ export function ClaudeHomeBrands() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Ten Platforms. One Company.</p>
-            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Our Brands</h2>
+            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">
+              <GoldShineText>Our Brands</GoldShineText>
+            </h2>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex overflow-hidden rounded-full border border-white/15">

@@ -1,19 +1,15 @@
 /** @vitest-environment happy-dom */
 
 /**
- * Story carousel regression coverage (owner restructure, 2026-08-29): the
- * About section's right column moved from a single static press card to a
- * carousel of story graphics + the SF Post press card. See
- * components/about.tsx and docs/DESIGN.md phase 39.
- *
- * 2026-10-02 round 5: a new lead slide (h-01.webp, the "Built From the
- * Ground Up" boat-DJ photo) was added ahead of the original 5, making this
- * a 7-slide carousel (6 story graphics + the press card) instead of 6.
+ * About section's right-column photo (owner restructure, 2026-10-02: "Built
+ * from the Ground up - remove the carousel, it should have the attached
+ * image, faded in like we did on the hero"). Replaces the former
+ * story-graphics + press-card carousel (arrows/dots/counter) with a single
+ * static photo. See components/about.tsx.
  */
 
 import { describe, it, expect, vi } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
+import { render, screen } from "@testing-library/react"
 import { About } from "@/components/about"
 
 vi.mock("next/image", () => ({
@@ -24,68 +20,29 @@ vi.mock("next/image", () => ({
   },
 }))
 
-function carousel(): HTMLElement {
+function photoBlock(): HTMLElement {
   return screen.getByRole("article", { name: "LUPFR story" })
 }
 
-describe("About — story carousel", () => {
-  it("starts on slide 1 of 7 with the new lead story graphic visible", () => {
+describe("About — story photo", () => {
+  it("renders the boat-DJ lead photo, not a carousel", () => {
     render(<About />)
-    const region = carousel()
-    expect(region.textContent).toContain("01 / 07")
-    expect(region.querySelector('img[src="/story/h-01.webp"]')).not.toBeNull()
+    const block = photoBlock()
+    expect(block.querySelector('img[src="/story/h-01.webp"]')).not.toBeNull()
+    expect(block.textContent).toContain("The LUPFR Story")
   })
 
-  it("advances to the next slide via the arrow button", async () => {
-    const user = userEvent.setup()
+  it("has no carousel controls (arrows, dots, slide counter)", () => {
     render(<About />)
-    await user.click(screen.getByRole("button", { name: "Next slide" }))
-    const region = carousel()
-    expect(region.textContent).toContain("02 / 07")
+    const block = photoBlock()
+    expect(screen.queryByRole("button", { name: "Next slide" })).toBeNull()
+    expect(screen.queryByRole("button", { name: "Previous slide" })).toBeNull()
+    expect(screen.queryAllByRole("tab")).toHaveLength(0)
+    expect(block.textContent).not.toMatch(/\d{2} \/ \d{2}/)
   })
 
-  it("wraps from the first slide back to the last via the previous arrow", async () => {
-    const user = userEvent.setup()
+  it("does not surface the featured-press link in this section anymore", () => {
     render(<About />)
-    await user.click(screen.getByRole("button", { name: "Previous slide" }))
-    const region = carousel()
-    expect(region.textContent).toContain("07 / 07")
-  })
-
-  it("jumps straight to the press card (slide 7) via its dot", async () => {
-    const user = userEvent.setup()
-    render(<About />)
-    const dots = screen.getAllByRole("tab", { name: /Show slide/ })
-    expect(dots).toHaveLength(7)
-    await user.click(dots[6])
-    const region = carousel()
-    expect(region.textContent).toContain("07 / 07")
-    expect(screen.getByRole("link", { name: /Read ".*" on/ })).toBeInTheDocument()
-  })
-
-  it("renders all 7 dots with the active one marked aria-selected", async () => {
-    const user = userEvent.setup()
-    render(<About />)
-    const dots = screen.getAllByRole("tab", { name: /Show slide/ })
-    expect(dots[0]).toHaveAttribute("aria-selected", "true")
-    await user.click(dots[2])
-    expect(dots[2]).toHaveAttribute("aria-selected", "true")
-    expect(dots[0]).toHaveAttribute("aria-selected", "false")
-  })
-
-  it("advances and rewinds via the arrow keys while focus is inside the carousel", () => {
-    render(<About />)
-    const region = carousel()
-    fireEvent.keyDown(region, { key: "ArrowRight" })
-    expect(region.textContent).toContain("02 / 07")
-    fireEvent.keyDown(region, { key: "ArrowLeft" })
-    expect(region.textContent).toContain("01 / 07")
-  })
-
-  it("ignores non-arrow keys", () => {
-    render(<About />)
-    const region = carousel()
-    fireEvent.keyDown(region, { key: "Enter" })
-    expect(region.textContent).toContain("01 / 07")
+    expect(screen.queryByRole("link", { name: /Read ".*" on/ })).toBeNull()
   })
 })

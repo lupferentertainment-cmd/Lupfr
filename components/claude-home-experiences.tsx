@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { BrandSlashText } from "@/components/brand-slash-text"
+import { GoldShineText } from "@/components/gold-shine-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
 import { brandPath, getBrandBySlug } from "@/lib/data/brands"
@@ -273,7 +274,7 @@ export function ClaudeHomeExperiences() {
     <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Our Work</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Featured Experiences</h2></div>
+          <div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Our Work</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]"><GoldShineText>Featured Experiences</GoldShineText></h2></div>
           <Link href="/events" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all experiences →</Link>
         </div>
         <div className="space-y-20 lg:space-y-28">

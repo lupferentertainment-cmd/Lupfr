@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
+import { GoldShineText } from "@/components/gold-shine-text"
 import { getNews, newsDateLabel } from "@/lib/data/news"
 
 /**
@@ -37,7 +38,9 @@ export function ClaudeHomeMedia() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Event Films · Sound//Check · Live Sets</p>
-            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Media &amp; News</h2>
+            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">
+              <GoldShineText>Media &amp; News</GoldShineText>
+            </h2>
           </div>
           <a href="/media" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">See all videos →</a>
         </div>
@@ -92,15 +95,21 @@ export function ClaudeHomeMedia() {
         {news.length > 0 ? (
           <div className="mt-14">
             <div className="mb-[18px] flex items-center gap-4">
-              <h3 className="font-condensed text-[clamp(24px,2.4vw,32px)] font-extrabold uppercase leading-none text-[#f3efe6]">LUPFR in the News</h3>
+              <h3 className="font-condensed text-[clamp(24px,2.4vw,32px)] font-extrabold uppercase leading-none text-[#f3efe6]">
+              <GoldShineText>LUPFR in the News</GoldShineText>
+            </h3>
               <span className="h-px flex-1 bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
             </div>
             <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
+              {/* 2026-10-02 fix (owner: "LUPFR in the news - make it square
+                  so image of me can be seen fully"): the short, wide
+                  min-h-[260px] card cropped most of the photo out — square
+                  gives the lead photo its full frame instead. */}
               <a
                 href={newsLead.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex min-h-[260px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
+                className="relative flex aspect-square flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
               >
                 {newsLead.image ? (
                   <Image src={newsLead.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />

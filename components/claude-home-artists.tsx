@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { GoldShineText } from "@/components/gold-shine-text"
 import { artistSlug, getArtists } from "@/lib/data/artists"
 
 /**
@@ -61,15 +62,18 @@ export function ClaudeHomeArtists() {
   return (
     <section id="artists" className="border-b border-white/10 bg-[#070605] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">The Sound</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">Past Artists</h2></div><Link href="/artists" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all artists →</Link></div>
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6"><div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">The Sound</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]"><GoldShineText>Past Artists</GoldShineText></h2></div><Link href="/artists" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all artists →</Link></div>
         {/* Design file's "art wall" (`lp-art-wall`, line 800): 4 columns,
             `grid-auto-rows:clamp(200px,19vw,280px)`, `grid-auto-flow:dense`,
             12px gap — each card's real colSpan/rowSpan from WALL_SPAN above.
             Mobile collapses to 2 columns with every card 1x1 (design's own
             `.lp-art-wall` media-query override, line 360), except the last
             card of this odd-length (7) set spans both columns there, same
-            as the design's `:last-child:nth-child(odd)` rule. */}
-        <div className="grid auto-rows-[clamp(200px,19vw,280px)] grid-cols-2 gap-3 [grid-auto-flow:dense] lg:grid-cols-4">
+            as the design's `:last-child:nth-child(odd)` rule.
+            2026-10-02 fix (owner: "this should fit better / be smaller"):
+            tightened the row-height clamp ~25% (200-280px -> 150-220px) so
+            the wall takes up less vertical real estate. */}
+        <div className="grid auto-rows-[clamp(150px,14vw,220px)] grid-cols-2 gap-3 [grid-auto-flow:dense] lg:grid-cols-4">
           {artists.map((artist, i) => {
             const href = artist.spotify ?? `/artists?artist=${artistSlug(artist.name)}`
             const external = Boolean(artist.spotify)
@@ -91,7 +95,11 @@ export function ClaudeHomeArtists() {
                     alt={artist.name}
                     fill
                     sizes="(min-width:1024px) 25vw, 50vw"
-                    className="object-cover transition duration-700 group-hover:scale-105"
+                    // 2026-10-02 fix (owner: "make the other boxes gray
+                    // unless you hover over it") — grayscale by default,
+                    // full color only on the hovered tile; `transition`
+                    // already covers `filter` so grayscale-0 eases in too.
+                    className="object-cover grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0"
                     style={{ objectPosition: "center 25%" }}
                   />
                 ) : null}
