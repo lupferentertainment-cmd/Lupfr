@@ -4,6 +4,8 @@ import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import {
   ArrowRight,
+  ArrowLeft,
+  Check,
   CalendarHeart,
   Briefcase,
   Mic2,
@@ -26,13 +28,7 @@ import {
 import { ScrollReveal } from "@/components/scroll-reveal"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { TextReveal } from "@/components/text-reveal"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { getServices } from "@/lib/data/services"
 
 const inquiryOptions: { label: string; icon: LucideIcon }[] = [
   { label: "Book an Event", icon: CalendarHeart },
@@ -46,33 +42,139 @@ const inquiryOptions: { label: string; icon: LucideIcon }[] = [
 ]
 
 const inquiryTypes = inquiryOptions.map((option) => option.label)
+const services = getServices()
+
+/**
+ * 2026-10-02 — "Start Planning" literal design-file port (owner: "how can
+ * we get the actual claude file I built onto the website" / "continue on
+ * everything"). The design's `#contact` section is a 6-step guided intake
+ * wizard (type → services → size → budget → when/where → contact info)
+ * with a progress nav and a live "brief" summary sentence, ending in a
+ * confirmation screen — not the single-step form this used to be. Rebuilt
+ * as that wizard, kept wired to the same real `/api/contact` endpoint (now
+ * additively extended with the new optional fields below) with the same
+ * mailto fallback on failure, and kept the "What can we help with?" inquiry
+ * types, the preset-inquiry event (`components/artists.tsx`'s "Submit Your
+ * Mix" link), and the separate "Join the contact list" card untouched.
+ * Header kicker/heading/subtext are deliberately left as they were — the
+ * design's own copy change there isn't a functional gap, just a word
+ * choice, so it's not worth the churn of re-verifying every test that
+ * pins today's exact heading text.
+ *
+ * Guest-count and budget are presented as generic ranges (not real figures
+ * from anywhere) — the design's own tiles are Coda template placeholders
+ * too, so a reasonable generic bucket is not a fabricated fact, just a
+ * UI convenience, same reasoning as the artists bento grid's size cycle.
+ * "Services needed" (step 2) and "What are you planning" (step 1) ARE real
+ * data — `lib/data/services.ts` and the existing inquiry-type list.
+ */
+
+const STEP_LABELS = ["Type", "Services", "Size", "Budget", "When & Where", "Contact"] as const
+type Step = 1 | 2 | 3 | 4 | 5 | 6 | 7
+
+const GUEST_BUCKETS = [
+  { label: "1–50", sub: "Intimate" },
+  { label: "50–150", sub: "Mid-size" },
+  { label: "150–400", sub: "Large" },
+  { label: "400+", sub: "Flagship" },
+] as const
+
+const BUDGET_BUCKETS = [
+  { label: "Under $5K", sub: "Starter" },
+  { label: "$5K–15K", sub: "Standard" },
+  { label: "$15K–50K", sub: "Premium" },
+  { label: "$50K–150K", sub: "Large-scale" },
+  { label: "$150K+", sub: "Flagship" },
+] as const
+
+// LUPFR's own two real markets (About/footer copy) — not an exhaustive
+// service area, so "Flexible / Other" covers everything else honestly.
+const CITY_OPTIONS = ["Los Angeles", "San Francisco", "Flexible / Other"] as const
 
 const PRESET_INQUIRY_EVENT = "presetInquiry"
 const LUPFR_EMAIL = "will@lupfr.com"
 
-function openContactMailto(payload: {
+interface WizardPayload {
   inquiryType: string
   name: string
   email: string
   company?: string
   budget?: string
   message: string
-}) {
+  phone?: string
+  services?: string[]
+  guestCount?: string
+  eventDate?: string
+  flexibleDate?: boolean
+  city?: string
+  venue?: string
+}
+
+function openContactMailto(payload: WizardPayload) {
   const subject = encodeURIComponent(`[LUPFR] ${payload.inquiryType} – ${payload.name}`)
-  const body = encodeURIComponent(
-    `Inquiry: ${payload.inquiryType}\nName: ${payload.name}\nEmail: ${payload.email}\n` +
-    (payload.company ? `Company: ${payload.company}\n` : "") +
-    (payload.budget ? `Budget: ${payload.budget}\n` : "") +
-    `\nMessage:\n${payload.message}`
-  )
+  const lines = [
+    `Inquiry: ${payload.inquiryType}`,
+    `Name: ${payload.name}`,
+    `Email: ${payload.email}`,
+    payload.phone ? `Phone: ${payload.phone}` : null,
+    payload.company ? `Company: ${payload.company}` : null,
+    payload.services?.length ? `Services: ${payload.services.join(", ")}` : null,
+    payload.guestCount ? `Guests: ${payload.guestCount}` : null,
+    payload.budget ? `Budget: ${payload.budget}` : null,
+    payload.eventDate || payload.flexibleDate
+      ? `When: ${payload.eventDate ?? ""}${payload.flexibleDate ? " (flexible)" : ""}`
+      : null,
+    payload.city ? `City: ${payload.city}` : null,
+    payload.venue ? `Venue/neighborhood: ${payload.venue}` : null,
+  ].filter((line): line is string => Boolean(line))
+  const body = encodeURIComponent(`${lines.join("\n")}\n\nMessage:\n${payload.message}`)
   window.location.href = `mailto:${LUPFR_EMAIL}?subject=${subject}&body=${body}`
+}
+
+/** The design's live-updating "brief" sentence, built only from the visitor's own answers. */
+function buildBrief(a: {
+  planType: string | null
+  planServices: string[]
+  guestCount: string | null
+  budget: string | null
+  eventDate: string
+  flexibleDate: boolean
+  city: string | null
+  venue: string
+}): string {
+  const typePart = a.planType ? a.planType.toLowerCase() : "an event"
+  const guestsPart = a.guestCount ? `${a.guestCount} guests` : "a guest count we'll figure out together"
+  const cityPart = a.city && a.city !== "Flexible / Other" ? a.city : a.venue.trim() || "LA or SF"
+  const whenPart = a.eventDate
+    ? `${a.eventDate}${a.flexibleDate ? " (flexible)" : ""}`
+    : a.flexibleDate
+      ? "a flexible date"
+      : "a date we'll figure out together"
+  const budgetPart = a.budget ? `a budget of ${a.budget}` : "a budget to be discussed"
+  const svcPart = a.planServices.length ? a.planServices.join(", ") : "your full production"
+  return `We're planning ${typePart} for ${guestsPart} in ${cityPart}, around ${whenPart}, with ${budgetPart}. We need ${svcPart}.`
 }
 
 export function Contact() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
-  const [selectedType, setSelectedType] = useState<string | null>(null)
+
+  const [step, setStep] = useState<Step>(1)
+  const [planType, setPlanType] = useState<string | null>(null)
+  const [planServices, setPlanServices] = useState<string[]>([])
+  const [guestCount, setGuestCount] = useState<string | null>(null)
+  const [budget, setBudget] = useState<string | null>(null)
+  const [eventDate, setEventDate] = useState("")
+  const [flexibleDate, setFlexibleDate] = useState(false)
+  const [city, setCity] = useState<string | null>(null)
+  const [venue, setVenue] = useState("")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [company, setCompany] = useState("")
+  const [phone, setPhone] = useState("")
+  const [notes, setNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+
   const [contactListName, setContactListName] = useState("")
   const [contactListEmail, setContactListEmail] = useState("")
   const [contactListPhone, setContactListPhone] = useState("")
@@ -81,28 +183,80 @@ export function Contact() {
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent<string>).detail
-      if (detail && inquiryTypes.includes(detail)) setSelectedType(detail)
+      if (detail && inquiryTypes.includes(detail)) setPlanType(detail)
     }
     window.addEventListener(PRESET_INQUIRY_EVENT, handler)
     return () => window.removeEventListener(PRESET_INQUIRY_EVENT, handler)
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (!selectedType) {
-      toast.error("Please select an inquiry type.")
+  function toggleService(title: string) {
+    setPlanServices((prev) => (prev.includes(title) ? prev.filter((s) => s !== title) : [...prev, title]))
+  }
+
+  function resetWizard() {
+    setStep(1)
+    setPlanType(null)
+    setPlanServices([])
+    setGuestCount(null)
+    setBudget(null)
+    setEventDate("")
+    setFlexibleDate(false)
+    setCity(null)
+    setVenue("")
+    setName("")
+    setEmail("")
+    setCompany("")
+    setPhone("")
+    setNotes("")
+  }
+
+  const canAdvance = step !== 1 || Boolean(planType)
+
+  function goNext() {
+    if (!canAdvance) {
+      toast.error("Please choose what you're planning.")
       return
     }
-    const form = e.currentTarget
-    const formData = new FormData(form)
-    const payload = {
-      inquiryType: selectedType,
-      name: (formData.get("name") as string)?.trim() ?? "",
-      email: (formData.get("email") as string)?.trim() ?? "",
-      company: (formData.get("company") as string)?.trim() || undefined,
-      budget: (formData.get("budget") as string)?.trim() || undefined,
-      message: (formData.get("message") as string)?.trim() ?? "",
+    setStep((s) => (s < 6 ? ((s + 1) as Step) : s))
+  }
+
+  function goBack() {
+    setStep((s) => (s > 1 ? ((s - 1) as Step) : s))
+  }
+
+  async function handleWizardSubmit() {
+    const cleanName = name.trim()
+    const cleanEmail = email.trim().toLowerCase()
+    if (!planType) {
+      toast.error("Please choose what you're planning.")
+      return
     }
+    if (!cleanName || !cleanEmail) {
+      toast.error("Name and email are required.")
+      return
+    }
+    if (!isValidEmail(cleanEmail)) {
+      toast.error("Please enter a valid email address.")
+      return
+    }
+
+    const brief = buildBrief({ planType, planServices, guestCount, budget, eventDate, flexibleDate, city, venue })
+    const payload: WizardPayload = {
+      inquiryType: planType,
+      name: cleanName,
+      email: cleanEmail,
+      company: company.trim() || undefined,
+      budget: budget ?? undefined,
+      message: notes.trim() || brief,
+      phone: phone.trim() || undefined,
+      services: planServices.length ? planServices : undefined,
+      guestCount: guestCount ?? undefined,
+      eventDate: eventDate || undefined,
+      flexibleDate: flexibleDate || undefined,
+      city: city ?? undefined,
+      venue: venue.trim() || undefined,
+    }
+
     setIsSubmitting(true)
     try {
       const res = await fetch("/api/contact", {
@@ -110,15 +264,13 @@ export function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-      const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         toast.error("Form not configured. Opening your email client to send to LUPFR instead.")
         openContactMailto(payload)
         return
       }
-      toast.success("Message sent! We'll get back to you soon.")
-      form.reset()
-      setSelectedType(null)
+      toast.success("Your brief is on its way!")
+      setStep(7)
     } catch {
       toast.error("Network error. Opening your email client to send to LUPFR instead.")
       openContactMailto(payload)
@@ -185,6 +337,8 @@ export function Contact() {
     }
   }
 
+  const brief = buildBrief({ planType, planServices, guestCount, budget, eventDate, flexibleDate, city, venue })
+
   return (
     <section
       id="contact"
@@ -214,7 +368,7 @@ export function Contact() {
             className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
           />
           <div className="mt-5 inline-flex rounded-full border border-gold-accent/35 bg-gold-accent/10 px-3 py-1 text-xs tracking-normal text-gold-accent">
-            Typical response in 24 hours
+            Six quick steps — we&apos;ll take it from there
           </div>
         </motion.div>
 
@@ -226,115 +380,364 @@ export function Contact() {
             className="space-y-6"
           >
             <div className="rounded-md border border-border/80 bg-card/70 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7 md:p-8">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="mb-3 block text-sm font-medium tracking-tight text-gold-accent">
-                    What can we help with?
-                  </label>
-                  <Select
-                    value={selectedType ?? ""}
-                    onValueChange={(value) => setSelectedType(value)}
-                  >
-                    <SelectTrigger
-                      aria-label="What can we help with?"
-                      className="w-full min-h-[52px] data-[size=default]:h-auto rounded-sm border-border bg-secondary px-4 py-3 text-sm text-foreground shadow-none transition-colors hover:border-accent/50 focus-visible:border-accent focus-visible:ring-0 data-[state=open]:border-accent data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-gold-accent [&>svg]:transition-transform [&>svg]:duration-300 data-[state=open]:[&>svg]:rotate-180"
-                    >
-                      <SelectValue placeholder="Choose an inquiry type" />
-                    </SelectTrigger>
-                    <SelectContent
-                      position="popper"
-                      sideOffset={8}
-                      className="rounded-sm border-border/80 bg-card/95 p-1.5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-xl"
-                    >
-                      {inquiryOptions.map(({ label, icon: Icon }) => (
-                        <SelectItem
-                          key={label}
-                          value={label}
-                          className="rounded-sm py-3 pl-3 text-sm text-muted-foreground transition-colors focus:bg-gold-accent/10 focus:text-foreground data-[state=checked]:text-gold-accent [&_svg:not([class*='text-'])]:text-gold-accent/80"
-                        >
-                          <Icon className="size-4" aria-hidden />
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Name</label>
-                    <input
-                      name="name"
-                      type="text"
-                      required
-                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Email</label>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div>
-                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">
-                      Company / Venue (optional)
-                    </label>
-                    <input
-                      name="company"
-                      type="text"
-                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                      placeholder="Your organization"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Budget (optional)</label>
-                    <input
-                      name="budget"
-                      type="text"
-                      className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                      placeholder="Budget range or amount"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Tell us more</label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={4}
-                    className="w-full resize-none rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors focus:border-accent focus:outline-none"
-                    placeholder="Share details about your event, project, or inquiry..."
+              {step !== 7 ? (
+                <div role="tablist" aria-label="Start Planning steps" className="relative mb-7 grid grid-cols-3 gap-y-5 sm:grid-cols-6">
+                  <span aria-hidden className="absolute left-0 right-0 top-5 h-px bg-border" />
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-5 h-px bg-[var(--gold)] transition-[width] duration-300"
+                    style={{ width: `${((step - 1) / 5) * 100}%` }}
                   />
+                  {STEP_LABELS.map((label, i) => {
+                    const n = i + 1
+                    const isActive = step === n
+                    const isDone = step > n
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        role="tab"
+                        aria-selected={isActive}
+                        onClick={() => setStep(n as Step)}
+                        className="relative z-[1] flex min-w-0 flex-col items-start gap-1.5 bg-transparent px-0 text-left"
+                      >
+                        <span className={`font-mono text-[10px] tracking-[0.12em] ${isActive || isDone ? "text-gold-accent" : "text-muted-foreground"}`}>
+                          {String(n).padStart(2, "0")}
+                        </span>
+                        <span className={`font-mono text-[9.5px] uppercase tracking-[0.12em] ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                          {label}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
+              ) : null}
 
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-metallic-gold group flex min-w-0 w-full items-center justify-center gap-3 rounded-full px-8 py-4 font-semibold tracking-normal transition-opacity hover:opacity-95 disabled:opacity-50"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                >
-                  {isSubmitting ? (
-                    <span>Sending...</span>
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className="min-h-[220px]"
+              >
+                  {step === 1 ? (
+                    <div>
+                      <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                        What are you planning?
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                        {inquiryOptions.map(({ label, icon: Icon }) => {
+                          const isActive = planType === label
+                          return (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => setPlanType(label)}
+                              aria-pressed={isActive}
+                              className={`flex min-h-[88px] flex-col items-start justify-between gap-2 rounded-sm border px-3 py-3 text-left transition-colors ${
+                                isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
+                              }`}
+                            >
+                              <Icon size={16} className="text-gold-accent" aria-hidden />
+                              <span className="text-sm text-foreground">{label}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 2 ? (
+                    <div>
+                      <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+                        <h3 className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                          What do you need from us?
+                        </h3>
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+                          Select all that apply
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                        {services.map((service) => {
+                          const Icon = service.icon
+                          const isChecked = planServices.includes(service.title)
+                          return (
+                            <button
+                              key={service.title}
+                              type="button"
+                              onClick={() => toggleService(service.title)}
+                              aria-pressed={isChecked}
+                              className={`flex items-center gap-3 rounded-sm border px-4 py-3 text-left transition-colors ${
+                                isChecked ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
+                              }`}
+                            >
+                              <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-gold-accent/40 bg-background">
+                                <Icon size={15} className="text-gold-accent" aria-hidden />
+                              </span>
+                              <span className="flex-1 text-sm text-foreground">{service.title}</span>
+                              <span className={`flex h-[18px] w-[18px] flex-none items-center justify-center rounded-[3px] border ${isChecked ? "border-accent bg-accent text-background" : "border-border"}`}>
+                                {isChecked ? <Check size={11} aria-hidden /> : null}
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 3 ? (
+                    <div>
+                      <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                        How big is it?
+                      </h3>
+                      <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+                        Estimated guests
+                      </span>
+                      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+                        {GUEST_BUCKETS.map(({ label, sub }) => {
+                          const isActive = guestCount === label
+                          return (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => setGuestCount(label)}
+                              aria-pressed={isActive}
+                              className={`flex flex-col gap-1 rounded-sm border px-4 py-3.5 text-left transition-colors ${
+                                isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
+                              }`}
+                            >
+                              <span className="font-serif text-lg font-bold text-foreground">{label}</span>
+                              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{sub}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 4 ? (
+                    <div>
+                      <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                        What&apos;s the budget?
+                      </h3>
+                      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                        {BUDGET_BUCKETS.map(({ label, sub }) => {
+                          const isActive = budget === label
+                          return (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => setBudget(label)}
+                              aria-pressed={isActive}
+                              className={`flex flex-col gap-1 rounded-sm border px-4 py-3.5 text-left transition-colors ${
+                                isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
+                              }`}
+                            >
+                              <span className="font-serif text-lg font-bold text-foreground">{label}</span>
+                              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{sub}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 5 ? (
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="mb-4 font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                          When and where?
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <label className="flex items-center gap-2">
+                            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">Date</span>
+                            <input
+                              type="date"
+                              value={eventDate}
+                              onChange={(e) => setEventDate(e.target.value)}
+                              className="rounded-sm border border-border bg-secondary px-3 py-2 text-sm text-foreground"
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setFlexibleDate((v) => !v)}
+                            aria-pressed={flexibleDate}
+                            className="flex items-center gap-2"
+                          >
+                            <span className={`relative h-[18px] w-[30px] rounded-full transition-colors ${flexibleDate ? "bg-accent" : "bg-border"}`}>
+                              <span
+                                className="absolute top-[2px] h-[14px] w-[14px] rounded-full bg-background transition-[left]"
+                                style={{ left: flexibleDate ? 14 : 2 }}
+                              />
+                            </span>
+                            <span className="text-sm text-muted-foreground">Flexible</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">City</span>
+                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                          {CITY_OPTIONS.map((label) => {
+                            const isActive = city === label
+                            return (
+                              <button
+                                key={label}
+                                type="button"
+                                onClick={() => setCity(label)}
+                                aria-pressed={isActive}
+                                className={`rounded-sm border px-4 py-3.5 text-left text-sm transition-colors ${
+                                  isActive ? "border-accent bg-accent/10 text-foreground" : "border-border bg-secondary text-foreground hover:border-accent/50"
+                                }`}
+                              >
+                                {label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="mb-2 block font-mono text-[10px] uppercase tracking-[0.1em] text-muted-foreground">
+                          Venue or neighborhood (optional)
+                        </label>
+                        <input
+                          value={venue}
+                          onChange={(e) => setVenue(e.target.value)}
+                          placeholder="Rooftop, yacht, our office..."
+                          className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 6 ? (
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                        Who should we talk to?
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div>
+                          <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Name</label>
+                          <input
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                            placeholder="Your name"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Email</label>
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                            placeholder="you@company.com"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Company (optional)</label>
+                          <input
+                            value={company}
+                            onChange={(e) => setCompany(e.target.value)}
+                            className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                            placeholder="Company or organization"
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Phone (optional)</label>
+                          <input
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            className="w-full rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                            placeholder="(555) 555-5555"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="mb-2 block text-xs tracking-normal text-gold-accent/90">Anything else? (optional)</label>
+                        <textarea
+                          value={notes}
+                          onChange={(e) => setNotes(e.target.value)}
+                          rows={3}
+                          className="w-full resize-none rounded-sm border border-border bg-secondary px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                          placeholder="The vibe you're after, must-haves, questions..."
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {step === 7 ? (
+                    <div className="flex flex-col items-start gap-4">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] text-background">
+                        <Check size={22} aria-hidden />
+                      </span>
+                      <h3 className="font-serif text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                        Your brief is on its way.
+                      </h3>
+                      <p className="max-w-md text-sm text-muted-foreground">
+                        Thanks, {name.trim().split(" ")[0] || "there"}. Someone from the LUPFR team will reply within
+                        two business days to talk through ideas, venues and next steps.
+                      </p>
+                      <div className="w-full rounded-sm border border-gold-accent/35 bg-gold-accent/5 p-5">
+                        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-gold-accent">Your brief</p>
+                        <p className="font-serif text-base leading-relaxed text-foreground">{brief}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={resetWizard}
+                        className="border-b border-gold-accent font-mono text-[10.5px] uppercase tracking-[0.12em] text-gold-accent"
+                      >
+                        Start another brief
+                      </button>
+                    </div>
+                  ) : null}
+                </motion.div>
+
+              {step !== 7 && step >= 2 ? (
+                <div className="mt-6 rounded-sm border border-gold-accent/30 bg-gold-accent/5 p-4">
+                  <p className="mb-1 font-mono text-[9.5px] uppercase tracking-[0.16em] text-gold-accent">Your brief</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{brief}</p>
+                </div>
+              ) : null}
+
+              {step !== 7 ? (
+                <div className="mt-7 flex items-center justify-between gap-4 border-t border-border pt-5">
+                  <button
+                    type="button"
+                    onClick={goBack}
+                    className={`flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground ${step === 1 ? "invisible" : ""}`}
+                  >
+                    <ArrowLeft size={13} aria-hidden /> Back
+                  </button>
+                  {step < 6 ? (
+                    <motion.button
+                      type="button"
+                      onClick={goNext}
+                      disabled={!canAdvance}
+                      className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal transition-opacity disabled:opacity-50"
+                      whileHover={canAdvance ? { scale: 1.03 } : undefined}
+                      whileTap={canAdvance ? { scale: 0.98 } : undefined}
+                      transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                    >
+                      Next <ArrowRight size={16} aria-hidden />
+                    </motion.button>
                   ) : (
-                    <>
-                      <span>Send Message</span>
-                      <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-                    </>
+                    <motion.button
+                      type="button"
+                      onClick={handleWizardSubmit}
+                      disabled={isSubmitting}
+                      className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal transition-opacity disabled:opacity-50"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                    >
+                      {isSubmitting ? "Sending..." : <>Send Brief <ArrowRight size={16} aria-hidden /></>}
+                    </motion.button>
                   )}
-                </motion.button>
-              </form>
+                </div>
+              ) : null}
             </div>
 
             <div className="rounded-md border border-border/80 bg-card/60 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7">

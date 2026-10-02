@@ -6,6 +6,7 @@ import { BrandSlashText } from "@/components/brand-slash-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { brandPath } from "@/lib/data/brands"
 import { eventDetailPath, getEventBySlug } from "@/lib/events"
+import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 /**
  * Oct 1 2026 homepage redesign (owner table, confirmed via follow-up: "Curated
@@ -55,6 +56,12 @@ interface CaseStudy {
   delivered: string[]
   href: string
   linkLabel: string
+  /** Real, already-verified external "watch the full film" link (design
+   * file's conditional `fx.hasFilm` "Watch Full Film" button) — only set
+   * where a genuine recap video already exists elsewhere in the site's own
+   * data (never a fabricated link). Omitted entirely means the design's
+   * `hasFilm` is false for that case study; no button renders. */
+  filmUrl?: string
   video?: { mp4: string; webm: string }
   main: { src: string; alt: string }
   side1: { src: string; alt: string }
@@ -70,6 +77,10 @@ const caseStudies: CaseStudy[] = [
     delivered: ["Public & private sailings", "Yacht sourcing, sound, lighting", "Artist bookings", "Photo & film"],
     href: brandPath({ key: "seaside" }),
     linkLabel: "View SEA//SIDE →",
+    // Same "SEA//SIDE 002" Instagram recap already used (and verified real)
+    // as claude-home-media.tsx's side-clip link — that event is literally
+    // one of this case study's own two referenced events (seaside-002).
+    filmUrl: "https://www.instagram.com/p/DdrQLrbpPqr/",
     video: { mp4: "/events/seaside_series.mp4", webm: "/events/seaside_series.webm" },
     main: { src: "/events/seaside_series_dj.webp", alt: "DJ set aboard a SEA//SIDE Series sailing" },
     side1: { src: "/events/seaside_series_interview.webp", alt: "SEA//SIDE Series guest interview on the water" },
@@ -83,6 +94,9 @@ const caseStudies: CaseStudy[] = [
     delivered: ["Creative direction", "Full production suite", "Performers & DJs", "Photography"],
     href: eventDetailPath("bal-masque"),
     linkLabel: "View experience →",
+    // Same Bal Masque YouTube recap already used (and verified real) as
+    // claude-home-media.tsx's side-clip link.
+    filmUrl: "https://www.youtube.com/watch?v=Xt6zGwZ7jKg",
     main: { src: "/events/bal_masque_wings.webp", alt: "Bal Masque — feathered wings installation" },
     side1: { src: "/events/bal_masque_acrobat.webp", alt: "Bal Masque — aerial acrobat performance" },
     side2: { src: "/events/bal_masque_masque_detail.webp", alt: "Bal Masque — masquerade detail" },
@@ -130,7 +144,26 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
             <li key={item} className="leading-snug text-[#bdb6a9]">{item}</li>
           ))}
         </ul>
-        <Link href={study.href} className="mt-2 font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">{study.linkLabel}</Link>
+        <div className="mt-1 flex flex-wrap items-center gap-3">
+          {study.filmUrl ? (
+            <a
+              href={study.filmUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-[2px] border border-[#f3e3c4]/70 bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-[22px] py-3.5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#1a1408]"
+            >
+              <span className="h-0 w-0 border-y-[5px] border-l-[8px] border-y-transparent border-l-[#1a1408]" aria-hidden />
+              Watch Full Film
+            </a>
+          ) : null}
+          <Link
+            href={CONTACT_PAGE_PATH}
+            className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-[2px] border border-[#c9a869]/55 px-[22px] py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#c9a869]"
+          >
+            Create an Experience Like This <span aria-hidden>→</span>
+          </Link>
+        </div>
+        <Link href={study.href} className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">{study.linkLabel}</Link>
       </div>
     </article>
   )

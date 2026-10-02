@@ -14,6 +14,7 @@ import { ClaudeHomeTeam } from "@/components/claude-home-team"
 import { getServices } from "@/lib/data/services"
 import { getBrandsByDivision } from "@/lib/data/brands"
 import { getFounders } from "@/lib/data/team"
+import { getNews } from "@/lib/data/news"
 
 /**
  * Oct 1 2026 homepage redesign (owner table: "The changes I want are ...").
@@ -76,6 +77,15 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getByRole("heading", { name: "BAL MASQUE" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "Zusebi 002: Golden Gate Live" })).toBeInTheDocument()
     expect(screen.getAllByRole("link", { name: "View experience →" }).length).toBe(2)
+    // Design file's dual CTA row: "Create an Experience Like This" always,
+    // "Watch Full Film" only for the 2 case studies with a real verified
+    // recap link (SEA//SIDE, Bal Masque) — not Golden Gate Live.
+    expect(screen.getAllByRole("link", { name: /Create an Experience Like This/ }).length).toBe(3)
+    const watchFullFilm = screen.getAllByRole("link", { name: "Watch Full Film" })
+    expect(watchFullFilm.length).toBe(2)
+    expect(watchFullFilm.map((a) => a.getAttribute("href")).sort()).toEqual(
+      ["https://www.instagram.com/p/DdrQLrbpPqr/", "https://www.youtube.com/watch?v=Xt6zGwZ7jKg"].sort()
+    )
   })
 
   it("ClaudeHomeMedia renders the lead event film and 3 real side clips", () => {
@@ -85,6 +95,18 @@ describe("new homepage sections render their real data", () => {
       expect(screen.getByText(title)).toBeInTheDocument()
     }
     expect(screen.getByRole("link", { name: "See all videos →" })).toHaveAttribute("href", "/media")
+  })
+
+  it("ClaudeHomeMedia renders the design's 'LUPFR in the News' block with real, newest-first press links", () => {
+    const news = getNews()
+    render(<ClaudeHomeMedia />)
+    expect(screen.getByRole("heading", { name: "LUPFR in the News" })).toBeInTheDocument()
+    const leadLink = screen.getByText(news[0].title).closest("a")
+    expect(leadLink).toHaveAttribute("href", news[0].url)
+    expect(leadLink).toHaveTextContent("Latest")
+    for (const item of news.slice(1, 4)) {
+      expect(screen.getByText(new RegExp(item.title.slice(0, 30)))).toBeInTheDocument()
+    }
   })
 
   it("ClaudeHomeArtists renders without crashing on real artist data", () => {
@@ -120,6 +142,13 @@ describe("new homepage sections render their real data", () => {
     if (!second) return
     await user.click(screen.getByRole("button", { name: new RegExp(second.title) }))
     expect(screen.getByRole("heading", { level: 3, name: second.title })).toBeInTheDocument()
+    // Design file's "INCLUDES" feature list + "Plan Your Event" CTA — real
+    // data from lib/data/services.ts that the first pass dropped entirely.
+    expect(screen.getByText("Includes")).toBeInTheDocument()
+    for (const feature of second.features) {
+      expect(screen.getByText(feature)).toBeInTheDocument()
+    }
+    expect(screen.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
   })
 
   it("ClaudeHomeBrands switches to the platform tab and back", async () => {

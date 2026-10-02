@@ -11,6 +11,16 @@ export interface ContactBody {
   company?: string;
   budget?: string;
   message: string;
+  // "Start Planning" wizard fields (2026-10-02 literal design-file port) —
+  // all optional/additive so the pre-wizard required-field contract above
+  // (inquiryType/name/email/message) is unchanged.
+  phone?: string;
+  services?: string[];
+  guestCount?: string;
+  eventDate?: string;
+  flexibleDate?: boolean;
+  city?: string;
+  venue?: string;
 }
 
 export async function POST(request: Request) {
@@ -45,6 +55,15 @@ export async function POST(request: Request) {
   const company = typeof body.company === "string" ? body.company.trim() : undefined;
   const budget = typeof body.budget === "string" ? body.budget.trim() : undefined;
   const message = typeof body.message === "string" ? body.message.trim() : "";
+  const phone = typeof body.phone === "string" ? body.phone.trim() || undefined : undefined;
+  const services = Array.isArray(body.services)
+    ? body.services.filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+    : undefined;
+  const guestCount = typeof body.guestCount === "string" ? body.guestCount.trim() || undefined : undefined;
+  const eventDate = typeof body.eventDate === "string" ? body.eventDate.trim() || undefined : undefined;
+  const flexibleDate = typeof body.flexibleDate === "boolean" ? body.flexibleDate : undefined;
+  const city = typeof body.city === "string" ? body.city.trim() || undefined : undefined;
+  const venue = typeof body.venue === "string" ? body.venue.trim() || undefined : undefined;
 
   if (!inquiryType || !name || !email || !message) {
     return NextResponse.json(
@@ -64,6 +83,13 @@ export async function POST(request: Request) {
     company,
     budget,
     message,
+    phone,
+    services: services?.length ? services : undefined,
+    guestCount,
+    eventDate,
+    flexibleDate,
+    city,
+    venue,
   });
 
   let data: { id?: string } | undefined;

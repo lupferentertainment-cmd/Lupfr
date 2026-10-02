@@ -111,10 +111,9 @@ describe("corporate section eyebrows", () => {
     expect(notFoundPage).toMatch(/className="lupfr-section-kicker[^"]*">404/)
   })
 
-  it("Contact's section eyebrow (above the h2) uses the kicker class; the form label and popup copy stay untouched", () => {
+  it("Contact's section eyebrow (above the h2) uses the kicker class; the popup copy stays untouched", () => {
     expect(contact).toMatch(/className="lupfr-section-kicker[^"]*">Get in touch/)
-    // Form field label and newsletter-popup line are not section eyebrows — leave their existing treatment alone.
-    expect(contact).toContain('className="mb-3 block text-sm font-medium tracking-tight text-gold-accent"')
+    // Newsletter-popup line is not a section eyebrow — leave its existing treatment alone.
     expect(contact).toContain('className="mb-2 text-xs tracking-tight text-gold-accent"')
   })
 

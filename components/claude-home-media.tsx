@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
+import { getNews, newsDateLabel } from "@/lib/data/news"
 
 /**
  * Oct 1 2026 homepage redesign (owner table, confirmed via follow-up: "do
@@ -27,6 +28,9 @@ const sideClips = [
 ]
 
 export function ClaudeHomeMedia() {
+  const news = getNews()
+  const [newsLead, ...rest] = news
+  const newsRest = rest.slice(0, 3)
   return (
     <section id="news" className="border-b border-white/10 bg-[#0b0a08] px-6 py-24 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-[120px]">
       <div className="mx-auto max-w-[1400px]">
@@ -71,6 +75,60 @@ export function ClaudeHomeMedia() {
             ))}
           </div>
         </div>
+
+        {/* 2026-10-02 fix (owner report, "a lot of the features and design
+            still did not make it in"): the design file's `#watch` section has
+            a second block below the video reel, "LUPFR in the News" — a
+            photo-backed lead press mention plus 3 more in a list. The first
+            pass of this component dropped that block entirely. Rebuilt here
+            from the same real, already-verified data getNews() uses
+            elsewhere (home's old news strip, /media) — every link a real
+            permalink, nothing invented. The design's lead card has a photo
+            background; the only press item with a real photo on file
+            (San Francisco Post) isn't the newest story, so labeling it
+            "LATEST" would be inaccurate — the lead card here is the actual
+            newest item instead, without a fabricated photo. */}
+        {news.length > 0 ? (
+          <div className="mt-20">
+            <div className="mb-[18px] flex items-center gap-4">
+              <h3 className="font-condensed text-[clamp(26px,2.6vw,36px)] font-extrabold uppercase leading-none text-[#f3efe6]">LUPFR in the News</h3>
+              <span className="h-px flex-1 bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
+            </div>
+            <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
+              <a
+                href={newsLead.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative flex min-h-[320px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:p-7"
+              >
+                <span className="absolute left-4 top-4 rounded-[2px] bg-[#c9a869] px-2.5 py-1 font-mono text-[9.5px] uppercase tracking-[0.18em] text-[#1a1408]">Latest</span>
+                <span className="text-[13px] font-medium text-[#e8caa0]">
+                  {newsLead.source} <span className="font-normal text-white/60">· {newsDateLabel(newsLead)}</span>
+                </span>
+                <span className="mt-2.5 text-balance font-sans text-[clamp(20px,2.2vw,28px)] font-semibold leading-tight text-[#fdf6e8]">{newsLead.title}</span>
+                <span className="mt-2.5 text-[13.5px] font-medium text-[#c9a869]">Read the interview ↗</span>
+              </a>
+              <div className="flex flex-col border-t border-white/10">
+                {newsRest.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-1 flex-col justify-center gap-1.5 border-b border-white/10 py-4 no-underline"
+                  >
+                    <span className="text-[12.5px] font-medium text-[#c9a869]">
+                      {item.source} <span className="font-normal text-white/50">· {newsDateLabel(item)}</span>
+                    </span>
+                    <span className="text-[16px] font-medium leading-snug text-[#f3efe6]">
+                      {item.title} <span className="text-[#c9a869]">↗</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   )

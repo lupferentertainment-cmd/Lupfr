@@ -77,8 +77,20 @@ export function contactFormEmail(params: {
   company?: string;
   budget?: string;
   message: string;
+  phone?: string;
+  services?: string[];
+  guestCount?: string;
+  eventDate?: string;
+  flexibleDate?: boolean;
+  city?: string;
+  venue?: string;
 }): string {
-  const { inquiryType, name, email, company, budget, message } = params;
+  const { inquiryType, name, email, company, budget, message, phone, services, guestCount, eventDate, flexibleDate, city, venue } = params;
+  const whenValue = eventDate
+    ? `${eventDate}${flexibleDate ? " (flexible)" : ""}`
+    : flexibleDate
+      ? "Flexible"
+      : undefined;
   const content = `
     <h1 style="margin:0 0 24px; font-size:22px; font-weight:600; color:${BRAND.text}; letter-spacing:-0.02em;">
       New inquiry
@@ -92,8 +104,14 @@ export function contactFormEmail(params: {
           ${row("Inquiry type", inquiryType)}
           ${row("Name", name)}
           ${row("Email", email)}
+          ${phone ? row("Phone", phone) : ""}
           ${company ? row("Company / Venue", company) : ""}
+          ${services?.length ? row("Services needed", services.join(", ")) : ""}
+          ${guestCount ? row("Estimated guests", guestCount) : ""}
           ${budget ? row("Budget", budget) : ""}
+          ${whenValue ? row("When", whenValue) : ""}
+          ${city ? row("City", city) : ""}
+          ${venue ? row("Venue / neighborhood", venue) : ""}
           <tr>
             <td style="padding:8px 0 4px; font-size:12px; color:${BRAND.muted}; text-transform:uppercase; letter-spacing:0.05em;">Message</td>
           </tr>

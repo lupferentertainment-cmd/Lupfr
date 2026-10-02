@@ -258,6 +258,116 @@ describe("POST /api/contact", () => {
     expect(res.status).toBe(200)
   })
 
+  it("accepts the Start Planning wizard's optional fields", async () => {
+    const { POST } = await import("@/app/api/contact/route")
+
+    const res = await POST(new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        inquiryType: "Corporate Event",
+        name: "Jane Doe",
+        email: "jane@example.com",
+        message: "Need a full production",
+        phone: "555-123-4567",
+        services: ["Live Events", "Talent Booking"],
+        guestCount: "150–400",
+        eventDate: "2026-12-05",
+        flexibleDate: true,
+        city: "Los Angeles",
+        venue: "Rooftop bar",
+      }),
+    }))
+
+    expect(res.status).toBe(200)
+    expect(sendMock).toHaveBeenCalledTimes(1)
+    const sendArgs = sendMock.mock.calls[0]![0] as { html: string }
+    expect(sendArgs.html).toContain("Live Events, Talent Booking")
+    expect(sendArgs.html).toContain("Rooftop bar")
+  })
+
+  it("ignores non-string/non-array optional wizard fields rather than crashing", async () => {
+    const { POST } = await import("@/app/api/contact/route")
+
+    const res = await POST(new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        inquiryType: "Corporate Event",
+        name: "Jane Doe",
+        email: "jane@example.com",
+        message: "hello",
+        phone: 12345,
+        services: "not-an-array",
+        guestCount: null,
+        eventDate: 20261205,
+        flexibleDate: "yes",
+        city: 5,
+        venue: null,
+      }),
+    }))
+
+    expect(res.status).toBe(200)
+  })
+
+  it("filters out non-string entries from the services array", async () => {
+    const { POST } = await import("@/app/api/contact/route")
+
+    const res = await POST(new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        inquiryType: "Corporate Event",
+        name: "Jane Doe",
+        email: "jane@example.com",
+        message: "hello",
+        services: ["Live Events", 42, "", null],
+      }),
+    }))
+
+    expect(res.status).toBe(200)
+    const sendArgs = sendMock.mock.calls[0]![0] as { html: string }
+    expect(sendArgs.html).toContain("Live Events")
+  })
+
+  it("treats blank optional wizard fields as absent", async () => {
+    const { POST } = await import("@/app/api/contact/route")
+
+    const res = await POST(new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `198.51.100.${Math.floor(Math.random() * 200)}`,
+      },
+      body: JSON.stringify({
+        inquiryType: "Corporate Event",
+        name: "Jane Doe",
+        email: "jane@example.com",
+        message: "hello",
+        phone: "   ",
+        guestCount: "",
+        eventDate: "  ",
+        flexibleDate: false,
+        city: "",
+        venue: "   ",
+      }),
+    }))
+
+    expect(res.status).toBe(200)
+    const sendArgs = sendMock.mock.calls[sendMock.mock.calls.length - 1]![0] as { html: string }
+    expect(sendArgs.html).not.toContain("Estimated guests")
+    expect(sendArgs.html).not.toContain("Venue / neighborhood")
+  })
+
   it("rate limits repeated requests", async () => {
     const { POST } = await import("@/app/api/contact/route")
 
