@@ -198,20 +198,22 @@
 
 - id: 17
   # Title/time/location corrected to match the real Partiful listing and the
-  # owner's poster (2026-08-29): "Golden Gate Live", 6-8 PM open air, Lands End.
+  # owner's poster (2026-08-29): "Golden Gate Live", 6-8 PM open air.
+  # 2026-10-03 fix (owner, direct correction): the poster's own "Lands End"
+  # reading was wrong — the real venue is Golden Gate Park.
   slug: zusebi-002-live-from-golden-gate
   title: "Zusebi 002: Golden Gate Live"
   subtitle: feat. Zusebi
   date: September 13th, 2026
   dateISO: "2026-09-13"
   time: 6 - 8 PM
-  location: Lands End, San Francisco, CA
+  location: Golden Gate Park, San Francisco, CA
   brandTag: OUT//SIDE
   city: SF
   image: /events/zusebi_002_golden_gate_live.webp
   partifulLink: https://partiful.com/e/yJrhsgHGp17dR9RgiBrK
   ticketLabel: RSVP on Partiful
-  description: A sundown open-air set at Lands End — night two of the Zusebi run.
+  description: A sundown open-air set in Golden Gate Park — night two of the Zusebi run.
 
 - id: 20
   # Zusebi 003 reinstated (owner, 2026-09-22). The 2026-08-28 restructure removed

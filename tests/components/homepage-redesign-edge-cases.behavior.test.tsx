@@ -32,14 +32,20 @@ afterEach(() => {
 
 describe("ClaudeHomeHero's background picker", () => {
   // 2026-10-02 fix, round 2: the hero's 3-item picker (Bal Masque / SEA//SIDE
-  // / Golden Gate) defaults to Bal Masque's real video; this exercises the
-  // no-video branch (Golden Gate has no real video asset, only a photo — see
-  // the file's own doc comment) by switching to it.
-  it("switches to the real photo when the Golden Gate tab (no video asset) is picked", async () => {
+  // / Golden Gate) defaults to Bal Masque's real video. 2026-10-03 fix: the
+  // Golden Gate tab used to have no real video asset (photo-only fallback
+  // branch) — the owner has since supplied a real clip for it
+  // (public/events/ggl_main_video.{mp4,webm}), so all 3 tabs now always
+  // render a video and that fallback branch no longer exists in the
+  // component. This just exercises switching tabs and picking up the new
+  // tab's own video source.
+  it("switches the video source when the Golden Gate tab is picked", async () => {
     const user = userEvent.setup()
-    render(<ClaudeHomeHero />)
+    const { container } = render(<ClaudeHomeHero />)
     await user.click(screen.getByText(/Golden Gate/))
-    expect(screen.getByAltText(/Golden Gate Live/)).toBeInTheDocument()
+    const video = container.querySelector("video")
+    expect(video?.getAttribute("poster")).toBe("/events/ggl_main_dj.webp")
+    expect(container.querySelector("source[src='/events/ggl_main_video.mp4']")).toBeInTheDocument()
   })
 })
 

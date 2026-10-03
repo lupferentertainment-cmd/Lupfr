@@ -63,9 +63,10 @@ const seasideAccent = getBrandBySlug("seaside")?.accent
 // study with its own brand eyebrow above the title — SEA//SIDE Series
 // already carries its brand identity in the title itself (BrandSlashText).
 // Bal Masque (an indoor masquerade at SF's Hibernia Bank) is a real
-// IN//SIDE event and Golden Gate Live (an open-air sunset pop-up at Lands
-// End) is a real OUT//SIDE event — both already-verified LUPFR brands
-// (data/brands.yml), not fabricated tags.
+// IN//SIDE event and Golden Gate Live (an open-air sunset pop-up in Golden
+// Gate Park — corrected 2026-10-03, owner: "the Zusebi: Golden Gate Live
+// was in Golden Gate Park, not Lands End") is a real OUT//SIDE event — both
+// already-verified LUPFR brands (data/brands.yml), not fabricated tags.
 const insideAccent = getBrandBySlug("inside")?.accent
 const outsideAccent = getBrandBySlug("outside")?.accent
 
@@ -190,9 +191,9 @@ const caseStudies: CaseStudy[] = [
   {
     title: goldenGateLive.title,
     brand: { label: "OUT//SIDE", accent: outsideAccent },
-    meta: `LANDS END, SAN FRANCISCO · ${monthYear(goldenGateLive.dateISO!)}`,
+    meta: `GOLDEN GATE PARK, SAN FRANCISCO · ${monthYear(goldenGateLive.dateISO!)}`,
     mediaLabel: "FULL SET",
-    desc: "An open-air sunset pop up at Lands End. Zusebi played live to the city, with the setting doing the rest.",
+    desc: "An open-air sunset pop up in Golden Gate Park. Zusebi played live to the city, with the setting doing the rest.",
     delivered: delivered([
       ["PRODUCTION", "Set up, lighting & crowd"],
       ["MUSIC & ENTERTAINMENT", "Artist & sound"],
@@ -200,7 +201,15 @@ const caseStudies: CaseStudy[] = [
     ]),
     href: eventDetailPath("zusebi-002-live-from-golden-gate"),
     linkLabel: "View experience →",
-    main: { src: "/events/ggl_main_dj.webp", alt: "Zusebi 002: Golden Gate Live — DJ set at Lands End" },
+    // 2026-10-03 fix (owner: "I have attached the new Golden Gate Live
+    // video. Add this as both the GOLDEN GATE hero video and also in the
+    // main box of the experience section for it too") — re-encoded from the
+    // owner's own attached clip (public/events/ggl_main_video.{mp4,webm}),
+    // same pipeline as Bal Masque/SEA//SIDE's loop videos. This case study
+    // previously had no real video asset of its own and fell back to a
+    // static main photo — see claude-home-hero.tsx's own matching note.
+    video: { mp4: "/events/ggl_main_video.mp4", webm: "/events/ggl_main_video.webm" },
+    main: { src: "/events/ggl_main_dj.webp", alt: "Zusebi 002: Golden Gate Live — DJ set in Golden Gate Park" },
     side1: { src: "/events/ggl_dj_crowd.webp", alt: "Zusebi 002: Golden Gate Live — crowd" },
     side2: { src: "/events/ggl_shoulders.webp", alt: "Zusebi 002: Golden Gate Live — sunset over the city" },
   },

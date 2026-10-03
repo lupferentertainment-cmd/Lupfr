@@ -57,16 +57,18 @@ export function About() {
     <section id="about" ref={ref} className="pt-8 sm:pt-9 md:pt-11 pb-(--lupfr-section-pad) px-4 sm:px-6 lg:px-12 relative overflow-hidden">
       <ScrollReveal variant="up" amountIn={0.2} className="relative">
         <div className="container mx-auto max-w-[1400px] relative z-10">
-          {/* items-stretch (was items-start): owner design-file punch list,
-              2026-09-02: "ABOUT LUPFR: story carousel stretches to match the
-              copy column (no dead space)" — the right column's fixed
-              aspect-[4/5] media frame used to leave the carousel shorter
-              than the (usually taller) left text column, stranding empty
-              space below it at lg+. Stretching both columns to the row's
-              height, combined with the media frame switching from a fixed
-              aspect ratio to `flex-1` below, lets the carousel grow to fill
-              that height instead. */}
-          <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16 items-stretch">
+          {/* Row now sizes to its content (owner report, 2026-10-02: "Make
+              the image a bit smaller (but keep the fade) so that there isnt
+              any black sapce under the description" — was a stretch-align
+              grid whose photo column grew to fill 100% of the stretched
+              row's height, a pairing meant for the old multi-slide carousel
+              (see the 2026-09-02 note it used to carry here). Once this slot
+              became a single static photo (round 6), that combination just
+              stretched the row taller than the text column's own natural
+              height and left the leftover gap empty beneath the (now
+              fixed-ratio, see below) photo instead. Sizing the row to its
+              content removes that gap entirely. */}
+          <div className="grid grid-cols-1 gap-10 sm:gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-12 xl:gap-16 items-start">
             {/* Left - Story */}
             <motion.div
               initial={{ opacity: 0, x: -32 }}
@@ -118,17 +120,19 @@ export function About() {
               animate={hasRevealed ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
               aria-label="LUPFR story"
-              className="relative flex h-full flex-col overflow-hidden"
+              className="relative flex flex-col overflow-hidden"
             >
-              {/* aspect-[4/5] below lg (fixed ratio: `flex-1` alone has no
-                  height to grow into in the single-column mobile layout),
-                  lg:flex-1 fills the stretched column's actual height. The
-                  left-edge fade only applies at lg+, where this column
-                  actually sits beside the text column — below lg the layout
-                  stacks (photo above/below copy, not side by side), so
-                  there's no seam for a fade to blend into; a mask there
-                  would just clip the photo's left side for no reason. */}
-              <div className="relative aspect-[4/5] w-full overflow-hidden lg:aspect-auto lg:flex-1 lg:[mask-image:linear-gradient(90deg,transparent,#000_40%)] lg:[-webkit-mask-image:linear-gradient(90deg,transparent,#000_40%)]">
+              {/* Fixed aspect-[4/5] at every breakpoint (previously switched
+                  to an auto aspect ratio + flex-grow at lg, which grew the
+                  photo to fill the stretch-aligned row's full height — see
+                  the grid's own comment above for why that's gone). The
+                  left-edge fade only applies at lg+,
+                  where this column actually sits beside the text column —
+                  below lg the layout stacks (photo above/below copy, not
+                  side by side), so there's no seam for a fade to blend
+                  into; a mask there would just clip the photo's left side
+                  for no reason. */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden lg:[mask-image:linear-gradient(90deg,transparent,#000_40%)] lg:[-webkit-mask-image:linear-gradient(90deg,transparent,#000_40%)]">
                 <ShimmerImage
                   src={STORY_IMAGE.src}
                   alt={STORY_IMAGE.alt}

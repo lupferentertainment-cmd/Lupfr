@@ -10,14 +10,32 @@ import { getServices, servicePath } from "@/lib/data/services"
 const services = getServices()
 
 // 2026-10-02 fix (owner: "change music and entertainment to Music (so it
-// fits on the row same as others)"). "Music & Entertainment" is the only
-// one of the 6 tab labels long enough to wrap to a 2nd line in this timeline
-// row — a shorter display label for the row only, not a data rename, so the
-// detail heading/description/features and every other reference to the full
-// "Music & Entertainment" service name (lib/data/services.ts, the services
-// directory page, claude-home-experiences.tsx's "Services Delivered" tags)
-// are unaffected.
-const TAB_LABEL_OVERRIDES: Record<string, string> = { "Music & Entertainment": "Music" }
+// fits on the row same as others)"); 2026-10-03 fix (owner, mid-batch:
+// "change Venue programming to just 'Programming'" / "change content &
+// media to just 'Media'") — same reasoning for all three: the row only has
+// room for short labels before wrapping to a 2nd line, so these get a
+// shorter display label for the row only, not a data rename. The detail
+// heading/description/features and every other reference to the full
+// service names (lib/data/services.ts, the services directory page,
+// claude-home-experiences.tsx's "Services Delivered" tags) are unaffected.
+const TAB_LABEL_OVERRIDES: Record<string, string> = {
+  "Music & Entertainment": "Music",
+  "Venue Programming": "Programming",
+  "Content & Media": "Media",
+}
+
+// 2026-10-03 fix (owner, live screenshot of this section: "have this image
+// zoomed in a bit so the speakers center the image") — Private Events' own
+// background photo (public/services/private-events-2026-ballroom.webp,
+// confirmed 1400x933px) has its two PA/speaker towers sitting left-of-center
+// and right-of-center in the source frame; a plain object-cover crop (no
+// position override) was leaving one or both out of frame depending on how
+// tall this panel renders. A modest zoom plus an objectPosition anchored on
+// the stage (between the two towers, slightly above the crowd) keeps both
+// towers in view and centered instead of the default full-frame center crop.
+const IMAGE_POSITION_OVERRIDES: Record<string, { position: string; zoom?: boolean }> = {
+  "Private Events": { position: "50% 38%", zoom: true },
+}
 
 /**
  * 2026-10-02 fix — full-site literal port (owner instruction: "how can we
@@ -44,7 +62,17 @@ export function ClaudeHomeServices() {
   return (
     <section id="services" ref={ref} className="relative overflow-hidden border-b border-white/10 bg-[#070605] text-[#f3efe6]">
       <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block" style={{ WebkitMaskImage: "linear-gradient(90deg,transparent,#000 40%)", maskImage: "linear-gradient(90deg,transparent,#000 40%)" }}>
-        {current.image ? <Image key={current.title} src={current.image} alt="" fill sizes="50vw" className="object-cover transition duration-700" /> : null}
+        {current.image ? (
+          <Image
+            key={current.title}
+            src={current.image}
+            alt=""
+            fill
+            sizes="50vw"
+            className={`object-cover transition duration-700 ${IMAGE_POSITION_OVERRIDES[current.title]?.zoom ? "scale-110" : ""}`}
+            style={IMAGE_POSITION_OVERRIDES[current.title] ? { objectPosition: IMAGE_POSITION_OVERRIDES[current.title]!.position } : undefined}
+          />
+        ) : null}
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/55" />
       </div>
 

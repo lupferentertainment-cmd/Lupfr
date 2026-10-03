@@ -493,7 +493,7 @@ export function Contact() {
                                 isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
                               }`}
                             >
-                              <span className="font-serif text-lg font-bold text-foreground">{label}</span>
+                              <span className="font-condensed text-lg font-extrabold uppercase tracking-[0.02em] text-foreground">{label}</span>
                               <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{sub}</span>
                             </button>
                           )
@@ -520,7 +520,15 @@ export function Contact() {
                                 isActive ? "border-accent bg-accent/10" : "border-border bg-secondary hover:border-accent/50"
                               }`}
                             >
-                              <span className="font-serif text-lg font-bold text-foreground">{label}</span>
+                              {/* 2026-10-02 fix (owner: "I do not like the
+                                  text of the budget #s. Make it like the
+                                  rest of the website") — swapped the serif
+                                  display numeral for the site's own
+                                  condensed/mono convention, matching the
+                                  guest-count tiles right above this step and
+                                  the STEP_LABELS row at the top of this same
+                                  wizard. */}
+                              <span className="font-condensed text-lg font-extrabold uppercase tracking-[0.02em] text-foreground">{label}</span>
                               <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-muted-foreground">{sub}</span>
                             </button>
                           )

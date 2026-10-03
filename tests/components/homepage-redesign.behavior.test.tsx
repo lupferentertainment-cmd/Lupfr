@@ -47,28 +47,38 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getByRole("link", { name: "Explore Our Work" })).toBeInTheDocument()
   })
 
+  // 2026-10-02 fix (owner: "change music and entertainment to Music (so it
+  // fits on the row same as others)"); 2026-10-03 fix (owner: "change Venue
+  // programming to just 'Programming'" / "change content & media to just
+  // 'Media'") — mirrors claude-home-services.tsx's own TAB_LABEL_OVERRIDES:
+  // the tab row shows a shortened label for these 3 services; everywhere
+  // else still uses the real full title (`current.title` once it's the
+  // active service's heading), covered separately below.
+  const TAB_LABEL_OVERRIDES: Record<string, string> = {
+    "Music & Entertainment": "Music",
+    "Venue Programming": "Programming",
+    "Content & Media": "Media",
+  }
+
   it("ClaudeHomeServices lists every real service as a tab", () => {
     const services = getServices()
     render(<ClaudeHomeServices />)
     for (const service of services) {
-      // 2026-10-02 fix (owner: "change music and entertainment to Music (so
-      // it fits on the row same as others)") — the tab row shows a shortened
-      // label for this one service; everywhere else still uses its real
-      // full title (`current.title` once it's the active service's
-      // heading), so that's covered separately below.
-      const tabLabel = service.title === "Music & Entertainment" ? "Music" : service.title
+      const tabLabel = TAB_LABEL_OVERRIDES[service.title] ?? service.title
       expect(screen.getAllByText(tabLabel).length).toBeGreaterThan(0)
     }
   })
 
-  it("ClaudeHomeServices still shows the real full title once a service is active", async () => {
+  it("ClaudeHomeServices still shows the real full title once a shortened-label service is active", async () => {
     const user = userEvent.setup()
     const services = getServices()
-    const musicService = services.find((s) => s.title === "Music & Entertainment")
-    if (!musicService) return
     render(<ClaudeHomeServices />)
-    await user.click(screen.getByRole("button", { name: "Music" }))
-    expect(screen.getByRole("heading", { level: 3, name: "Music & Entertainment" })).toBeInTheDocument()
+    for (const [fullTitle, shortLabel] of Object.entries(TAB_LABEL_OVERRIDES)) {
+      const service = services.find((s) => s.title === fullTitle)
+      if (!service) continue
+      await user.click(screen.getByRole("button", { name: shortLabel }))
+      expect(screen.getByRole("heading", { level: 3, name: fullTitle })).toBeInTheDocument()
+    }
   })
 
   it("ClaudeHomeBrands renders real operating brands, not fabricated ones", () => {

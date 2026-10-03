@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
@@ -20,10 +19,11 @@ import { CONTACT_PAGE_PATH } from "@/lib/site"
  * Media is the same already-verified-real assets Experiences uses:
  * - Bal Masque: `/events/bal_masque_loop.{mp4,webm}` (real loop video).
  * - SEA//SIDE: `/events/seaside_series.{mp4,webm}` (real loop video).
- * - Golden Gate (Zusebi 002): no real video asset exists anywhere in
- *   `public/` for this case study — only photos — so per the "never
- *   fabricate media" rule its tab uses the real photo
- *   `/events/ggl_main_dj.webp` instead of inventing a video.
+ * - Golden Gate (Zusebi 002): `/events/ggl_main_video.{mp4,webm}` (owner-
+ *   supplied clip, re-encoded 2026-10-03 — see the matching note in
+ *   claude-home-experiences.tsx). Round 7 and earlier had no real video
+ *   asset for this case study, so this tab fell back to a static photo; now
+ *   every tab has a real video, so that fallback branch is gone.
  *
  * Not importing `caseStudies` from claude-home-experiences.tsx directly:
  * that array's shape (meta/desc/delivered/links) is specific to the case
@@ -39,7 +39,7 @@ import { CONTACT_PAGE_PATH } from "@/lib/site"
 type HeroTab = {
   id: string
   label: string
-  video?: { mp4: string; webm: string }
+  video: { mp4: string; webm: string }
   poster: string
   alt: string
 }
@@ -62,8 +62,9 @@ const HERO_TABS: readonly HeroTab[] = [
   {
     id: "golden-gate",
     label: "Golden Gate",
+    video: { mp4: "/events/ggl_main_video.mp4", webm: "/events/ggl_main_video.webm" },
     poster: "/events/ggl_main_dj.webp",
-    alt: "Zusebi 002: Golden Gate Live — DJ set at Lands End",
+    alt: "Zusebi 002: Golden Gate Live — DJ set in Golden Gate Park",
   },
 ] as const
 
@@ -78,17 +79,13 @@ export function ClaudeHomeHero() {
         className="absolute inset-y-0 right-0 w-full md:w-[72%] lg:w-[66%]"
         style={{ WebkitMaskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)", maskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)" }}
       >
-        {activeTab.video ? (
-          <LazyLoopVideo
-            key={activeTab.id}
-            srcMp4={activeTab.video.mp4}
-            srcWebm={activeTab.video.webm}
-            poster={activeTab.poster}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <Image key={activeTab.id} src={activeTab.poster} alt={activeTab.alt} fill priority sizes="(min-width:1024px) 66vw, 100vw" className="object-cover" />
-        )}
+        <LazyLoopVideo
+          key={activeTab.id}
+          srcMp4={activeTab.video.mp4}
+          srcWebm={activeTab.video.webm}
+          poster={activeTab.poster}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-[#070605]/60 via-transparent to-[#070605]/75" />
       </div>
 
@@ -130,7 +127,26 @@ export function ClaudeHomeHero() {
             <span className="h-[120px] w-px bg-gradient-to-b from-transparent via-[#e8caa0] to-transparent" />
             <div>
               <h1 className="font-condensed text-[clamp(70px,9vw,132px)] font-extrabold uppercase leading-[0.78] tracking-[0.01em] text-[#fdf6e8]">LUPFR</h1>
-              <div className="mt-4 flex justify-between font-mono text-[clamp(10px,1vw,16px)] uppercase tracking-[0.25em] text-[#e8caa0]">ENTERTAINMENT</div>
+              {/* 2026-10-03 fix (owner, reference image attached: "make the
+                  LUPFR Entertainment Look like this (entertainment spread
+                  across to fit exactly under LUPFR)"). `justify-between` on
+                  a flex container only spreads multiple flex-item children —
+                  against a single "ENTERTAINMENT" text node it was a no-op,
+                  so the word sat left-aligned under "LUPFR" instead of
+                  spanning its full width. Splitting it into one <span> per
+                  letter gives justify-between real children to distribute;
+                  `w-full` makes the row span exactly as wide as the "LUPFR"
+                  h1 above it (its sibling in the same flex column), matching
+                  the reference image. Per-letter tracking already comes from
+                  the spread itself, so the old `tracking-[0.25em]` (which
+                  fought justify-between by adding its own letter-spacing) is
+                  dropped. */}
+              <div className="mt-4 flex w-full justify-between font-mono text-[clamp(10px,1vw,16px)] uppercase text-[#e8caa0]" aria-hidden="true">
+                {"ENTERTAINMENT".split("").map((letter, i) => (
+                  <span key={i}>{letter}</span>
+                ))}
+              </div>
+              <span className="sr-only">Entertainment</span>
             </div>
           </div>
           <div className="mt-8 h-[2px] w-[110px] bg-[#c9a869]" />

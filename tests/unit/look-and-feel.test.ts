@@ -641,6 +641,20 @@ describe("about structure", () => {
     expect(about).toContain("BrandSlashText")
     expect(about).toContain("getBrands()")
   })
+
+  // 2026-10-02 fix (owner: "Make the image a bit smaller (but keep the fade)
+  // so that there isnt any black sapce under the description") — the row no
+  // longer stretches the photo panel to match the (usually taller) text
+  // column's height; the photo keeps a fixed aspect ratio at every
+  // breakpoint instead of growing to fill a stretched row.
+  it("sizes the photo row to its content instead of stretching the photo to match the text column", () => {
+    expect(about).toContain("items-start")
+    expect(about).not.toContain("items-stretch")
+    expect(about).not.toContain("lg:aspect-auto")
+    expect(about).not.toContain("lg:flex-1")
+    expect(about).toContain("aspect-[4/5]")
+    expect(about).toContain("mask-image:linear-gradient")
+  })
 })
 
 // ── event card desktop sizing ────────────────────────────────────────────────
