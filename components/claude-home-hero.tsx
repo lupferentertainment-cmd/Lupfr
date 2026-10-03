@@ -1,9 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
+import { useClientPrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 /**
@@ -68,10 +69,29 @@ const HERO_TABS: readonly HeroTab[] = [
   },
 ] as const
 
+const HERO_AUTOPLAY_MS = 7000
+
 export function ClaudeHomeHero() {
   const ref = useRef<HTMLElement>(null)
   const [active, setActive] = useState(0)
   const activeTab = HERO_TABS[active]
+  const reducedMotion = useClientPrefersReducedMotion()
+
+  // 2026-10-03 fix (owner: "needs to automatically move thru each hero
+  // video") — the 3-tab picker used to be click-only. Re-keying off `active`
+  // (not an empty dep array) means every advance — whether from this timer
+  // or a visitor's own click — restarts a fresh HERO_AUTOPLAY_MS window, so
+  // manually picking a tab doesn't get immediately overridden by a timer
+  // that was already most of the way through its interval. Paused under
+  // prefers-reduced-motion, same guard LazyLoopVideo itself already applies
+  // to the actual video playback.
+  useEffect(() => {
+    if (reducedMotion) return
+    const id = window.setTimeout(() => {
+      setActive((i) => (i + 1) % HERO_TABS.length)
+    }, HERO_AUTOPLAY_MS)
+    return () => window.clearTimeout(id)
+  }, [active, reducedMotion])
 
   return (
     <section ref={ref} id="hero" className="relative min-h-[100svh] overflow-hidden border-b border-white/10 bg-[#070605] pt-[76px] text-[#f3efe6]">

@@ -231,12 +231,24 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
     <article className={`grid gap-6 lg:items-stretch ${reverse ? "lg:grid-cols-[.65fr_1.35fr] lg:[&>*:first-child]:order-2" : "lg:grid-cols-[1.35fr_.65fr]"}`}>
       <div className="grid aspect-[16/11] min-w-0 grid-cols-[2fr_1fr] grid-rows-2 gap-2">
         <div className="relative row-span-2 overflow-hidden bg-[#0d0c0a]">
-          <Image src={study.main.src} alt={study.main.alt} fill sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
+          {/* 2026-10-03 fix (owner: "on the zusebi experience, dont have the
+              picture in the main image at any point. Just the video.") —
+              this used to always render `study.main` as a base photo layer
+              underneath the video, which only ever actually showed for a
+              case study with no video. Now that all 3 case studies have a
+              real video (see the round-8 note above), that base photo layer
+              was dead weight for every card — `LazyLoopVideo`'s own
+              `poster` prop already shows this same photo before playback
+              starts, so the separate `<Image>` never added anything but
+              could still be the thing a visitor briefly sees. Only render
+              it for a (currently hypothetical) case study with no video. */}
           {study.video ? (
             <div className="absolute inset-0">
               <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} className="h-full w-full object-cover" />
             </div>
-          ) : null}
+          ) : (
+            <Image src={study.main.src} alt={study.main.alt} fill sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
+          )}
           {/* 2026-10-02 fix (owner: "Hero headers - no black background,
               just fit into the hero videos as is"): the design file's own
               media-type label (e.g. "PHOTOGRAPHY") sits directly on the

@@ -49,6 +49,58 @@ describe("ClaudeHomeHero's background picker", () => {
   })
 })
 
+// 2026-10-03 fix (owner: "needs to automatically move thru each hero
+// video") — the picker used to be click-only; it now also advances itself
+// on a timer, paused under prefers-reduced-motion the same way
+// LazyLoopVideo's own playback already is.
+describe("ClaudeHomeHero's auto-advance", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("moves to the next tab on its own after the autoplay interval", () => {
+    const { container } = render(<ClaudeHomeHero />)
+    expect(container.querySelector("source[src='/events/bal_masque_loop.mp4']")).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(7000)
+    })
+    expect(container.querySelector("source[src='/events/seaside_series.mp4']")).toBeInTheDocument()
+    act(() => {
+      vi.advanceTimersByTime(7000)
+    })
+    expect(container.querySelector("source[src='/events/ggl_main_video.mp4']")).toBeInTheDocument()
+  })
+
+  it("does not auto-advance for a visitor who prefers reduced motion", () => {
+    // Under reduced motion LazyLoopVideo itself also falls back to a plain
+    // poster <img> (no <video>/<source> at all — see its own test coverage
+    // in homepage-redesign-edge-cases above), so the signal to check here is
+    // that the poster image never changes off Bal Masque's, not the
+    // <source> element this suite's other Hero tests look for.
+    const mql = {
+      matches: true,
+      media: "(prefers-reduced-motion: reduce)",
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+      onchange: null,
+    } as unknown as MediaQueryList
+    const mediaSpy = vi.spyOn(window, "matchMedia").mockReturnValue(mql)
+    const { container } = render(<ClaudeHomeHero />)
+    act(() => {
+      vi.advanceTimersByTime(20000)
+    })
+    expect(container.querySelector("img[src='/events/bal_masque_wings.webp']")).toBeInTheDocument()
+    expect(container.querySelector("img[src='/events/seaside_series_dj.webp']")).toBeNull()
+    mediaSpy.mockRestore()
+  })
+})
+
 describe("claude-home-experiences' requireEvent guard", () => {
   it("throws loudly instead of silently rendering placeholder copy when a hardcoded slug goes missing", async () => {
     vi.doMock("@/lib/events", () => ({

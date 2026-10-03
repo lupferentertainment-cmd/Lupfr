@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
-import { getServices, servicePath } from "@/lib/data/services"
+import { getServices } from "@/lib/data/services"
 
 const services = getServices()
 
@@ -48,9 +48,10 @@ const IMAGE_POSITION_OVERRIDES: Record<string, { position: string; zoom?: boolea
  * timeline bar, the INCLUDES list, and the CTA (replaced with an "Explore
  * service →" detail-page link instead) — all while `lib/data/services.ts`
  * already carried `icon` and `features` for every service, unused. Rebuilt
- * to use both. Kept the existing "Explore service →" detail-page link
- * alongside the design's own CTA rather than dropping real navigation the
- * static mockup has no equivalent of.
+ * to use both, originally keeping the "Explore service →" detail-page link
+ * alongside the design's own CTA. 2026-10-03 fix (owner: "remove the
+ * 'explore this service' and just have the button there") — that secondary
+ * link is gone; "Plan Your Event" is the only CTA now, same as the design.
  */
 export function ClaudeHomeServices() {
   const ref = useRef<HTMLElement>(null)
@@ -111,13 +112,19 @@ export function ClaudeHomeServices() {
           <div className="mt-6 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
 
           <div className="mt-6 grid gap-6 md:grid-cols-2 md:items-start">
+            {/* 2026-10-03 fix (owner: "remove the 'explore this service' and
+                just have the button there (fix it to have better
+                margins)") — dropped the secondary "Explore service →"
+                detail-page link entirely; with the gold CTA now the only
+                thing below the description, it gets a bit more breathing
+                room above it (mt-1.5 -> mt-4) than it needed when a second
+                line sat right under it. */}
             <div className="flex flex-col items-start gap-2.5">
               <h3 className="font-condensed text-[clamp(22px,2.2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
               <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{current.description}</p>
-              <Link href={CONTACT_PAGE_PATH} className="mt-1.5 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
+              <Link href={CONTACT_PAGE_PATH} className="mt-4 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
                 Plan Your Event <span aria-hidden>→</span>
               </Link>
-              <Link href={servicePath(current)} className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">Explore service →</Link>
             </div>
             {current.features?.length ? (
               <div className="flex flex-col">

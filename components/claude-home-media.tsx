@@ -45,16 +45,25 @@ export function ClaudeHomeMedia() {
           <a href="/media" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">See all videos →</a>
         </div>
         <div className="grid gap-3.5 lg:grid-cols-[1.7fr_1fr]">
+          {/* 2026-10-03 fix (owner: "on news, replace the event film with
+              the zusebi video attached") — swapped the lead Event Film clip
+              from the SEA//SIDE loop to the owner's own Zusebi opener clip
+              (re-encoded to this site's video budget: 1280x720, muted,
+              ~2.7MB each — public/events/zusebi_opener.{mp4,webm}). The
+              brand tag beside "Event Film" now reads OUT//SIDE to match —
+              Zusebi 002: Golden Gate Live is a real OUT//SIDE event (see
+              claude-home-experiences.tsx) and this clip is that same
+              brand's content, not SEA//SIDE's. */}
           <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[#0d0c0a]">
             <LazyLoopVideo
-              srcMp4="/events/seaside_event_film.mp4"
-              srcWebm="/events/seaside_event_film.webm"
-              poster="/brands/seaside-gallery-2.webp"
+              srcMp4="/events/zusebi_opener.mp4"
+              srcWebm="/events/zusebi_opener.webm"
+              poster="/events/ggl_main_dj.webp"
               className="h-full w-full object-cover"
             />
             <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between gap-3 bg-gradient-to-b from-black/70 to-transparent p-4">
               <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">Event Film</span>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/75">SEA//SIDE</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/75">OUT//SIDE</span>
             </div>
           </div>
           <div className="flex min-w-0 flex-col gap-3.5">
@@ -114,12 +123,24 @@ export function ClaudeHomeMedia() {
                   capped height so the card's size no longer scales with the
                   column's width; still tall enough to show the photo
                   properly (not the old short strip), just not viewport-
-                  dominating. */}
+                  dominating.
+                  Round 3 (owner: "the image of the hidden gem article has my
+                  face cut off - make that tile a bit bigger"): this card's
+                  source photo (public/images/team/will-2026.webp) is a tall
+                  portrait going into a wide `object-cover` crop — at
+                  280/320px tall the visible vertical slice was cutting into
+                  his face. Taller fixed heights (340/400px, +20-25%) reveal
+                  more of that same `object-position: 50% 15%` crop without
+                  touching the zoom/position itself. The 3-item list on the
+                  right isn't touched directly — it already stretches to
+                  match this column's height via the grid's default
+                  `items-stretch`, so it grows along with the lead card by
+                  itself; same design, just naturally taller. */}
               <a
                 href={newsLead.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative flex h-[280px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:h-[320px] sm:p-7"
+                className="relative flex h-[340px] flex-col justify-end overflow-hidden border border-white/10 bg-gradient-to-br from-[#1a1710] to-[#0b0a08] p-6 no-underline sm:h-[400px] sm:p-7"
               >
                 {newsLead.image ? (
                   <Image src={newsLead.image} alt="" fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" style={{ objectPosition: "50% 15%" }} />
