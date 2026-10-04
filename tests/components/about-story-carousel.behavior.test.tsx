@@ -46,3 +46,21 @@ describe("About — story photo", () => {
     expect(screen.queryByRole("link", { name: /Read ".*" on/ })).toBeNull()
   })
 })
+
+// 2026-10-04 fix, round 10 (owner, mobile screenshot: "we need to have that
+// image faded behind the text on mobile, not below it"). Adds a decorative,
+// `lg:hidden` background layer behind the text column using the same
+// photo, separate from (and in addition to) the real `lg:`-only photo
+// block above.
+describe("About — mobile background photo (round 10)", () => {
+  it("renders a decorative, aria-hidden background using the same story photo, alongside the real lg-only photo block", () => {
+    const { container } = render(<About />)
+    const images = container.querySelectorAll('img[src="/story/h-01.webp"]')
+    // One inside the real `aria-label="LUPFR story"` article, one in the
+    // new decorative mobile background layer.
+    expect(images.length).toBe(2)
+    const decorative = [...images].find((img) => img.getAttribute("alt") === "")
+    expect(decorative).toBeTruthy()
+    expect(decorative?.closest('[aria-hidden="true"]')).not.toBeNull()
+  })
+})

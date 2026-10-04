@@ -61,7 +61,16 @@ function FounderCard({ member }: { member: TeamMember }) {
         // box, leaving a tall slab of empty gradient next to Sky's copy. Any
         // founder without a photo now gets a capped, self-contained box
         // instead — real portraits above are untouched.
-        <div className="relative aspect-square w-full max-w-[220px] self-start overflow-hidden rounded-sm bg-gradient-to-br from-[#141210] via-[#1c1916] to-[#141210] sm:max-w-[260px]">
+        // 2026-10-04 fix, round 10 (owner, mobile screenshot: "Sky Terrell
+        // image needs to fit the across the screen (same height) so there
+        // is not dead space"). The 220px cap applied below `sm:` too, which
+        // on an actual phone-width column (full-width below `lg`, same as
+        // the real-portrait founders) left dead space beside the small box
+        // instead of the "tall slab" round 6 was actually guarding against.
+        // Dropping just the base cap lets it go full-width like every real
+        // portrait does at that breakpoint; the `sm:`/implicit `lg:` cap
+        // that round 6 added is untouched.
+        <div className="relative aspect-square w-full self-start overflow-hidden rounded-sm bg-gradient-to-br from-[#141210] via-[#1c1916] to-[#141210] sm:max-w-[260px]">
           <div className="flex h-full w-full flex-col items-center justify-center gap-2">
             <span className="font-condensed text-5xl font-bold text-[#c9a869]/50" aria-hidden>
               {member.name.charAt(0)}
@@ -79,13 +88,29 @@ function FounderCard({ member }: { member: TeamMember }) {
           {lastName ? <span className="text-[#c9a869]">{lastName}</span> : null}
         </h3>
 
-        <div className="mt-5 flex items-center gap-3.5 lg:mt-6">
-          <span className="h-px w-12 shrink-0 bg-[#c9a869]" aria-hidden />
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#8f887c]">{member.title}</span>
-          <span className="text-[#8f887c]/40" aria-hidden>
+        {/* 2026-10-04 fix, round 10 (owner, mobile screenshot: "We need to
+            have the text of title and cities as one row each (instead of
+            two rows per text)"). Neither span had `whitespace-nowrap`, so
+            on a narrow phone each one's own text — not the row as a whole —
+            was free to wrap mid-string onto a second line. `whitespace-
+            nowrap` on both makes each one a true single line; `flex-wrap`
+            on the row (nowrap again from `lg:`, where it already fit on
+            one line) lets the location group drop to its own line below
+            the title instead of breaking inside a word if both can't fit
+            alongside the rule/divider. Slightly smaller size/tracking below
+            `sm:` and hiding the "·" divider there make sharing one row more
+            achievable on an actual phone width. */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5 lg:mt-6 lg:flex-nowrap lg:gap-x-3.5">
+          <span className="h-px w-8 shrink-0 bg-[#c9a869] sm:w-12" aria-hidden />
+          <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c] sm:text-[11px] sm:tracking-[0.18em]">
+            {member.title}
+          </span>
+          <span className="hidden text-[#8f887c]/40 sm:inline" aria-hidden>
             ·
           </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#8f887c]/70">{member.location}</span>
+          <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c]/70 sm:text-[11px] sm:tracking-[0.18em]">
+            {member.location}
+          </span>
         </div>
 
         <div className="mt-6 max-h-[176px] space-y-3.5 overflow-y-auto sm:max-h-[200px]">

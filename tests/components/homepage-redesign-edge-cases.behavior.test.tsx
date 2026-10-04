@@ -1,10 +1,11 @@
 /** @vitest-environment happy-dom */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { act, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ClaudeHomeHero } from "@/components/claude-home-hero"
+import { ClaudeHomeTeam } from "@/components/claude-home-team"
 
 /**
  * Optional-field branches on the new homepage sections (missing image,
@@ -197,6 +198,58 @@ describe("ClaudeHomeArtists with an imageless artist", () => {
   })
 })
 
+// 2026-10-04 fix, round 10 (owner, mobile screenshot: "We also need PLS&TY
+// to be colored until you select another artist") — mobile has no hover,
+// so the wall's first/default card needs to render colored without one.
+describe("ClaudeHomeArtists' default-active tile", () => {
+  it("renders the first card (PLS&TY) in color by default, and swaps which one is colored on hover", async () => {
+    const { ClaudeHomeArtists } = await import("@/components/claude-home-artists")
+    const { container } = render(<ClaudeHomeArtists />)
+    const tiles = container.querySelectorAll("a[href^='https://open.spotify.com'], a[href^='/artists?artist=']")
+    expect(tiles.length).toBeGreaterThan(1)
+    const firstImg = tiles[0]!.querySelector("img")
+    const secondImg = tiles[1]!.querySelector("img")
+    expect(firstImg).toHaveClass("grayscale-0")
+    expect(firstImg).not.toHaveClass("grayscale")
+    expect(secondImg).toHaveClass("grayscale")
+    expect(secondImg).not.toHaveClass("grayscale-0")
+
+    fireEvent.mouseEnter(tiles[1]!)
+    expect(secondImg).toHaveClass("grayscale-0")
+    expect(firstImg).toHaveClass("grayscale")
+
+    // Keyboard/focus users (no mouse at all) get the same swap via onFocus.
+    fireEvent.focus(tiles[0]!)
+    expect(firstImg).toHaveClass("grayscale-0")
+    expect(secondImg).toHaveClass("grayscale")
+  })
+
+  it("applies the real bento col/row spans at every breakpoint, not just lg:", async () => {
+    const { ClaudeHomeArtists } = await import("@/components/claude-home-artists")
+    const { container } = render(<ClaudeHomeArtists />)
+    // PLS&TY is WALL_SPAN[0] = { col: 2, row: 2 } — used to only apply
+    // col-span-2/row-span-2 at `lg:`, collapsing to a uniform 1x1 box below
+    // that (round 10's complaint). Now applies unprefixed too.
+    const firstTile = container.querySelectorAll("a[href^='https://open.spotify.com'], a[href^='/artists?artist=']")[0]!
+    expect(firstTile).toHaveClass("col-span-2")
+    expect(firstTile).toHaveClass("row-span-2")
+  })
+})
+
+// 2026-10-04 fix, round 10 (owner, mobile screenshot: "We need to have the
+// text of title and cities as one row each (instead of two rows per
+// text)") — each span now forces a single line instead of being free to
+// wrap mid-text.
+describe("ClaudeHomeTeam's title/location row", () => {
+  it("keeps the title and location each on a single line", () => {
+    render(<ClaudeHomeTeam />)
+    const title = screen.getByText("CEO & Founder")
+    const location = screen.getByText("Los Angeles & San Francisco")
+    expect(title).toHaveClass("whitespace-nowrap")
+    expect(location).toHaveClass("whitespace-nowrap")
+  })
+})
+
 describe("ClaudeHomeBrands with an imageless brand", () => {
   it("renders the card without an image", async () => {
     vi.doMock("@/lib/data/brands", () => ({
@@ -211,6 +264,32 @@ describe("ClaudeHomeBrands with an imageless brand", () => {
     const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
     render(<ClaudeHomeBrands />)
     expect(screen.getAllByText("BARE").length).toBeGreaterThan(0)
+  })
+})
+
+// 2026-10-04 fix, round 10 (owner, mobile screenshot: "The brands section
+// needs to have the smaller tiles like our current website on mobile" /
+// "Platform - the tiles also need to be designed like the screenshot of
+// the brands (vertical and less height on mobile)") — both tabs' tiles
+// used to share desktop's tall aspect-[3/4] below `lg:` too; now shorter
+// (aspect-[4/3]) there, full aspect-[3/4] restored from `lg:`.
+describe("ClaudeHomeBrands' mobile tile shape", () => {
+  it("gives Operating-tab tiles a shorter aspect ratio below lg, restoring the taller one from lg:", async () => {
+    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
+    const { container } = render(<ClaudeHomeBrands />)
+    const tile = container.querySelector("a[href^='/brands/']")!
+    expect(tile).toHaveClass("aspect-[4/3]")
+    expect(tile).toHaveClass("lg:aspect-[3/4]")
+  })
+
+  it("gives Platform-tab tiles the same shorter mobile aspect ratio", async () => {
+    const user = userEvent.setup()
+    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
+    const { container } = render(<ClaudeHomeBrands />)
+    await user.click(screen.getByRole("button", { name: "platform" }))
+    const tile = [...container.querySelectorAll("div")].find((el) => el.className.includes("aspect-[4/3]"))
+    expect(tile).toBeTruthy()
+    expect(tile).toHaveClass("lg:aspect-[3/4]")
   })
 })
 
