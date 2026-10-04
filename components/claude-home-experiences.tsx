@@ -271,16 +271,26 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
           />
         </div>
       </div>
+      {/* 2026-10-04 fix, round 11 (owner, mobile screenshot: "the brand
+          (OUT//SIDE, SEA//SIDE, etc) and location should be below the
+          title of the event"). Below `lg:` the title now renders first,
+          with the brand eyebrow and meta line beneath it; `lg:` restores
+          today's exact order (brand, meta, title — verified against the
+          design file across earlier rounds, untouched). Flex items default
+          to `order-0`, so every sibling after this reordered trio also
+          needs its own explicit (breakpoint-stable) order — left unset,
+          they'd jump ahead of the 1/2/3 set below instead of staying after
+          it. */}
       <div className="mt-[-4px] flex min-w-0 max-w-[560px] flex-col gap-[18px]">
         {study.brand ? (
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#8f887c]">
+          <p className="order-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#8f887c] lg:order-1">
             <BrandSlashText text={study.brand.label} color={study.brand.accent} />
           </p>
         ) : null}
-        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c]">{study.meta}</p>
-        <h3 className="font-condensed text-[clamp(32px,4vw,52px)] font-extrabold uppercase leading-[0.94] text-[#f3efe6]">{study.title}</h3>
-        <p className="text-base leading-relaxed text-[#bdb6a9]">{study.desc}</p>
-        <ul className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-5">
+        <p className="order-3 font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c] lg:order-2">{study.meta}</p>
+        <h3 className="order-1 font-condensed text-[clamp(32px,4vw,52px)] font-extrabold uppercase leading-[0.94] text-[#f3efe6] lg:order-3">{study.title}</h3>
+        <p className="order-4 text-base leading-relaxed text-[#bdb6a9]">{study.desc}</p>
+        <ul className="order-5 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-5">
           {study.delivered.map((item) => (
             <li key={item.label} className="flex items-start gap-3">
               <span className="mt-0.5 flex size-8 flex-none items-center justify-center rounded-full border border-[#c9a869]/40 bg-[#c9a869]/10 text-[#c9a869]">
@@ -293,7 +303,7 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
             </li>
           ))}
         </ul>
-        <div className="mt-1 flex flex-wrap items-center gap-3">
+        <div className="order-6 mt-1 flex flex-wrap items-center gap-3">
           {study.filmUrl ? (
             <a
               href={study.filmUrl}
@@ -312,7 +322,7 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
             Create an Experience Like This <span aria-hidden>→</span>
           </Link>
         </div>
-        <Link href={study.href} className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">{study.linkLabel}</Link>
+        <Link href={study.href} className="order-7 font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">{study.linkLabel}</Link>
       </div>
     </article>
   )

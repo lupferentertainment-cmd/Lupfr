@@ -1,11 +1,15 @@
 /** @vitest-environment happy-dom */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { act, fireEvent, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ClaudeHomeHero } from "@/components/claude-home-hero"
 import { ClaudeHomeTeam } from "@/components/claude-home-team"
+import { ClaudeHomeExperiences } from "@/components/claude-home-experiences"
+import { ClaudeHomeBrands } from "@/components/claude-home-brands"
+import { ClaudeHomeServices } from "@/components/claude-home-services"
+import { getServices } from "@/lib/data/services"
 
 /**
  * Optional-field branches on the new homepage sections (missing image,
@@ -290,6 +294,118 @@ describe("ClaudeHomeBrands' mobile tile shape", () => {
     const tile = [...container.querySelectorAll("div")].find((el) => el.className.includes("aspect-[4/3]"))
     expect(tile).toBeTruthy()
     expect(tile).toHaveClass("lg:aspect-[3/4]")
+  })
+})
+
+// 2026-10-04 fix, round 11 (owner, Claude design tool screenshot: "mobile
+// Should look like the screenshot attached... The previous website design
+// was like this") — corrects round 10's own 2-up mobile grid (built off a
+// different reference) back to a single full-width card per row.
+describe("ClaudeHomeBrands/Platform's single-column mobile grid", () => {
+  it("lays Operating-tab tiles out one per row below lg", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    // The <a> tile sits inside a framer-motion <m.div> wrapper, so the
+    // grid itself is its grandparent, not its immediate parent.
+    const grid = container.querySelector("a[href^='/brands/']")!.parentElement!.parentElement!
+    expect(grid).toHaveClass("grid-cols-1")
+    expect(grid).toHaveClass("lg:grid-cols-3")
+  })
+
+  it("lays Platform-tab tiles out one per row below lg", async () => {
+    const user = userEvent.setup()
+    const { container } = render(<ClaudeHomeBrands />)
+    await user.click(screen.getByRole("button", { name: "platform" }))
+    const tile = [...container.querySelectorAll("div")].find((el) => el.className.includes("aspect-[4/3]"))!
+    expect(tile.parentElement).toHaveClass("grid-cols-1")
+    expect(tile.parentElement).toHaveClass("md:grid-cols-3")
+  })
+})
+
+// 2026-10-04 fix, round 11 (owner, Claude design mobile screenshot: "Hero...
+// needs to be designed like the screenshot I have from the claude design")
+// — the media panel's left-edge mask and heavy dark gradient only ever
+// made sense for the `md:`+ two-column layout; content now anchors to the
+// bottom on mobile instead of vertically centering.
+describe("ClaudeHomeHero's mobile layout", () => {
+  it("has no left-edge mask below md:, and restores it from md: up", () => {
+    const { container } = render(<ClaudeHomeHero />)
+    const mediaPanel = container.querySelector("video")!.closest("div.absolute")!
+    // Unprefixed (mobile) class must be absent — only the md:-prefixed one exists.
+    expect(mediaPanel.classList.contains("[-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)]")).toBe(false)
+    expect(mediaPanel).toHaveClass("md:[-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)]")
+  })
+
+  it("anchors content to the bottom below md:, centered from md: up", () => {
+    const { container } = render(<ClaudeHomeHero />)
+    const contentRow = container.querySelector("h1")!.closest("div.relative.z-10")!
+    expect(contentRow).toHaveClass("items-end")
+    expect(contentRow).toHaveClass("md:items-center")
+  })
+})
+
+// 2026-10-04 addition, round 11 (owner, mobile screenshot: "OUR SERVICES -
+// Mobile version needs to align to screenshot attached. The services are
+// top to bottom with dropdowns on the info. The image of each is shown
+// above") — a new `lg:hidden` accordion alongside the existing `lg:`-only
+// icon-tab-row + shared detail panel (now wrapped `hidden lg:block`, both
+// still real DOM nodes in jsdom, hence the `data-testid` scoping below).
+describe("ClaudeHomeServices' mobile accordion", () => {
+  it("defaults open on the first service (Private Events) with its image, description and features", () => {
+    const services = getServices()
+    const first = services[0]!
+    render(<ClaudeHomeServices />)
+    const accordion = within(screen.getByTestId("services-accordion"))
+    const toggle = accordion.getByRole("button", { name: new RegExp(first.title) })
+    expect(toggle).toHaveAttribute("aria-expanded", "true")
+    expect(accordion.getByText(first.description)).toBeInTheDocument()
+    for (const feature of first.features) {
+      expect(accordion.getByText(feature)).toBeInTheDocument()
+    }
+  })
+
+  it("collapses the open service and expands another on tap, each showing its own CTA", async () => {
+    const services = getServices()
+    const second = services[1]
+    if (!second) return
+    const user = userEvent.setup()
+    render(<ClaudeHomeServices />)
+    const accordion = within(screen.getByTestId("services-accordion"))
+    await user.click(accordion.getByRole("button", { name: new RegExp(second.title) }))
+    expect(accordion.getByRole("button", { name: new RegExp(second.title) })).toHaveAttribute("aria-expanded", "true")
+    expect(accordion.getByText(second.description)).toBeInTheDocument()
+    expect(accordion.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
+    // Tapping the now-open row again closes it instead of leaving it stuck open.
+    await user.click(accordion.getByRole("button", { name: new RegExp(second.title) }))
+    expect(accordion.getByRole("button", { name: new RegExp(second.title) })).toHaveAttribute("aria-expanded", "false")
+    expect(accordion.queryByText(second.description)).not.toBeInTheDocument()
+  })
+
+  it("renders an imageless service's row without a photo", async () => {
+    vi.doMock("@/lib/data/services", () => ({
+      getServices: () => [{ title: "Bare Service", description: "A plain service.", features: [] }],
+    }))
+    const { ClaudeHomeServices: Mocked } = await import("@/components/claude-home-services")
+    render(<Mocked />)
+    const accordion = within(screen.getByTestId("services-accordion"))
+    expect(accordion.getByText("A plain service.")).toBeInTheDocument()
+    expect(accordion.queryByRole("img")).not.toBeInTheDocument()
+  })
+})
+
+// 2026-10-04 fix, round 11 (owner, mobile screenshot: "the brand (OUT//SIDE,
+// SEA//SIDE, etc) and location should be below the title of the event") —
+// title now orders first below `lg:`, with brand/meta restored above it
+// from `lg:` up (unchanged desktop order).
+describe("ClaudeHomeExperiences' mobile brand/location order", () => {
+  it("orders the title before the brand eyebrow and meta line below lg, and restores the original order from lg:", () => {
+    render(<ClaudeHomeExperiences />)
+    const title = screen.getByRole("heading", { name: "BAL MASQUE" })
+    const brand = title.parentElement!.querySelector("p.order-2")!
+    const meta = title.parentElement!.querySelector("p.order-3")!
+    expect(title).toHaveClass("order-1")
+    expect(title).toHaveClass("lg:order-3")
+    expect(brand).toHaveClass("lg:order-1")
+    expect(meta).toHaveClass("lg:order-2")
   })
 })
 

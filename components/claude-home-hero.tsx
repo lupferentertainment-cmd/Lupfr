@@ -95,9 +95,19 @@ export function ClaudeHomeHero() {
 
   return (
     <section ref={ref} id="hero" className="relative min-h-[100svh] overflow-hidden border-b border-white/10 bg-[#070605] pt-[76px] text-[#f3efe6]">
+      {/* 2026-10-04 fix, round 11 (owner, mobile screenshot: "Hero... needs
+          to be designed like the screenshot I have from the claude
+          design"). Two things were only ever right for the `md:`+ two-
+          column layout (text left, photo right) and were leaking into
+          mobile with no second column for them to make sense against: the
+          left-edge mask (fading the photo's own left ~38% down to the flat
+          page background instead of the design's full-bleed mobile photo)
+          and the heavier top/bottom dark gradient (the design's mobile
+          photo reads much brighter). Both now start at `md:`; below that
+          there's no mask at all and a lighter gradient, restored to
+          today's exact values from `md:` up. */}
       <div
-        className="absolute inset-y-0 right-0 w-full md:w-[72%] lg:w-[66%]"
-        style={{ WebkitMaskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)", maskImage: "linear-gradient(90deg,transparent 0%,rgba(0,0,0,.55) 16%,#000 38%)" }}
+        className="absolute inset-y-0 right-0 w-full md:w-[72%] lg:w-[66%] md:[-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)] md:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)]"
       >
         <LazyLoopVideo
           key={activeTab.id}
@@ -106,10 +116,12 @@ export function ClaudeHomeHero() {
           poster={activeTab.poster}
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#070605]/60 via-transparent to-[#070605]/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070605]/30 via-transparent to-[#070605]/55 md:from-[#070605]/60 md:to-[#070605]/75" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-76px)] max-w-[1440px] items-center px-6 py-20 sm:px-8 lg:px-12 xl:px-[72px]">
+      {/* Content anchors to the bottom third on mobile (design reference),
+          vertically centered from `md:` up (unchanged). */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-76px)] max-w-[1440px] items-end px-6 pb-24 pt-20 sm:px-8 md:items-center md:pb-20 lg:px-12 xl:px-[72px]">
         <div className="max-w-[720px]">
           <div className="flex items-center gap-5 sm:gap-7">
             {/* 2026-10-02 fix, round 4 (owner: "LE logo should be bigger to

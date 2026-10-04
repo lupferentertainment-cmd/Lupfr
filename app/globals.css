@@ -437,6 +437,19 @@
     z-index: 10;
   }
 
+  /* 2026-10-04 addition, round 11 — reserves room for the sitewide fixed
+     bottom bar (components/mobile-sticky-cta.tsx, and its Contact-page
+     counterpart in components/contact.tsx) so it never overlaps the last
+     content/footer on any page. Both bars are the same height, so this
+     stays unconditional regardless of which one is actually showing at a
+     given scroll position. Matches the `lg:` breakpoint those components
+     hide themselves at — above that width, neither bar renders. */
+  @media (max-width: 1023.98px) {
+    .lupfr-site-content {
+      padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+  }
+
   /* Light mode: cool off-white surface — no gold wash, no warm-cream gradient. */
   html:not(.dark) body {
     background: var(--background);

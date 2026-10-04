@@ -43,8 +43,18 @@ describe("contact scroll-flicker guard", () => {
     expect(contact).toContain("useInView(ref, { once: true,")
   })
 
-  it("does not use once:false for the section-level observer", () => {
-    expect(contact).not.toMatch(/useInView\(ref,\s*\{\s*once:\s*false/)
+  // 2026-10-04 update, round 11: contact.tsx gained a second useInView(ref, ...)
+  // call — `stickyBarInView`, used only to show/hide the mobile sticky
+  // Back/Continue/Send-Brief bar (a full conditional-render swap via
+  // createPortal, not an opacity `animate`). once:false is safe there
+  // because nothing fades; it's not the flicker bug this guard exists for.
+  // This still catches the original bug: any OTHER once:false observer on
+  // `ref` (e.g. one re-wired into the opacity animate below) still fails.
+  it("does not use once:false for the section-level opacity observer (stickyBarInView's own once:false is a documented exception — it drives the sticky bar's show/hide, never an opacity animation)", () => {
+    const onceFalseAssignments = [...contact.matchAll(/const\s+(\w+)\s*=\s*useInView\(ref,\s*\{\s*once:\s*false/g)]
+    for (const match of onceFalseAssignments) {
+      expect(match[1]).toBe("stickyBarInView")
+    }
   })
 })
 

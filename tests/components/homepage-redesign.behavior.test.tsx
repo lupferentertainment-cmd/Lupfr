@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { describe, expect, it } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ClaudeHomeNavigation } from "@/components/claude-home-navigation"
 import { ClaudeHomeHero } from "@/components/claude-home-hero"
@@ -166,15 +166,23 @@ describe("new homepage sections render their real data", () => {
     render(<ClaudeHomeServices />)
     const second = services[1]
     if (!second) return
-    await user.click(screen.getByRole("button", { name: new RegExp(second.title) }))
-    expect(screen.getByRole("heading", { level: 3, name: second.title })).toBeInTheDocument()
+    // 2026-10-04 fix, round 11: scoped to the desktop tab-row/panel
+    // specifically (`data-testid="services-desktop"`) — the new mobile
+    // accordion (`ServicesAccordion`, same file) renders its own
+    // independent copy of every service's title/Includes list/"Plan Your
+    // Event" link alongside this one (jsdom doesn't apply the `lg:hidden`/
+    // `hidden lg:block` CSS that keeps only one visible in a real browser),
+    // so an unscoped query here would be ambiguous between the two.
+    const desktop = within(screen.getByTestId("services-desktop"))
+    await user.click(desktop.getByRole("button", { name: new RegExp(second.title) }))
+    expect(desktop.getByRole("heading", { level: 3, name: second.title })).toBeInTheDocument()
     // Design file's "INCLUDES" feature list + "Plan Your Event" CTA — real
     // data from lib/data/services.ts that the first pass dropped entirely.
-    expect(screen.getByText("Includes")).toBeInTheDocument()
+    expect(desktop.getByText("Includes")).toBeInTheDocument()
     for (const feature of second.features) {
-      expect(screen.getByText(feature)).toBeInTheDocument()
+      expect(desktop.getByText(feature)).toBeInTheDocument()
     }
-    expect(screen.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
+    expect(desktop.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
   })
 
   it("ClaudeHomeBrands switches to the platform tab and back", async () => {

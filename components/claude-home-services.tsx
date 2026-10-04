@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRef, useState } from "react"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
-import { getServices } from "@/lib/data/services"
+import { getServices, type ServiceItem } from "@/lib/data/services"
 
 const services = getServices()
 
@@ -84,62 +84,144 @@ export function ClaudeHomeServices() {
           <div className="my-5 h-[3px] w-[110px] bg-[#c9a869]" />
           <p className="mb-6 text-base text-[#e6e0d4]">All an event needs in one place.</p>
 
-          <div className="relative grid grid-cols-3 gap-y-6 sm:grid-cols-6">
-            <span aria-hidden className="absolute left-[8.33%] right-[8.33%] top-5 h-px bg-[#c9a869]/30" />
-            <span aria-hidden className="absolute left-[8.33%] top-5 h-px bg-[#c9a869] transition-[width] duration-400" style={{ width: `${progressPct * 0.8333}%` }} />
-            {services.map((service, i) => {
-              const Icon = service.icon
-              const isActive = active === i
-              return (
-                <button
-                  key={service.title}
-                  type="button"
-                  onMouseEnter={() => setActive(i)}
-                  onClick={() => setActive(i)}
-                  className="relative z-[1] flex min-w-0 flex-col items-center gap-2.5 bg-transparent px-1 text-center"
-                >
-                  {Icon ? (
-                    <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-full border transition-colors ${isActive ? "border-[#c9a869] bg-[#c9a869]" : "border-[#c9a869]/45 bg-[#0d0c0a]"}`}>
-                      <Icon size={18} strokeWidth={1.6} className={isActive ? "text-[#1a1408]" : "text-[#c9a869]"} />
-                    </span>
-                  ) : null}
-                  <span className={`font-condensed text-[13px] font-extrabold uppercase leading-none sm:text-[15px] ${isActive ? "text-[#e8caa0]" : "text-[#bdb6a9]"}`}>{TAB_LABEL_OVERRIDES[service.title] ?? service.title}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="mt-6 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
-
-          <div className="mt-6 grid gap-6 md:grid-cols-2 md:items-start">
-            {/* 2026-10-03 fix (owner: "remove the 'explore this service' and
-                just have the button there (fix it to have better
-                margins)") — dropped the secondary "Explore service →"
-                detail-page link entirely; with the gold CTA now the only
-                thing below the description, it gets a bit more breathing
-                room above it (mt-1.5 -> mt-4) than it needed when a second
-                line sat right under it. */}
-            <div className="flex flex-col items-start gap-2.5">
-              <h3 className="font-condensed text-[clamp(22px,2.2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
-              <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{current.description}</p>
-              <Link href={CONTACT_PAGE_PATH} className="mt-4 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
-                Plan Your Event <span aria-hidden>→</span>
-              </Link>
+          {/* 2026-10-04 fix, round 11 (owner, mobile screenshot: "Mobile
+              version needs to align to screenshot attached. The services
+              are top to bottom with dropdowns on the info"). This
+              icon-tab-row + single shared detail panel below is a design
+              that only works once there's room for a horizontal row of 6
+              icons plus a two-column detail grid beside it — now `lg:`-
+              only (unchanged from before). A separate, `lg:hidden` mobile
+              accordion (ServicesAccordion, below) replaces it on small
+              screens. */}
+          <div className="hidden lg:block" data-testid="services-desktop">
+            <div className="relative grid grid-cols-3 gap-y-6 sm:grid-cols-6">
+              <span aria-hidden className="absolute left-[8.33%] right-[8.33%] top-5 h-px bg-[#c9a869]/30" />
+              <span aria-hidden className="absolute left-[8.33%] top-5 h-px bg-[#c9a869] transition-[width] duration-400" style={{ width: `${progressPct * 0.8333}%` }} />
+              {services.map((service, i) => {
+                const Icon = service.icon
+                const isActive = active === i
+                return (
+                  <button
+                    key={service.title}
+                    type="button"
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => setActive(i)}
+                    className="relative z-[1] flex min-w-0 flex-col items-center gap-2.5 bg-transparent px-1 text-center"
+                  >
+                    {Icon ? (
+                      <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-full border transition-colors ${isActive ? "border-[#c9a869] bg-[#c9a869]" : "border-[#c9a869]/45 bg-[#0d0c0a]"}`}>
+                        <Icon size={18} strokeWidth={1.6} className={isActive ? "text-[#1a1408]" : "text-[#c9a869]"} />
+                      </span>
+                    ) : null}
+                    <span className={`font-condensed text-[13px] font-extrabold uppercase leading-none sm:text-[15px] ${isActive ? "text-[#e8caa0]" : "text-[#bdb6a9]"}`}>{TAB_LABEL_OVERRIDES[service.title] ?? service.title}</span>
+                  </button>
+                )
+              })}
             </div>
-            {current.features?.length ? (
-              <div className="flex flex-col">
-                <span className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#c9a869]">Includes</span>
-                {current.features.map((feature) => (
-                  <span key={feature} className="flex items-center gap-2.5 border-b border-white/[0.08] py-2 text-sm text-[#fdf6e8]">
-                    <span className="h-[5px] w-[5px] flex-none rotate-45 bg-[#c9a869]" />
-                    {feature}
-                  </span>
-                ))}
+
+            <div className="mt-6 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
+
+            <div className="mt-6 grid gap-6 md:grid-cols-2 md:items-start">
+              {/* 2026-10-03 fix (owner: "remove the 'explore this service' and
+                  just have the button there (fix it to have better
+                  margins)") — dropped the secondary "Explore service →"
+                  detail-page link entirely; with the gold CTA now the only
+                  thing below the description, it gets a bit more breathing
+                  room above it (mt-1.5 -> mt-4) than it needed when a second
+                  line sat right under it. */}
+              <div className="flex flex-col items-start gap-2.5">
+                <h3 className="font-condensed text-[clamp(22px,2.2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
+                <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{current.description}</p>
+                <Link href={CONTACT_PAGE_PATH} className="mt-4 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
+                  Plan Your Event <span aria-hidden>→</span>
+                </Link>
               </div>
-            ) : null}
+              {current.features?.length ? (
+                <div className="flex flex-col">
+                  <span className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#c9a869]">Includes</span>
+                  {current.features.map((feature) => (
+                    <span key={feature} className="flex items-center gap-2.5 border-b border-white/[0.08] py-2 text-sm text-[#fdf6e8]">
+                      <span className="h-[5px] w-[5px] flex-none rotate-45 bg-[#c9a869]" />
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </div>
+
+          <ServicesAccordion services={services} />
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * 2026-10-04 addition, round 11 — mobile-only (`lg:hidden`) companion to
+ * the icon-tab-row above. Each service is its own expandable row; opening
+ * one shows that service's own real photo (`service.image` — the same
+ * field the desktop background panel already uses, not a new asset),
+ * description, features list and its own "Plan Your Event" CTA, instead of
+ * every service sharing one detail panel. Defaults open on the first
+ * service (Private Events, `data/services.yml`'s own real order) to match
+ * the design reference.
+ */
+function ServicesAccordion({ services }: { services: ServiceItem[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
+
+  return (
+    <div className="lg:hidden" data-testid="services-accordion">
+      <div className="divide-y divide-white/10 border-y border-white/10">
+        {services.map((service, i) => {
+          const Icon = service.icon
+          const isOpen = openIndex === i
+          const panelId = `service-accordion-panel-${i}`
+          return (
+            <div key={service.title}>
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={panelId}
+                onClick={() => setOpenIndex((current) => (current === i ? null : i))}
+                className="flex w-full items-center gap-3.5 py-4 text-left"
+              >
+                {Icon ? (
+                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-full border transition-colors ${isOpen ? "border-[#c9a869] bg-[#c9a869]" : "border-[#c9a869]/45 bg-[#0d0c0a]"}`}>
+                    <Icon size={18} strokeWidth={1.6} className={isOpen ? "text-[#1a1408]" : "text-[#c9a869]"} />
+                  </span>
+                ) : null}
+                <span className={`flex-1 font-condensed text-base font-extrabold uppercase leading-none ${isOpen ? "text-[#e8caa0]" : "text-[#fdf6e8]"}`}>{service.title}</span>
+                <span aria-hidden className="font-mono text-lg leading-none text-[#c9a869]">{isOpen ? "−" : "+"}</span>
+              </button>
+              {isOpen ? (
+                <div id={panelId} className="flex flex-col gap-4 pb-6">
+                  {service.image ? (
+                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm">
+                      <Image src={service.image} alt="" fill sizes="100vw" className="object-cover" />
+                    </div>
+                  ) : null}
+                  <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{service.description}</p>
+                  {service.features?.length ? (
+                    <div className="flex flex-col">
+                      <span className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#c9a869]">Includes</span>
+                      {service.features.map((feature) => (
+                        <span key={feature} className="flex items-center gap-2.5 border-b border-white/[0.08] py-2 text-sm text-[#fdf6e8]">
+                          <span className="h-[5px] w-[5px] flex-none rotate-45 bg-[#c9a869]" />
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                  <Link href={CONTACT_PAGE_PATH} className="inline-flex items-center gap-2 self-start rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
+                    Plan Your Event <span aria-hidden>→</span>
+                  </Link>
+                </div>
+              ) : null}
+            </div>
+          )
+        })}
+      </div>
+    </div>
   )
 }

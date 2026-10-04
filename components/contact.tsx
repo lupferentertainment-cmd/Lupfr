@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { ArrowRight, ArrowLeft, Check } from "lucide-react"
 import { toast } from "sonner"
 import { isValidEmail, isValidPhone } from "@/lib/contact-input"
@@ -175,6 +176,18 @@ function buildBrief(a: {
 export function Contact() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "0px 0px 80px 0px" })
+  // 2026-10-04 addition, round 11 (owner: "Continue button when planning
+  // services should be on screen at all times when in that section (so you
+  // do not have to scroll down to plan event)"). Separate from `isInView`
+  // above — that one is `once: true` and stays true forever after the
+  // section's entrance animation first fires, so it can't drive a bar that
+  // needs to hide again once the visitor scrolls away. This one toggles
+  // live both ways, gating the sticky Back/Continue/Send Brief bar below.
+  const stickyBarInView = useInView(ref, { once: false, margin: "-10% 0px -10% 0px" })
+  const [portalMounted, setPortalMounted] = useState(false)
+  useEffect(() => {
+    setPortalMounted(true)
+  }, [])
 
   const [step, setStep] = useState<Step>(1)
   const [planType, setPlanType] = useState<string | null>(null)
@@ -697,8 +710,16 @@ export function Contact() {
                 </div>
               ) : null}
 
+              {/* 2026-10-04 fix, round 11 (owner: "Continue button when
+                  planning services should be on screen at all times when
+                  in that section"). Step 1's services checklist is long
+                  enough that this row used to scroll out of reach on a
+                  phone. It's now `lg:`-only (unchanged from before, still
+                  the one and only nav row on desktop); below `lg:` the
+                  portaled sticky bar further down (see `stickyBarInView`
+                  above) is the only Back/Continue/Send Brief control. */}
               {step !== 6 ? (
-                <div className="mt-7 flex items-center justify-between gap-4 border-t border-border pt-5">
+                <div className="mt-7 hidden items-center justify-between gap-4 border-t border-border pt-5 lg:flex">
                   <button
                     type="button"
                     onClick={goBack}
@@ -733,6 +754,56 @@ export function Contact() {
                 </div>
               ) : null}
             </div>
+
+            {/* 2026-10-04 addition, round 11 — mobile-only sticky counterpart
+                to the row above, portaled straight to `document.body`. This
+                component sits inside the `motion.div` wrappers above (and
+                `ScrollReveal` further up), and framer-motion sets a CSS
+                `transform` on an animating element that's still present
+                (as `translate(0)`) once the animation settles — any
+                ancestor `transform` turns that ancestor into the
+                `position: fixed` containing block instead of the viewport,
+                so a plain fixed-positioned bar nested in here would scroll
+                away with the page instead of staying pinned. Portaling to
+                `document.body` sidesteps that entirely. Gated on
+                `stickyBarInView` (live both ways) so it only shows while
+                this section is actually in view, not for the component's
+                whole mounted lifetime — `components/mobile-sticky-cta.tsx`
+                is the generic "Plan Your Event" bar shown everywhere else. */}
+            {portalMounted && step !== 6 && stickyBarInView
+              ? createPortal(
+                  <div className="fixed inset-x-0 bottom-0 z-[90] border-t border-border/80 bg-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
+                    <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
+                      <button
+                        type="button"
+                        onClick={goBack}
+                        className={`flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground ${step === 1 ? "invisible" : ""}`}
+                      >
+                        <ArrowLeft size={13} aria-hidden /> Back
+                      </button>
+                      {step < 5 ? (
+                        <button
+                          type="button"
+                          onClick={goNext}
+                          className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal"
+                        >
+                          Continue <ArrowRight size={16} aria-hidden />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleWizardSubmit}
+                          disabled={isSubmitting}
+                          className="btn-metallic-gold flex items-center gap-2 rounded-full px-6 py-3 font-semibold tracking-normal disabled:opacity-50"
+                        >
+                          {isSubmitting ? "Sending..." : <>Send Brief <ArrowRight size={16} aria-hidden /></>}
+                        </button>
+                      )}
+                    </div>
+                  </div>,
+                  document.body
+                )
+              : null}
 
             <div className="rounded-md border border-border/80 bg-card/60 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),0_6px_20px_rgba(0,0,0,0.07),0_20px_48px_-8px_rgba(0,0,0,0.05)] dark:shadow-[0_30px_80px_-50px_rgba(0,0,0,0.9)] backdrop-blur sm:p-7">
               <p className="mb-2 text-xs tracking-tight text-gold-accent">Join the contact list</p>

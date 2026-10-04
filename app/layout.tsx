@@ -7,6 +7,7 @@ import { EscapeBack } from '@/components/escape-back'
 import { MotionProvider } from '@/components/motion-provider'
 import { PrefetchHomeRoute } from '@/components/prefetch-home-route'
 import { PhoneListPopup } from '@/components/phone-list-popup'
+import { MobileStickyCta } from '@/components/mobile-sticky-cta'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/components/theme-provider'
 import { SITE_URL } from '@/lib/site'
@@ -186,6 +187,7 @@ export default function RootLayout({
               {children}
               <CookieConsent />
               <PhoneListPopup />
+              <MobileStickyCta />
               <Toaster />
             </div>
           </MotionProvider>

@@ -48,11 +48,19 @@ const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
  * screenshot of the brands (vertical and less height on mobile"). Below
  * `lg`, both tabs' tiles used to inherit the same tall `aspect-[3/4]` as
  * desktop — combined with the Operating tab's 1-column mobile grid (full
- * device width per tile), that produced much taller tiles than the
- * reference screenshot's compact, wider-than-tall cards. Both tabs now
- * share a shorter `aspect-[4/3]` below `lg` (full `aspect-[3/4]` restored at
- * `lg:`, unchanged from before), and the Operating tab's mobile grid matches
- * the Platform tab's existing 2-up layout instead of 1-up.
+ * device width per tile), that produced much taller tiles than that
+ * round's reference screenshot's compact, wider-than-tall cards. Both tabs
+ * got a shorter `aspect-[4/3]` below `lg` (full `aspect-[3/4]` restored at
+ * `lg:`, unchanged from round 9).
+ *
+ * Round 11 correction (owner, Claude design tool screenshot: "mobile Should
+ * look like the screenshot attached... The previous website design was like
+ * this"): round 10's 2-up grid was the wrong reference — the owner's new
+ * screenshot (and, per the owner, the real pre-redesign site) shows a
+ * single full-width card per row, not two narrow ones side by side. The
+ * shorter `aspect-[4/3]` from round 10 stays (still matches "less height" —
+ * the ask was about tile proportions, not column count), but both tabs'
+ * mobile grid goes back to one column.
  */
 function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: number; isInView: boolean }) {
   const numeral = String(index + 1).padStart(2, "0")
@@ -153,7 +161,7 @@ export function ClaudeHomeBrands() {
               <div style={{ flex: 3 }}><DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} /></div>
               <div style={{ flex: 2 }}><DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} /></div>
             </div>
-            <div className="grid grid-cols-2 gap-3.5 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
               <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} inline />
               {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
               <DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} inline />
@@ -161,7 +169,7 @@ export function ClaudeHomeBrands() {
             </div>
           </>
         ) : (
-          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
             {PLATFORM_PROGRAMS.map((program) => (
               <div key={program.name} className="relative aspect-[4/3] overflow-hidden border border-[#c9a869]/30 bg-[#141210] lg:aspect-[3/4]">
                 <Image src={program.image} alt="" fill sizes="(min-width:1280px) 20vw, 50vw" className="object-cover" />
