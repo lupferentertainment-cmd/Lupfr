@@ -4,7 +4,7 @@
     "title": "SEA//SIDE",
     "tag": "YACHTS",
     "accent": "#6fb8c9",
-    "image": "/brands/seaside.webp",
+    "image": "/brands/seaside-v4.webp",
     "description": "An off-shore music series taking the experience aboard yachts, cruises, and sailboats.",
     "format": "Yacht sessions · LA & SF · 21+",
     "externalUrl": "https://seaside.la",
@@ -109,5 +109,16 @@
         "body": "Locations chosen so the setting carries as much of the night as the lineup."
       }
     ]
+  },
+  {
+    "key": "skiside",
+    "title": "SKI//SIDE",
+    "tag": "COMING 2027",
+    "accent": "#5b8ee6",
+    "image": "/brands/skiside.webp",
+    "slashImage": "/brands/skiside-slashes.webp",
+    "description": "Après ski concerts and slopeside sessions at mountain resorts.",
+    "format": "Après sessions · Tahoe",
+    "comingSoon": true
   }
 ]

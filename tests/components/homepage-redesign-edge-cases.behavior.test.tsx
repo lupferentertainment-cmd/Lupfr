@@ -529,3 +529,71 @@ describe("ThemeToggle inside a real ThemeProvider", () => {
     expect(await screen.findByLabelText("Turn light off")).toBeInTheDocument()
   })
 })
+
+// LUPFR Website Design v10 (owner, 2026-11-11) — desktop-only Our Brands
+// redesign + SKI//SIDE. Mobile classes above (grid-cols-1, aspect-[4/3])
+// stay pinned by the round 10/11 tests; these lock the v10 deltas.
+describe("ClaudeHomeBrands' v10 desktop layout", () => {
+  it("reads 'Eleven Platforms. One Company.' (v10 kicker, was Ten)", () => {
+    render(<ClaudeHomeBrands />)
+    expect(screen.getByText("Eleven Platforms. One Company.")).toBeInTheDocument()
+    expect(screen.queryByText("Ten Platforms. One Company.")).toBeNull()
+  })
+
+  it("uses a 4-column grid above 1200px (was 5 at xl), keeping 1 col on mobile and 3 at lg", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const grid = container.querySelector("a[href^='/brands/']")!.parentElement!.parentElement!
+    expect(grid).toHaveClass("grid-cols-1", "lg:grid-cols-3", "min-[1201px]:grid-cols-4")
+    expect(grid.className).not.toContain("xl:grid-cols-5")
+  })
+
+  it("renders both division rules inside the grid at every width, each right above its own group", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const labels = [...container.querySelectorAll("[data-division-label]")] as HTMLElement[]
+    expect(labels).toHaveLength(2)
+    for (const label of labels) {
+      expect(label).toHaveClass("col-span-full", "lg:border-t", "lg:pt-3")
+      expect(label.className).not.toContain("xl:hidden")
+    }
+    expect(labels[1]).toHaveClass("min-[1201px]:mt-[30px]")
+    const grid = labels[0].parentElement!
+    const children = [...grid.children]
+    const between = children.slice(children.indexOf(labels[0]) + 1, children.indexOf(labels[1]))
+    const hrefs = between.map((el) => el.querySelector("a")!.getAttribute("href"))
+    expect(hrefs).toEqual(["/brands/seaside", "/brands/inside", "/brands/outside", "/brands/skiside"])
+  })
+
+  it("makes HIGH//RISE and SOUND//CHECK wide (span 2, 3:2) above 1200px; live tiles stay standard", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    for (const key of ["highrise", "soundcheck"]) {
+      const tile = container.querySelector(`a[href='/brands/${key}']`)!
+      expect(tile).toHaveAttribute("data-wide", "true")
+      expect(tile).toHaveClass("aspect-[4/3]", "lg:aspect-[3/4]", "min-[1201px]:aspect-[3/2]")
+      expect(tile.parentElement).toHaveClass("min-[1201px]:col-span-2")
+    }
+    const seaside = container.querySelector("a[href='/brands/seaside']")!
+    expect(seaside).not.toHaveAttribute("data-wide")
+    expect(seaside.className).not.toContain("min-[1201px]:aspect-[3/2]")
+  })
+
+  it("adds SKI//SIDE as tile 04 with its v10 copy and slash-mark image, keeping an accessible '//'", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const tile = container.querySelector("a[href='/brands/skiside']") as HTMLElement
+    expect(tile).not.toBeNull()
+    expect(within(tile).getByText("COMING 2027")).toBeInTheDocument()
+    expect(within(tile).getByText("04")).toBeInTheDocument()
+    expect(within(tile).getByText("Après ski concerts and slopeside sessions at mountain resorts.")).toBeInTheDocument()
+    const heading = within(tile).getByRole("heading", { level: 3 })
+    expect(heading.textContent).toBe("SKI//SIDE")
+    expect(heading.querySelector("[data-brand-slash-image]")).not.toBeNull()
+    expect(heading.querySelector(".lupfr-brand-slash")).toBeNull()
+  })
+
+  it("shows SEA//SIDE's v10 photo and keeps text '//' for brands without a slash mark", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const seaside = container.querySelector("a[href='/brands/seaside']") as HTMLElement
+    expect(seaside.querySelector("img")!.getAttribute("src")).toContain(encodeURIComponent("/brands/seaside-v4.webp"))
+    expect(seaside.querySelector(".lupfr-brand-slash")).not.toBeNull()
+    expect(seaside.querySelector("[data-brand-slash-image]")).toBeNull()
+  })
+})

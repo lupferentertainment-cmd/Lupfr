@@ -36,6 +36,7 @@ export interface BrandItemRaw {
   deck?: string[]
   concepts?: BrandConcept[]
   social?: BrandSocial
+  slashImage?: string
 }
 
 export interface BrandItem {
@@ -58,6 +59,9 @@ export interface BrandItem {
   concepts?: BrandConcept[]
   /** This brand's own verified accounts, when any have been confirmed. */
   social?: BrandSocial
+  /** Optional image mark drawn in place of the text "//" on the home Our
+   * Brands tile (SKI//SIDE's red/blue slashes, LUPFR Website Design v10). */
+  slashImage?: string
 }
 
 function normalizePath(path: string): string {
@@ -91,7 +95,8 @@ export function getBrands(): BrandItem[] {
  * the home Our Brands operating tab groups its cards by division instead of
  * introducing a second, differently-worded grouping concept.
  */
-export const LIVE_EVENTS_BRAND_KEYS = ["seaside", "inside", "outside"] as const
+// SKI//SIDE joins Live Events per LUPFR Website Design v10 (its liveBrands list).
+export const LIVE_EVENTS_BRAND_KEYS = ["seaside", "inside", "outside", "skiside"] as const
 export const CORPORATE_MEDIA_BRAND_KEYS = ["highrise", "soundcheck"] as const
 
 /** Brands split into the two operating divisions, each in its own YAML order. */

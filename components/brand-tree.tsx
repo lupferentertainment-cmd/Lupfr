@@ -39,8 +39,8 @@ interface TreeColumn {
 const COLUMNS: TreeColumn[] = [
   {
     label: "Live Events",
-    sub: "Sea · In · Out",
-    operatingKeys: ["seaside", "inside", "outside"],
+    sub: "Sea · In · Out · Ski", // LUPFR Website Design v10 brandDivisions.live
+    operatingKeys: ["seaside", "inside", "outside", "skiside"],
     platform: [{ num: "07", caption: "Promoter Network" }], // LP Program
     accent: "#6fb8c9", // seaside
   },

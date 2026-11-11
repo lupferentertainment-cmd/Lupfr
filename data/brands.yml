@@ -26,11 +26,11 @@
   title: "SEA//SIDE"
   tag: YACHTS
   accent: "#6fb8c9"
-  # Owner's actual chosen card background (design canvas, 2026-08-28:
-  # assets/brands/seaside-bg-v3.jpg, the design file's own brandPanelPhotos.seaside) —
-  # re-encoded from that high-res source. Previously stood in with a gallery photo, which
-  # was an interim substitute, not the owner's choice.
-  image: "/brands/seaside.webp"
+  # LUPFR Website Design v10 (2026-11-11): the design file's brandPanelPhotos.seaside
+  # moved from seaside-bg-v3.jpg to assets/brands/seaside-bg-v4.jpg — re-encoded from that
+  # source. The previous v3 card (/brands/seaside.webp) stays on disk unreferenced for an
+  # easy revert.
+  image: "/brands/seaside-v4.webp"
   description: "An off-shore music series taking the experience aboard yachts, cruises, and sailboats."
   format: "Yacht sessions · LA & SF · 21+"
   externalUrl: "https://seaside.la"
@@ -116,3 +116,22 @@
       body: "Sets timed to sundown, when the light and the music peak together."
     - heading: "Nature + Sound"
       body: "Locations chosen so the setting carries as much of the night as the lineup."
+
+# LUPFR Website Design v10 (2026-11-11): new live-events brand. Every field is
+# transcribed from that design file's own `subbrands` entry (key skiside) —
+# name, tag, accent, description, format — with format in this file's
+# sentence-case convention. image = its brandPanelPhotos.skiside
+# (assets/brands/skiside-bg.png); slashImage = its slashImg mark
+# (assets/brands/marks/skiside-slashes.png), drawn in place of the text "//"
+# on the home Our Brands tile only. comingSoon mirrors the design's own
+# isComingSoon list. No social accounts, gallery, deck or concepts in the
+# design — none added.
+- key: skiside
+  title: "SKI//SIDE"
+  tag: "COMING 2027"
+  accent: "#5b8ee6"
+  image: "/brands/skiside.webp"
+  slashImage: "/brands/skiside-slashes.webp"
+  description: "Après ski concerts and slopeside sessions at mountain resorts."
+  format: "Après sessions · Tahoe"
+  comingSoon: true

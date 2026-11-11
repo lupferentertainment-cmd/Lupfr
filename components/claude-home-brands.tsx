@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { m, useInView } from "framer-motion"
-import { useRef, useState } from "react"
+import { useRef, useState, type CSSProperties } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } from "@/lib/data/brands"
@@ -42,6 +42,51 @@ const { liveEvents, corporateMedia } = getBrandsByDivision()
 const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
 
 /**
+ * LUPFR Website Design v10 (owner, 2026-11-11) — desktop-only redesign of
+ * this section, transcribed from the v10 design file's own `#experiences`
+ * markup/CSS (diffed against v7 so only what actually changed moves):
+ * - a 4-column poster grid (was 5) — `.lp-brands-poster` repeat(4,1fr);
+ * - both division rules run the full grid width above their own group
+ *   (`grid-column:1 / -1`) with a hairline top border and a fading rule,
+ *   replacing the old single proportioned 3:2 bar above one shared row —
+ *   so the separate xl-only top bar is gone and the inline labels show at
+ *   every width (they already did below xl);
+ * - above 1200px (the design's own breakpoint, not Tailwind's 1280 `xl`),
+ *   HIGH//RISE and SOUND//CHECK become wide tiles (`.lp-poster-wide`:
+ *   span 2, aspect 3:2) and Corporate//Media gets 30px of top margin;
+ * - SKI//SIDE joins Live Events (data/brands.yml) and draws its own
+ *   red/blue slash mark (`slashImg`) in place of the text "//".
+ * Typography and every below-`lg` class are unchanged (mobile stays the
+ * round-11 single column).
+ */
+const DIVISION_RULES = {
+  liveEvents: { border: "rgba(63,124,191,0.45)", fade: "rgba(63,124,191,0.35)" },
+  corporateMedia: { border: "rgba(201,168,105,0.45)", fade: "rgba(201,168,105,0.35)" },
+}
+
+/** Brand name with its divider: the brand's slash-mark image when it has one, else the accent-coloured text "//". */
+function BrandTileTitle({ brand }: { brand: BrandItem }) {
+  if (!brand.slashImage) return <BrandSlashText text={brand.title} color={brand.accent} />
+  const [before, after] = brand.title.split("//")
+  return (
+    <span className="inline-flex items-center">
+      {before}
+      <span className="sr-only">{"//"}</span>
+      <Image
+        src={brand.slashImage}
+        alt=""
+        aria-hidden
+        width={514}
+        height={474}
+        data-brand-slash-image
+        className="mx-[0.08em] inline-block h-[0.78em] w-auto"
+      />
+      {after}
+    </span>
+  )
+}
+
+/**
  * 2026-10-04 fix, round 10 (owner, current-site mobile screenshot: "The
  * brands section needs to have the smaller tiles like our current website
  * on mobile" / "Platform - the tiles also need to be designed like the
@@ -62,24 +107,26 @@ const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
  * the ask was about tile proportions, not column count), but both tabs'
  * mobile grid goes back to one column.
  */
-function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: number; isInView: boolean }) {
+function BrandPosterTile({ brand, index, isInView, wide = false }: { brand: BrandItem; index: number; isInView: boolean; wide?: boolean }) {
   const numeral = String(index + 1).padStart(2, "0")
   return (
     <m.div
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className={wide ? "min-[1201px]:col-span-2" : undefined}
     >
       <Link
         href={brandPath(brand)}
-        className="group relative block aspect-[4/3] overflow-hidden border border-white/10 bg-[#141210] lg:aspect-[3/4]"
+        data-wide={wide ? "true" : undefined}
+        className={`group relative block aspect-[4/3] overflow-hidden border border-white/10 bg-[#141210] lg:aspect-[3/4]${wide ? " min-[1201px]:aspect-[3/2]" : ""}`}
       >
         {brand.image ? (
           <Image
             src={brand.image}
             alt=""
             fill
-            sizes="(min-width:1280px) 20vw, (min-width:1024px) 33vw, 50vw"
+            sizes={wide ? "(min-width:1201px) 50vw, (min-width:1024px) 33vw, 100vw" : "(min-width:1201px) 25vw, (min-width:1024px) 33vw, 100vw"}
             className="object-cover transition duration-700 group-hover:scale-[1.06]"
           />
         ) : null}
@@ -102,7 +149,7 @@ function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: 
               the block's total height constant across every card, so every
               title sits the same distance above its card's bottom edge. */}
           <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white">
-            <BrandSlashText text={brand.title} color={brand.accent} />
+            <BrandTileTitle brand={brand} />
           </h3>
           <p className="mt-2.5 line-clamp-3 min-h-[61px] text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
           <div className="mt-3.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: brand.accent }}>
@@ -114,13 +161,32 @@ function BrandPosterTile({ brand, index, isInView }: { brand: BrandItem; index: 
   )
 }
 
-function DivisionLabel({ before, after, accent, inline }: { before: string; after: string; accent: string; inline?: boolean }) {
+function DivisionLabel({
+  before,
+  after,
+  accent,
+  rule,
+  className = "",
+}: {
+  before: string
+  after: string
+  accent: string
+  rule: { border: string; fade: string }
+  className?: string
+}) {
+  // Below lg: unchanged solid accent rule, no top border. lg+: the v10
+  // hairline top border plus a rule that fades out to the right.
+  const vars = { "--rule-solid": accent, "--rule-fade": rule.fade, borderColor: rule.border } as CSSProperties
   return (
-    <div className={inline ? "col-span-full flex min-w-0 items-center gap-2.5 xl:hidden" : "flex min-w-0 items-center gap-2.5"}>
+    <div
+      data-division-label
+      className={`col-span-full flex min-w-0 items-center gap-2.5 lg:border-t lg:pt-3 ${className}`.trim()}
+      style={vars}
+    >
       <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>
         {before} <span aria-hidden>{"//"}</span> {after}
       </span>
-      <span className="h-px flex-1" style={{ backgroundColor: accent }} aria-hidden />
+      <span className="h-px flex-1 bg-[var(--rule-solid)] lg:bg-[linear-gradient(90deg,var(--rule-fade),transparent)]" aria-hidden />
     </div>
   )
 }
@@ -134,7 +200,7 @@ export function ClaudeHomeBrands() {
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Ten Platforms. One Company.</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Eleven Platforms. One Company.</p>
             <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">
               <GoldShineText>Our Brands</GoldShineText>
             </h2>
@@ -152,22 +218,20 @@ export function ClaudeHomeBrands() {
         </div>
 
         {tab === "operating" ? (
-          <>
-            {/* Single proportioned bar — only where all 5 cards actually share
-                one row (xl+); below that the grid wraps into 1/2/3 columns, so
-                this top bar would sit far above the groups it labels and the
-                inline per-group labels in the grid below take over instead. */}
-            <div className="mb-3 hidden items-center gap-4 sm:mb-4 xl:flex">
-              <div style={{ flex: 3 }}><DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} /></div>
-              <div style={{ flex: 2 }}><DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} /></div>
-            </div>
-            <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:gap-[18px] xl:grid-cols-5">
-              <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} inline />
-              {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
-              <DivisionLabel before="Corporate" after="Media" accent={DIVISION_ACCENTS.corporateMedia} inline />
-              {corporateMedia.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} isInView={isInView} />)}
-            </div>
-          </>
+          <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:items-start lg:gap-[18px] min-[1201px]:grid-cols-4">
+            <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} rule={DIVISION_RULES.liveEvents} />
+            {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
+            <DivisionLabel
+              before="Corporate"
+              after="Media"
+              accent={DIVISION_ACCENTS.corporateMedia}
+              rule={DIVISION_RULES.corporateMedia}
+              className="min-[1201px]:mt-[30px]"
+            />
+            {corporateMedia.map((brand, i) => (
+              <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} isInView={isInView} wide />
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
             {PLATFORM_PROGRAMS.map((program) => (

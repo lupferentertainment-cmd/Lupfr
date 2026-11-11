@@ -9,7 +9,14 @@ import { BrandSlashText } from "@/components/brand-slash-text"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { getBrands } from "@/lib/data/brands"
 
-const brands = getBrands()
+/**
+ * The roll call sits inside copy that says "five distinct brands" — the same
+ * five the v10 design's own About text still lists. SKI//SIDE (added in
+ * LUPFR Website Design v10, still "Coming 2027") is left out here so the
+ * sentence stays true; it appears everywhere else brands are listed.
+ */
+const ROLL_CALL_EXCLUDED_KEYS = new Set(["skiside"])
+const brands = getBrands().filter((brand) => !ROLL_CALL_EXCLUDED_KEYS.has(brand.key))
 
 /**
  * 2026-10-02 fix (owner: "Built from the Ground up - remove the carousel, it

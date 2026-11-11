@@ -26,9 +26,9 @@ describe("brand routes", () => {
     }
   })
 
-  it("marks highrise and soundcheck as coming soon; other brands are not", () => {
+  it("marks highrise, soundcheck and skiside as coming soon; other brands are not", () => {
     const comingSoon = getBrands().filter((b) => b.comingSoon)
-    expect(comingSoon.map((b) => b.key).sort()).toEqual(["highrise", "soundcheck"])
+    expect(comingSoon.map((b) => b.key).sort()).toEqual(["highrise", "skiside", "soundcheck"])
 
     const notComingSoon = getBrands().filter((b) => !b.comingSoon)
     expect(notComingSoon.map((b) => b.key).sort()).toEqual(["inside", "outside", "seaside"])

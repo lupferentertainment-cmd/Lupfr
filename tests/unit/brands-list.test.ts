@@ -7,8 +7,8 @@ import { getBrands } from "@/lib/data/brands"
  * pill/dot, not sitewide).
  */
 describe("brands list", () => {
-  it("exposes exactly five sub-brand rows", () => {
-    expect(getBrands()).toHaveLength(5)
+  it("exposes exactly six sub-brand rows (SKI//SIDE added in v10)", () => {
+    expect(getBrands()).toHaveLength(6)
   })
 
   it("every row has a unique key, a '//' brand-slash title, a tag, and a hex accent", () => {

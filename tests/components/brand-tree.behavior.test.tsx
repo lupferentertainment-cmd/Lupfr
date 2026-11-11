@@ -45,7 +45,7 @@ describe("BrandTree", () => {
     expect(mediaGroup.textContent).toContain("Creator Network")
   })
 
-  it("groups HIGH//RISE, LUPFR Hospitality, and LUPFR Ventures under Corporate, HIGH//RISE and SOUND//CHECK both marked Soon", () => {
+  it("groups HIGH//RISE, LUPFR Hospitality, and LUPFR Ventures under Corporate, HIGH//RISE, SOUND//CHECK and SKI//SIDE marked Soon", () => {
     render(<BrandTree brands={brands} />)
     const corpGroup = screen.getByRole("group", { name: "Corporate" })
     expect(corpGroup.textContent).toContain("HIGH")
@@ -53,7 +53,8 @@ describe("BrandTree", () => {
     expect(corpGroup.textContent).toContain("Venue Partnerships")
     expect(corpGroup.textContent).toContain("LUPFR Ventures")
     expect(corpGroup.textContent).toContain("Capital · Concepts")
-    expect(screen.getAllByText("Soon")).toHaveLength(2)
+    // SKI//SIDE (v10, "Coming 2027") is the third coming-soon node.
+    expect(screen.getAllByText("Soon")).toHaveLength(3)
   })
 
   // Owner report, 2026-08-29: "center all text on the corp tree texts."

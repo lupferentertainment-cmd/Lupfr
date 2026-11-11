@@ -20,16 +20,17 @@ describe("Brands", () => {
 
   it("renders all five sub-brand cards with their tags", () => {
     const { container } = render(<Brands />)
-    for (const tag of ["YACHTS", "CORPORATE", "COMING FALL 2026", "INDOORS", "OUTDOORS"]) {
+    for (const tag of ["YACHTS", "CORPORATE", "COMING FALL 2026", "INDOORS", "OUTDOORS", "COMING 2027"]) {
       expect(screen.getByText(tag)).toBeInTheDocument()
     }
-    expect(container.querySelectorAll("h3")).toHaveLength(5)
+    // SKI//SIDE joined in LUPFR Website Design v10 (2026-11-11).
+    expect(container.querySelectorAll("h3")).toHaveLength(6)
   })
 
   it("splits brand-slash titles into styled spans instead of raw '//' text", () => {
     const { container } = render(<Brands />)
     const slashes = container.querySelectorAll(".lupfr-brand-slash")
-    expect(slashes.length).toBe(5)
+    expect(slashes.length).toBe(6)
     expect(container.querySelector("h3")?.textContent).toBe("SEA // SIDE")
   })
 
@@ -43,7 +44,8 @@ describe("Brands", () => {
     // highrise, soundcheck rather than the raw YAML order.
     // SEA//SIDE #6fb8c9, IN//SIDE #e8e4da, OUT//SIDE #8aa878, HIGH//RISE
     // #e08a4a, SOUND//CHECK #c9a869 — same hex as each card's tag/dot.
-    expect(accents).toEqual(["#6fb8c9", "#e8e4da", "#8aa878", "#e08a4a", "#c9a869"])
+    // SKI//SIDE #5b8ee6 follows OUT//SIDE in Live Events (v10).
+    expect(accents).toEqual(["#6fb8c9", "#e8e4da", "#8aa878", "#5b8ee6", "#e08a4a", "#c9a869"])
   })
 
   it("renders all five operating cards in division order, no full row-break", () => {
@@ -56,7 +58,7 @@ describe("Brands", () => {
     // the row, at every breakpoint below the single-row xl one — see the
     // next test), so this only asserts on the actual card nodes.
     const cards = Array.from(grid?.children ?? []).filter((el) => el.tagName === "ARTICLE")
-    expect(cards).toHaveLength(5)
+    expect(cards).toHaveLength(6)
   })
 
   it("shows a Live//Events + Corporate//Media rule bar above the single-row (xl) grid (owner correction, 2026-09-02)", () => {
@@ -88,7 +90,7 @@ describe("Brands", () => {
     const corporateIdx = children.indexOf(inlineCorporate)
     expect(liveIdx).toBe(0)
     const cardsBetween = children.slice(liveIdx + 1, corporateIdx).filter((el) => el.tagName === "ARTICLE")
-    expect(cardsBetween).toHaveLength(3)
+    expect(cardsBetween).toHaveLength(4) // + SKI//SIDE (v10)
     const cardsAfter = children.slice(corporateIdx + 1).filter((el) => el.tagName === "ARTICLE")
     expect(cardsAfter).toHaveLength(2)
   })
@@ -127,7 +129,7 @@ describe("Brands", () => {
     const exploreLinks = Array.from(container.querySelectorAll('a[href^="/brands/"]'))
     const hrefs = exploreLinks.map((a) => a.getAttribute("href")).sort()
     expect(hrefs).toEqual(
-      ["/brands/highrise", "/brands/inside", "/brands/outside", "/brands/seaside", "/brands/soundcheck"].sort()
+      ["/brands/highrise", "/brands/inside", "/brands/outside", "/brands/seaside", "/brands/skiside", "/brands/soundcheck"].sort()
     )
     expect(container.textContent).toContain("Explore")
   })
