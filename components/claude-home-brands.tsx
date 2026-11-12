@@ -51,13 +51,19 @@ const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
  *   replacing the old single proportioned 3:2 bar above one shared row —
  *   so the separate xl-only top bar is gone and the inline labels show at
  *   every width (they already did below xl);
- * - above 1200px (the design's own breakpoint, not Tailwind's 1280 `xl`),
+ * - above 1200px (the design's own breakpoint, not Tailwind's 1280 `xl`;
+ *   written as `min-[75.0625rem]` = 1201px — a px-valued arbitrary breakpoint
+ *   gets sorted *before* Tailwind's rem-valued `lg` in the generated CSS, so
+ *   `lg:` silently won at every width; this shipped broken in 558a5ca),
  *   HIGH//RISE and SOUND//CHECK become wide tiles (`.lp-poster-wide`:
  *   span 2, aspect 3:2) and Corporate//Media gets 30px of top margin;
  * - SKI//SIDE joins Live Events (data/brands.yml) and draws its own
  *   red/blue slash mark (`slashImg`) in place of the text "//".
- * Typography and every below-`lg` class are unchanged (mobile stays the
- * round-11 single column).
+ * Follow-up (owner, 2026-11-11, live preview vs the v10 design screenshot):
+ * at `lg:` the division labels take the design's condensed bold style
+ * (clamp(13px,1.2vw,16px), 0.06em tracking), brand names its
+ * clamp(20px,2.4vw,30px) size, and tiles its 4px corner radius. Every
+ * below-`lg` class is unchanged (mobile stays the round-11 single column).
  */
 const DIVISION_RULES = {
   liveEvents: { border: "rgba(63,124,191,0.45)", fade: "rgba(63,124,191,0.35)" },
@@ -114,12 +120,12 @@ function BrandPosterTile({ brand, index, isInView, wide = false }: { brand: Bran
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className={wide ? "min-[1201px]:col-span-2" : undefined}
+      className={wide ? "min-[75.0625rem]:col-span-2" : undefined}
     >
       <Link
         href={brandPath(brand)}
         data-wide={wide ? "true" : undefined}
-        className={`group relative block aspect-[4/3] overflow-hidden border border-white/10 bg-[#141210] lg:aspect-[3/4]${wide ? " min-[1201px]:aspect-[3/2]" : ""}`}
+        className={["group relative block aspect-[4/3] overflow-hidden border border-white/10 bg-[#141210] lg:aspect-[3/4] lg:rounded-[4px]", wide ? "min-[75.0625rem]:aspect-[3/2]" : ""].join(" ").trim()}
       >
         {brand.image ? (
           <Image
@@ -148,7 +154,7 @@ function BrandPosterTile({ brand, index, isInView, wide = false }: { brand: Bran
               for the description (whether it needs all 3 lines or not) keeps
               the block's total height constant across every card, so every
               title sits the same distance above its card's bottom edge. */}
-          <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white">
+          <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white lg:text-[clamp(20px,2.4vw,30px)]">
             <BrandTileTitle brand={brand} />
           </h3>
           <p className="mt-2.5 line-clamp-3 min-h-[61px] text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
@@ -183,7 +189,10 @@ function DivisionLabel({
       className={`col-span-full flex min-w-0 items-center gap-2.5 lg:border-t lg:pt-3 ${className}`.trim()}
       style={vars}
     >
-      <span className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: accent }}>
+      <span
+        className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em] lg:font-condensed lg:text-[clamp(13px,1.2vw,16px)] lg:font-bold lg:tracking-[0.06em]"
+        style={{ color: accent }}
+      >
         {before} <span aria-hidden>{"//"}</span> {after}
       </span>
       <span className="h-px flex-1 bg-[var(--rule-solid)] lg:bg-[linear-gradient(90deg,var(--rule-fade),transparent)]" aria-hidden />
@@ -218,7 +227,7 @@ export function ClaudeHomeBrands() {
         </div>
 
         {tab === "operating" ? (
-          <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:items-start lg:gap-[18px] min-[1201px]:grid-cols-4">
+          <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:items-start lg:gap-[18px] min-[75.0625rem]:grid-cols-4">
             <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} rule={DIVISION_RULES.liveEvents} />
             {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
             <DivisionLabel
@@ -226,7 +235,7 @@ export function ClaudeHomeBrands() {
               after="Media"
               accent={DIVISION_ACCENTS.corporateMedia}
               rule={DIVISION_RULES.corporateMedia}
-              className="min-[1201px]:mt-[30px]"
+              className="min-[75.0625rem]:mt-[30px]"
             />
             {corporateMedia.map((brand, i) => (
               <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} isInView={isInView} wide />

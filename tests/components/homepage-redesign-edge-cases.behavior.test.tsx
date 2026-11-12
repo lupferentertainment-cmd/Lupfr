@@ -543,7 +543,7 @@ describe("ClaudeHomeBrands' v10 desktop layout", () => {
   it("uses a 4-column grid above 1200px (was 5 at xl), keeping 1 col on mobile and 3 at lg", () => {
     const { container } = render(<ClaudeHomeBrands />)
     const grid = container.querySelector("a[href^='/brands/']")!.parentElement!.parentElement!
-    expect(grid).toHaveClass("grid-cols-1", "lg:grid-cols-3", "min-[1201px]:grid-cols-4")
+    expect(grid).toHaveClass("grid-cols-1", "lg:grid-cols-3", "min-[75.0625rem]:grid-cols-4")
     expect(grid.className).not.toContain("xl:grid-cols-5")
   })
 
@@ -555,7 +555,7 @@ describe("ClaudeHomeBrands' v10 desktop layout", () => {
       expect(label).toHaveClass("col-span-full", "lg:border-t", "lg:pt-3")
       expect(label.className).not.toContain("xl:hidden")
     }
-    expect(labels[1]).toHaveClass("min-[1201px]:mt-[30px]")
+    expect(labels[1]).toHaveClass("min-[75.0625rem]:mt-[30px]")
     const grid = labels[0].parentElement!
     const children = [...grid.children]
     const between = children.slice(children.indexOf(labels[0]) + 1, children.indexOf(labels[1]))
@@ -568,12 +568,12 @@ describe("ClaudeHomeBrands' v10 desktop layout", () => {
     for (const key of ["highrise", "soundcheck"]) {
       const tile = container.querySelector(`a[href='/brands/${key}']`)!
       expect(tile).toHaveAttribute("data-wide", "true")
-      expect(tile).toHaveClass("aspect-[4/3]", "lg:aspect-[3/4]", "min-[1201px]:aspect-[3/2]")
-      expect(tile.parentElement).toHaveClass("min-[1201px]:col-span-2")
+      expect(tile).toHaveClass("aspect-[4/3]", "lg:aspect-[3/4]", "min-[75.0625rem]:aspect-[3/2]")
+      expect(tile.parentElement).toHaveClass("min-[75.0625rem]:col-span-2")
     }
     const seaside = container.querySelector("a[href='/brands/seaside']")!
     expect(seaside).not.toHaveAttribute("data-wide")
-    expect(seaside.className).not.toContain("min-[1201px]:aspect-[3/2]")
+    expect(seaside.className).not.toContain("min-[75.0625rem]:aspect-[3/2]")
   })
 
   it("adds SKI//SIDE as tile 04 with its v10 copy and slash-mark image, keeping an accessible '//'", () => {
@@ -587,6 +587,15 @@ describe("ClaudeHomeBrands' v10 desktop layout", () => {
     expect(heading.textContent).toBe("SKI//SIDE")
     expect(heading.querySelector("[data-brand-slash-image]")).not.toBeNull()
     expect(heading.querySelector(".lupfr-brand-slash")).toBeNull()
+  })
+
+  it("applies the v10 desktop type scale and corner radius only from lg (follow-up fix)", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const tile = container.querySelector("a[href='/brands/seaside']") as HTMLElement
+    expect(tile).toHaveClass("lg:rounded-[4px]")
+    expect(within(tile).getByRole("heading", { level: 3 })).toHaveClass("text-2xl", "lg:text-[clamp(20px,2.4vw,30px)]")
+    const label = container.querySelector("[data-division-label] span") as HTMLElement
+    expect(label).toHaveClass("font-mono", "text-[10px]", "lg:font-condensed", "lg:font-bold", "lg:text-[clamp(13px,1.2vw,16px)]")
   })
 
   it("shows SEA//SIDE's v10 photo and keeps text '//' for brands without a slash mark", () => {
