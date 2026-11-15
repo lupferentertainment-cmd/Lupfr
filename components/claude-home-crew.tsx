@@ -200,10 +200,7 @@ function CrewTile({ entry, onOpen }: { entry: CrewEntry; onOpen: (id: string, tr
       <div
         className={cn(
           "absolute inset-y-0 right-0 w-[38%] bg-[#0e0d0b]",
-          "[-webkit-mask-image:linear-gradient(to_left,#000_35%,transparent_100%)] [mask-image:linear-gradient(to_left,#000_35%,transparent_100%)]",
-          // Greyscale until hover/focus. No hover on touch devices, so they
-          // stay in colour (same lesson as the Past Artists wall, round 10).
-          "grayscale transition-[filter] duration-300 group-hover:grayscale-0 group-focus-within:grayscale-0 [@media(hover:none)]:grayscale-0"
+          "[-webkit-mask-image:linear-gradient(to_left,#000_35%,transparent_100%)] [mask-image:linear-gradient(to_left,#000_35%,transparent_100%)]"
         )}
       >
         <CrewPhoto member={entry} sizes="(max-width: 900px) 130px, 160px" />
