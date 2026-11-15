@@ -32,9 +32,6 @@ const POLL_INTERVAL_MS = 100
 const STABILITY_WINDOW_MS = 500
 const ALIGN_TOLERANCE_PX = 48 // flush under the header; a broken jump is off by 100s
 const STABILITY_TOLERANCE_PX = 4
-// Scroll-spy (IntersectionObserver) can lag the scroll settle under parallel CI
-// load, so the active-link read is polled to convergence instead of read once.
-const ACTIVE_SETTLE_MS = 4000
 
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -87,17 +84,15 @@ async function _open_mobile_menu(page) {
   // The mobile toggle is a pure-JS button (no anchor fallback), so a click fired
   // before hydration under chunk throttling is simply lost. Retry while the menu
   // is still closed; only click when closed so we never toggle it back shut.
-  const dialog = page.getByRole("dialog", { name: "Site navigation" })
+  const toggle = page.getByRole("button", { name: "Toggle menu" })
+  const menu = page.getByRole("navigation", { name: "Site navigation" })
   const deadline = Date.now() + 15000
   while (Date.now() < deadline) {
-    if ((await page.getAttribute("header", "data-lupfr-nav-menu-open")) === "true") {
-      await dialog.waitFor({ state: "visible", timeout: 2000 })
+    if ((await toggle.getAttribute("aria-expanded").catch(() => null)) === "true") {
+      await menu.waitFor({ state: "visible", timeout: 2000 })
       return
     }
-    await page
-      .getByRole("button", { name: "Open menu" })
-      .click({ timeout: 2000 })
-      .catch(() => {})
+    await toggle.click({ timeout: 2000 }).catch(() => {})
     await page.waitForTimeout(300)
   }
   throw new Error("verify-nav-scroll: mobile menu did not open (hydration timeout)")
@@ -114,7 +109,7 @@ async function _check(page, { label, sectionId, mobile }, sink) {
   const linkScope = mobile
     ? (await (async () => {
         await _open_mobile_menu(page)
-        return page.getByRole("dialog", { name: "Site navigation" })
+        return page.getByRole("navigation", { name: "Site navigation" })
       })())
     : page.locator('nav[aria-label="Primary"]')
 
@@ -161,48 +156,17 @@ async function _check(page, { label, sectionId, mobile }, sink) {
     return
   }
 
-  if (mobile) await _open_mobile_menu(page)
-  // Poll for scroll-spy to converge on the clicked section — the observer that
-  // sets aria-current can fire a frame or two after the scroll settles under CI
-  // contention, so a single read races and false-flags the section above.
-  let activeLabels = []
-  const activeDeadline = Date.now() + ACTIVE_SETTLE_MS
-  while (Date.now() < activeDeadline) {
-    activeLabels = await linkScope.locator('a[aria-current="true"]').allTextContents()
-    if (activeLabels.length === 1 && activeLabels[0]?.trim() === label) break
-    await page.waitForTimeout(POLL_INTERVAL_MS)
-  }
-  if (activeLabels.length !== 1 || activeLabels[0]?.trim() !== label) {
-    sink.push({
-      where,
-      problem: `active navbar link is ${JSON.stringify(activeLabels.map((value) => value.trim()))}; expected only ${JSON.stringify(label)}`,
-    })
-    return
-  }
-  // Desktop links have the visual underline; the mobile drawer indicates active
-  // state with gold text only, so its rendered contract is aria-current above.
-  if (!mobile) {
-    const visibleUnderlines = linkScope.locator('[data-lupfr-nav-underline].w-full')
-    const visibleUnderlineCount = await visibleUnderlines.count()
-    const activeUnderlineClass = await linkScope
-      .locator('a[aria-current="true"] [data-lupfr-nav-underline]')
-      .getAttribute("class")
-    if (visibleUnderlineCount !== 1 || !activeUnderlineClass?.includes("w-full")) {
-      sink.push({
-        where,
-        problem: `visible underline count=${visibleUnderlineCount}, active underline class=${JSON.stringify(activeUnderlineClass)}; expected exactly the clicked link underline at full width`,
-      })
-      return
-    }
-  }
   console.log(`verify-nav-scroll: OK  ${where} top=${settledTop.toFixed(1)}px pad=${pad}px`)
 }
 
+// Round 12 (v15 nav): six numbered links, no scroll-spy / active underline, so the
+// gate asserts the landing position only. Numbers are aria-hidden, so the link's
+// accessible name is just the label.
 const CASES = [
-  { label: "Events", sectionId: "events", mobile: false }, // eager control
-  { label: "Contact", sectionId: "contact", mobile: false }, // deepest deferred
-  { label: "About", sectionId: "about", mobile: false }, // middle deferred (Team nav link retired 2026-08-28; Team now lives inside About)
-  { label: "Contact", sectionId: "contact", mobile: true }, // mobile menu path
+  { label: "Experiences", sectionId: "events", mobile: false }, // eager control
+  { label: "About", sectionId: "about", mobile: false }, // middle deferred
+  { label: "Team", sectionId: "team", mobile: false }, // Our Team (deferred, owns #team)
+  { label: "Team", sectionId: "team", mobile: true }, // mobile menu path
 ]
 
 function _report(sink) {

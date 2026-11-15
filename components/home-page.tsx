@@ -27,13 +27,8 @@ import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"
 // the real section causes the page to grow when the real component swaps
 // in — the layout shift IS the CLS score; a placeholder much taller does the
 // opposite (a jarring collapse). ABOUT_MIN_HEIGHT is unchanged because About
-// itself is unchanged by this redesign. TEAM_MIN_HEIGHT is carried over
-// as-is from the old, much taller FounderCard layout — claude-home-team.tsx
-// is visibly more compact, so this number is almost certainly oversized now
-// and needs a real re-measurement (Playwright across widths, as the
-// 2026-09-02 pass did) before shipping; flagged rather than guessed.
+// itself is unchanged by this redesign.
 const ABOUT_MIN_HEIGHT = "min-h-[1150px] lg:min-h-[920px]"
-const TEAM_MIN_HEIGHT = "min-h-[3100px] sm:min-h-[3700px] lg:min-h-[1950px]"
 
 const About = dynamic(() =>
   import("@/components/about").then((m) =>
@@ -42,11 +37,25 @@ const About = dynamic(() =>
   { ssr: false, loading: () => <div className={ABOUT_MIN_HEIGHT} aria-hidden="true" /> }
 )
 
+// 2026-11-15, round 12 (v15 design): the standalone Founders section is gone.
+// "Our Team" (Exec Team = Will + Eliott on top, then five dashed group frames)
+// owns the `#team` anchor, followed by the Partiful partnership band that used
+// to sit under Founders. Placeholder height approximates the real section so the
+// swap-in doesn't shift layout; measured in Chromium at 1440/924/390.
+const TEAM_MIN_HEIGHT = "min-h-[3700px] min-[901px]:min-h-[2900px]"
+
 const Team = dynamic(() =>
-  import("@/components/claude-home-team").then((m) =>
-    resolveDynamicComponent(m, "ClaudeHomeTeam", "@/components/claude-home-team")
+  import("@/components/claude-home-crew").then((m) =>
+    resolveDynamicComponent(m, "ClaudeHomeCrew", "@/components/claude-home-crew")
   ),
   { ssr: false, loading: () => <div className={TEAM_MIN_HEIGHT} aria-hidden="true" /> }
+)
+
+const PartifulBand = dynamic(() =>
+  import("@/components/claude-home-partiful-band").then((m) =>
+    resolveDynamicComponent(m, "ClaudeHomePartifulBand", "@/components/claude-home-partiful-band")
+  ),
+  { ssr: false }
 )
 
 const Contact = dynamic(() =>
@@ -93,6 +102,7 @@ export function HomePage() {
       </DeferredHomeSection>
       <DeferredHomeSection id="team" estimatedHeightClassName={TEAM_MIN_HEIGHT}>
         <Team />
+        <PartifulBand />
       </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         {/* Owner 2026-08-08 flow: About → Our Team → Follow the Momentum. Rides

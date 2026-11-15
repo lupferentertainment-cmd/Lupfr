@@ -67,15 +67,19 @@ async function main() {
     page.setDefaultTimeout(NAV_TIMEOUT_MS)
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" })
 
-    const brands = page.getByRole("link", { name: /View all brands/i })
+    // Live home (claude-home-*): Brands links to /brands via "Explore LUPFR →";
+    // Services has no /services index link — its CTA is "Plan Your Event" → /contact.
+    // (The pre-redesign "View all brands" / "Explore all services" links are gone.)
+    await _scrollUntil(page, "#brands")
+    const brands = page.locator("#brands").getByRole("link", { name: /Explore LUPFR/i }).first()
     if ((await brands.count()) === 0 || (await brands.getAttribute("href")) !== "/brands") {
-      failures.push("missing View all brands → /brands")
+      failures.push("missing Explore LUPFR → /brands")
     }
 
     await _scrollUntil(page, "#services")
-    const services = page.getByRole("link", { name: /Explore all services/i })
-    if ((await services.count()) === 0 || (await services.getAttribute("href")) !== "/services") {
-      failures.push("missing Explore all services → /services")
+    const services = page.locator("#services").getByRole("link", { name: /Plan Your Event/i }).first()
+    if ((await services.count()) === 0 || !(await services.getAttribute("href"))?.startsWith("/contact")) {
+      failures.push("missing Services → Plan Your Event → /contact")
     }
 
     await _scrollUntil(page, "#events")
@@ -91,8 +95,10 @@ async function main() {
     }
 
     await _scrollUntil(page, "#artists")
-    if ((await page.getByText("ASTRD", { exact: true }).count()) === 0) {
-      failures.push("ASTRD missing from artists roster")
+    // The home "Past Artists" wall is the design's fixed 7-name pick (round 4),
+    // not the full roster, so ASTRD is not expected here; PLS&TY leads the wall.
+    if ((await page.locator("#artists").getByRole("heading", { name: "PLS&TY" }).count()) === 0) {
+      failures.push("PLS&TY missing from the Past Artists wall")
     }
 
     await _scrollUntil(page, "#team")

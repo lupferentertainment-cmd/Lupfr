@@ -5,7 +5,6 @@ import { act, fireEvent, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ClaudeHomeHero } from "@/components/claude-home-hero"
-import { ClaudeHomeTeam } from "@/components/claude-home-team"
 import { ClaudeHomeExperiences } from "@/components/claude-home-experiences"
 import { ClaudeHomeBrands } from "@/components/claude-home-brands"
 import { ClaudeHomeServices } from "@/components/claude-home-services"
@@ -118,22 +117,6 @@ describe("claude-home-experiences' requireEvent guard", () => {
   })
 })
 
-describe("ClaudeHomeTeam with a bare-minimum founder", () => {
-  it("skips the image, quote, badge, and stats blocks, and a single-word name renders with no last-name span", async () => {
-    // Single-word name ("Jane", not "Jane Doe") exercises FounderCard's
-    // spaceIndex === -1 branches — every real founder has a "First Last"
-    // name, so that split path otherwise never runs.
-    vi.doMock("@/lib/data/team", () => ({
-      getFounders: () => [{ name: "Jane", title: "Founder", location: "LA", bio: "A short bio." }],
-    }))
-    const { ClaudeHomeTeam } = await import("@/components/claude-home-team")
-    const { container } = render(<ClaudeHomeTeam />)
-    expect(screen.getByText("Founder")).toBeInTheDocument()
-    expect(screen.getByText("Jane")).toBeInTheDocument()
-    expect(container.querySelector("blockquote")).toBeNull()
-  })
-})
-
 describe("ClaudeHomeBrands' entrance animation", () => {
   /** Same MockIntersectionObserver pattern as the LazyLoopVideo describe
    * below — framer-motion's useInView needs a real IntersectionObserver,
@@ -237,20 +220,6 @@ describe("ClaudeHomeArtists' default-active tile", () => {
     const firstTile = container.querySelectorAll("a[href^='https://open.spotify.com'], a[href^='/artists?artist=']")[0]!
     expect(firstTile).toHaveClass("col-span-2")
     expect(firstTile).toHaveClass("row-span-2")
-  })
-})
-
-// 2026-10-04 fix, round 10 (owner, mobile screenshot: "We need to have the
-// text of title and cities as one row each (instead of two rows per
-// text)") — each span now forces a single line instead of being free to
-// wrap mid-text.
-describe("ClaudeHomeTeam's title/location row", () => {
-  it("keeps the title and location each on a single line", () => {
-    render(<ClaudeHomeTeam />)
-    const title = screen.getByText("CEO & Founder")
-    const location = screen.getByText("Los Angeles & San Francisco")
-    expect(title).toHaveClass("whitespace-nowrap")
-    expect(location).toHaveClass("whitespace-nowrap")
   })
 })
 

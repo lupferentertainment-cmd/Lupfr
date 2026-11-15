@@ -31,8 +31,29 @@ describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
     expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
     expect(homePage).toContain('import { ClaudeHomeMedia as News } from "@/components/claude-home-media"')
     expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
-    expect(homePage).toMatch(/import\("@\/components\/claude-home-team"\)/)
-    expect(homePage).toContain('resolveDynamicComponent(m, "ClaudeHomeTeam", "@/components/claude-home-team")')
+    // Round 12 (v15 design): the standalone Founders section (claude-home-team) is
+    // gone; Our Team (Exec Team + five groups) owns the #team anchor.
+    expect(homePage).toMatch(/import\("@\/components\/claude-home-crew"\)/)
+    expect(homePage).toContain('resolveDynamicComponent(m, "ClaudeHomeCrew", "@/components/claude-home-crew")')
+    expect(homePage).toMatch(/import\("@\/components\/claude-home-partiful-band"\)/)
+  })
+
+  it("no longer mounts the standalone Founders section", () => {
+    expect(homePage).not.toContain("claude-home-team")
+    expect(homePage).not.toContain("ClaudeHomeTeam")
+    expect(homePage).not.toContain('id="crew"')
+  })
+
+  it("mounts Our Team (with the Partiful band under it) on the #team anchor, between About and Contact", () => {
+    const about = homePage.indexOf('<DeferredHomeSection id="about"')
+    const team = homePage.indexOf('<DeferredHomeSection id="team"')
+    const contact = homePage.indexOf('<DeferredHomeSection id="contact"')
+    expect(about).toBeGreaterThan(-1)
+    expect(team).toBeGreaterThan(about)
+    expect(contact).toBeGreaterThan(team)
+    const teamBlock = homePage.slice(team, contact)
+    expect(teamBlock).toContain("<Team />")
+    expect(teamBlock).toContain("<PartifulBand />")
   })
 
   it("leaves every CURRENT section on its original component", () => {

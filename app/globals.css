@@ -417,6 +417,17 @@
     min-width: 0;
     width: 100%;
     max-width: 100%;
+    /* Stop rubber-band / stray sideways pans on touch devices (round 12). */
+    overscroll-behavior-x: none;
+  }
+
+  /* Browsers without `overflow: clip` (older iOS Safari) would otherwise let a
+     wide child pan the whole page sideways; `hidden` is the safe fallback. */
+  @supports not (overflow: clip) {
+    html,
+    body {
+      overflow-x: hidden;
+    }
   }
 
   body {

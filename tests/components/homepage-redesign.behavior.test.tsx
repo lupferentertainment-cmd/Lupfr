@@ -10,10 +10,9 @@ import { ClaudeHomeExperiences } from "@/components/claude-home-experiences"
 import { ClaudeHomeBrands } from "@/components/claude-home-brands"
 import { ClaudeHomeMedia } from "@/components/claude-home-media"
 import { ClaudeHomeArtists } from "@/components/claude-home-artists"
-import { ClaudeHomeTeam } from "@/components/claude-home-team"
+import { ClaudeHomePartifulBand } from "@/components/claude-home-partiful-band"
 import { getServices } from "@/lib/data/services"
 import { getBrandsByDivision } from "@/lib/data/brands"
-import { getFounders } from "@/lib/data/team"
 import { getNews } from "@/lib/data/news"
 
 /**
@@ -34,7 +33,7 @@ import { getNews } from "@/lib/data/news"
 describe("new homepage sections render their real data", () => {
   it("ClaudeHomeNavigation renders the simplified primary nav + CTA", () => {
     render(<ClaudeHomeNavigation />)
-    for (const name of ["Services", "Experiences", "Brands", "Media", "About"]) {
+    for (const name of ["Services", "Experiences", "Brands", "Media", "About", "Team"]) {
       expect(screen.getAllByText(name).length).toBeGreaterThan(0)
     }
     expect(screen.getAllByText("Plan Your Event").length).toBeGreaterThan(0)
@@ -89,12 +88,10 @@ describe("new homepage sections render their real data", () => {
     }
   })
 
-  it("ClaudeHomeTeam renders every real founder's name and title", () => {
-    const founders = getFounders()
-    render(<ClaudeHomeTeam />)
-    for (const founder of founders) {
-      expect(screen.getByText(founder.title)).toBeInTheDocument()
-    }
+  it("ClaudeHomePartifulBand keeps the Backed by Partiful announcement (moved out of the removed Founders section)", () => {
+    render(<ClaudeHomePartifulBand />)
+    expect(screen.getByRole("heading", { name: "Backed by Partiful" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Follow LUPFR on Partiful →" })).toBeInTheDocument()
   })
 
   it("ClaudeHomeExperiences renders the 3 curated case studies with real event links", () => {
