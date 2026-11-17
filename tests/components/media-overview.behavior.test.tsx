@@ -1,6 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { describe, it, expect } from "vitest"
+import userEvent from "@testing-library/user-event"
 import { render, screen, within } from "@testing-library/react"
 import { MediaOverview } from "@/components/media-overview"
 import { getMediaOverview, LUPFR_MEDIA_KEY } from "@/lib/data/media"
@@ -62,5 +63,42 @@ describe("News & Media — follow each brand", () => {
     render(<MediaOverview />)
     const region = screen.getByRole("region", { name: /follow each brand/i })
     expect(region.textContent).toMatch(/VIA LUPFR/i)
+  })
+})
+
+describe("News & Media — v16 layout", () => {
+  it("leads with the featured Zusebi set beside the three latest news items (SKI//SIDE launch first)", () => {
+    render(<MediaOverview />)
+    const top = screen.getByTestId("media-top")
+    expect(within(top).getByText("FEATURED SET")).toBeInTheDocument()
+    expect(within(top).getByText("Zusebi · Live at Golden Gate Park")).toBeInTheDocument()
+    expect(within(top).getByRole("button", { name: "Watch Zusebi live at Golden Gate Park" })).toBeInTheDocument()
+    const latest = within(top).getByRole("region", { name: "Latest news" })
+    const links = within(latest).getAllByRole("link")
+    expect(links).toHaveLength(3)
+    expect(links[0]).toHaveAttribute("href", "https://www.linkedin.com/posts/activity-7526374516848099330-Uqq7")
+    expect(links[0]).toHaveTextContent(/SKI\/\/SIDE/)
+  })
+
+  it("lists the six WATCH videos as external links with posters", () => {
+    render(<MediaOverview />)
+    const videos = within(screen.getByTestId("media-videos")).getAllByRole("link")
+    expect(videos).toHaveLength(6)
+    expect(videos.map((a) => a.textContent)).toEqual(expect.arrayContaining([expect.stringContaining("Bal Masque"), expect.stringContaining("LUPFR b2b BAUM")]))
+    for (const a of videos) expect(a).toHaveAttribute("rel", expect.stringContaining("noopener"))
+  })
+
+  it("opens the film modal from the featured tile", async () => {
+    const user = userEvent.setup()
+    render(<MediaOverview />)
+    await user.click(screen.getByRole("button", { name: "Watch Zusebi live at Golden Gate Park" }))
+    expect(screen.getByRole("dialog")).toBeInTheDocument()
+  })
+
+  it("tints the SKI//SIDE news chip blue in the full list", () => {
+    render(<MediaOverview />)
+    const list = within(screen.getByRole("region", { name: "News and updates" }))
+    const chip = list.getAllByText("LinkedIn").find((n) => n.className.includes("rounded-[2px]") && n.closest("a")?.textContent?.includes("SKI//SIDE"))
+    expect(chip).toHaveStyle({ color: "#5b8ee6" })
   })
 })

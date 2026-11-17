@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "News & Media",
   description:
-    "The latest from LUPFR, plus every account across the portfolio — follow LUPFR and each brand: SEA//SIDE, HIGH//RISE, SOUND//CHECK, IN//SIDE, and OUT//SIDE.",
+    "Full sets, event films, SOUND//CHECK conversations and the latest news from LUPFR — plus every account across the portfolio.",
   alternates: { canonical: `${SITE_URL}/media` },
 }
 
@@ -18,6 +18,9 @@ export const metadata: Metadata = {
  * sub-page from claude file") — header ported from
  * `LUPFR_Restructure.dc.html`'s `isMediaPage` block; the news feed and
  * follow-each-brand matrix below live in `MediaOverview`.
+ *
+ * Round 13 (LUPFR Website Design v16): new layout — featured Zusebi film,
+ * latest news, six-video WATCH grid, full news list, then the channel matrix.
  *
  * The "N Brands / N Live Channels / Updated ..." stat readout that used to
  * sit under the header was removed (owner punch list, 2026-09-02: "remove
@@ -30,15 +33,14 @@ export default function MediaPage() {
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
       <div className="px-4 pb-20 pt-32 sm:px-6 sm:pt-36 md:pt-40 lg:px-12">
-        <div className="mx-auto max-w-[1180px]">
-          <div className="mb-10 max-w-[640px] sm:mb-14">
-            <p className="lupfr-section-kicker mb-4">News &amp; Channels</p>
-            <GoldShineText as="h1" className="mb-5">
-              News &amp; Media
+        <div className="mx-auto max-w-[1280px]">
+          <div className="mb-9 max-w-[640px]">
+            <p className="lupfr-section-kicker mb-4">LUPFR.COM/MEDIA</p>
+            <GoldShineText as="h1" className="mb-4">
+              Media &amp; News
             </GoldShineText>
             <p className="text-base leading-7 text-muted-foreground sm:text-[17px]">
-              The latest from LUPFR, plus every account across the portfolio —
-              follow each brand on Instagram, TikTok, LinkedIn, and YouTube.
+              Full sets, event films, SOUND//CHECK conversations and the latest company news from across the LUPFR portfolio.
             </p>
           </div>
           <MediaOverview />

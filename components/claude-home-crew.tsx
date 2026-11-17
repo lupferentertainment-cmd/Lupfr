@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils"
 /**
  * 2026-11-15, round 12 (owner design handoff "LUPFR Website Design v15"):
  * "Our Team" — the Exec Team (Will + Eliott) as two large tiles on top, then
- * five dashed group frames (matching the dashed division frames in Our
+ * five dashed group frames (v16: Operations 3, Business Dev 2 + Legal 1, Media 2 + photo fill, Advisors 3) (matching the dashed division frames in Our
  * Brands), each with a centered gold-icon header and a small sub-line. This
  * REPLACES the standalone Founders section (`claude-home-team.tsx`, removed).
  * Driven by `lib/data/crew.ts`; same fixed `#0b0a08`/`#c9a869` palette as its
@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils"
  * has members (max 3) so every tile is the same width and `row dense`
  * packing leaves no empty cells (Operations 3, Biz Dev 3, Media 2 + Legal 1,
  * Advisors 3). ≤900px: one column, each group's tiles a horizontal
- * scroll-snap row, Exec tiles stack. The pop-up steps through all 14 people
+ * scroll-snap row, Exec tiles stack. The pop-up steps through all 13 people
  * and becomes a bottom sheet at ≤720px.
  *
  * Whole-tile click target is a real <button> stretched over the tile rather
@@ -193,7 +193,7 @@ function CrewTile({ entry, onOpen }: { entry: CrewEntry; onOpen: (id: string, tr
       className={cn(
         "group relative box-border h-[232px] min-w-0 overflow-hidden rounded-[4px] border border-white/10 bg-[#141210] transition-colors",
         "hover:border-[#c9a869]/70 hover:bg-[#1a1712] focus-within:border-[#c9a869]/70",
-        "max-[900px]:h-[204px] max-[900px]:w-[min(340px,80vw)] max-[900px]:shrink-0 max-[900px]:snap-start"
+        "max-[900px]:h-[204px] max-[900px]:w-[min(340px,calc(100%-48px))] max-[900px]:shrink-0 max-[900px]:snap-start"
       )}
       data-testid="crew-tile"
     >
@@ -535,7 +535,7 @@ export function ClaudeHomeCrew() {
                     className={cn(
                       "relative grid gap-4",
                       COLS_CLASS[n],
-                      "max-[900px]:flex max-[900px]:snap-x max-[900px]:snap-mandatory max-[900px]:gap-2.5 max-[900px]:overflow-x-auto max-[900px]:[scrollbar-width:none] max-[900px]:[&::-webkit-scrollbar]:hidden"
+                      "max-[900px]:-mr-3 max-[900px]:flex max-[900px]:snap-x max-[900px]:snap-mandatory max-[900px]:gap-2.5 max-[900px]:overflow-x-auto max-[900px]:pr-3 max-[900px]:[scrollbar-width:none] max-[900px]:[&::-webkit-scrollbar]:hidden"
                     )}
                   >
                     {group.members.map(() => {
@@ -546,6 +546,16 @@ export function ClaudeHomeCrew() {
                 </div>
               )
             })}
+            {/* v16: photo fill in the free grid cell beside the Media Team (after Legal packs under Business Development). Faded like the profile photos; hidden on mobile where groups swipe. */}
+            <div
+              aria-hidden="true"
+              data-testid="crew-fill"
+              className="relative mb-[19px] mt-[75px] box-border min-h-[232px] min-w-0 overflow-hidden rounded-[4px] border border-white/10 bg-[#141210] max-[900px]:hidden"
+            >
+              <div className="absolute inset-0 [-webkit-mask-image:linear-gradient(to_left,#000_35%,transparent_100%)] [mask-image:linear-gradient(to_left,#000_35%,transparent_100%)]">
+                <Image src="/hero/hero-slat-neon-dj.webp" alt="" fill sizes="(max-width: 1400px) 30vw, 440px" className="object-cover" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

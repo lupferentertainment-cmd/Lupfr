@@ -11,7 +11,7 @@ describe("News — edge cases", () => {
   it("renders nothing when there is no news", async () => {
     vi.resetModules()
     vi.doMock("@/lib/data/news", () => ({
-      getNews: () => [],
+      getHomeNews: () => [],
       newsDateLabel: () => "",
     }))
     const { News } = await import("@/components/news")
@@ -23,7 +23,7 @@ describe("News — edge cases", () => {
   it("hides the prev/next arrows when there's only one item to scroll", async () => {
     vi.resetModules()
     vi.doMock("@/lib/data/news", () => ({
-      getNews: () => [{ id: 1, source: "X", dateISO: "2026-01-01", title: "Only item", url: "https://example.com/x" }],
+      getHomeNews: () => [{ id: 1, source: "X", dateISO: "2026-01-01", title: "Only item", url: "https://example.com/x" }],
       newsDateLabel: () => "JAN 1, 2026",
     }))
     const { News } = await import("@/components/news")

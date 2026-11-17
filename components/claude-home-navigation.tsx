@@ -7,7 +7,7 @@ import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
-// Round 12 (v15 design): six numbered links. "Team" is Our Team (`#team`, which now
+// Round 13 (v16 design): six links, numbers removed. "Team" is Our Team (`#team`, which now
 // also holds the Exec Team — the standalone Founders section is gone).
 const links = [
   ["Services", "#services"],
@@ -28,15 +28,12 @@ export function ClaudeHomeNavigation() {
         </Link>
 
         <div className="hidden min-w-0 flex-1 items-center justify-center gap-[30px] whitespace-nowrap lg:flex">
-          {links.map(([label, href], i) => (
+          {links.map(([label, href]) => (
             <a
               key={href}
               href={href}
-              className="flex items-baseline gap-1.5 font-condensed text-[15px] font-semibold uppercase tracking-[0.12em] text-[#bdb6a9] transition-colors hover:text-white"
+              className="font-condensed text-[15px] font-semibold uppercase tracking-[0.12em] text-[#bdb6a9] transition-colors hover:text-white"
             >
-              <span className="font-mono text-[9px] tracking-normal text-[#c9a869]" aria-hidden="true">
-                {String(i + 1).padStart(2, "0")}
-              </span>
               {label}
             </a>
           ))}

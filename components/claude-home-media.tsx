@@ -1,9 +1,10 @@
 "use client"
 
 import Image from "next/image"
-import { LazyLoopVideo } from "@/components/lazy-loop-video"
+import { PlayRing } from "@/components/zusebi-featured"
+import { ZusebiFilmButton } from "@/components/zusebi-film"
 import { GoldShineText } from "@/components/gold-shine-text"
-import { getNews, newsDateLabel } from "@/lib/data/news"
+import { getHomeNews, newsDateLabel } from "@/lib/data/news"
 
 /**
  * Oct 1 2026 homepage redesign (owner table, confirmed via follow-up: "do
@@ -29,7 +30,7 @@ const sideClips = [
 ]
 
 export function ClaudeHomeMedia() {
-  const news = getNews()
+  const news = getHomeNews()
   const [newsLead, ...rest] = news
   const newsRest = rest.slice(0, 3)
   return (
@@ -54,18 +55,22 @@ export function ClaudeHomeMedia() {
               Zusebi 002: Golden Gate Live is a real OUT//SIDE event (see
               claude-home-experiences.tsx) and this clip is that same
               brand's content, not SEA//SIDE's. */}
-          <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[#0d0c0a]">
-            <LazyLoopVideo
-              srcMp4="/events/zusebi_opener.mp4"
-              srcWebm="/events/zusebi_opener.webm"
-              poster="/events/ggl_main_dj.webp"
-              className="h-full w-full object-cover"
-            />
-            <div className="pointer-events-none absolute inset-x-0 top-0 flex justify-between gap-3 bg-gradient-to-b from-black/70 to-transparent p-4">
-              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">Event Film</span>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/75">OUT//SIDE</span>
-            </div>
-          </div>
+          {/* Round 13 (LUPFR Website Design v16): the lead is now the full Zusebi
+              live set — a poster button that opens the YouTube set in a modal
+              (components/zusebi-film.tsx) instead of the muted opener loop. */}
+          <ZusebiFilmButton className="group relative block aspect-[16/10] w-full overflow-hidden rounded-[3px] border border-white/10 bg-[#0d0c0a] p-0 text-left transition-colors hover:border-[rgba(201,168,105,0.6)]">
+            <Image src="/events/ggl_main_dj.webp" alt="" fill sizes="(min-width:1024px) 55vw, 100vw" className="object-cover" style={{ objectPosition: "center 45%" }} />
+            <span className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,7,6,0.92)_8%,rgba(8,7,6,0.2)_55%,rgba(8,7,6,0.55)_100%)]" aria-hidden />
+            <span className="absolute inset-x-0 top-0 flex justify-between gap-3 px-[18px] py-4">
+              <span className="font-mono text-[10px] tracking-[0.16em] text-[#e8caa0]">FULL LIVE SET</span>
+              <span className="font-mono text-[10px] tracking-[0.14em] text-[rgba(243,239,230,0.8)]">OUT//SIDE</span>
+            </span>
+            <PlayRing size={72} />
+            <span className="absolute inset-x-[22px] bottom-5 flex flex-col gap-1.5">
+              <span className="font-condensed text-[clamp(26px,3vw,40px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">Zusebi · Live at Golden Gate Park</span>
+              <span className="font-mono text-[10px] tracking-[0.14em] text-[#c9a869]">WATCH THE SET ▶</span>
+            </span>
+          </ZusebiFilmButton>
           <div className="flex min-w-0 flex-col gap-3.5">
             {sideClips.map((clip) => (
               <a

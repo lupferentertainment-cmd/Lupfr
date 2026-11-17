@@ -1,3 +1,6 @@
+import fs from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 import { brandPath, brandPlainTitle, getBrandBySlug, getBrands } from "@/lib/data/brands"
 
@@ -34,15 +37,27 @@ describe("brand routes", () => {
     expect(notComingSoon.map((b) => b.key).sort()).toEqual(["inside", "outside", "seaside"])
   })
 
-  it("only seaside carries a gallery, with site-root leading-slash paths", () => {
-    const seaside = getBrandBySlug("seaside")
-    expect(seaside?.gallery?.length).toBe(6)
-    for (const path of seaside?.gallery ?? []) {
-      expect(path.startsWith("/")).toBe(true)
+  it("gives every brand a landing gallery (v16) with site-root paths: full for seaside/inside/outside, sparse for the rest", () => {
+    const counts = Object.fromEntries(getBrands().map((b) => [b.key, b.gallery?.length ?? 0]))
+    expect(counts).toEqual({ seaside: 6, inside: 6, outside: 6, highrise: 3, soundcheck: 3, skiside: 1 })
+    for (const brand of getBrands()) {
+      for (const path of brand.gallery ?? []) expect(path.startsWith("/")).toBe(true)
     }
+  })
 
-    for (const brand of getBrands().filter((b) => b.key !== "seaside")) {
-      expect(brand.gallery).toBeUndefined()
+  it("gives every brand landing copy: tagline, statement, CTA, empty-calendar line and three pillars", () => {
+    for (const brand of getBrands()) {
+      const l = brand.landing
+      expect(l, brand.key).toBeDefined()
+      for (const field of [l!.tagline, l!.statement, l!.cta, l!.empty]) expect(field.length, brand.key).toBeGreaterThan(0)
+      expect(l!.pillars, brand.key).toHaveLength(3)
     }
+  })
+
+  // public/ is partial in some checkouts; only assert on a full tree.
+  const publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "public")
+  it.runIf(fs.existsSync(path.join(publicDir, "brands", "seaside.webp")))("every brand landing gallery photo exists under public/", () => {
+    const missing = getBrands().flatMap((b) => (b.gallery ?? []).filter((g) => !fs.existsSync(path.join(publicDir, g))))
+    expect(missing).toEqual([])
   })
 })

@@ -6,7 +6,7 @@ import { useRef } from "react"
 import { ArrowUpRight, Instagram, Linkedin, Youtube } from "lucide-react"
 
 import { GoldShineText } from "@/components/gold-shine-text"
-import { getNews, newsDateLabel } from "@/lib/data/news"
+import { getHomeNews, newsDateLabel } from "@/lib/data/news"
 import { LINKS } from "@/lib/links"
 
 /**
@@ -35,7 +35,7 @@ const TIKTOK = { name: "TikTok", href: LINKS.tiktok }
 export function FollowTheMomentum() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: "-80px" })
-  const latest = getNews()[0]
+  const latest = getHomeNews()[0]
 
   return (
     <section

@@ -708,16 +708,17 @@ describe("heading split / subline system", () => {
 
 // ── brand detail page layout ──────────────────────────────────────────────────
 
-describe("brand detail page back-link row", () => {
+describe("brand landing page (v16)", () => {
   const brandDetailPage = fs.readFileSync(
     path.join(rootDir, "app", "brands", "[slug]", "page.tsx"),
     "utf8",
   )
 
-  it("keeps the tag-pill kicker block-level so it cannot share a line with the All Brands back link", () => {
-    // Both the back link and the pill being inline-flex put them on one text
-    // line, collapsing the link's mb-8 gap (owner screenshot 2026-07-17).
-    expect(brandDetailPage).toContain('className="mb-4 flex w-fit items-center rounded-xs border')
+  it("renders the v16 landing (hero → format → calendar → gallery → plan box) instead of the old two-column detail", () => {
+    // The old page's back-link/tag-pill row (owner screenshot 2026-07-17) is gone with the layout;
+    // the hero's tag pill now sits in a flex row beside the path label.
+    expect(brandDetailPage).toContain("BrandLanding")
+    expect(brandDetailPage).not.toContain("All Brands")
     expect(brandDetailPage).not.toContain("inline-flex w-fit items-center rounded-xs")
   })
 })

@@ -49,3 +49,8 @@ function setMemoryStorage() {
 if (!isStorageLike(globalThis.localStorage)) {
 	setMemoryStorage()
 }
+
+// happy-dom would otherwise try to fetch an <iframe src> (e.g. the YouTube
+// film modal) over the network — tests only assert the attribute.
+const happyDom = (globalThis as { happyDOM?: { settings?: { disableIframePageLoading?: boolean } } }).happyDOM
+if (happyDom?.settings) happyDom.settings.disableIframePageLoading = true

@@ -13,7 +13,7 @@
  */
 import { describe, expect, it } from "vitest"
 
-import { getNews, newsDateLabel, type NewsItem } from "@/lib/data/news"
+import { getHomeNews, getNews, newsDateLabel, type NewsItem } from "@/lib/data/news"
 
 const news = getNews()
 
@@ -26,10 +26,17 @@ const GENERIC_LANDING = [
 ]
 
 describe("company news data", () => {
-  it("ships the five owner-delivered items", () => {
+  it("ships the six owner-delivered items", () => {
     // 4 from the 2026-08-08 delivery + the VoyageLA "Hidden Gems" founder
-    // interview (owner-supplied 2026-09-22, published 2026-09-21).
-    expect(news).toHaveLength(5)
+    // interview (owner-supplied 2026-09-22) + the SKI//SIDE launch post
+    // (v16, 2026-11-16 — /media only).
+    expect(news).toHaveLength(6)
+  })
+
+  it("keeps the SKI//SIDE launch post on /media only, newest first, with its blue accent", () => {
+    expect(news[0]).toMatchObject({ id: 6, showOnHome: false, accent: "#5b8ee6" })
+    expect(getHomeNews().map((n) => n.id)).toEqual([5, 4, 1, 2, 3])
+    expect(getHomeNews()).not.toContain(news[0])
   })
 
   it("orders newest first", () => {

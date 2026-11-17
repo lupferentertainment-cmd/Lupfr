@@ -22,6 +22,25 @@ export interface BrandSocial {
   youtube?: string
 }
 
+/**
+ * Per-brand landing-page copy (LUPFR Website Design v16): hero tagline, "THE
+ * FORMAT" statement + three pillars, the CTA label, and the line shown when
+ * the brand has no upcoming events. Taglines/pillars are the design file's
+ * placeholder copy until the owner supplies final wording.
+ */
+export interface BrandLandingPillar {
+  title: string
+  line: string
+}
+
+export interface BrandLanding {
+  tagline: string
+  statement: string
+  cta: string
+  empty: string
+  pillars: BrandLandingPillar[]
+}
+
 export interface BrandItemRaw {
   key: string
   title: string
@@ -37,6 +56,7 @@ export interface BrandItemRaw {
   concepts?: BrandConcept[]
   social?: BrandSocial
   slashImage?: string
+  landing?: BrandLanding
 }
 
 export interface BrandItem {
@@ -62,6 +82,8 @@ export interface BrandItem {
   /** Optional image mark drawn in place of the text "//" on the home Our
    * Brands tile (SKI//SIDE's red/blue slashes, LUPFR Website Design v10). */
   slashImage?: string
+  /** Landing-page copy for /brands/<key> (v16). */
+  landing?: BrandLanding
 }
 
 function normalizePath(path: string): string {

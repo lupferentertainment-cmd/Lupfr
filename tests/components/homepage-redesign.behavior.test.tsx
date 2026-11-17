@@ -13,7 +13,7 @@ import { ClaudeHomeArtists } from "@/components/claude-home-artists"
 import { ClaudeHomePartifulBand } from "@/components/claude-home-partiful-band"
 import { getServices } from "@/lib/data/services"
 import { getBrandsByDivision } from "@/lib/data/brands"
-import { getNews } from "@/lib/data/news"
+import { getHomeNews } from "@/lib/data/news"
 
 /**
  * Oct 1 2026 homepage redesign (owner table: "The changes I want are ...").
@@ -111,9 +111,15 @@ describe("new homepage sections render their real data", () => {
     )
   })
 
-  it("ClaudeHomeMedia renders the lead event film and 3 real side clips", () => {
+  it("ClaudeHomeMedia renders the Zusebi lead set (opens the film modal) and 3 real side clips", async () => {
+    const user = userEvent.setup()
     render(<ClaudeHomeMedia />)
-    expect(screen.getByText("Event Film")).toBeInTheDocument()
+    expect(screen.getByText("FULL LIVE SET")).toBeInTheDocument()
+    expect(screen.getByText("Zusebi · Live at Golden Gate Park")).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: "Watch Zusebi live at Golden Gate Park" }))
+    expect(screen.getByTitle("Zusebi · Live at Golden Gate Park")).toHaveAttribute("src", expect.stringContaining("youtube-nocookie.com/embed/2w09dEQpz2E"))
+    await user.click(screen.getByRole("button", { name: "Close" }))
+    expect(screen.queryByTestId("film-modal")).not.toBeInTheDocument()
     for (const title of ["Artist podcast", "SEA//SIDE 002", "Bal Masque"]) {
       expect(screen.getByText(title)).toBeInTheDocument()
     }
@@ -121,7 +127,7 @@ describe("new homepage sections render their real data", () => {
   })
 
   it("ClaudeHomeMedia renders the design's 'LUPFR in the News' block with real, newest-first press links", () => {
-    const news = getNews()
+    const news = getHomeNews()
     render(<ClaudeHomeMedia />)
     expect(screen.getByRole("heading", { name: "LUPFR in the News" })).toBeInTheDocument()
     const leadLink = screen.getByText(news[0].title).closest("a")

@@ -4,7 +4,19 @@ All notable project changes are recorded here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Build: Work Sans self-hosted (2026-11-17).** `next build` (Turbopack, Next 16.1.6) failed on Will's Mac with `next/font/google queries have exactly one entry` for Work Sans only (Playfair, Barlow Condensed and Space Mono loaded fine; `next build --webpack` passed, so it is a Turbopack parsing bug on Google's current Work Sans file URLs, not a network problem). `app/layout.tsx` now loads Work Sans with `next/font/local` from `app/fonts/work-sans-latin-wght.woff2` (variable, latin subset, 100–900, SIL OFL licence beside it; source: `@fontsource-variable/work-sans` 5.3.0). Same `--font-work-sans` variable, so no CSS changes. The webpack build stays off: it ships ~233 KB gzip more JS (see the Turbopack switch below).
+
 ### Added
+
+- **Thirteenth homepage-redesign pass — LUPFR Website Design v16 (owner, 2026-11-16):**
+  - **Top nav:** the 01–06 numbers are gone; labels only.
+  - **Our Team:** Will is third in Operations; Robbie Cullerton removed (13 people in the pop-up); Business Development spans 2 columns with Legal beside it; neon-DJ photo fill beside the Media Team (desktop only); mobile group rows use `min(340px, 100% - 48px)` tiles so the next card peeks in.
+  - **Brand pages:** every `/brands/<key>` is now the v16 landing (hero with tagline + CTA, THE FORMAT, calendar, gallery, plan box with the brand's accounts, more-from-LUPFR). New `components/brand-landing.tsx`, `brand-wordmark.tsx`, `lib/data/brand-landing.ts`; `data/brands.yml` gains a `landing` block per brand and galleries for inside/outside/skiside/highrise/soundcheck. Four new gallery WebPs under `public/brands/` (`inside-gallery-2/3/-dome`, `outside-gallery-3`). Placeholder copy flagged for owner review.
+  - **Media page:** featured Zusebi film + modal (`zusebi-film.tsx`, `zusebi-featured.tsx`), latest-news box, six-video WATCH grid, full news list, then the follow-each-brand matrix. SKI//SIDE launch post added to `data/news.yml` (`showOnHome: false`, blue accent); home surfaces read `getHomeNews()`.
+  - **Home Media & News:** lead video is the Zusebi poster button that opens the same modal.
+  - **Tests:** crew, nav, news, brand-routes and look-and-feel specs updated; new brand-landing, brand-landing-data and zusebi-film specs; the happy-dom setup disables iframe page loading.
 
 - **Twelfth homepage-redesign pass — LUPFR Website Design v15 (owner, 2026-11-15, full site update):**
   - **Top nav (`claude-home-navigation.tsx`):** six numbered links 01 Services, 02 Experiences, 03 Brands, 04 Media, 05 About, 06 Team ("Work" → Experiences, "Watch" → Media). Gold Space Mono 9px number before each label; Barlow Condensed 600, 15px, uppercase, 30px apart, white on hover. Mobile menu uses the same labels.

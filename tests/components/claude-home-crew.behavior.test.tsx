@@ -9,7 +9,7 @@ import { getCrewEntries } from "@/lib/data/crew"
 /**
  * Round 12 (owner handoff "LUPFR Website Design v15", 2026-11-15): render/
  * interaction contracts for Our Team — the Exec Team tiles, the five dashed
- * group frames, and the 14-person bio pop-up.
+ * group frames, and the 13-person bio pop-up.
  */
 
 vi.mock("next/image", () => ({
@@ -49,7 +49,7 @@ describe("ClaudeHomeCrew section", () => {
     expect(within(tiles[0]).queryByLabelText("Will Lupfer website")).not.toBeInTheDocument()
   })
 
-  it("renders the 5 dashed groups in order, each with its header and sub-line, and 12 tiles", () => {
+  it("renders the 5 dashed groups in order, each with its header and sub-line, and 11 tiles", () => {
     render(<ClaudeHomeCrew />)
     const groups = screen.getAllByTestId("crew-group")
     expect(groups.map((g) => g.getAttribute("aria-label"))).toEqual([
@@ -62,9 +62,29 @@ describe("ClaudeHomeCrew section", () => {
     for (const group of groups) expect(group.className).toContain("border-dashed")
     expect(within(groups[0]).getByText("PRODUCTION · LOGISTICS · EXECUTION")).toBeInTheDocument()
     expect(within(groups[4]).getByText("STRATEGY · OPERATIONS · HOSPITALITY")).toBeInTheDocument()
-    expect(screen.getAllByTestId("crew-tile")).toHaveLength(12)
+    expect(screen.getAllByTestId("crew-tile")).toHaveLength(11)
     expect(within(groups[2]).getAllByTestId("crew-tile")).toHaveLength(2)
     expect(within(groups[3]).getAllByTestId("crew-tile")).toHaveLength(1)
+  })
+
+  it("packs Business Development as 2 tiles and adds the faded photo fill beside the Media Team (v16)", () => {
+    render(<ClaudeHomeCrew />)
+    const groups = screen.getAllByTestId("crew-group")
+    expect(within(groups[1]).getAllByTestId("crew-tile")).toHaveLength(2)
+    expect(groups[1].className).toContain("col-span-2")
+    expect(screen.queryByLabelText(/Robbie/)).not.toBeInTheDocument()
+    const fill = screen.getByTestId("crew-fill")
+    expect(fill).toHaveAttribute("aria-hidden", "true")
+    expect(fill.className).toContain("max-[900px]:hidden")
+    expect(fill.querySelector("img")).not.toBeNull()
+    // Will is the third Operations tile.
+    const opsTiles = within(groups[0]).getAllByTestId("crew-tile")
+    expect(within(opsTiles[2]).getByText("Will Lupfer")).toBeInTheDocument()
+  })
+
+  it("sizes mobile tiles so the next card peeks in", () => {
+    render(<ClaudeHomeCrew />)
+    expect(screen.getAllByTestId("crew-tile")[0].className).toContain("max-[900px]:w-[min(340px,calc(100%-48px))]")
   })
 
   it("has no gold pill labels or numbers on the group frames any more", () => {
@@ -77,7 +97,7 @@ describe("ClaudeHomeCrew section", () => {
 
   it("shows the short line on each tile (not the full bio) and no pop-up by default", () => {
     render(<ClaudeHomeCrew />)
-    const [, , opsWill] = getCrewEntries()
+    const opsWill = getCrewEntries()[4]
     expect(screen.getByText(opsWill.short)).toBeInTheDocument()
     expect(screen.queryByText(opsWill.bio)).not.toBeInTheDocument()
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
@@ -85,7 +105,7 @@ describe("ClaudeHomeCrew section", () => {
 
   it("renders each social/website button only when that URL exists", () => {
     render(<ClaudeHomeCrew />)
-    // Link Studios: Instagram only. Robbie: Instagram only. Nikita: all three. FredEx: website only.
+    // Link Studios: Instagram only. Nikita: all three. FredEx: website only.
     expect(screen.queryByLabelText("Link Studios on LinkedIn")).not.toBeInTheDocument()
     expect(screen.getByLabelText("Link Studios on Instagram")).toHaveAttribute(
       "href",
@@ -96,8 +116,7 @@ describe("ClaudeHomeCrew section", () => {
       "https://www.linkedin.com/in/nikitakhandheria/"
     )
     expect(screen.getByLabelText("Nikita Khandheria website")).toHaveAttribute("href", "https://eria.co")
-    expect(screen.getByLabelText("Robbie Cullerton on Instagram")).toBeInTheDocument()
-    expect(screen.queryByLabelText("Robbie Cullerton on LinkedIn")).not.toBeInTheDocument()
+    expect(screen.queryByLabelText("Robbie Cullerton on Instagram")).not.toBeInTheDocument()
     expect(screen.getByLabelText("FredEx Entertainment website")).toHaveAttribute("href", "https://fredexentertainment.com")
     expect(screen.queryByLabelText("FredEx Entertainment on LinkedIn")).not.toBeInTheDocument()
     expect(screen.getByLabelText("Cube World website")).toHaveAttribute("href", "https://cubeworldproductions.com")
@@ -131,7 +150,7 @@ describe("ClaudeHomeCrew bio pop-up", () => {
     expect(within(dialog).getByText(/Advisor · Founder & CEO, ERIA/i)).toBeInTheDocument()
     expect(within(dialog).getByText(/seasoned entrepreneur/)).toBeInTheDocument()
     expect(within(dialog).getByRole("link", { name: /ERIA\.CO/ })).toHaveAttribute("href", "https://eria.co")
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("13 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("12 / 13")
     expect(document.body.style.overflow).toBe("hidden")
   })
 
@@ -139,20 +158,20 @@ describe("ClaudeHomeCrew bio pop-up", () => {
     await openMember(BIO("Will Lupfer", "Founder & CEO"))
     const dialog = screen.getByRole("dialog")
     expect(within(dialog).getByText("EXEC TEAM")).toBeInTheDocument()
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 13")
     expect(within(dialog).getByText(/Raised in Oregon/)).toBeInTheDocument()
     expect(within(dialog).getByText(/B2 Authentic LLC/)).toBeInTheDocument()
     expect(dialog.querySelectorAll(".flex-col.gap-3\\.5 > p")).toHaveLength(5)
   })
 
-  it("steps through all 14 people in display order and loops at both ends", async () => {
+  it("steps through all 13 people in display order and loops at both ends", async () => {
     const user = await openMember(BIO("Will Lupfer", "Founder & CEO"))
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 13")
     await user.click(screen.getByRole("button", { name: "Previous team member" }))
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("14 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("13 / 13")
     expect(within(screen.getByRole("dialog")).getByRole("heading", { level: 3 })).toHaveTextContent("Kamilla Zakirzianova")
     await user.click(screen.getByRole("button", { name: "Next team member" }))
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("01 / 13")
     await user.click(screen.getByRole("button", { name: "Next team member" }))
     expect(within(screen.getByRole("dialog")).getByRole("heading", { level: 3 })).toHaveTextContent("Eliott Nazarian")
   })
@@ -162,9 +181,9 @@ describe("ClaudeHomeCrew bio pop-up", () => {
     const trigger = screen.getByRole("button", { name: BIO("Cube World", "Production Partner") })
     const modal = screen.getByTestId("crew-modal")
     fireEvent.keyDown(modal, { key: "ArrowRight" })
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("06 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("05 / 13")
     fireEvent.keyDown(modal, { key: "ArrowLeft" })
-    expect(screen.getByTestId("crew-position")).toHaveTextContent("05 / 14")
+    expect(screen.getByTestId("crew-position")).toHaveTextContent("04 / 13")
     fireEvent.keyDown(modal, { key: "Escape" })
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
     expect(document.body.style.overflow).toBe("")

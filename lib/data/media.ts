@@ -36,6 +36,8 @@ export interface MediaNews {
   dateISO: string
   title: string
   url: string
+  /** Optional per-item highlight colour (e.g. SKI//SIDE blue); the UI defaults to gold. */
+  accent?: string
 }
 
 export type MediaChannelState = "live" | "via" | "soon"
@@ -100,6 +102,7 @@ function pressAsNews(): MediaNews[] {
       date: MONTH_YEAR.format(new Date(`${item.dateISO}T00:00:00Z`)),
       title: item.title,
       url: item.url,
+      ...(item.accent ? { accent: item.accent } : {}),
     }))
 
   const byUrl = new Map<string, MediaNews>()

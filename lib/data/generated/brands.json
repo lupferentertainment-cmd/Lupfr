@@ -7,6 +7,26 @@
     "image": "/brands/seaside-v4.webp",
     "description": "An off-shore music series taking the experience aboard yachts, cruises, and sailboats.",
     "format": "Yacht sessions · LA & SF · 21+",
+    "landing": {
+      "tagline": "Live music, on the water.",
+      "statement": "Concerts that leave the dock.",
+      "cta": "Book a SEA//SIDE sailing",
+      "empty": "New sailings drop seasonally. Charter a private SEA//SIDE for your group in the meantime.",
+      "pillars": [
+        {
+          "title": "Yacht sessions",
+          "line": "Three-hour sailings with DJs and live acts on deck, from Long Beach and Marina del Rey to the SF Bay."
+        },
+        {
+          "title": "Sunset sets",
+          "line": "Every lineup is built around golden hour, so the best set of the night lands as the sun goes down."
+        },
+        {
+          "title": "Private charters",
+          "line": "Take the full SEA//SIDE production private for birthdays, teams and brand activations."
+        }
+      ]
+    },
     "externalUrl": "https://seaside.la",
     "social": {
       "instagram": "https://www.instagram.com/seaside.la/",
@@ -43,6 +63,31 @@
     "image": "/brands/highrise.webp",
     "description": "Corporate galas, product launches, and executive gatherings that produce music with class.",
     "format": "Corporate events · LA & SF",
+    "landing": {
+      "tagline": "Corporate events, music infused.",
+      "statement": "Company events people actually want to attend.",
+      "cta": "Plan a HIGH//RISE event",
+      "empty": "HIGH//RISE events are private. Tell us about yours.",
+      "pillars": [
+        {
+          "title": "Galas & launches",
+          "line": "Product launches, award nights and galas with live music at the center."
+        },
+        {
+          "title": "Executive gatherings",
+          "line": "Offsites, client dinners and leadership events with a curated soundtrack."
+        },
+        {
+          "title": "Full production",
+          "line": "Venue, talent, sound, lighting and run-of-show handled by one team."
+        }
+      ]
+    },
+    "gallery": [
+      "/brands/highrise.webp",
+      "/services/private-events-2026-ballroom.webp",
+      "/events/fifa_world_cup_watch_party.webp"
+    ],
     "comingSoon": true,
     "deck": [
       "/brands/highrise-deck-1.webp",
@@ -62,6 +107,31 @@
     "image": "/brands/soundcheck.webp",
     "description": "The LUPFR podcast — conversations with the artists, producers, and managers shaping the music industry.",
     "format": "Weekly episodes · LA",
+    "landing": {
+      "tagline": "A music industry podcast by LUPFR.",
+      "statement": "Conversations from the other side of the stage.",
+      "cta": "Pitch a SOUND//CHECK guest",
+      "empty": "New episodes arrive weekly from Fall 2026.",
+      "pillars": [
+        {
+          "title": "Artist conversations",
+          "line": "Long-form talks with the artists who play LUPFR stages."
+        },
+        {
+          "title": "Industry voices",
+          "line": "Managers, promoters and founders on how live music really works."
+        },
+        {
+          "title": "Live sessions",
+          "line": "Stripped-back performances recorded alongside each episode."
+        }
+      ]
+    },
+    "gallery": [
+      "/brands/soundcheck.webp",
+      "/artists/zusebi.webp",
+      "/artists/auguste.webp"
+    ],
     "comingSoon": true
   },
   {
@@ -72,6 +142,34 @@
     "image": "/brands/inside-2026.webp",
     "description": "Indoor live music experiences redefining what nights out mean in California.",
     "format": "Indoor sessions · LA & SF",
+    "landing": {
+      "tagline": "The night, reimagined indoors.",
+      "statement": "Rooms that become the show.",
+      "cta": "Plan an IN//SIDE night",
+      "empty": "The next IN//SIDE night is in the works. Get in touch to host one at your venue.",
+      "pillars": [
+        {
+          "title": "Venue takeovers",
+          "line": "Warehouses, lounges and landmark rooms transformed for one night of live music."
+        },
+        {
+          "title": "Curated lineups",
+          "line": "House, garage and live bands booked to match the room, from opener to close."
+        },
+        {
+          "title": "Immersive production",
+          "line": "Lighting, sound, performers and theme, built so the night feels like somewhere else."
+        }
+      ]
+    },
+    "gallery": [
+      "/brands/inside-2026.webp",
+      "/events/bal_masque.webp",
+      "/events/bal_masque_acrobat.webp",
+      "/brands/inside-gallery-2.webp",
+      "/brands/inside-gallery-3.webp",
+      "/brands/inside-gallery-dome.webp"
+    ],
     "concepts": [
       {
         "heading": "The Room",
@@ -95,6 +193,34 @@
     "image": "/brands/outside.webp",
     "description": "The open-air music series melding nature and sound into one.",
     "format": "Outdoor sessions · LA & SF",
+    "landing": {
+      "tagline": "Open air. Real sound.",
+      "statement": "Nature as the venue.",
+      "cta": "Plan an OUT//SIDE session",
+      "empty": "New OUT//SIDE sessions are announced on Instagram first.",
+      "pillars": [
+        {
+          "title": "Coast & park sessions",
+          "line": "Live sets staged at the coastline, in the park and on the overlook, from Lands End to Venice Beach."
+        },
+        {
+          "title": "Pop-ups",
+          "line": "Small-footprint shows that appear for an afternoon and leave no trace."
+        },
+        {
+          "title": "Day to dusk",
+          "line": "Daytime programming that builds into golden hour, with sound tuned for the outdoors."
+        }
+      ]
+    },
+    "gallery": [
+      "/brands/outside.webp",
+      "/events/ggl_main_dj.webp",
+      "/events/ggl_dj_crowd.webp",
+      "/events/ggl_shoulders.webp",
+      "/brands/outside-gallery-3.webp",
+      "/events/wheres_west.webp"
+    ],
     "concepts": [
       {
         "heading": "Open Air",
@@ -119,6 +245,29 @@
     "slashImage": "/brands/skiside-slashes.webp",
     "description": "Après ski concerts and slopeside sessions at mountain resorts.",
     "format": "Après sessions · Tahoe",
+    "landing": {
+      "tagline": "Après ski, amplified.",
+      "statement": "Live music at the top of the mountain.",
+      "cta": "Partner with SKI//SIDE",
+      "empty": "SKI//SIDE launches in 2027. Resorts and partners, reach out to bring it to your mountain.",
+      "pillars": [
+        {
+          "title": "Slopeside stages",
+          "line": "Live sets at the base of the lifts as the last runs come down."
+        },
+        {
+          "title": "Après sessions",
+          "line": "DJs and bands built into the après window, from lodge decks to mountain-top bars."
+        },
+        {
+          "title": "Resort partnerships",
+          "line": "Full production and programming delivered with resorts across Tahoe and beyond."
+        }
+      ]
+    },
+    "gallery": [
+      "/brands/skiside.webp"
+    ],
     "comingSoon": true
   }
 ]

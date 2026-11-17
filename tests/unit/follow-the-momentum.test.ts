@@ -50,7 +50,7 @@ describe("Follow the Momentum uses verified data only", () => {
   })
 
   it("pulls its latest update from reviewed news data, not inline copy", () => {
-    expect(source).toContain("getNews()")
+    expect(source).toContain("getHomeNews()")
     expect(source).toContain("newsDateLabel")
   })
 

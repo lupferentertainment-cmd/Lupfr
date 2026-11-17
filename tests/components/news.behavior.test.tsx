@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { News } from "@/components/news"
-import { getNews } from "@/lib/data/news"
+import { getHomeNews } from "@/lib/data/news"
 
 /**
  * Home-page News strip: a vertical scrolling carousel (owner request
@@ -21,7 +21,7 @@ describe("News", () => {
     const section = container.querySelector("section#news")
     expect(section).not.toBeNull()
 
-    const news = getNews()
+    const news = getHomeNews()
     expect(news.length).toBeGreaterThan(0)
     for (const item of news) {
       const link = container.querySelector(`a[href="${item.url}"]`)
@@ -40,7 +40,7 @@ describe("News", () => {
     const { container } = render(<News />)
     const list = container.querySelector("ul")
     expect(list).not.toBeNull()
-    expect(list?.children.length).toBe(getNews().length)
+    expect(list?.children.length).toBe(getHomeNews().length)
     expect(Array.from(list?.children ?? []).every((el) => el.tagName === "LI")).toBe(true)
   })
 

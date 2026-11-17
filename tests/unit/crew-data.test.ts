@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url"
 import { CREW_EXEC, CREW_GROUPS, crewLinkLabel, crewSlug, getCrewEntries, getCrewExec, getCrewGroups, splitCrewName } from "@/lib/data/crew"
 
 /**
- * Round 12 (owner handoff "LUPFR Website Design v15", 2026-11-15): data contract
- * for the Our Team roster (Exec Team + five groups = 14 people). Plain .test.ts so the node:fs read below isn't
+ * Round 12/13 (owner handoffs v15 + v16): data contract
+ * for the Our Team roster (Exec Team + five groups = 13 people (v16: Robbie removed, Will third in Operations)). Plain .test.ts so the node:fs read below isn't
  * forced under happy-dom (see homepage-redesign-scope-lock.test.ts).
  */
 const rootDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
@@ -21,8 +21,8 @@ describe("crew roster data", () => {
       "ADVISORS",
     ])
     expect(CREW_GROUPS.map((g) => g.members.map((m) => m.name))).toEqual([
-      ["Will Lupfer", "FredEx Entertainment", "Cube World"],
-      ["Robbie Cullerton", "Aliyah Hyman", "Rayan Hashemy"],
+      ["FredEx Entertainment", "Cube World", "Will Lupfer"],
+      ["Aliyah Hyman", "Rayan Hashemy"],
       ["Yahsek Gonzalez", "Link Studios"],
       ["Eliott Nazarian"],
       ["Mike Lupfer", "Nikita Khandheria", "Kamilla Zakirzianova"],
@@ -57,7 +57,7 @@ describe("crew roster data", () => {
 
   it("every member has a short line, a full bio and a role", () => {
     const entries = getCrewEntries()
-    expect(entries).toHaveLength(14)
+    expect(entries).toHaveLength(13)
     for (const m of entries) {
       expect(m.short.length, m.name).toBeGreaterThan(0)
       expect(m.bio.length, m.name).toBeGreaterThan(m.short.length)
@@ -72,15 +72,15 @@ describe("crew roster data", () => {
     expect(entries[0]).toMatchObject({ name: "Will Lupfer", group: "EXEC TEAM", icon: "ops", id: "exec-will-lupfer" })
     expect(entries[1]).toMatchObject({ name: "Eliott Nazarian", group: "EXEC TEAM", id: "exec-eliott-nazarian" })
     // Will and Eliott appear again in their working groups, with their own ids.
-    expect(entries[2]).toMatchObject({ name: "Will Lupfer", group: "OPERATIONS", id: "will-lupfer" })
-    expect(entries[13]).toMatchObject({ name: "Kamilla Zakirzianova", group: "ADVISORS", icon: "adv" })
+    expect(entries[4]).toMatchObject({ name: "Will Lupfer", group: "OPERATIONS", id: "will-lupfer" })
+    expect(entries[12]).toMatchObject({ name: "Kamilla Zakirzianova", group: "ADVISORS", icon: "adv" })
   })
 
   it("carries the social + website links from the v15 list, and nothing else", () => {
     const linkedin = getCrewEntries().filter((e) => e.group !== "EXEC TEAM" && e.linkedin).map((e) => e.name)
     expect(linkedin).toEqual(["Will Lupfer", "Aliyah Hyman", "Rayan Hashemy", "Eliott Nazarian", "Mike Lupfer", "Nikita Khandheria", "Kamilla Zakirzianova"])
     const instagram = getCrewEntries().filter((e) => e.group !== "EXEC TEAM" && e.instagram).map((e) => e.name)
-    expect(instagram).toEqual(["Will Lupfer", "Robbie Cullerton", "Yahsek Gonzalez", "Link Studios", "Eliott Nazarian", "Nikita Khandheria", "Kamilla Zakirzianova"])
+    expect(instagram).toEqual(["Will Lupfer", "Yahsek Gonzalez", "Link Studios", "Eliott Nazarian", "Nikita Khandheria", "Kamilla Zakirzianova"])
     const websites = Object.fromEntries(getCrewEntries().filter((e) => e.link).map((e) => [e.name, e.link]))
     expect(websites).toEqual({
       "FredEx Entertainment": "https://fredexentertainment.com",

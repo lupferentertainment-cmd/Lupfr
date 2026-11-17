@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Barlow_Condensed, Work_Sans, Space_Mono } from 'next/font/google'
+import { Playfair_Display, Barlow_Condensed, Space_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
 import { SiteTelemetry } from '@/components/site-telemetry'
@@ -28,11 +29,15 @@ const barlowCondensed = Barlow_Condensed({
   display: 'swap',
 })
 
-const workSans = Work_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+// Self-hosted (variable, latin subset, OFL): Turbopack on Next 16.1.6 cannot parse Google's
+// current Work Sans file URLs (`next/font/google queries have exactly one entry`).
+const workSans = localFont({
+  src: './fonts/work-sans-latin-wght.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-work-sans',
   display: 'swap',
+  adjustFontFallback: 'Arial',
 })
 
 const spaceMono = Space_Mono({

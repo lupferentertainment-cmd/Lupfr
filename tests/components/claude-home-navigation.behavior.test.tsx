@@ -6,9 +6,8 @@ import userEvent from "@testing-library/user-event"
 import { ClaudeHomeNavigation } from "@/components/claude-home-navigation"
 
 /**
- * Round 12 (owner handoff "LUPFR Website Design v15"): six numbered header
- * links — 01 Services, 02 Experiences, 03 Brands, 04 Media, 05 About, 06 Team
- * — and the same labels in the mobile menu.
+ * Round 12 (owner handoff "LUPFR Website Design v15"): six header links
+ * (v16 dropped the 01–06 numbers) and the same labels in the mobile menu.
  */
 const EXPECTED: Array<[string, string]> = [
   ["Services", "#services"],
@@ -27,14 +26,14 @@ describe("ClaudeHomeNavigation (v15)", () => {
     expect(links.map((a) => [a.textContent?.replace(/^\d+/, ""), a.getAttribute("href")])).toEqual(EXPECTED)
   })
 
-  it("prefixes each desktop label with a small gold number that screen readers skip", () => {
+  it("has no numbers before the labels (v16: numbered nav removed)", () => {
     render(<ClaudeHomeNavigation />)
     const primary = screen.getByRole("navigation", { name: "Primary" })
-    // The accessible name is the bare label, so "Experiences" etc. stay findable by name.
     for (const [label] of EXPECTED) expect(within(primary).getByRole("link", { name: label })).toBeInTheDocument()
-    const numbers = Array.from(primary.querySelectorAll("a > span[aria-hidden='true']")).map((n) => n.textContent)
-    expect(numbers).toEqual(["01", "02", "03", "04", "05", "06"])
-    expect(primary.querySelector("a > span[aria-hidden='true']")?.className).toContain("text-[#c9a869]")
+    expect(primary.querySelector("a > span[aria-hidden='true']")).toBeNull()
+    for (const a of Array.from(primary.querySelectorAll("a[href^='#']")).filter((n) => n.getAttribute("href") !== "#")) {
+      expect(a.textContent).not.toMatch(/\d/)
+    }
   })
 
   it("uses Barlow Condensed 600 / 15px uppercase labels spaced 30px apart", () => {

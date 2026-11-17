@@ -95,16 +95,6 @@ export const CREW_GROUPS: CrewGroup[] = [
     icon: "ops",
     members: [
       {
-        name: "Will Lupfer",
-        role: "Founder // Head of Operations",
-        short: "Runs operations at every LUPFR event, start to finish.",
-        bio: "Will runs operations at every LUPFR event. He owns the plan from first walkthrough to final load-out: venue logistics, vendor and production coordination, run-of-show, staffing and on-site execution, across both the LA and SF markets. On event day he is on the floor making sure every detail lands, so the experience feels effortless for guests, artists and partners.",
-        photo: "/images/team/crew/will-ops.webp",
-        linkedin: "https://www.linkedin.com/in/will-lupfer-ba56a1143/",
-        instagram: "https://www.instagram.com/wlupfer/",
-        focus: "50% 25%"
-      },
-      {
         name: "FredEx Entertainment",
         role: "Production Partner",
         short: "Production partner for LUPFR's San Francisco events.",
@@ -121,6 +111,16 @@ export const CREW_GROUPS: CrewGroup[] = [
         photo: "/images/team/crew/cube-world-productions.webp",
         link: "https://cubeworldproductions.com",
         linkLabel: "CUBEWORLDPRODUCTIONS.COM"
+      },
+      {
+        name: "Will Lupfer",
+        role: "Founder // Head of Operations",
+        short: "Runs operations at every LUPFR event, start to finish.",
+        bio: "Will runs operations at every LUPFR event. He owns the plan from first walkthrough to final load-out: venue logistics, vendor and production coordination, run-of-show, staffing and on-site execution, across both the LA and SF markets. On event day he is on the floor making sure every detail lands, so the experience feels effortless for guests, artists and partners.",
+        photo: "/images/team/crew/will-ops.webp",
+        linkedin: "https://www.linkedin.com/in/will-lupfer-ba56a1143/",
+        instagram: "https://www.instagram.com/wlupfer/",
+        focus: "50% 25%"
       }
     ]
   },
@@ -129,15 +129,6 @@ export const CREW_GROUPS: CrewGroup[] = [
     sub: "PARTNERSHIPS · GREEK LIFE · MUSIC",
     icon: "biz",
     members: [
-      {
-        name: "Robbie Cullerton",
-        role: "Business Development",
-        short: "Building Greek Life and music industry partnerships.",
-        bio: "Robbie Cullerton works in Business Development at LUPFR, building partnerships with Greek Life chapters and across the music industry. A recent Chapman University graduate and bassist in Where's West?, a band LUPFR has booked, he lives on both sides of a show: he knows what artists need on stage and what it takes to fill the room. At LUPFR he connects chapters, artists, managers and venues with events that feel worth showing up for.",
-        photo: "/images/team/crew/robbie-cullerton.webp",
-        instagram: "https://www.instagram.com/wheres__west/",
-        focus: "50% 35%"
-      },
       {
         name: "Aliyah Hyman",
         role: "Business Development",

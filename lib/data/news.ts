@@ -17,6 +17,12 @@ export interface NewsItem {
    *  still shows in the home-page News strip; omitted/true = shown everywhere
    *  (see data/news.yml's doc comment). */
   showOnMedia?: boolean
+  /** false keeps this item out of the home-page news surfaces (strip, "LUPFR
+   *  in the News", Follow the Momentum) while it still leads /media; omitted/
+   *  true = shown everywhere. */
+  showOnHome?: boolean
+  /** Optional highlight colour for this item's source chip + arrow on /media (default gold). */
+  accent?: string
   /** Optional background photo for the home "LUPFR in the News" lead card
    *  (components/claude-home-media.tsx) — see data/news.yml's doc comment.
    *  Site-root path under public/. */
@@ -30,6 +36,11 @@ export const NEWS: NewsItem[] = (newsJson as NewsItem[])
 
 export function getNews(): NewsItem[] {
   return NEWS
+}
+
+/** Newest first, minus items flagged `showOnHome: false` — the home-page surfaces use this. */
+export function getHomeNews(): NewsItem[] {
+  return NEWS.filter((n) => n.showOnHome !== false)
 }
 
 /** "AUG 7, 2026" — the design file's mono date treatment, in UTC so the

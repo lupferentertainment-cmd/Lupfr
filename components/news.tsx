@@ -5,9 +5,9 @@ import { m, useInView } from "framer-motion"
 import { ArrowUpRight, ChevronDown, ChevronUp } from "lucide-react"
 
 import { GoldShineText } from "@/components/gold-shine-text"
-import { getNews, newsDateLabel } from "@/lib/data/news"
+import { getHomeNews, newsDateLabel } from "@/lib/data/news"
 
-const news = getNews()
+const news = getHomeNews()
 
 const CHEVRON_CLASS =
   "flex size-8 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors duration-200 hover:border-accent/50 hover:bg-accent/20 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 disabled:pointer-events-none disabled:opacity-40"

@@ -381,7 +381,7 @@ describe("ClaudeHomeExperiences' mobile brand/location order", () => {
 describe("ClaudeHomeMedia's 'LUPFR in the News' lead card with no image", () => {
   it("renders the lead card without a background photo", async () => {
     vi.doMock("@/lib/data/news", () => ({
-      getNews: () => [
+      getHomeNews: () => [
         { id: 1, source: "Bare Source", dateISO: "2026-01-01", title: "Bare Headline", url: "https://example.com/bare" },
       ],
       newsDateLabel: () => "JAN 1, 2026",
@@ -389,10 +389,10 @@ describe("ClaudeHomeMedia's 'LUPFR in the News' lead card with no image", () => 
     const { ClaudeHomeMedia } = await import("@/components/claude-home-media")
     render(<ClaudeHomeMedia />)
     expect(screen.getByText("Bare Headline")).toBeInTheDocument()
-    // 3 side-clip posters always render (sideClips is fixed, not news data);
-    // the lead card's own photo is the only `image` that's conditional, so
-    // its absence here means exactly 3 decorative images, not 4.
-    expect(screen.getAllByAltText("")).toHaveLength(3)
+    // The Zusebi lead poster + 3 side-clip posters always render (fixed, not
+    // news data); the news lead card's own photo is the only conditional
+    // `image`, so its absence here means exactly 4 decorative images, not 5.
+    expect(screen.getAllByAltText("")).toHaveLength(4)
   })
 })
 

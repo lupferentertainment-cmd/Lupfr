@@ -72,8 +72,9 @@ describe("deck viewer contract", () => {
 })
 
 describe("deck mounting", () => {
-  it("mounts the brand deck on the brand detail page", () => {
-    expect(brandPageSource).toContain("BrandDeck")
+  it("mounts the brand deck on the brand detail page (via the v16 landing component)", () => {
+    expect(brandPageSource).toContain("BrandLanding")
+    expect(fs.readFileSync(path.join(rootDir, "components", "brand-landing.tsx"), "utf8")).toContain("BrandDeck")
   })
 
   it("mounts the LUPFR deck on the /brands index", () => {
