@@ -85,7 +85,9 @@
 
 - icon: Pin
   title: Venue Programming
-  image: "/services/venue-programming.webp"
+  # LUPFR Website Design v5 (2026-11-17): the SKI//SIDE gateway arrival now fronts this card
+  # (and the intake's "Venue programming" tile). The previous photo stays on disk.
+  image: "/brands/skiside-gateway-arrival.webp"
   description: "Recurring nights for venues, brands and companies."
   features:
     - Recurring series

@@ -126,7 +126,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("<Artists />")
         expect(homePage).not.toContain("<Gallery />")
         expect(homePage).toContain("<About />")
-        expect(homePage).toContain("<Contact />")
+        expect(homePage).toContain("<StartPlanning />")
         expect(homePage).toContain("<Footer />")
     })
 

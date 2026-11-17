@@ -24,7 +24,8 @@ const heroShared = fs.readFileSync(path.join(rootDir, "components", "hero-shared
 const eventsComponent = fs.readFileSync(path.join(rootDir, "components", "events.tsx"), "utf8")
 const servicesComponent = fs.readFileSync(path.join(rootDir, "components", "services.tsx"), "utf8")
 const artistsComponent = fs.readFileSync(path.join(rootDir, "components", "artists.tsx"), "utf8")
-const contact = fs.readFileSync(path.join(rootDir, "components", "contact.tsx"), "utf8")
+// v5 (2026-11-17): the old Contact wizard is gone; `contact` is now the Start Planning intake.
+const contact = fs.readFileSync(path.join(rootDir, "components", "start-planning.tsx"), "utf8")
 const phoneListPopup = fs.readFileSync(path.join(rootDir, "components", "phone-list-popup.tsx"), "utf8")
 const footer = fs.readFileSync(path.join(rootDir, "components", "footer.tsx"), "utf8")
 const about = fs.readFileSync(path.join(rootDir, "components", "about.tsx"), "utf8")
@@ -111,12 +112,9 @@ describe("corporate section eyebrows", () => {
     expect(notFoundPage).toMatch(/className="lupfr-section-kicker[^"]*">404/)
   })
 
-  it("Contact's section eyebrow (above the h2) uses the kicker class; the popup copy stays untouched", () => {
-    // 2026-10-02: eyebrow/heading now match the design file's real
-    // "INQUIRIES" / "Start Planning" copy (owner report, see docs/DESIGN.md).
-    expect(contact).toMatch(/className="lupfr-section-kicker[^"]*">Inquiries/)
-    // Newsletter-popup line is not a section eyebrow — leave its existing treatment alone.
-    expect(contact).toContain('className="mb-2 text-xs tracking-tight text-gold-accent"')
+  it("Start Planning's eyebrow reads (04) INQUIRIES, as in the v5 design", () => {
+    expect(contact).toContain("(04)")
+    expect(contact).toContain("INQUIRIES")
   })
 
   it("uses the shared corporate eyebrow treatment on the partners strip", () => {
@@ -564,17 +562,17 @@ describe("contact structure", () => {
     expect(getContactPhoneText()).toBe("(323) 366-9246")
   })
 
-  it("uses neutral visitor phone placeholders", () => {
-    expect(contact).toContain('placeholder="Your phone number"')
+  it("uses a neutral phone-or-Instagram placeholder", () => {
+    expect(contact).toContain('placeholder="(555) 555-5555 or @handle"')
   })
 
   it("uses neutral popup phone placeholders", () => {
     expect(phoneListPopup).toContain('placeholder="Your phone number"')
   })
 
-  it("drops the 'Ready to elevate' card and moves its subtext under the heading", () => {
+  it("drops the 'Ready to elevate' card and keeps the v5 intro under the heading", () => {
     expect(contact).not.toContain("Ready to elevate your event?")
-    expect(contact).toContain("Whether you're planning a corporate event")
+    expect(contact).toContain("Tell us what you have in mind.")
   })
 
   it("no longer renders the email/location/phone info cards (they live in the footer)", () => {

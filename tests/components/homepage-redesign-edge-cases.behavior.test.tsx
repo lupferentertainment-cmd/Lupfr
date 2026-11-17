@@ -117,47 +117,6 @@ describe("claude-home-experiences' requireEvent guard", () => {
   })
 })
 
-describe("ClaudeHomeBrands' entrance animation", () => {
-  /** Same MockIntersectionObserver pattern as the LazyLoopVideo describe
-   * below — framer-motion's useInView needs a real IntersectionObserver,
-   * which happy-dom doesn't implement. Exercises the `isInView` branch of
-   * BrandPosterTile's `animate={isInView ? {...} : {}}` that a plain render
-   * (never intersecting) never takes. */
-  type IoEntry = { isIntersecting: boolean; target: Element }
-  let ioInstances: Array<{ fire: (entries: IoEntry[]) => void }> = []
-
-  beforeEach(() => {
-    ioInstances = []
-    class MockIntersectionObserver {
-      private readonly cb: IntersectionObserverCallback
-      constructor(cb: IntersectionObserverCallback) {
-        this.cb = cb
-      }
-      observe(target: Element) {
-        ioInstances.push({
-          fire: (entries) => this.cb(entries as unknown as IntersectionObserverEntry[], this as unknown as IntersectionObserver),
-        })
-      }
-      unobserve() {}
-      disconnect() {}
-      takeRecords(): IntersectionObserverEntry[] {
-        return []
-      }
-    }
-    globalThis.IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver
-  })
-
-  it("animates the poster tiles in once the section scrolls into view", async () => {
-    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
-    const { container } = render(<ClaudeHomeBrands />)
-    expect(ioInstances.length).toBeGreaterThan(0)
-    act(() => {
-      ioInstances[0]!.fire([{ isIntersecting: true, target: container }])
-    })
-    expect(container.querySelectorAll("a[href^='/brands/']").length).toBeGreaterThan(0)
-  })
-})
-
 describe("ClaudeHomeServices with an imageless service", () => {
   it("renders the tab and detail panel without an image", async () => {
     vi.doMock("@/lib/data/services", () => ({
@@ -240,53 +199,46 @@ describe("ClaudeHomeBrands with an imageless brand", () => {
   })
 })
 
-// 2026-10-04 fix, round 10 (owner, mobile screenshot: "The brands section
-// needs to have the smaller tiles like our current website on mobile" /
-// "Platform - the tiles also need to be designed like the screenshot of
-// the brands (vertical and less height on mobile)") — both tabs' tiles
-// used to share desktop's tall aspect-[3/4] below `lg:` too; now shorter
-// (aspect-[4/3]) there, full aspect-[3/4] restored from `lg:`.
-describe("ClaudeHomeBrands' mobile tile shape", () => {
-  it("gives Operating-tab tiles a shorter aspect ratio below lg, restoring the taller one from lg:", async () => {
-    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
-    const { container } = render(<ClaudeHomeBrands />)
-    const tile = container.querySelector("a[href^='/brands/']")!
-    expect(tile).toHaveClass("aspect-[4/3]")
-    expect(tile).toHaveClass("lg:aspect-[3/4]")
+// LUPFR Website Design v5 (owner, 2026-11-17): Our Brands "Reveal" tiles. The
+// v10 poster grid (division rules, 4 columns, wide HIGH//RISE/SOUND//CHECK
+// tiles, 4:3 mobile tiles) is gone; these pin the v5 responsive classes. The
+// compiled cascade order is checked in tests/unit/brands-desktop-breakpoint-css.test.ts.
+describe("ClaudeHomeBrands' v5 Reveal responsive grid", () => {
+  it("lays Operating tiles out 6-up, then 3 at <=1100px, 2 at <=720px, 1 at <=480px", () => {
+    render(<ClaudeHomeBrands />)
+    const grid = screen.getByTestId("brands-grid-operating")
+    expect(grid).toHaveClass("grid-cols-6", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1", "gap-[10px]")
   })
 
-  it("gives Platform-tab tiles the same shorter mobile aspect ratio", async () => {
+  it("gives every tile the 3:4.6 shape, becoming 5:3 at <=480px", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    for (const tile of container.querySelectorAll("a[href^='/brands/']")) {
+      expect(tile).toHaveClass("aspect-[3/4.6]", "max-[480px]:aspect-[5/3]", "rounded-[4px]")
+    }
+  })
+
+  it("lays Platform tiles out 5-up with the same responsive steps and shape", async () => {
     const user = userEvent.setup()
-    const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
-    const { container } = render(<ClaudeHomeBrands />)
+    render(<ClaudeHomeBrands />)
     await user.click(screen.getByRole("button", { name: "platform" }))
-    const tile = [...container.querySelectorAll("div")].find((el) => el.className.includes("aspect-[4/3]"))
-    expect(tile).toBeTruthy()
-    expect(tile).toHaveClass("lg:aspect-[3/4]")
-  })
-})
-
-// 2026-10-04 fix, round 11 (owner, Claude design tool screenshot: "mobile
-// Should look like the screenshot attached... The previous website design
-// was like this") — corrects round 10's own 2-up mobile grid (built off a
-// different reference) back to a single full-width card per row.
-describe("ClaudeHomeBrands/Platform's single-column mobile grid", () => {
-  it("lays Operating-tab tiles out one per row below lg", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    // The <a> tile sits inside a framer-motion <m.div> wrapper, so the
-    // grid itself is its grandparent, not its immediate parent.
-    const grid = container.querySelector("a[href^='/brands/']")!.parentElement!.parentElement!
-    expect(grid).toHaveClass("grid-cols-1")
-    expect(grid).toHaveClass("lg:grid-cols-3")
+    const grid = screen.getByTestId("brands-grid-platform")
+    expect(grid).toHaveClass("grid-cols-5", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1")
+    expect(grid.children).toHaveLength(5)
+    for (const tile of grid.children) expect(tile).toHaveClass("aspect-[3/4.6]")
   })
 
-  it("lays Platform-tab tiles out one per row below lg", async () => {
-    const user = userEvent.setup()
-    const { container } = render(<ClaudeHomeBrands />)
-    await user.click(screen.getByRole("button", { name: "platform" }))
-    const tile = [...container.querySelectorAll("div")].find((el) => el.className.includes("aspect-[4/3]"))!
-    expect(tile.parentElement).toHaveClass("grid-cols-1")
-    expect(tile.parentElement).toHaveClass("md:grid-cols-3")
+  it("turns the small labels into off-white dark pills at <=900px and drops the brand wash at <=1100px", () => {
+    render(<ClaudeHomeBrands />)
+    const label = screen.getAllByTestId("brand-label")[0]!
+    expect(label).toHaveClass("max-[900px]:text-[#f3efe6]", "max-[900px]:bg-[rgba(8,7,6,0.72)]")
+    expect(screen.getAllByTestId("brand-wash")[0]).toHaveClass("opacity-[.22]", "group-hover:opacity-40", "max-[1100px]:hidden")
+  })
+
+  it("reveals the description on hover (max-h 90px) and always shows it at <=1100px", () => {
+    render(<ClaudeHomeBrands />)
+    const description = screen.getByText(/Indoor live music experiences/)
+    expect(description).toHaveClass("max-h-0", "group-hover:max-h-[90px]", "max-[1100px]:max-h-[90px]", "max-[1100px]:opacity-100")
+    expect(screen.getAllByTestId("brand-bar")[0]).toHaveClass("scale-x-[.18]", "group-hover:scale-x-100")
   })
 })
 
@@ -312,69 +264,114 @@ describe("ClaudeHomeHero's mobile layout", () => {
   })
 })
 
-// 2026-10-04 addition, round 11 (owner, mobile screenshot: "OUR SERVICES -
-// Mobile version needs to align to screenshot attached. The services are
-// top to bottom with dropdowns on the info. The image of each is shown
-// above") — a new `lg:hidden` accordion alongside the existing `lg:`-only
-// icon-tab-row + shared detail panel (now wrapped `hidden lg:block`, both
-// still real DOM nodes in jsdom, hence the `data-testid` scoping below).
-describe("ClaudeHomeServices' mobile accordion", () => {
-  it("defaults open on the first service (Private Events) with its image, description and features", () => {
+// LUPFR Website Design v5 (owner, 2026-11-17): Services is a 3x2 grid of photo
+// cards (number, icon, title, description only) with the Plan Your Event
+// button in the header; at <=900px it is a swipe row with the button below.
+describe("ClaudeHomeServices' v5 card grid", () => {
+  it("renders one card per service with number, title and description, and no included-items list", () => {
     const services = getServices()
-    const first = services[0]!
     render(<ClaudeHomeServices />)
-    const accordion = within(screen.getByTestId("services-accordion"))
-    const toggle = accordion.getByRole("button", { name: new RegExp(first.title) })
-    expect(toggle).toHaveAttribute("aria-expanded", "true")
-    expect(accordion.getByText(first.description)).toBeInTheDocument()
-    for (const feature of first.features) {
-      expect(accordion.getByText(feature)).toBeInTheDocument()
-    }
+    const cards = screen.getAllByTestId("service-card")
+    expect(cards).toHaveLength(services.length)
+    services.forEach((service, i) => {
+      const card = within(cards[i]!)
+      expect(card.getByText(String(i + 1).padStart(2, "0"))).toBeInTheDocument()
+      expect(card.getByRole("heading", { level: 3, name: service.title })).toBeInTheDocument()
+      expect(card.getByText(service.description)).toBeInTheDocument()
+      expect(cards[i]!.querySelector("ul")).toBeNull()
+    })
   })
 
-  it("collapses the open service and expands another on tap, each showing its own CTA", async () => {
-    const services = getServices()
-    const second = services[1]
-    if (!second) return
-    const user = userEvent.setup()
+  it("uses the v5 card shape: 16:10, 4:3 from 901 to 1250px, 4:5 at <=900px, 80vw swipe cards", () => {
     render(<ClaudeHomeServices />)
-    const accordion = within(screen.getByTestId("services-accordion"))
-    await user.click(accordion.getByRole("button", { name: new RegExp(second.title) }))
-    expect(accordion.getByRole("button", { name: new RegExp(second.title) })).toHaveAttribute("aria-expanded", "true")
-    expect(accordion.getByText(second.description)).toBeInTheDocument()
-    expect(accordion.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
-    // Tapping the now-open row again closes it instead of leaving it stuck open.
-    await user.click(accordion.getByRole("button", { name: new RegExp(second.title) }))
-    expect(accordion.getByRole("button", { name: new RegExp(second.title) })).toHaveAttribute("aria-expanded", "false")
-    expect(accordion.queryByText(second.description)).not.toBeInTheDocument()
+    expect(screen.getAllByTestId("service-card")[0]).toHaveClass(
+      "aspect-[16/10]",
+      "max-[1250px]:min-[901px]:aspect-[4/3]",
+      "max-[900px]:aspect-[4/5]",
+      "max-[900px]:basis-[80vw]",
+      "rounded-[4px]"
+    )
+    expect(screen.getByTestId("services-grid")).toHaveClass("grid-cols-3", "max-[900px]:flex", "max-[900px]:snap-x")
   })
 
-  it("renders an imageless service's row without a photo", async () => {
+  it("puts Plan Your Event in the header (hidden <=900px) and again below the cards with the swipe hint", () => {
+    render(<ClaudeHomeServices />)
+    const header = screen.getByTestId("services-header-cta")
+    expect(header).toHaveAttribute("href", "/contact")
+    expect(header).toHaveClass("max-[900px]:hidden")
+    expect(screen.getByTestId("services-footer-cta")).toHaveAttribute("href", "/contact")
+    expect(screen.getByText(`SWIPE · ${getServices().length} SERVICES →`)).toBeInTheDocument()
+  })
+
+  it("shows the heading 'Idea to execution.' with the v5 subtitle", () => {
+    render(<ClaudeHomeServices />)
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Idea to execution.")
+    expect(screen.getByText("All an event needs in one place.")).toBeInTheDocument()
+  })
+
+  it("applies the per-card photo focus from the design (Venue Programming 40%, Production 55%)", () => {
+    const { container } = render(<ClaudeHomeServices />)
+    const positions = [...container.querySelectorAll("[data-testid=service-card] img")].map((img) => (img as HTMLElement).style.objectPosition)
+    expect(positions).toEqual(["50% 45%", "50% 45%", "50% 40%", "50% 40%", "50% 55%", "50% 35%"])
+  })
+
+  it("renders an imageless, iconless service without a photo or badge", async () => {
     vi.doMock("@/lib/data/services", () => ({
       getServices: () => [{ title: "Bare Service", description: "A plain service.", features: [] }],
     }))
     const { ClaudeHomeServices: Mocked } = await import("@/components/claude-home-services")
     render(<Mocked />)
-    const accordion = within(screen.getByTestId("services-accordion"))
-    expect(accordion.getByText("A plain service.")).toBeInTheDocument()
-    expect(accordion.queryByRole("img")).not.toBeInTheDocument()
+    const card = within(screen.getByTestId("service-card"))
+    expect(card.getByText("A plain service.")).toBeInTheDocument()
+    expect(card.queryByRole("img")).not.toBeInTheDocument()
   })
 })
 
-// 2026-10-04 fix, round 11 (owner, mobile screenshot: "the brand (OUT//SIDE,
-// SEA//SIDE, etc) and location should be below the title of the event") —
-// title now orders first below `lg:`, with brand/meta restored above it
-// from `lg:` up (unchanged desktop order).
-describe("ClaudeHomeExperiences' mobile brand/location order", () => {
-  it("orders the title before the brand eyebrow and meta line below lg, and restores the original order from lg:", () => {
+// LUPFR Website Design v5 (owner, 2026-11-17): Featured Experiences "Stack".
+describe("ClaudeHomeExperiences' v5 sticky stack", () => {
+  it("pins each full-width card at 92px + index x 16px with the v5 height and radius", () => {
     render(<ClaudeHomeExperiences />)
-    const title = screen.getByRole("heading", { name: "BAL MASQUE" })
-    const brand = title.parentElement!.querySelector("p.order-2")!
-    const meta = title.parentElement!.querySelector("p.order-3")!
-    expect(title).toHaveClass("order-1")
-    expect(title).toHaveClass("lg:order-3")
-    expect(brand).toHaveClass("lg:order-1")
-    expect(meta).toHaveClass("lg:order-2")
+    const cards = screen.getAllByTestId("experience-card")
+    expect(cards).toHaveLength(3)
+    cards.forEach((card, i) => {
+      expect(card).toHaveClass("sticky", "h-[min(80vh,760px)]", "min-h-[540px]", "rounded-[4px]", "max-[900px]:h-[74vh]", "max-[900px]:max-h-[640px]")
+      expect(card.style.top).toBe(`${92 + i * 16}px`)
+    })
+  })
+
+  it("shows '01 / 03' counters and the (02) OUR WORK header with a View Past Events link", () => {
+    render(<ClaudeHomeExperiences />)
+    for (const counter of ["01 / 03", "02 / 03", "03 / 03"]) expect(screen.getByText(counter)).toBeInTheDocument()
+    expect(screen.getByText("(02)")).toBeInTheDocument()
+    expect(screen.getByText("OUR WORK")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { level: 2, name: "Featured Experiences" })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "View Past Events →" })).toHaveAttribute("href", "/events")
+  })
+
+  it("hides the description, chips, meta line and thumbnails on mobile / below 1100px, keeping title and buttons", () => {
+    render(<ClaudeHomeExperiences />)
+    const card = within(screen.getAllByTestId("experience-card")[1]!)
+    expect(card.getByRole("heading", { level: 3 })).toHaveClass("max-[900px]:text-[40px]")
+    expect(card.getByText(/Masquerade evenings with Maison Noir/)).toHaveClass("max-[900px]:hidden")
+    expect(card.getByTestId("experience-thumbs")).toHaveClass("max-[1100px]:hidden")
+    expect(card.getByRole("link", { name: /Create One Like This/ })).toHaveAttribute("href", "/contact")
+  })
+
+  it("links service chips to #services and only shows Watch Film when a film URL exists", () => {
+    render(<ClaudeHomeExperiences />)
+    const [seaside, bal, golden] = screen.getAllByTestId("experience-card").map((c) => within(c))
+    expect(seaside!.getAllByRole("link", { name: /PRODUCTION/ })[0]).toHaveAttribute("href", "#services")
+    expect(seaside!.getByRole("link", { name: "Watch Film" })).toHaveAttribute("href", "https://www.instagram.com/p/DdrQLrbpPqr/")
+    expect(bal!.getByRole("link", { name: "Watch Film" })).toHaveAttribute("href", "https://www.youtube.com/watch?v=Xt6zGwZ7jKg")
+    expect(golden!.queryByRole("link", { name: "Watch Film" })).toBeNull()
+  })
+
+  it("keeps the CURRENT Golden Gate loop video on the Zusebi card — no YouTube background or embed (owner, 2026-11-17)", () => {
+    const { container } = render(<ClaudeHomeExperiences />)
+    const golden = screen.getAllByTestId("experience-card")[2]!
+    expect(golden.innerHTML).toContain("ggl_main_video")
+    expect(container.querySelector("iframe")).toBeNull()
+    expect(container.innerHTML).not.toContain("2w09dEQpz2E")
   })
 })
 
@@ -499,78 +496,49 @@ describe("ThemeToggle inside a real ThemeProvider", () => {
   })
 })
 
-// LUPFR Website Design v10 (owner, 2026-11-11) — desktop-only Our Brands
-// redesign + SKI//SIDE. Mobile classes above (grid-cols-1, aspect-[4/3])
-// stay pinned by the round 10/11 tests; these lock the v10 deltas.
-describe("ClaudeHomeBrands' v10 desktop layout", () => {
-  it("reads 'Eleven Platforms. One Company.' (v10 kicker, was Ten)", () => {
+// LUPFR Website Design v5 (owner, 2026-11-17) — Our Brands content.
+describe("ClaudeHomeBrands' v5 content", () => {
+  it("reads '(03) ELEVEN PLATFORMS. ONE COMPANY.' with the Explore LUPFR link and no division labels", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    expect(screen.getByText("ELEVEN PLATFORMS. ONE COMPANY.")).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "Explore LUPFR →" })).toHaveAttribute("href", "/brands")
+    expect(container.querySelector("[data-division-label]")).toBeNull()
+  })
+
+  it("orders the Operating tiles SEA//SIDE, IN//SIDE, OUT//SIDE, SKI//SIDE, HIGH//RISE, SOUND//CHECK with 01–06 numbers", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const hrefs = [...container.querySelectorAll("a[href^='/brands/']")].map((a) => a.getAttribute("href"))
+    expect(hrefs).toEqual(["/brands/seaside", "/brands/inside", "/brands/outside", "/brands/skiside", "/brands/highrise", "/brands/soundcheck"])
+    for (const n of ["01", "02", "03", "04", "05", "06"]) expect(screen.getByText(n)).toBeInTheDocument()
+  })
+
+  it("uses the design file's small labels (file wins: SEA//SIDE is OFFSHORE EXPERIENCES)", () => {
     render(<ClaudeHomeBrands />)
-    expect(screen.getByText("Eleven Platforms. One Company.")).toBeInTheDocument()
-    expect(screen.queryByText("Ten Platforms. One Company.")).toBeNull()
+    expect(screen.getAllByTestId("brand-label").map((l) => l.textContent)).toEqual([
+      "SEA//SIDE OFFSHORE EXPERIENCES",
+      "IN//SIDE INDOOR NIGHTS",
+      "OUT//SIDE OPEN-AIR GATHERINGS",
+      "SKI//SIDE APRÈS-SKI EXPERIENCES",
+      "HIGH//RISE CORPORATE",
+      "SOUND//CHECK MEDIA",
+    ])
   })
 
-  it("uses a 4-column grid above 1200px (was 5 at xl), keeping 1 col on mobile and 3 at lg", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    const grid = container.querySelector("a[href^='/brands/']")!.parentElement!.parentElement!
-    expect(grid).toHaveClass("grid-cols-1", "lg:grid-cols-3", "min-[75.0625rem]:grid-cols-4")
-    expect(grid.className).not.toContain("xl:grid-cols-5")
+  it("shows the five Platform tiles labelled VIP, PROMOTER, MEDIA, HOSPITALITY, VENTURES with numbers 06–10", async () => {
+    const user = userEvent.setup()
+    render(<ClaudeHomeBrands />)
+    await user.click(screen.getByRole("button", { name: "platform" }))
+    expect(screen.getAllByTestId("brand-label").map((l) => l.textContent)).toEqual(["VIP", "PROMOTER", "MEDIA", "HOSPITALITY", "VENTURES"])
+    for (const n of ["06", "07", "08", "09", "10"]) expect(screen.getByText(n)).toBeInTheDocument()
   })
 
-  it("renders both division rules inside the grid at every width, each right above its own group", () => {
+  it("keeps SKI//SIDE's slash-mark image with an accessible '//', and text '//' for brands without one", () => {
     const { container } = render(<ClaudeHomeBrands />)
-    const labels = [...container.querySelectorAll("[data-division-label]")] as HTMLElement[]
-    expect(labels).toHaveLength(2)
-    for (const label of labels) {
-      expect(label).toHaveClass("col-span-full", "lg:border-t", "lg:pt-3")
-      expect(label.className).not.toContain("xl:hidden")
-    }
-    expect(labels[1]).toHaveClass("min-[75.0625rem]:mt-[30px]")
-    const grid = labels[0].parentElement!
-    const children = [...grid.children]
-    const between = children.slice(children.indexOf(labels[0]) + 1, children.indexOf(labels[1]))
-    const hrefs = between.map((el) => el.querySelector("a")!.getAttribute("href"))
-    expect(hrefs).toEqual(["/brands/seaside", "/brands/inside", "/brands/outside", "/brands/skiside"])
-  })
-
-  it("makes HIGH//RISE and SOUND//CHECK wide (span 2, 3:2) above 1200px; live tiles stay standard", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    for (const key of ["highrise", "soundcheck"]) {
-      const tile = container.querySelector(`a[href='/brands/${key}']`)!
-      expect(tile).toHaveAttribute("data-wide", "true")
-      expect(tile).toHaveClass("aspect-[4/3]", "lg:aspect-[3/4]", "min-[75.0625rem]:aspect-[3/2]")
-      expect(tile.parentElement).toHaveClass("min-[75.0625rem]:col-span-2")
-    }
-    const seaside = container.querySelector("a[href='/brands/seaside']")!
-    expect(seaside).not.toHaveAttribute("data-wide")
-    expect(seaside.className).not.toContain("min-[75.0625rem]:aspect-[3/2]")
-  })
-
-  it("adds SKI//SIDE as tile 04 with its v10 copy and slash-mark image, keeping an accessible '//'", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    const tile = container.querySelector("a[href='/brands/skiside']") as HTMLElement
-    expect(tile).not.toBeNull()
-    expect(within(tile).getByText("COMING 2027")).toBeInTheDocument()
-    expect(within(tile).getByText("04")).toBeInTheDocument()
-    expect(within(tile).getByText("Après ski concerts and slopeside sessions at mountain resorts.")).toBeInTheDocument()
-    const heading = within(tile).getByRole("heading", { level: 3 })
+    const ski = container.querySelector("a[href='/brands/skiside']") as HTMLElement
+    const heading = within(ski).getByRole("heading", { level: 3 })
     expect(heading.textContent).toBe("SKI//SIDE")
     expect(heading.querySelector("[data-brand-slash-image]")).not.toBeNull()
-    expect(heading.querySelector(".lupfr-brand-slash")).toBeNull()
-  })
-
-  it("applies the v10 desktop type scale and corner radius only from lg (follow-up fix)", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    const tile = container.querySelector("a[href='/brands/seaside']") as HTMLElement
-    expect(tile).toHaveClass("lg:rounded-[4px]")
-    expect(within(tile).getByRole("heading", { level: 3 })).toHaveClass("text-2xl", "lg:text-[clamp(20px,2.4vw,30px)]")
-    const label = container.querySelector("[data-division-label] span") as HTMLElement
-    expect(label).toHaveClass("font-mono", "text-[10px]", "lg:font-condensed", "lg:font-bold", "lg:text-[clamp(13px,1.2vw,16px)]")
-  })
-
-  it("shows SEA//SIDE's v10 photo and keeps text '//' for brands without a slash mark", () => {
-    const { container } = render(<ClaudeHomeBrands />)
     const seaside = container.querySelector("a[href='/brands/seaside']") as HTMLElement
-    expect(seaside.querySelector("img")!.getAttribute("src")).toContain(encodeURIComponent("/brands/seaside-v4.webp"))
     expect(seaside.querySelector(".lupfr-brand-slash")).not.toBeNull()
     expect(seaside.querySelector("[data-brand-slash-image]")).toBeNull()
   })

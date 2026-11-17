@@ -10,7 +10,7 @@ import { resolveDynamicComponent } from "@/lib/dynamic-component"
 
 // Oct 1 2026 homepage redesign (owner table): Navbar/Hero/News/Brands/Events/
 // Services/Artists/Team swap to the new claude-home-*.tsx sibling components
-// below. Partners/About/Follow the Momentum/Contact/Footer stay on their
+// below. Partners/About/Follow the Momentum/Start Planning/Footer stay on their
 // original components untouched — see tests/components/
 // homepage-redesign.behavior.test.tsx's "scope lock" for the locked contract.
 import { ClaudeHomeNavigation as Navigation } from "@/components/claude-home-navigation"
@@ -58,9 +58,9 @@ const PartifulBand = dynamic(() =>
   { ssr: false }
 )
 
-const Contact = dynamic(() =>
-  import("@/components/contact").then((m) =>
-    resolveDynamicComponent(m, "Contact", "@/components/contact")
+const StartPlanning = dynamic(() =>
+  import("@/components/start-planning").then((m) =>
+    resolveDynamicComponent(m, "StartPlanning", "@/components/start-planning")
   ),
   { ssr: false }
 )
@@ -109,7 +109,7 @@ export function HomePage() {
             the contact deferred block rather than getting its own, so it stays
             below the fold without adding another placeholder to scroll through. */}
         <FollowTheMomentum />
-        <Contact />
+        <StartPlanning />
         {/* Owner 2026-08-08: Laylo drop signup, above the footer. */}
         <LayloEmbed />
         <Footer />

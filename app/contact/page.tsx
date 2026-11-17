@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Contact } from "@/components/contact"
+import { StartPlanning } from "@/components/start-planning"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { SITE_URL } from "@/lib/site"
@@ -17,8 +17,8 @@ export default function ContactPage() {
     <main className="relative min-h-screen overflow-x-clip">
       <Navigation />
       <h1 className="sr-only">Contact</h1>
-      <div className="pt-32 sm:pt-36 md:pt-40 pb-20">
-        <Contact />
+      <div className="pt-16 sm:pt-20">
+        <StartPlanning />
       </div>
       <Footer />
     </main>

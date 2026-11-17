@@ -20,7 +20,7 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..")
 const read = (rel: string) => fs.readFileSync(path.join(root, rel), "utf8")
 
 const services = read("components/services.tsx")
-const contact = read("components/contact.tsx")
+const startPlanning = read("components/start-planning.tsx")
 const footer = read("components/footer.tsx")
 const about = read("components/about.tsx")
 
@@ -36,25 +36,15 @@ describe("services scroll-flicker guard", () => {
   })
 })
 
-// ── contact ───────────────────────────────────────────────────────────────────
+// ── start planning ────────────────────────────────────────────────────────────
 
-describe("contact scroll-flicker guard", () => {
-  it("useInView uses once:true so form never fades out on scroll-past", () => {
-    expect(contact).toContain("useInView(ref, { once: true,")
-  })
-
-  // 2026-10-04 update, round 11: contact.tsx gained a second useInView(ref, ...)
-  // call — `stickyBarInView`, used only to show/hide the mobile sticky
-  // Back/Continue/Send-Brief bar (a full conditional-render swap via
-  // createPortal, not an opacity `animate`). once:false is safe there
-  // because nothing fades; it's not the flicker bug this guard exists for.
-  // This still catches the original bug: any OTHER once:false observer on
-  // `ref` (e.g. one re-wired into the opacity animate below) still fails.
-  it("does not use once:false for the section-level opacity observer (stickyBarInView's own once:false is a documented exception — it drives the sticky bar's show/hide, never an opacity animation)", () => {
-    const onceFalseAssignments = [...contact.matchAll(/const\s+(\w+)\s*=\s*useInView\(ref,\s*\{\s*once:\s*false/g)]
-    for (const match of onceFalseAssignments) {
-      expect(match[1]).toBe("stickyBarInView")
-    }
+describe("start planning scroll-flicker guard", () => {
+  // v5 (2026-11-17): the old Contact wizard's scroll-linked fade (and its
+  // portaled sticky bar observer) are gone. The intake has no in-view
+  // observer at all, so nothing can fade back out on scroll-past; its mobile
+  // Back/Continue bar is plain CSS `sticky`.
+  it("has no in-view observer that could fade the form out", () => {
+    expect(startPlanning).not.toMatch(/useInView|IntersectionObserver/)
   })
 })
 

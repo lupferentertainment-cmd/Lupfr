@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { BrandSlashText } from "@/components/brand-slash-text"
-import { GoldShineText } from "@/components/gold-shine-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
 import { brandPath, getBrandBySlug } from "@/lib/data/brands"
@@ -57,18 +56,9 @@ function monthYear(dateISO: string): string {
 // instead of a static frame, which reads as a different (smaller/quieter) card.
 const seasideAccent = getBrandBySlug("seaside")?.accent
 
-// 2026-10-02 fix (owner, Claude design app screenshot: "on the bal masque
-// and zusebi golden gate live add the IN//SIDE and OUT//SIDE in just like
-// the screenshot from claude i included"). The design file shows each case
-// study with its own brand eyebrow above the title — SEA//SIDE Series
-// already carries its brand identity in the title itself (BrandSlashText).
-// Bal Masque (an indoor masquerade at SF's Hibernia Bank) is a real
-// IN//SIDE event and Golden Gate Live (an open-air sunset pop-up in Golden
-// Gate Park — corrected 2026-10-03, owner: "the Zusebi: Golden Gate Live
-// was in Golden Gate Park, not Lands End") is a real OUT//SIDE event — both
-// already-verified LUPFR brands (data/brands.yml), not fabricated tags.
-const insideAccent = getBrandBySlug("inside")?.accent
-const outsideAccent = getBrandBySlug("outside")?.accent
+// 2026-11-17 (design v5): the per-card brand eyebrow (IN//SIDE, OUT//SIDE)
+// from earlier rounds is gone — the v5 "Stack" cards carry only the index,
+// meta line, title, description, service chips and the two CTAs.
 
 // 2026-10-02 fix, round 2 (owner screenshots of the Claude design file:
 // "it should align everything to that"). Each case study's "Services
@@ -107,9 +97,6 @@ interface DeliveredItem {
 
 interface CaseStudy {
   title: React.ReactNode
-  /** Per-card brand eyebrow (IN//SIDE, OUT//SIDE) — omitted for SEA//SIDE
-   * Series, whose title already carries its own brand identity. */
-  brand?: { label: string; accent?: string }
   meta: string
   mediaLabel: string
   desc: string
@@ -168,10 +155,9 @@ const caseStudies: CaseStudy[] = [
   },
   {
     title: balMasque.title,
-    brand: { label: "IN//SIDE", accent: insideAccent },
     meta: `SAN FRANCISCO · ${monthYear(balMasque.dateISO!)}`,
     mediaLabel: "PHOTOGRAPHY",
-    desc: "A masquerade evening in San Francisco with Maison Noir, where dress code, design and music set a new standard for events.",
+    desc: "Masquerade evenings with Maison Noir, where dress code, design and music set a new standard for events",
     delivered: delivered([
       ["BRAND ACTIVATIONS", "Creative direction"],
       ["PRODUCTION", "Full Production Suite"],
@@ -190,7 +176,6 @@ const caseStudies: CaseStudy[] = [
   },
   {
     title: goldenGateLive.title,
-    brand: { label: "OUT//SIDE", accent: outsideAccent },
     meta: `GOLDEN GATE PARK, SAN FRANCISCO · ${monthYear(goldenGateLive.dateISO!)}`,
     mediaLabel: "FULL SET",
     desc: "An open-air sunset pop up in Golden Gate Park. Zusebi played live to the city, with the setting doing the rest.",
@@ -215,114 +200,90 @@ const caseStudies: CaseStudy[] = [
   },
 ]
 
-function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean }) {
-  // 2026-10-02 fix, round 4 (owner: "the Bal Masque section should be the
-  // same size as the others. It shouldnt be smaller"). Bal Masque is the
-  // only one of the 3 case studies with `reverse` true (alternating
-  // layout, every 2nd card). Reversing only reordered the two children
-  // (`order-2` on the media block) without also swapping which grid track
-  // they land in — grid-template-columns stayed a fixed `1.35fr .65fr`
-  // regardless, so the reordered media block got auto-placed into the
-  // narrower .65fr track instead of the wide 1.35fr one, rendering it
-  // visibly smaller than SEA//SIDE's and Golden Gate's (both not
-  // reversed). The column proportions now flip along with the visual
-  // order, so the media block is always the ~1.35fr-wide one.
+function thumbs(study: CaseStudy): Array<{ src: string; alt: string; position?: string }> {
+  return [study.side1, study.side2]
+}
+
+const GOLD_BTN =
+  "inline-flex items-center gap-2 whitespace-nowrap rounded-[2px] border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-[18px] py-[13px] font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#1a1408] max-[900px]:px-3.5 max-[900px]:py-[11px] max-[900px]:text-[9.5px]"
+const GHOST_BTN =
+  "inline-flex items-center gap-2 whitespace-nowrap rounded-[2px] border border-[#c9a869]/55 bg-[rgba(8,7,6,0.35)] px-[18px] py-[13px] font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#e8caa0] max-[900px]:px-3.5 max-[900px]:py-[11px] max-[900px]:text-[9.5px]"
+
+/**
+ * One sticky "Stack" card (design v5, fx1). Each card pins at `92px + index x
+ * 16px` so the next one slides over it, leaving a sliver of the previous
+ * title visible. Owner override (2026-11-17): the Zusebi card keeps the
+ * CURRENT Golden Gate loop video — no YouTube background or embed.
+ */
+function CaseStudyCard({ study, index, total }: { study: CaseStudy; index: number; total: number }) {
+  const counter = `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
   return (
-    <article className={`grid gap-6 lg:items-stretch ${reverse ? "lg:grid-cols-[.65fr_1.35fr] lg:[&>*:first-child]:order-2" : "lg:grid-cols-[1.35fr_.65fr]"}`}>
-      <div className="grid aspect-[16/11] min-w-0 grid-cols-[2fr_1fr] grid-rows-2 gap-2">
-        <div className="relative row-span-2 overflow-hidden bg-[#0d0c0a]">
-          {/* 2026-10-03 fix (owner: "on the zusebi experience, dont have the
-              picture in the main image at any point. Just the video.") —
-              this used to always render `study.main` as a base photo layer
-              underneath the video, which only ever actually showed for a
-              case study with no video. Now that all 3 case studies have a
-              real video (see the round-8 note above), that base photo layer
-              was dead weight for every card — `LazyLoopVideo`'s own
-              `poster` prop already shows this same photo before playback
-              starts, so the separate `<Image>` never added anything but
-              could still be the thing a visitor briefly sees. Only render
-              it for a (currently hypothetical) case study with no video. */}
-          {study.video ? (
-            <div className="absolute inset-0">
-              <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} className="h-full w-full object-cover" />
-            </div>
-          ) : (
-            <Image src={study.main.src} alt={study.main.alt} fill sizes="(min-width:1024px) 60vw, 100vw" className="object-cover" />
-          )}
-          {/* 2026-10-02 fix (owner: "Hero headers - no black background,
-              just fit into the hero videos as is"): the design file's own
-              media-type label (e.g. "PHOTOGRAPHY") sits directly on the
-              photo as plain mono text — no bordered black chip. Dropped the
-              border/bg-black box; a drop-shadow keeps it legible over any
-              photo instead. */}
-          <span className="absolute bottom-3.5 left-3.5 font-mono text-[9.5px] uppercase tracking-[0.16em] text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.85)]">{study.mediaLabel}</span>
+    <article
+      data-testid="experience-card"
+      className="sticky mb-6 h-[min(80vh,760px)] min-h-[540px] overflow-hidden rounded-[4px] border border-white/10 bg-[#0d0c0a] last:mb-0 max-[900px]:h-[74vh] max-[900px]:max-h-[640px] max-[900px]:min-h-0"
+      style={{ top: 92 + index * 16 }}
+    >
+      {study.video ? (
+        <div className="absolute inset-0">
+          <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} className="h-full w-full object-cover" />
         </div>
-        <div className="relative overflow-hidden bg-[#0d0c0a]">
-          <Image src={study.side1.src} alt={study.side1.alt} fill sizes="(min-width:1024px) 20vw, 50vw" className="object-cover" />
-        </div>
-        <div className="relative overflow-hidden bg-[#0d0c0a]">
-          <Image
-            src={study.side2.src}
-            alt={study.side2.alt}
-            fill
-            sizes="(min-width:1024px) 20vw, 50vw"
-            className="object-cover"
-            style={study.side2.position ? { objectPosition: study.side2.position } : undefined}
-          />
-        </div>
+      ) : (
+        <Image src={study.main.src} alt={study.main.alt} fill sizes="100vw" className="object-cover" />
+      )}
+      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,6,5,0.88)_0%,rgba(7,6,5,0.45)_48%,rgba(7,6,5,0)_80%)] max-[900px]:hidden" />
+      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,6,5,0.35)_0%,rgba(7,6,5,0)_30%,rgba(7,6,5,0.2)_60%,rgba(7,6,5,0.92)_100%)] max-[900px]:bg-[linear-gradient(180deg,rgba(7,6,5,0)_35%,rgba(7,6,5,0.95)_100%)]" />
+
+      <div className="absolute inset-x-8 top-7 flex items-start justify-between gap-6 max-[900px]:inset-x-5 max-[900px]:top-5">
+        <span className="font-mono text-[11px] tracking-[0.2em] text-[#e8caa0]">{counter}</span>
+        <span className="text-right font-mono text-[10px] uppercase tracking-[0.14em] text-[#e6e0d4] max-[900px]:hidden">{study.meta}</span>
       </div>
-      {/* 2026-10-04 fix, round 11 (owner, mobile screenshot: "the brand
-          (OUT//SIDE, SEA//SIDE, etc) and location should be below the
-          title of the event"). Below `lg:` the title now renders first,
-          with the brand eyebrow and meta line beneath it; `lg:` restores
-          today's exact order (brand, meta, title — verified against the
-          design file across earlier rounds, untouched). Flex items default
-          to `order-0`, so every sibling after this reordered trio also
-          needs its own explicit (breakpoint-stable) order — left unset,
-          they'd jump ahead of the 1/2/3 set below instead of staying after
-          it. */}
-      <div className="mt-[-4px] flex min-w-0 max-w-[560px] flex-col gap-[18px]">
-        {study.brand ? (
-          <p className="order-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#8f887c] lg:order-1">
-            <BrandSlashText text={study.brand.label} color={study.brand.accent} />
-          </p>
-        ) : null}
-        <p className="order-3 font-mono text-[10px] uppercase tracking-[0.14em] text-[#8f887c] lg:order-2">{study.meta}</p>
-        <h3 className="order-1 font-condensed text-[clamp(32px,4vw,52px)] font-extrabold uppercase leading-[0.94] text-[#f3efe6] lg:order-3">{study.title}</h3>
-        <p className="order-4 text-base leading-relaxed text-[#bdb6a9]">{study.desc}</p>
-        <ul className="order-5 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/10 pt-5">
-          {study.delivered.map((item) => (
-            <li key={item.label} className="flex items-start gap-3">
-              <span className="mt-0.5 flex size-8 flex-none items-center justify-center rounded-full border border-[#c9a869]/40 bg-[#c9a869]/10 text-[#c9a869]">
-                <ServiceIcon icon={item.icon} size={16} />
-              </span>
-              <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] text-[#c9a869]">{item.label}</span>
-                <span className="text-[13px] leading-snug text-[#bdb6a9]">{item.description}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-        <div className="order-6 mt-1 flex flex-wrap items-center gap-3">
-          {study.filmUrl ? (
-            <a
-              href={study.filmUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-[2px] border border-[#f3e3c4]/70 bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-[22px] py-3.5 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#1a1408]"
-            >
-              <span className="h-0 w-0 border-y-[5px] border-l-[8px] border-y-transparent border-l-[#1a1408]" aria-hidden />
-              Watch Full Film
-            </a>
-          ) : null}
-          <Link
-            href={CONTACT_PAGE_PATH}
-            className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-[2px] border border-[#c9a869]/55 px-[22px] py-3.5 font-mono text-[11px] uppercase tracking-[0.18em] text-[#c9a869]"
-          >
-            Create an Experience Like This <span aria-hidden>→</span>
-          </Link>
+
+      <div className="absolute inset-x-8 bottom-8 flex items-end justify-between gap-8 max-[900px]:inset-x-5 max-[900px]:bottom-5">
+        <div className="flex min-w-0 max-w-[640px] flex-col gap-4 max-[900px]:gap-3.5">
+          <h3 className="m-0 font-condensed text-[clamp(40px,5.4vw,84px)] font-extrabold uppercase leading-[0.9] text-[#fdf6e8] max-[900px]:text-[40px]">{study.title}</h3>
+          <p className="m-0 max-w-[520px] text-[clamp(14px,1.2vw,17px)] leading-[1.55] text-[#e6e0d4] max-[900px]:hidden">{study.desc}</p>
+          <ul className="m-0 flex list-none flex-wrap gap-2 p-0 max-[900px]:hidden">
+            {study.delivered.map((item) => (
+              <li key={item.label}>
+                <a
+                  href="#services"
+                  title={item.description}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#c9a869]/45 bg-[rgba(8,7,6,0.45)] px-3 py-1.5 font-mono text-[9.5px] uppercase tracking-[0.12em] text-[#e8caa0]"
+                >
+                  <ServiceIcon icon={item.icon} size={12} />
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-1 flex flex-wrap items-center gap-3">
+            {study.filmUrl ? (
+              <a href={study.filmUrl} target="_blank" rel="noopener noreferrer" className={GOLD_BTN}>
+                <span className="h-0 w-0 border-y-[4px] border-l-[7px] border-y-transparent border-l-[#1a1408]" aria-hidden />
+                Watch Film
+              </a>
+            ) : null}
+            <Link href={CONTACT_PAGE_PATH} className={GHOST_BTN}>
+              Create One Like This <span aria-hidden>→</span>
+            </Link>
+            <Link href={study.href} className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0] max-[900px]:hidden">{study.linkLabel}</Link>
+          </div>
         </div>
-        <Link href={study.href} className="order-7 font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">{study.linkLabel}</Link>
+
+        <div className="flex flex-none gap-2.5 max-[1100px]:hidden" data-testid="experience-thumbs">
+          {thumbs(study).map((thumb) => (
+            <div key={thumb.src} className="relative aspect-[4/5] w-[150px] overflow-hidden rounded-[2px] border border-white/20 bg-[#0d0c0a]">
+              <Image
+                src={thumb.src}
+                alt={thumb.alt}
+                fill
+                sizes="150px"
+                className="object-cover"
+                style={thumb.position ? { objectPosition: thumb.position } : undefined}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </article>
   )
@@ -330,14 +291,20 @@ function CaseStudyCard({ study, reverse }: { study: CaseStudy; reverse: boolean 
 
 export function ClaudeHomeExperiences() {
   return (
-    <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
+    <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <div><p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Our Work</p><h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]"><GoldShineText>Featured Experiences</GoldShineText></h2></div>
-          <Link href="/events" className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0]">View all experiences →</Link>
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
+              <span className="text-[#c9a869]">(02)</span>
+              <span>OUR WORK</span>
+            </div>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8]">Featured Experiences</h2>
+          </div>
+          <Link href="/events" className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-[#e8caa0]">View Past Events →</Link>
         </div>
-        <div className="space-y-20 lg:space-y-28">
-          {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} reverse={i % 2 === 1} />)}
+        <div>
+          {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} />)}
         </div>
       </div>
     </section>

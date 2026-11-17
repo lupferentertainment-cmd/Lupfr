@@ -28,7 +28,7 @@ describe("Follow the Momentum placement", () => {
   it("follows Team in the owner's About → Team → Momentum order", () => {
     const team = homePage.indexOf("<Team />")
     const momentum = homePage.indexOf("<FollowTheMomentum />")
-    const contact = homePage.indexOf("<Contact />")
+    const contact = homePage.indexOf("<StartPlanning />")
     expect(team).toBeGreaterThan(-1)
     expect(momentum).toBeGreaterThan(team)
     expect(contact).toBeGreaterThan(momentum)

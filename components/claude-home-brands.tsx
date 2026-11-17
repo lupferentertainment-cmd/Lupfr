@@ -2,73 +2,37 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { m, useInView } from "framer-motion"
-import { useRef, useState, type CSSProperties } from "react"
+import { useState } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
-import { GoldShineText } from "@/components/gold-shine-text"
 import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } from "@/lib/data/brands"
 
 /**
- * 2026-10-02 fix (owner report, screenshots of the live preview: "a lot of
- * the features and design still did not make it in"): the first pass of
- * this section flattened all 5 operating brands into one undifferentiated
- * grid with name + tag only, dropping the division grouping, the real
- * per-brand description copy, and the "Explore" CTA that the design file's
- * `#experiences` ("Our Brands") poster-tile grid actually has — and that the
- * site's OWN pre-redesign `components/brands.tsx` (now unused on any route,
- * see its "CORPORATE // MEDIA" owner punch-list history) already carried,
- * tested, and owner-iterated on for months (division rule bars in each
- * brand's/gold accent, `brand.description`, numbered tag/index badges,
- * "Explore →"). This rebuilds the same structure/content directly (not by
- * importing that component, which is wired to the sitewide light/dark theme
- * tokens the Oct 1 redesign deliberately opts out of — see docs/DESIGN.md's
- * "Homepage redesign" entry) with this redesign's own fixed dark palette.
- *
- * 2026-10-02 second fix (owner report: "the OUR Brands looks off - should be
- * pretty similar to how it was in the current website"): the first fix above
- * still read as flatter than `components/brands.tsx` — no entrance animation,
- * and both division dividers spanned the full grid width equally instead of
- * the real design file's proportioned single-row bar (`#experiences`'s own
- * `lp-brands-divider`: `grid-column:span 3` for Live//Events next to `span 2`
- * for Corporate//Media, a 3:2 split matching the 3+2 card count). Restored
- * that proportioned top bar (xl+, where all 5 cards actually share one row)
- * with the design file's own literal divider colors — Live//Events blue
- * (`rgba(63,124,191)` / `#7aa7dc`), independent of any one brand's own accent
- * — falling back to per-group inline labels below xl exactly as
- * `components/brands.tsx` already does, plus that component's ScrollReveal-
- * style staggered entrance.
+ * LUPFR Website Design v5 (owner, 2026-11-17) — Our Brands, "Reveal" layout
+ * (design variant br3). Both tabs share one tile: a 3:4.6 photo with a
+ * brand-colour wash, an outlined index number, a small mono label, the brand
+ * name, a description that is revealed on hover (always visible at <=1100px)
+ * and an accent bar that grows on hover. Operating is a 6-column row in the
+ * order SEA//SIDE, IN//SIDE, OUT//SIDE, SKI//SIDE, HIGH//RISE, SOUND//CHECK;
+ * Platform is 5 columns. This replaces the v10 division-label poster grid
+ * (the Live//Events and Corporate//Media rules are gone). Responsive: 3
+ * columns at <=1100px (no photo filter), 2 at <=720px, 1 at <=480px with
+ * shorter tiles. The small labels are the design file's own (the file wins
+ * over the pasted list, e.g. SEA//SIDE reads "OFFSHORE EXPERIENCES").
  */
 const { liveEvents, corporateMedia } = getBrandsByDivision()
-const DIVISION_ACCENTS = { liveEvents: "#7aa7dc", corporateMedia: "#c9a869" }
+const OPERATING = [...liveEvents, ...corporateMedia]
 
-/**
- * LUPFR Website Design v10 (owner, 2026-11-11) — desktop-only redesign of
- * this section, transcribed from the v10 design file's own `#experiences`
- * markup/CSS (diffed against v7 so only what actually changed moves):
- * - a 4-column poster grid (was 5) — `.lp-brands-poster` repeat(4,1fr);
- * - both division rules run the full grid width above their own group
- *   (`grid-column:1 / -1`) with a hairline top border and a fading rule,
- *   replacing the old single proportioned 3:2 bar above one shared row —
- *   so the separate xl-only top bar is gone and the inline labels show at
- *   every width (they already did below xl);
- * - above 1200px (the design's own breakpoint, not Tailwind's 1280 `xl`;
- *   written as `min-[75.0625rem]` = 1201px — a px-valued arbitrary breakpoint
- *   gets sorted *before* Tailwind's rem-valued `lg` in the generated CSS, so
- *   `lg:` silently won at every width; this shipped broken in 558a5ca),
- *   HIGH//RISE and SOUND//CHECK become wide tiles (`.lp-poster-wide`:
- *   span 2, aspect 3:2) and Corporate//Media gets 30px of top margin;
- * - SKI//SIDE joins Live Events (data/brands.yml) and draws its own
- *   red/blue slash mark (`slashImg`) in place of the text "//".
- * Follow-up (owner, 2026-11-11, live preview vs the v10 design screenshot):
- * at `lg:` the division labels take the design's condensed bold style
- * (clamp(13px,1.2vw,16px), 0.06em tracking), brand names its
- * clamp(20px,2.4vw,30px) size, and tiles its 4px corner radius. Every
- * below-`lg` class is unchanged (mobile stays the round-11 single column).
- */
-const DIVISION_RULES = {
-  liveEvents: { border: "rgba(63,124,191,0.45)", fade: "rgba(63,124,191,0.35)" },
-  corporateMedia: { border: "rgba(201,168,105,0.45)", fade: "rgba(201,168,105,0.35)" },
+const BRAND_LABELS: Record<string, string> = {
+  seaside: "SEA//SIDE OFFSHORE EXPERIENCES",
+  inside: "IN//SIDE INDOOR NIGHTS",
+  outside: "OUT//SIDE OPEN-AIR GATHERINGS",
+  skiside: "SKI//SIDE APRÈS-SKI EXPERIENCES",
+  highrise: "HIGH//RISE CORPORATE",
+  soundcheck: "SOUND//CHECK MEDIA",
 }
+
+const PLATFORM_LABELS = ["VIP", "PROMOTER", "MEDIA", "HOSPITALITY", "VENTURES"]
+const PLATFORM_ACCENT = "#c9a869"
 
 /** Brand name with its divider: the brand's slash-mark image when it has one, else the accent-coloured text "//". */
 function BrandTileTitle({ brand }: { brand: BrandItem }) {
@@ -92,132 +56,93 @@ function BrandTileTitle({ brand }: { brand: BrandItem }) {
   )
 }
 
-/**
- * 2026-10-04 fix, round 10 (owner, current-site mobile screenshot: "The
- * brands section needs to have the smaller tiles like our current website
- * on mobile" / "Platform - the tiles also need to be designed like the
- * screenshot of the brands (vertical and less height on mobile"). Below
- * `lg`, both tabs' tiles used to inherit the same tall `aspect-[3/4]` as
- * desktop — combined with the Operating tab's 1-column mobile grid (full
- * device width per tile), that produced much taller tiles than that
- * round's reference screenshot's compact, wider-than-tall cards. Both tabs
- * got a shorter `aspect-[4/3]` below `lg` (full `aspect-[3/4]` restored at
- * `lg:`, unchanged from round 9).
- *
- * Round 11 correction (owner, Claude design tool screenshot: "mobile Should
- * look like the screenshot attached... The previous website design was like
- * this"): round 10's 2-up grid was the wrong reference — the owner's new
- * screenshot (and, per the owner, the real pre-redesign site) shows a
- * single full-width card per row, not two narrow ones side by side. The
- * shorter `aspect-[4/3]` from round 10 stays (still matches "less height" —
- * the ask was about tile proportions, not column count), but both tabs'
- * mobile grid goes back to one column.
- */
-function BrandPosterTile({ brand, index, isInView, wide = false }: { brand: BrandItem; index: number; isInView: boolean; wide?: boolean }) {
-  const numeral = String(index + 1).padStart(2, "0")
+interface RevealTileProps {
+  num: string
+  label: string
+  accent: string
+  image?: string
+  description: string
+  title: React.ReactNode
+  sizes: string
+}
+
+/** The shared Reveal tile body (design v5 `.lp-br3`), rendered inside a Link (operating) or a div (platform). */
+function RevealTileBody({ num, label, accent, image, description, title, sizes }: RevealTileProps) {
   return (
-    <m.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className={wide ? "min-[75.0625rem]:col-span-2" : undefined}
-    >
-      <Link
-        href={brandPath(brand)}
-        data-wide={wide ? "true" : undefined}
-        className={["group relative block aspect-[4/3] overflow-hidden border border-white/10 bg-[#141210] lg:aspect-[3/4] lg:rounded-[4px]", wide ? "min-[75.0625rem]:aspect-[3/2]" : ""].join(" ").trim()}
+    <>
+      {image ? (
+        <Image
+          src={image}
+          alt=""
+          fill
+          sizes={sizes}
+          className="object-cover brightness-[.72] saturate-[1.05] transition duration-700 group-hover:scale-[1.06] group-hover:brightness-[.92] max-[1100px]:brightness-100 max-[1100px]:saturate-100"
+        />
+      ) : null}
+      <div
+        aria-hidden
+        data-testid="brand-wash"
+        className="pointer-events-none absolute inset-0 opacity-[.22] mix-blend-multiply transition-opacity duration-500 group-hover:opacity-40 max-[1100px]:hidden"
+        style={{ backgroundColor: accent }}
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,6,5,0.35)_0%,rgba(7,6,5,0)_30%,rgba(7,6,5,0.55)_62%,rgba(7,6,5,0.95)_100%)]" />
+      <span
+        aria-hidden
+        className="absolute left-4 top-3.5 font-condensed text-[26px] font-extrabold leading-none text-transparent [-webkit-text-stroke:1px_rgba(253,246,232,0.7)] max-[480px]:text-[24px]"
       >
-        {brand.image ? (
-          <Image
-            src={brand.image}
-            alt=""
-            fill
-            sizes={wide ? "(min-width:1201px) 50vw, (min-width:1024px) 33vw, 100vw" : "(min-width:1201px) 25vw, (min-width:1024px) 33vw, 100vw"}
-            className="object-cover transition duration-700 group-hover:scale-[1.06]"
-          />
-        ) : null}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-black/55" />
+        {num}
+      </span>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 px-4 pb-5 pt-4">
         <span
-          className="absolute left-4 top-4 rounded-[2px] border px-2 py-1 font-mono text-[9px] uppercase tracking-wider"
-          style={{ borderColor: brand.accent, color: brand.accent, backgroundColor: "rgba(8,7,6,0.5)" }}
+          data-testid="brand-label"
+          className="w-fit font-mono text-[9.5px] uppercase leading-[1.4] tracking-[0.14em] max-[900px]:rounded-[2px] max-[900px]:bg-[rgba(8,7,6,0.72)] max-[900px]:px-2 max-[900px]:py-1 max-[900px]:text-[#f3efe6]"
+          style={{ color: accent }}
         >
-          {brand.tag}
+          {label}
         </span>
-        <span className="absolute right-4 top-[18px] font-mono text-[10px] text-white/45">{numeral}</span>
-        <div className="absolute inset-x-0 bottom-0 flex flex-col p-5 pb-6">
-          {/* 2026-10-02 fix (owner: "make sure all brand/platform titles are
-              at the same height level"). This block anchors to the card's
-              bottom edge as one unit, so a 2-line description vs. a
-              line-clamp-3'd 3-line one used to change the whole block's
-              height and push each card's title to a different Y — titles
-              only lined up by coincidence. Reserving a fixed 3-line height
-              for the description (whether it needs all 3 lines or not) keeps
-              the block's total height constant across every card, so every
-              title sits the same distance above its card's bottom edge. */}
-          <h3 className="font-condensed text-2xl font-extrabold uppercase leading-none text-white lg:text-[clamp(20px,2.4vw,30px)]">
-            <BrandTileTitle brand={brand} />
-          </h3>
-          <p className="mt-2.5 line-clamp-3 min-h-[61px] text-[12.5px] leading-relaxed text-white/70">{brand.description}</p>
-          <div className="mt-3.5 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]" style={{ color: brand.accent }}>
-            Explore <span aria-hidden>→</span>
-          </div>
-        </div>
-      </Link>
-    </m.div>
+        <h3 className="m-0 font-condensed text-[clamp(18px,1.75vw,26px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8] max-[480px]:text-[30px]">{title}</h3>
+        <p className="m-0 max-h-0 overflow-hidden text-[12.5px] leading-[1.5] text-[#e6e0d4] opacity-0 transition-all duration-500 group-hover:max-h-[90px] group-hover:opacity-100 group-focus-visible:max-h-[90px] group-focus-visible:opacity-100 max-[1100px]:max-h-[90px] max-[1100px]:opacity-100">
+          {description}
+        </p>
+        <span
+          aria-hidden
+          data-testid="brand-bar"
+          className="block h-[2px] w-full origin-left scale-x-[.18] transition-transform duration-500 group-hover:scale-x-100 group-focus-visible:scale-x-100"
+          style={{ backgroundColor: accent }}
+        />
+      </div>
+    </>
   )
 }
 
-function DivisionLabel({
-  before,
-  after,
-  accent,
-  rule,
-  className = "",
-}: {
-  before: string
-  after: string
-  accent: string
-  rule: { border: string; fade: string }
-  className?: string
-}) {
-  // Below lg: unchanged solid accent rule, no top border. lg+: the v10
-  // hairline top border plus a rule that fades out to the right.
-  const vars = { "--rule-solid": accent, "--rule-fade": rule.fade, borderColor: rule.border } as CSSProperties
-  return (
-    <div
-      data-division-label
-      className={`col-span-full flex min-w-0 items-center gap-2.5 lg:border-t lg:pt-3 ${className}`.trim()}
-      style={vars}
-    >
-      <span
-        className="whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.16em] lg:font-condensed lg:text-[clamp(13px,1.2vw,16px)] lg:font-bold lg:tracking-[0.06em]"
-        style={{ color: accent }}
-      >
-        {before} <span aria-hidden>{"//"}</span> {after}
-      </span>
-      <span className="h-px flex-1 bg-[var(--rule-solid)] lg:bg-[linear-gradient(90deg,var(--rule-fade),transparent)]" aria-hidden />
-    </div>
-  )
-}
+const TILE_CLASS =
+  "group relative block aspect-[3/4.6] overflow-hidden rounded-[4px] border border-white/10 bg-[#141210] transition-transform duration-500 hover:-translate-y-1.5 focus-visible:-translate-y-1.5 max-[480px]:aspect-[5/3]"
+
+const GRID_BASE = "grid gap-[10px] max-[1100px]:grid-cols-3 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1"
 
 export function ClaudeHomeBrands() {
-  const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" })
   const [tab, setTab] = useState<"operating" | "platform">("operating")
   return (
-    <section id="brands" ref={ref} className="border-b border-white/10 bg-[#070605] px-6 py-14 text-[#f3efe6] sm:px-8 lg:px-12 lg:py-20">
+    <section id="brands" className="border-b border-white/10 bg-[#070605] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#c9a869]">Eleven Platforms. One Company.</p>
-            <h2 className="mt-3 font-condensed text-[clamp(38px,4.2vw,64px)] font-extrabold uppercase leading-[0.9]">
-              <GoldShineText>Our Brands</GoldShineText>
-            </h2>
+            <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
+              <span className="text-[#c9a869]">(03)</span>
+              <span>ELEVEN PLATFORMS. ONE COMPANY.</span>
+            </div>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8]">Our Brands</h2>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex overflow-hidden rounded-full border border-white/15">
               {(["operating", "platform"] as const).map((t) => (
-                <button key={t} onClick={() => setTab(t)} className={`px-5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] ${tab === t ? "bg-[#c9a869] text-[#1a1408]" : "text-[#bdb6a9]"}`}>
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={tab === t}
+                  onClick={() => setTab(t)}
+                  className={`px-5 py-2 font-mono text-[10px] uppercase tracking-[0.14em] ${tab === t ? "bg-[#c9a869] text-[#1a1408]" : "text-[#bdb6a9]"}`}
+                >
                   {t}
                 </button>
               ))}
@@ -227,33 +152,34 @@ export function ClaudeHomeBrands() {
         </div>
 
         {tab === "operating" ? (
-          <div className="grid grid-cols-1 gap-3.5 lg:grid-cols-3 lg:items-start lg:gap-[18px] min-[75.0625rem]:grid-cols-4">
-            <DivisionLabel before="Live" after="Events" accent={DIVISION_ACCENTS.liveEvents} rule={DIVISION_RULES.liveEvents} />
-            {liveEvents.map((brand, i) => <BrandPosterTile key={brand.key} brand={brand} index={i} isInView={isInView} />)}
-            <DivisionLabel
-              before="Corporate"
-              after="Media"
-              accent={DIVISION_ACCENTS.corporateMedia}
-              rule={DIVISION_RULES.corporateMedia}
-              className="min-[75.0625rem]:mt-[30px]"
-            />
-            {corporateMedia.map((brand, i) => (
-              <BrandPosterTile key={brand.key} brand={brand} index={liveEvents.length + i} isInView={isInView} wide />
+          <div data-testid="brands-grid-operating" className={`${GRID_BASE} grid-cols-6`}>
+            {OPERATING.map((brand, i) => (
+              <Link key={brand.key} href={brandPath(brand)} className={TILE_CLASS}>
+                <RevealTileBody
+                  num={String(i + 1).padStart(2, "0")}
+                  label={BRAND_LABELS[brand.key] ?? brand.tag}
+                  accent={brand.accent}
+                  image={brand.image}
+                  description={brand.description}
+                  title={<BrandTileTitle brand={brand} />}
+                  sizes="(min-width:1101px) 16vw, (min-width:721px) 33vw, 50vw"
+                />
+              </Link>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3 xl:grid-cols-5">
-            {PLATFORM_PROGRAMS.map((program) => (
-              <div key={program.name} className="relative aspect-[4/3] overflow-hidden border border-[#c9a869]/30 bg-[#141210] lg:aspect-[3/4]">
-                <Image src={program.image} alt="" fill sizes="(min-width:1280px) 20vw, 50vw" className="object-cover" />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/92 via-black/25 to-black/50" />
-                <div className="absolute inset-0 flex flex-col justify-between p-5">
-                  <span className="font-mono text-[10.5px] text-[#c9a869]">{program.num}</span>
-                  <div className="flex flex-col gap-2.5">
-                    <h3 className="font-condensed text-2xl font-bold uppercase leading-[0.95] text-white">{program.name}</h3>
-                    <p className="text-[12.5px] leading-relaxed text-white/75">{program.line}</p>
-                  </div>
-                </div>
+          <div data-testid="brands-grid-platform" className={`${GRID_BASE} grid-cols-5`}>
+            {PLATFORM_PROGRAMS.map((program, i) => (
+              <div key={program.name} className={TILE_CLASS}>
+                <RevealTileBody
+                  num={program.num}
+                  label={PLATFORM_LABELS[i] ?? program.name}
+                  accent={PLATFORM_ACCENT}
+                  image={program.image}
+                  description={program.line}
+                  title={program.name}
+                  sizes="(min-width:1101px) 20vw, (min-width:721px) 33vw, 50vw"
+                />
               </div>
             ))}
           </div>

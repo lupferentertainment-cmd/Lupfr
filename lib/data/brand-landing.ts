@@ -32,6 +32,17 @@ export function handleFromUrl(platform: MediaChannelCell["platform"], url: strin
  * LUPFR" — never an invented handle (see lib/data/media.ts).
  */
 export function getBrandSocials(brandKey: string): BrandSocialLink[] {
+  // v5 (2026-11-17): a brand's own confirmed `social` URLs win even while the
+  // brand is "coming soon" (HIGH//RISE's Instagram is confirmed; the Media
+  // page still shows coming-soon brands as such via lib/data/media.ts).
+  const ownSocial = getBrands().find((b) => b.key === brandKey)?.social
+  if (ownSocial) {
+    const own = (["Instagram", "TikTok", "LinkedIn", "YouTube"] as const).flatMap((platform) => {
+      const href = ownSocial[platform.toLowerCase() as keyof typeof ownSocial]
+      return href ? [{ platform, handle: handleFromUrl(platform, href), href, viaLupfr: false }] : []
+    })
+    if (own.length > 0) return own
+  }
   const row = getMediaOverview().brandRows.find((r) => r.key === brandKey)
   const own = (row?.channels ?? []).filter((c): c is MediaChannelCell & { href: string } => c.state === "live" && !!c.href)
   if (own.length > 0) {

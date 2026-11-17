@@ -61,7 +61,9 @@ describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
     expect(homePage).toContain('import { FollowTheMomentum } from "@/components/follow-the-momentum"')
     expect(homePage).toMatch(/import\("@\/components\/about"\)/)
     expect(homePage).toContain('resolveDynamicComponent(m, "About", "@/components/about")')
-    expect(homePage).toMatch(/import\("@\/components\/contact"\)/)
+    // v5 (2026-11-17): the Contact wizard was replaced by the Start Planning intake on #contact.
+    expect(homePage).toMatch(/import\("@\/components\/start-planning"\)/)
+    expect(homePage).not.toMatch(/components\/contact"/)
     expect(homePage).toMatch(/import\("@\/components\/footer"\)/)
     expect(homePage).toContain("<LayloEmbed />")
   })

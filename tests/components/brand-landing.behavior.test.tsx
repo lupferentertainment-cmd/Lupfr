@@ -7,12 +7,13 @@ import { brandPlainTitle, getBrandBySlug, getBrands } from "@/lib/data/brands"
 
 /**
  * LUPFR Website Design v16: every brand gets the full landing — hero with
- * tagline + CTA, THE FORMAT (statement + three pillars), calendar, gallery,
- * "bring it to you" plan box with the brand's accounts, and the other five
- * brands. Copy comes from data/brands.yml's `landing` block.
+ * tagline + CTA, THE FORMAT (statement, format photo + three icon pillars),
+ * gallery, "bring it to you" plan box with the brand's accounts, and the other
+ * five brands with a "See Past Events" button. v5 (2026-11-17) removed the
+ * "On the calendar" section. Copy comes from data/brands.yml's `landing` block.
  */
 describe("BrandLanding", () => {
-  it.each(getBrands().map((b) => b.key))("%s renders hero, format, calendar, plan box and the other five brands", (key) => {
+  it.each(getBrands().map((b) => b.key))("%s renders hero, format, plan box and the other five brands, with no calendar", (key) => {
     const brand = getBrandBySlug(key)!
     render(<BrandLanding brand={brand} />)
     const landing = brand.landing!
@@ -23,7 +24,13 @@ describe("BrandLanding", () => {
     expect(screen.getAllByRole("link", { name: landing.cta })).toHaveLength(2) // hero + plan box
     expect(screen.getByRole("heading", { level: 2, name: landing.statement })).toBeInTheDocument()
     expect(screen.getAllByTestId("brand-pillar")).toHaveLength(3)
-    expect(screen.getByRole("heading", { level: 2, name: "On the calendar" })).toBeInTheDocument()
+    expect(screen.queryByRole("heading", { level: 2, name: "On the calendar" })).toBeNull()
+    expect(screen.queryByTestId("brand-upcoming")).toBeNull()
+    expect(screen.queryByTestId("brand-past")).toBeNull()
+    // v5: every pillar carries one of the brand's icons, and the format photo carries the motif disc.
+    expect(screen.getAllByTestId("brand-pillar-icon")).toHaveLength(3)
+    expect(screen.getByTestId("brand-motif")).toBeInTheDocument()
+    expect(screen.getByTestId("brand-format-photo")).toBeInTheDocument()
     expect(screen.getByRole("heading", { level: 2, name: `Your event. ${brand.title} production.` })).toBeInTheDocument()
     expect(screen.getByText(`BRING ${brand.title} TO YOU`)).toBeInTheDocument()
     expect(within(screen.getByTestId("brand-others")).getAllByRole("link")).toHaveLength(5)
@@ -31,18 +38,40 @@ describe("BrandLanding", () => {
     expect(otherNames.some((n) => n?.startsWith(brandPlainTitle(brand) + " —"))).toBe(false)
   })
 
-  it("shows the empty-calendar line + 'Get in touch' when there are no upcoming events, and the past placeholder", () => {
+  it("links an outlined 'See Past Events →' button to /events from the More-from header", () => {
+    render(<BrandLanding brand={getBrandBySlug("seaside")!} />)
+    const button = screen.getByTestId("see-past-events")
+    expect(button).toHaveAttribute("href", "/events")
+    expect(button).toHaveTextContent("See Past Events")
+    expect(button).toHaveStyle({ color: getBrandBySlug("seaside")!.accent })
+  })
+
+  it("uses the format photo gallery[1] || gallery[0] || the brand image, and the 4th icon as the motif", () => {
+    const { container, unmount } = render(<BrandLanding brand={getBrandBySlug("skiside")!} />)
+    expect(screen.getByTestId("brand-format-photo").querySelector("img")!.getAttribute("src")).toContain("skiside-photo-install")
+    expect(screen.getByTestId("brand-motif").querySelector("svg")!.getAttribute("data-icon")).toBe("snow")
+    expect(Array.from(container.querySelectorAll("[data-testid=brand-pillar-icon] svg")).map((n) => n.getAttribute("data-icon"))).toEqual(["mountain", "mug", "gondola"])
+    unmount()
+    const only = { ...getBrandBySlug("inside")!, gallery: ["/brands/inside-1.webp"] }
+    render(<BrandLanding brand={only} />)
+    expect(screen.getByTestId("brand-format-photo").querySelector("img")!.getAttribute("src")).toContain("inside-1")
+  })
+
+  it("renders SKI//SIDE's v5 copy: 'Last run. First track.', the three pillars and its six photos", () => {
     render(<BrandLanding brand={getBrandBySlug("skiside")!} />)
-    const upcoming = screen.getByTestId("brand-upcoming")
-    expect(within(upcoming).getByText(/SKI\/\/SIDE launches in 2027/)).toBeInTheDocument()
-    expect(within(upcoming).getByRole("link", { name: "Get in touch →" })).toHaveAttribute("href", "/contact")
-    expect(within(screen.getByTestId("brand-past")).getByText("The first chapter is still being written.")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { level: 2, name: "Last run. First track." })).toBeInTheDocument()
+    expect(screen.getByText("Après ski, amplified.")).toBeInTheDocument()
+    expect(screen.getAllByRole("link", { name: "Partner with SKI//SIDE" })).toHaveLength(2)
+    expect(screen.getByText("World-class performers")).toBeInTheDocument()
+    expect(screen.getByText("The scene")).toBeInTheDocument()
+    expect(screen.getByText("The collection")).toBeInTheDocument()
+    expect(screen.getByTestId("brand-gallery").children).toHaveLength(6)
   })
 
   it("draws SKI//SIDE's slash artwork in the hero and every brand's gallery from its own photos", () => {
     const { container } = render(<BrandLanding brand={getBrandBySlug("skiside")!} />)
     expect(container.querySelector("h1 [data-brand-slash-image]")).not.toBeNull()
-    expect(screen.getByTestId("brand-gallery").children).toHaveLength(1)
+    expect(screen.getByTestId("brand-gallery").children).toHaveLength(6)
   })
 
   it("renders 6 gallery tiles for SEA//SIDE with the first spanning 2×2 and the fourth 2 wide", () => {
@@ -60,8 +89,14 @@ describe("BrandLanding", () => {
     expect(screen.getByRole("link", { name: /Visit seaside\.la/ })).toHaveAttribute("href", "https://seaside.la")
   })
 
-  it("routes brands without their own accounts to LUPFR's real channels, labelled 'via LUPFR'", () => {
+  it("links HIGH//RISE's own Instagram (confirmed in the v5 design)", () => {
     render(<BrandLanding brand={getBrandBySlug("highrise")!} />)
+    expect(screen.getByRole("link", { name: /@high\.rise\.la\s*INSTAGRAM/i })).toHaveAttribute("href", "https://www.instagram.com/high.rise.la/")
+    expect(screen.queryByText(/via LUPFR/)).toBeNull()
+  })
+
+  it("routes brands without their own accounts to LUPFR's real channels, labelled 'via LUPFR'", () => {
+    render(<BrandLanding brand={getBrandBySlug("inside")!} />)
     const follow = screen.getByRole("link", { name: /@lupfr_\s*INSTAGRAM · via LUPFR/i })
     expect(follow).toHaveAttribute("href", "https://www.instagram.com/lupfr_/")
   })
@@ -81,6 +116,6 @@ describe("BrandLanding", () => {
     expect(screen.getAllByRole("link", { name: "Plan a AA//BB event" })).toHaveLength(2)
     expect(screen.queryByTestId("brand-gallery")).toBeNull()
     expect(screen.queryByTestId("brand-pillar")).toBeNull()
-    expect(screen.getByText("New dates are announced soon.")).toBeInTheDocument()
+    expect(screen.queryByTestId("brand-format-photo")).toBeNull()
   })
 })

@@ -46,37 +46,12 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getByRole("link", { name: "Explore Our Work" })).toBeInTheDocument()
   })
 
-  // 2026-10-02 fix (owner: "change music and entertainment to Music (so it
-  // fits on the row same as others)"); 2026-10-03 fix (owner: "change Venue
-  // programming to just 'Programming'" / "change content & media to just
-  // 'Media'") — mirrors claude-home-services.tsx's own TAB_LABEL_OVERRIDES:
-  // the tab row shows a shortened label for these 3 services; everywhere
-  // else still uses the real full title (`current.title` once it's the
-  // active service's heading), covered separately below.
-  const TAB_LABEL_OVERRIDES: Record<string, string> = {
-    "Music & Entertainment": "Music",
-    "Venue Programming": "Programming",
-    "Content & Media": "Media",
-  }
-
-  it("ClaudeHomeServices lists every real service as a tab", () => {
+  it("ClaudeHomeServices lists every real service as a card with its real title and description", () => {
     const services = getServices()
     render(<ClaudeHomeServices />)
     for (const service of services) {
-      const tabLabel = TAB_LABEL_OVERRIDES[service.title] ?? service.title
-      expect(screen.getAllByText(tabLabel).length).toBeGreaterThan(0)
-    }
-  })
-
-  it("ClaudeHomeServices still shows the real full title once a shortened-label service is active", async () => {
-    const user = userEvent.setup()
-    const services = getServices()
-    render(<ClaudeHomeServices />)
-    for (const [fullTitle, shortLabel] of Object.entries(TAB_LABEL_OVERRIDES)) {
-      const service = services.find((s) => s.title === fullTitle)
-      if (!service) continue
-      await user.click(screen.getByRole("button", { name: shortLabel }))
-      expect(screen.getByRole("heading", { level: 3, name: fullTitle })).toBeInTheDocument()
+      expect(screen.getByRole("heading", { level: 3, name: service.title })).toBeInTheDocument()
+      expect(screen.getByText(service.description)).toBeInTheDocument()
     }
   })
 
@@ -84,7 +59,8 @@ describe("new homepage sections render their real data", () => {
     const { liveEvents, corporateMedia } = getBrandsByDivision()
     render(<ClaudeHomeBrands />)
     for (const brand of [...liveEvents, ...corporateMedia]) {
-      expect(screen.getAllByText(brand.tag).length).toBeGreaterThan(0)
+      // v5 Reveal tiles: each real brand is a link to its landing page showing its real description.
+      expect(screen.getByRole("link", { name: new RegExp(brand.description.slice(0, 20)) })).toHaveAttribute("href", `/brands/${brand.key}`)
     }
   })
 
@@ -100,11 +76,11 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getByRole("heading", { name: "BAL MASQUE" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "Zusebi 002: Golden Gate Live" })).toBeInTheDocument()
     expect(screen.getAllByRole("link", { name: "View experience →" }).length).toBe(2)
-    // Design file's dual CTA row: "Create an Experience Like This" always,
-    // "Watch Full Film" only for the 2 case studies with a real verified
-    // recap link (SEA//SIDE, Bal Masque) — not Golden Gate Live.
-    expect(screen.getAllByRole("link", { name: /Create an Experience Like This/ }).length).toBe(3)
-    const watchFullFilm = screen.getAllByRole("link", { name: "Watch Full Film" })
+    // v5 CTA row: "Create One Like This →" always, "Watch Film" only for the
+    // 2 case studies with a real verified recap link (SEA//SIDE, Bal Masque)
+    // — not Golden Gate Live.
+    expect(screen.getAllByRole("link", { name: /Create One Like This/ }).length).toBe(3)
+    const watchFullFilm = screen.getAllByRole("link", { name: "Watch Film" })
     expect(watchFullFilm.length).toBe(2)
     expect(watchFullFilm.map((a) => a.getAttribute("href")).sort()).toEqual(
       ["https://www.instagram.com/p/DdrQLrbpPqr/", "https://www.youtube.com/watch?v=Xt6zGwZ7jKg"].sort()
@@ -163,38 +139,14 @@ describe("new homepage sections render their real data", () => {
     expect(switchControl).toBeInTheDocument()
   })
 
-  it("ClaudeHomeServices switches the detail panel when another tab is clicked", async () => {
-    const services = getServices()
-    const user = userEvent.setup()
-    render(<ClaudeHomeServices />)
-    const second = services[1]
-    if (!second) return
-    // 2026-10-04 fix, round 11: scoped to the desktop tab-row/panel
-    // specifically (`data-testid="services-desktop"`) — the new mobile
-    // accordion (`ServicesAccordion`, same file) renders its own
-    // independent copy of every service's title/Includes list/"Plan Your
-    // Event" link alongside this one (jsdom doesn't apply the `lg:hidden`/
-    // `hidden lg:block` CSS that keeps only one visible in a real browser),
-    // so an unscoped query here would be ambiguous between the two.
-    const desktop = within(screen.getByTestId("services-desktop"))
-    await user.click(desktop.getByRole("button", { name: new RegExp(second.title) }))
-    expect(desktop.getByRole("heading", { level: 3, name: second.title })).toBeInTheDocument()
-    // Design file's "INCLUDES" feature list + "Plan Your Event" CTA — real
-    // data from lib/data/services.ts that the first pass dropped entirely.
-    expect(desktop.getByText("Includes")).toBeInTheDocument()
-    for (const feature of second.features) {
-      expect(desktop.getByText(feature)).toBeInTheDocument()
-    }
-    expect(desktop.getByRole("link", { name: /Plan Your Event/ })).toHaveAttribute("href", "/contact")
-  })
-
   it("ClaudeHomeBrands switches to the platform tab and back", async () => {
     const user = userEvent.setup()
     render(<ClaudeHomeBrands />)
     await user.click(screen.getByRole("button", { name: "platform" }))
-    expect(screen.getAllByText(/./).length).toBeGreaterThan(0)
+    expect(screen.getByTestId("brands-grid-platform")).toBeInTheDocument()
+    expect(screen.queryByTestId("brands-grid-operating")).toBeNull()
     await user.click(screen.getByRole("button", { name: "operating" }))
-    const { liveEvents, corporateMedia } = getBrandsByDivision()
-    expect(screen.getAllByText([...liveEvents, ...corporateMedia][0].tag).length).toBeGreaterThan(0)
+    expect(screen.getByTestId("brands-grid-operating")).toBeInTheDocument()
+    expect(screen.queryByTestId("brands-grid-platform")).toBeNull()
   })
 })

@@ -2,226 +2,100 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useRef, useState } from "react"
-import { GoldShineText } from "@/components/gold-shine-text"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
-import { getServices, type ServiceItem } from "@/lib/data/services"
+import { getServices } from "@/lib/data/services"
 
 const services = getServices()
 
-// 2026-10-02 fix (owner: "change music and entertainment to Music (so it
-// fits on the row same as others)"); 2026-10-03 fix (owner, mid-batch:
-// "change Venue programming to just 'Programming'" / "change content &
-// media to just 'Media'") — same reasoning for all three: the row only has
-// room for short labels before wrapping to a 2nd line, so these get a
-// shorter display label for the row only, not a data rename. The detail
-// heading/description/features and every other reference to the full
-// service names (lib/data/services.ts, the services directory page,
-// claude-home-experiences.tsx's "Services Delivered" tags) are unaffected.
-const TAB_LABEL_OVERRIDES: Record<string, string> = {
-  "Music & Entertainment": "Music",
-  "Venue Programming": "Programming",
-  "Content & Media": "Media",
+/** Per-card photo focus (design v5 `svcV3[].pos`); anything unlisted is centred. */
+const IMAGE_POSITIONS: Record<string, string> = {
+  "Private Events": "50% 45%",
+  "Brand Activations": "50% 45%",
+  "Music & Entertainment": "50% 40%",
+  "Venue Programming": "50% 40%",
+  Production: "50% 55%",
+  "Content & Media": "50% 35%",
 }
 
-// 2026-10-03 fix (owner, live screenshot of this section: "have this image
-// zoomed in a bit so the speakers center the image") — Private Events' own
-// background photo (public/services/private-events-2026-ballroom.webp,
-// confirmed 1400x933px) has its two PA/speaker towers sitting left-of-center
-// and right-of-center in the source frame; a plain object-cover crop (no
-// position override) was leaving one or both out of frame depending on how
-// tall this panel renders. A modest zoom plus an objectPosition anchored on
-// the stage (between the two towers, slightly above the crowd) keeps both
-// towers in view and centered instead of the default full-frame center crop.
-const IMAGE_POSITION_OVERRIDES: Record<string, { position: string; zoom?: boolean }> = {
-  "Private Events": { position: "50% 38%", zoom: true },
-}
+const PLAN_CTA =
+  "inline-flex items-center gap-2 whitespace-nowrap rounded-[2px] border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-[18px] py-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#1a1408] no-underline"
 
 /**
- * 2026-10-02 fix — full-site literal port (owner instruction: "how can we
- * get the actual claude file I built onto the website"). The design file's
- * `#services` section is a 6-node icon timeline (circular icon badge + a
- * connecting progress bar, `svcV3`/`lp-svc-tl`), the active service's
- * description + "Plan Your Event →" CTA on the left of a two-column detail
- * row, and its "INCLUDES" bulleted `features` list on the right. The first
- * pass here used plain text tab buttons and dropped the icon nodes, the
- * timeline bar, the INCLUDES list, and the CTA (replaced with an "Explore
- * service →" detail-page link instead) — all while `lib/data/services.ts`
- * already carried `icon` and `features` for every service, unused. Rebuilt
- * to use both, originally keeping the "Explore service →" detail-page link
- * alongside the design's own CTA. 2026-10-03 fix (owner: "remove the
- * 'explore this service' and just have the button there") — that secondary
- * link is gone; "Plan Your Event" is the only CTA now, same as the design.
+ * LUPFR Website Design v5 (owner, 2026-11-17) — "Idea to execution." is now a
+ * 3x2 grid of photo cards (number, icon, title, one-line description only; the
+ * old per-service "included" list and divider are gone) with the "Plan Your
+ * Event" button in the section header. Cards are 16:10 (4:3 between 901 and
+ * 1250px wide) so all six fit on one screen; at ≤900px the grid becomes a
+ * horizontal swipe row of 80vw 4:5 cards that snap, with the button moving
+ * back below it. The previous icon-timeline + accordion is retired.
  */
 export function ClaudeHomeServices() {
-  const ref = useRef<HTMLElement>(null)
-  const [active, setActive] = useState(0)
-  const current = services[active] ?? services[0]
-  if (!current) return null
-  const progressPct = services.length > 1 ? (active / (services.length - 1)) * 100 : 0
-
   return (
-    <section id="services" ref={ref} className="relative overflow-hidden border-b border-white/10 bg-[#070605] text-[#f3efe6]">
-      <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block" style={{ WebkitMaskImage: "linear-gradient(90deg,transparent,#000 40%)", maskImage: "linear-gradient(90deg,transparent,#000 40%)" }}>
-        {current.image ? (
-          <Image
-            key={current.title}
-            src={current.image}
-            alt=""
-            fill
-            sizes="50vw"
-            className={`object-cover transition duration-700 ${IMAGE_POSITION_OVERRIDES[current.title]?.zoom ? "scale-110" : ""}`}
-            style={IMAGE_POSITION_OVERRIDES[current.title] ? { objectPosition: IMAGE_POSITION_OVERRIDES[current.title]!.position } : undefined}
-          />
-        ) : null}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-transparent to-black/55" />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6 py-12 sm:px-8 lg:px-12 lg:py-16">
-        <div className="max-w-[760px]">
-          <div className="mb-4 flex gap-3 font-mono text-[11px] tracking-[0.2em] text-[#8f887c]"><span className="text-[#c9a869]">(01)</span><span>SERVICES</span></div>
-          <h2 className="font-condensed text-[clamp(36px,4vw,60px)] font-extrabold uppercase leading-[0.9] tracking-[0.005em] text-[#fdf6e8]">Idea to <GoldShineText scrollTargetRef={ref}>execution.</GoldShineText></h2>
-          <div className="my-5 h-[3px] w-[110px] bg-[#c9a869]" />
-          <p className="mb-6 text-base text-[#e6e0d4]">All an event needs in one place.</p>
-
-          {/* 2026-10-04 fix, round 11 (owner, mobile screenshot: "Mobile
-              version needs to align to screenshot attached. The services
-              are top to bottom with dropdowns on the info"). This
-              icon-tab-row + single shared detail panel below is a design
-              that only works once there's room for a horizontal row of 6
-              icons plus a two-column detail grid beside it — now `lg:`-
-              only (unchanged from before). A separate, `lg:hidden` mobile
-              accordion (ServicesAccordion, below) replaces it on small
-              screens. */}
-          <div className="hidden lg:block" data-testid="services-desktop">
-            <div className="relative grid grid-cols-3 gap-y-6 sm:grid-cols-6">
-              <span aria-hidden className="absolute left-[8.33%] right-[8.33%] top-5 h-px bg-[#c9a869]/30" />
-              <span aria-hidden className="absolute left-[8.33%] top-5 h-px bg-[#c9a869] transition-[width] duration-400" style={{ width: `${progressPct * 0.8333}%` }} />
-              {services.map((service, i) => {
-                const Icon = service.icon
-                const isActive = active === i
-                return (
-                  <button
-                    key={service.title}
-                    type="button"
-                    onMouseEnter={() => setActive(i)}
-                    onClick={() => setActive(i)}
-                    className="relative z-[1] flex min-w-0 flex-col items-center gap-2.5 bg-transparent px-1 text-center"
-                  >
-                    {Icon ? (
-                      <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-full border transition-colors ${isActive ? "border-[#c9a869] bg-[#c9a869]" : "border-[#c9a869]/45 bg-[#0d0c0a]"}`}>
-                        <Icon size={18} strokeWidth={1.6} className={isActive ? "text-[#1a1408]" : "text-[#c9a869]"} />
-                      </span>
-                    ) : null}
-                    <span className={`font-condensed text-[13px] font-extrabold uppercase leading-none sm:text-[15px] ${isActive ? "text-[#e8caa0]" : "text-[#bdb6a9]"}`}>{TAB_LABEL_OVERRIDES[service.title] ?? service.title}</span>
-                  </button>
-                )
-              })}
+    <section id="services" className="relative border-b border-white/10 bg-[#070605] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-[84px]">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-6 min-[901px]:mb-9">
+          <div className="flex flex-col items-start">
+            <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
+              <span className="text-[#c9a869]">(01)</span>
+              <span>SERVICES</span>
             </div>
-
-            <div className="mt-6 h-px bg-gradient-to-r from-[#c9a869]/45 to-transparent" />
-
-            <div className="mt-6 grid gap-6 md:grid-cols-2 md:items-start">
-              {/* 2026-10-03 fix (owner: "remove the 'explore this service' and
-                  just have the button there (fix it to have better
-                  margins)") — dropped the secondary "Explore service →"
-                  detail-page link entirely; with the gold CTA now the only
-                  thing below the description, it gets a bit more breathing
-                  room above it (mt-1.5 -> mt-4) than it needed when a second
-                  line sat right under it. */}
-              <div className="flex flex-col items-start gap-2.5">
-                <h3 className="font-condensed text-[clamp(22px,2.2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{current.title}</h3>
-                <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{current.description}</p>
-                <Link href={CONTACT_PAGE_PATH} className="mt-4 inline-flex items-center gap-2 rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
-                  Plan Your Event <span aria-hidden>→</span>
-                </Link>
-              </div>
-              {current.features?.length ? (
-                <div className="flex flex-col">
-                  <span className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#c9a869]">Includes</span>
-                  {current.features.map((feature) => (
-                    <span key={feature} className="flex items-center gap-2.5 border-b border-white/[0.08] py-2 text-sm text-[#fdf6e8]">
-                      <span className="h-[5px] w-[5px] flex-none rotate-45 bg-[#c9a869]" />
-                      {feature}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] tracking-[0.005em] text-[#fdf6e8]">
+              Idea to <span className="text-[#e8caa0]">execution.</span>
+            </h2>
+            <p className="mt-[18px] text-[clamp(15px,1.3vw,18px)] leading-[1.55] text-[#e6e0d4]">All an event needs in one place.</p>
           </div>
+          <Link href={CONTACT_PAGE_PATH} data-testid="services-header-cta" className={`${PLAN_CTA} max-[900px]:hidden`}>
+            Plan Your Event <span aria-hidden>→</span>
+          </Link>
+        </div>
 
-          <ServicesAccordion services={services} />
+        <div
+          data-testid="services-grid"
+          className="grid grid-cols-3 gap-3.5 max-[900px]:-mr-5 max-[900px]:flex max-[900px]:snap-x max-[900px]:snap-mandatory max-[900px]:gap-3 max-[900px]:overflow-x-auto max-[900px]:pr-5 max-[900px]:[scrollbar-width:none] max-[900px]:[&::-webkit-scrollbar]:hidden"
+        >
+          {services.map((service, i) => {
+            const Icon = service.icon
+            return (
+              <article
+                key={service.title}
+                data-testid="service-card"
+                className="group relative aspect-[16/10] overflow-hidden rounded-[4px] border border-white/[0.08] bg-[#0d0c0a] max-[1250px]:min-[901px]:aspect-[4/3] max-[900px]:aspect-[4/5] max-[900px]:flex-none max-[900px]:basis-[80vw] max-[900px]:snap-start"
+              >
+                {service.image ? (
+                  <Image
+                    src={service.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 900px) 80vw, 33vw"
+                    className="object-cover transition-transform duration-[800ms] group-hover:scale-105"
+                    style={{ objectPosition: IMAGE_POSITIONS[service.title] ?? "50% 50%" }}
+                  />
+                ) : null}
+                <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,6,5,0.55)_0%,rgba(7,6,5,0)_26%,rgba(7,6,5,0.35)_50%,rgba(7,6,5,0.95)_100%)]" />
+                <div className="absolute inset-x-[18px] top-[18px] flex items-center justify-between">
+                  <span className="font-mono text-[11px] tracking-[0.16em] text-[#e8caa0]">{String(i + 1).padStart(2, "0")}</span>
+                  {Icon ? (
+                    <span className="flex size-[34px] items-center justify-center rounded-full border border-[rgba(201,168,105,0.6)] bg-[rgba(8,7,6,0.5)]">
+                      <Icon size={15} strokeWidth={1.6} className="text-[#c9a869]" />
+                    </span>
+                  ) : null}
+                </div>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[7px] px-5 pb-5 pt-[18px]">
+                  <h3 className="m-0 font-condensed text-[clamp(24px,2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{service.title}</h3>
+                  <p className="m-0 text-pretty text-[13.5px] leading-[1.45] text-[#e6e0d4]">{service.description}</p>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+
+        <div className="mt-7 hidden flex-wrap items-center justify-between gap-4 max-[900px]:flex">
+          <span className="font-mono text-[10px] tracking-[0.18em] text-[#8f887c]">SWIPE · {services.length} SERVICES →</span>
+          <Link href={CONTACT_PAGE_PATH} data-testid="services-footer-cta" className={`${PLAN_CTA} ml-auto`}>
+            Plan Your Event <span aria-hidden>→</span>
+          </Link>
         </div>
       </div>
     </section>
-  )
-}
-
-/**
- * 2026-10-04 addition, round 11 — mobile-only (`lg:hidden`) companion to
- * the icon-tab-row above. Each service is its own expandable row; opening
- * one shows that service's own real photo (`service.image` — the same
- * field the desktop background panel already uses, not a new asset),
- * description, features list and its own "Plan Your Event" CTA, instead of
- * every service sharing one detail panel. Defaults open on the first
- * service (Private Events, `data/services.yml`'s own real order) to match
- * the design reference.
- */
-function ServicesAccordion({ services }: { services: ServiceItem[] }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
-
-  return (
-    <div className="lg:hidden" data-testid="services-accordion">
-      <div className="divide-y divide-white/10 border-y border-white/10">
-        {services.map((service, i) => {
-          const Icon = service.icon
-          const isOpen = openIndex === i
-          const panelId = `service-accordion-panel-${i}`
-          return (
-            <div key={service.title}>
-              <button
-                type="button"
-                aria-expanded={isOpen}
-                aria-controls={panelId}
-                onClick={() => setOpenIndex((current) => (current === i ? null : i))}
-                className="flex w-full items-center gap-3.5 py-4 text-left"
-              >
-                {Icon ? (
-                  <span className={`flex h-10 w-10 flex-none items-center justify-center rounded-full border transition-colors ${isOpen ? "border-[#c9a869] bg-[#c9a869]" : "border-[#c9a869]/45 bg-[#0d0c0a]"}`}>
-                    <Icon size={18} strokeWidth={1.6} className={isOpen ? "text-[#1a1408]" : "text-[#c9a869]"} />
-                  </span>
-                ) : null}
-                <span className={`flex-1 font-condensed text-base font-extrabold uppercase leading-none ${isOpen ? "text-[#e8caa0]" : "text-[#fdf6e8]"}`}>{service.title}</span>
-                <span aria-hidden className="font-mono text-lg leading-none text-[#c9a869]">{isOpen ? "−" : "+"}</span>
-              </button>
-              {isOpen ? (
-                <div id={panelId} className="flex flex-col gap-4 pb-6">
-                  {service.image ? (
-                    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm">
-                      <Image src={service.image} alt="" fill sizes="100vw" className="object-cover" />
-                    </div>
-                  ) : null}
-                  <p className="text-[15px] leading-relaxed text-[#e6e0d4]">{service.description}</p>
-                  {service.features?.length ? (
-                    <div className="flex flex-col">
-                      <span className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.2em] text-[#c9a869]">Includes</span>
-                      {service.features.map((feature) => (
-                        <span key={feature} className="flex items-center gap-2.5 border-b border-white/[0.08] py-2 text-sm text-[#fdf6e8]">
-                          <span className="h-[5px] w-[5px] flex-none rotate-45 bg-[#c9a869]" />
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-                  <Link href={CONTACT_PAGE_PATH} className="inline-flex items-center gap-2 self-start rounded-sm border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-[#1a1408]">
-                    Plan Your Event <span aria-hidden>→</span>
-                  </Link>
-                </div>
-              ) : null}
-            </div>
-          )
-        })}
-      </div>
-    </div>
   )
 }

@@ -83,6 +83,9 @@
         }
       ]
     },
+    "social": {
+      "instagram": "https://www.instagram.com/high.rise.la/"
+    },
     "gallery": [
       "/brands/highrise.webp",
       "/services/private-events-2026-ballroom.webp",
@@ -247,26 +250,31 @@
     "format": "Après sessions · Tahoe",
     "landing": {
       "tagline": "Après ski, amplified.",
-      "statement": "Live music at the top of the mountain.",
+      "statement": "Last run. First track.",
       "cta": "Partner with SKI//SIDE",
-      "empty": "SKI//SIDE launches in 2027. Resorts and partners, reach out to bring it to your mountain.",
+      "empty": "SKI//SIDE launches in 2027. Follow along for dates and lineups.",
       "pillars": [
         {
-          "title": "Slopeside stages",
-          "line": "Live sets at the base of the lifts as the last runs come down."
+          "title": "World-class performers",
+          "line": "Headline DJ sets as the lifts close, and full live bands on a mountain stage. When the lifts close, the party starts."
         },
         {
-          "title": "Après sessions",
-          "line": "DJs and bands built into the après window, from lodge decks to mountain-top bars."
+          "title": "The scene",
+          "line": "A branded gateway arrival, photo installations, fire-pit lounges and VIP decks, built at the base of the mountain."
         },
         {
-          "title": "Resort partnerships",
-          "line": "Full production and programming delivered with resorts across Tahoe and beyond."
+          "title": "The collection",
+          "line": "Two merch lines: Heritage Alpine, with knits, pullovers and puffers, and Winter Athletic, with sculpt sets, flares and insulated layers."
         }
       ]
     },
     "gallery": [
-      "/brands/skiside.webp"
+      "/brands/skiside-gateway-arrival.webp",
+      "/brands/skiside-photo-install.webp",
+      "/brands/skiside-dj-crowd.webp",
+      "/brands/skiside-live-band.webp",
+      "/brands/skiside-heritage-collection.webp",
+      "/brands/skiside-tahoe-concert.webp"
     ],
     "comingSoon": true
   }

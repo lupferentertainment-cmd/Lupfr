@@ -1441,3 +1441,23 @@ html:not(.dark) .stat-tile-surface:hover {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* LUPFR Website Design v5 (2026-11-17): Start Planning step transition (design `lpPlIn`). */
+@keyframes lpPlIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.lp-pl-step {
+  animation: lpPlIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-pl-step {
+    animation: none;
+  }
+}

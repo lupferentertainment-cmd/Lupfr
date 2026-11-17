@@ -37,9 +37,9 @@ describe("brand routes", () => {
     expect(notComingSoon.map((b) => b.key).sort()).toEqual(["inside", "outside", "seaside"])
   })
 
-  it("gives every brand a landing gallery (v16) with site-root paths: full for seaside/inside/outside, sparse for the rest", () => {
+  it("gives every brand a landing gallery (v16) with site-root paths: full for seaside/inside/outside/skiside (v5), sparse for the rest", () => {
     const counts = Object.fromEntries(getBrands().map((b) => [b.key, b.gallery?.length ?? 0]))
-    expect(counts).toEqual({ seaside: 6, inside: 6, outside: 6, highrise: 3, soundcheck: 3, skiside: 1 })
+    expect(counts).toEqual({ seaside: 6, inside: 6, outside: 6, highrise: 3, soundcheck: 3, skiside: 6 })
     for (const brand of getBrands()) {
       for (const path of brand.gallery ?? []) expect(path.startsWith("/")).toBe(true)
     }

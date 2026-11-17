@@ -1,16 +1,18 @@
 import Image from "next/image"
 import Link from "next/link"
 import { BrandDeck } from "@/components/brand-deck"
+import { BrandPillarIcon, brandIconName } from "@/components/brand-pillar-icons"
 import { BrandWordmark } from "@/components/brand-wordmark"
 import { ShimmerImage } from "@/components/shimmer-image"
 import { getBrandSocials, getOtherBrands, hexToRgba } from "@/lib/data/brand-landing"
 import { brandPath, brandPlainTitle, type BrandItem } from "@/lib/data/brands"
-import { eventDetailPath, getPastEvents, getUpcomingEvents, type EventItem } from "@/lib/events"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 /**
- * Brand landing page body (LUPFR Website Design v16): full-screen hero with
- * tagline + CTA, THE FORMAT (statement + three pillars), the events calendar,
+ * Brand landing page body (LUPFR Website Design v16; v5 on 2026-11-17 removed
+ * the "On the calendar" section — past events now live behind the "See Past
+ * Events" button — and added the format photo + pillar icons): full-screen hero with
+ * tagline + CTA, THE FORMAT (statement, format photo and three icon pillars),
  * a photo gallery, the "bring it to you" planning box with the brand's
  * accounts, and a row linking to the other brands. Theme tokens drive
  * everything below the hero; the hero is a fixed-dark photo overlay in both
@@ -33,55 +35,15 @@ function SectionHead({ kicker, title, accent }: { kicker: string; title: string;
   )
 }
 
-function EventRow({ event, accent, past }: { event: EventItem; accent: string; past: boolean }) {
-  return (
-    <Link
-      href={eventDetailPath(event.slug)}
-      className="grid grid-cols-[96px_minmax(0,1fr)_20px] items-center gap-[18px] border-b border-border px-1 py-[18px] text-foreground no-underline transition-colors hover:bg-foreground/[0.03] max-[520px]:grid-cols-[76px_minmax(0,1fr)_16px] max-[520px]:gap-3"
-    >
-      <span className="font-mono text-[11px] uppercase tracking-[0.08em]" style={{ color: accent }}>
-        {event.date}
-      </span>
-      <span className="flex min-w-0 flex-col gap-1">
-        <span className="font-condensed text-[22px] font-bold uppercase leading-[1.05]">{event.title}</span>
-        <span className="text-[13px] text-muted-foreground">{past ? event.subtitle || event.location : event.location}</span>
-      </span>
-      <span className="text-[15px]" style={{ color: accent }} aria-hidden>
-        →
-      </span>
-    </Link>
-  )
-}
-
-function DatesColumn({ label, events, accent, past, emptyLine, showCta }: { label: string; events: EventItem[]; accent: string; past: boolean; emptyLine: string; showCta: boolean }) {
-  return (
-    <div className="min-w-0" data-testid={past ? "brand-past" : "brand-upcoming"}>
-      <div className="border-b border-border pb-3 font-mono text-[10.5px] uppercase tracking-[0.16em] text-muted-foreground">{label}</div>
-      {events.map((e) => (
-        <EventRow key={e.id} event={e} accent={accent} past={past} />
-      ))}
-      {events.length === 0 ? (
-        <div className="flex flex-col items-start gap-3.5 border-b border-border px-1 py-[26px]">
-          <span className="text-[15px] leading-relaxed text-muted-foreground">{emptyLine}</span>
-          {showCta ? (
-            <Link href={CONTACT_PAGE_PATH} className="border-b pb-0.5 text-sm no-underline" style={{ borderColor: accent, color: accent }}>
-              Get in touch →
-            </Link>
-          ) : null}
-        </div>
-      ) : null}
-    </div>
-  )
-}
-
 export function BrandLanding({ brand }: { brand: BrandItem }) {
   const landing = brand.landing
   const plain = brandPlainTitle(brand)
-  const upcoming = brand.comingSoon ? [] : getUpcomingEvents().filter((e) => e.brandTag === brand.title)
-  const past = brand.comingSoon ? [] : getPastEvents().filter((e) => e.brandTag === brand.title)
   const socials = getBrandSocials(brand.key)
   const others = getOtherBrands(brand.key)
   const gallery = (brand.gallery ?? []).slice(0, 6)
+  // v5: format photo = gallery[1] || gallery[0] || the brand image; motif = the 4th icon of the brand's set.
+  const formatPic = gallery[1] ?? gallery[0] ?? brand.image
+  const motif = brandIconName(brand.key, 3)
   const accent = brand.accent
   const ctaLabel = landing?.cta ?? `Plan a ${brand.title} event`
 
@@ -143,14 +105,42 @@ export function BrandLanding({ brand }: { brand: BrandItem }) {
                 The format
               </div>
               <h2 className={H2}>{landing.statement}</h2>
-              <div className="mt-[22px] font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">{brand.format}</div>
+              <div className="mt-[22px] flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
+                {motif ? <BrandPillarIcon name={motif} color={accent} size={18} /> : null}
+                {brand.format}
+              </div>
+              {formatPic ? (
+                <div data-testid="brand-format-photo" className="relative mt-9 aspect-[4/3] overflow-hidden rounded-[4px] border border-border bg-card">
+                  <ShimmerImage src={formatPic} alt="" fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover" />
+                  {motif ? (
+                    <span
+                      data-testid="brand-motif"
+                      className="pointer-events-none absolute bottom-3.5 left-3.5 flex size-11 items-center justify-center rounded-full border bg-[rgba(11,10,8,0.72)]"
+                      style={{ borderColor: accent }}
+                    >
+                      <BrandPillarIcon name={motif} color={accent} size={22} />
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
             <div className="flex flex-col border-t border-border">
               {landing.pillars.map((p, i) => (
                 <div key={p.title} className="grid grid-cols-[56px_minmax(0,1fr)] gap-[18px] border-b border-border py-[26px]" data-testid="brand-pillar">
-                  <span className="pt-[5px] font-mono text-xs tracking-[0.06em]" style={{ color: accent }}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                  <div className="flex flex-col items-start gap-2.5">
+                    {brandIconName(brand.key, i) ? (
+                      <span
+                        data-testid="brand-pillar-icon"
+                        className="flex size-11 items-center justify-center rounded-full border border-border"
+                        style={{ background: hexToRgba(accent, 0.07) }}
+                      >
+                        <BrandPillarIcon name={brandIconName(brand.key, i)!} color={accent} size={22} />
+                      </span>
+                    ) : null}
+                    <span className="pl-0.5 font-mono text-[11px] tracking-[0.06em]" style={{ color: accent }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
                   <div className="flex flex-col gap-2">
                     <span className="font-condensed text-[28px] font-bold uppercase leading-none text-foreground">{p.title}</span>
                     <span className="max-w-[56ch] text-pretty text-[15px] leading-relaxed text-muted-foreground">{p.line}</span>
@@ -166,23 +156,6 @@ export function BrandLanding({ brand }: { brand: BrandItem }) {
           ) : null}
         </section>
       ) : null}
-
-      <section className={SECTION} aria-label="Dates">
-        <div className={INNER}>
-          <SectionHead kicker="Dates" title="On the calendar" accent={accent} />
-          <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-            <DatesColumn
-              label="Upcoming"
-              events={upcoming}
-              accent={accent}
-              past={false}
-              emptyLine={landing?.empty ?? "New dates are announced soon."}
-              showCta
-            />
-            <DatesColumn label="Past" events={past} accent={accent} past emptyLine="The first chapter is still being written." showCta={false} />
-          </div>
-        </div>
-      </section>
 
       {gallery.length > 0 ? (
         <section className={SECTION} aria-label="Gallery">
@@ -244,7 +217,17 @@ export function BrandLanding({ brand }: { brand: BrandItem }) {
 
       <section className="px-5 pb-[110px] pt-20 sm:px-8 lg:px-12" aria-label="More from LUPFR">
         <div className={INNER}>
-          <div className={`${KICKER} mb-5 text-[#c9a869]`}>More from LUPFR</div>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+            <div className={`${KICKER} text-[#c9a869]`}>More from LUPFR</div>
+            <Link
+              href="/events"
+              data-testid="see-past-events"
+              className="inline-flex items-center gap-2 rounded-[2px] border px-[18px] py-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] no-underline transition-colors hover:bg-foreground/[0.05]"
+              style={{ borderColor: accent, color: accent }}
+            >
+              See Past Events <span aria-hidden>→</span>
+            </Link>
+          </div>
           <div className="flex snap-x snap-mandatory gap-2.5 overflow-x-auto md:grid md:grid-cols-5 md:gap-3 md:overflow-visible" data-testid="brand-others">
             {others.map((o) => (
               <Link

@@ -2,9 +2,11 @@
 
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
+import { BrandWordmark } from "@/components/brand-wordmark"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { useClientPrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion"
+import { getBrandBySlug, type BrandItem } from "@/lib/data/brands"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 /**
@@ -39,6 +41,9 @@ import { CONTACT_PAGE_PATH } from "@/lib/site"
  */
 type HeroTab = {
   id: string
+  /** Brand the event belongs to (data/brands.yml key); its wordmark leads the tab. */
+  brandKey: string
+  /** Event name shown under the brand wordmark (`0N · EVENT`). */
   label: string
   video: { mp4: string; webm: string }
   poster: string
@@ -48,6 +53,7 @@ type HeroTab = {
 const HERO_TABS: readonly HeroTab[] = [
   {
     id: "bal-masque",
+    brandKey: "inside",
     label: "Bal Masque",
     video: { mp4: "/events/bal_masque_loop.mp4", webm: "/events/bal_masque_loop.webm" },
     poster: "/events/bal_masque_wings.webp",
@@ -55,13 +61,15 @@ const HERO_TABS: readonly HeroTab[] = [
   },
   {
     id: "seaside",
-    label: "SEA//SIDE",
+    brandKey: "seaside",
+    label: "Yacht Series",
     video: { mp4: "/events/seaside_series.mp4", webm: "/events/seaside_series.webm" },
     poster: "/events/seaside_series_dj.webp",
     alt: "DJ set aboard a SEA//SIDE Series sailing",
   },
   {
     id: "golden-gate",
+    brandKey: "outside",
     label: "Golden Gate",
     video: { mp4: "/events/ggl_main_video.mp4", webm: "/events/ggl_main_video.webm" },
     poster: "/events/ggl_main_dj.webp",
@@ -70,6 +78,9 @@ const HERO_TABS: readonly HeroTab[] = [
 ] as const
 
 const HERO_AUTOPLAY_MS = 7000
+
+/** Resolved once: the three tabs' brands (a missing key would fall back to the plain event label). */
+const HERO_TAB_BRANDS: Array<BrandItem | undefined> = HERO_TABS.map((tab) => getBrandBySlug(tab.brandKey))
 
 export function ClaudeHomeHero() {
   const ref = useRef<HTMLElement>(null)
@@ -156,7 +167,7 @@ export function ClaudeHomeHero() {
                 style={{ width: "191.76%", height: "191.76%", left: "-46.82%", top: "-41.23%", maxWidth: "none" }}
               />
             </div>
-            <span className="h-[120px] w-px bg-gradient-to-b from-transparent via-[#e8caa0] to-transparent" />
+            <span aria-hidden className="h-[120px] w-px bg-gradient-to-b from-transparent via-[#e8caa0] to-transparent max-[760px]:hidden" />
             <div>
               <h1 className="font-condensed text-[clamp(70px,9vw,132px)] font-extrabold uppercase leading-[0.78] tracking-[0.01em] text-[#fdf6e8]">LUPFR</h1>
               {/* 2026-10-03 fix (owner, reference image attached: "make the
@@ -181,24 +192,44 @@ export function ClaudeHomeHero() {
               <span className="sr-only">Entertainment</span>
             </div>
           </div>
-          <div className="mt-8 h-[2px] w-[110px] bg-[#c9a869]" />
-          <div className="mt-7 font-condensed text-[clamp(22px,2.1vw,30px)] font-semibold uppercase tracking-[0.06em] text-[#fdf6e8]">
-            Real Experiences. Music-Led. <GoldShineText scrollTargetRef={ref}>Built for You.</GoldShineText>
+          <div aria-hidden className="mt-8 h-[2px] w-[110px] bg-[#c9a869] max-[760px]:hidden" />
+          {/* v5 (2026-11-17): the periods become gold skewed "//" dividers; the line may
+              wrap on phones (≤760px). */}
+          <div data-testid="hero-tagline" className="mt-7 font-condensed text-[clamp(22px,2.1vw,30px)] font-semibold uppercase leading-[1.15] tracking-[0.06em] text-[#fdf6e8] max-[760px]:mt-[18px] max-[760px]:text-[clamp(13px,3.9vw,17px)] min-[761px]:whitespace-nowrap">
+            Real Experiences
+            <span aria-hidden className="mx-[0.32em] inline-block -skew-x-12 text-[#c9a869]">{"//"}</span>
+            Music-Led
+            <span aria-hidden className="mx-[0.32em] inline-block -skew-x-12 text-[#c9a869]">{"//"}</span>
+            <GoldShineText scrollTargetRef={ref}>Built for You.</GoldShineText>
           </div>
           <div className="mt-8 flex flex-wrap gap-3.5">
             <Link href={CONTACT_PAGE_PATH} className="rounded-sm btn-metallic-gold px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">Plan Your Event</Link>
-            <a href="#events" className="rounded-sm border border-[#e8caa0]/55 bg-black/35 px-6 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-[#e8caa0]">Explore Our Work</a>
+            <a href="#events" className="rounded-sm border border-[#e8caa0]/55 bg-black/35 px-6 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-[#e8caa0] max-[760px]:hidden">Explore Our Work</a>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-8 right-8 z-20 hidden w-[440px] grid-cols-3 gap-4 lg:grid">
-        {HERO_TABS.map((tab, i) => (
-          <button key={tab.id} type="button" onClick={() => setActive(i)} className="min-w-0 text-left">
-            <span className={`block truncate font-mono text-[9.5px] uppercase tracking-[0.12em] ${active === i ? "text-[#e8caa0]" : "text-white/45"}`}>0{i + 1} · {tab.label}</span>
-            <span className="mt-2 block h-[2px] bg-white/20"><span className={`block h-full bg-[#c9a869] transition-all ${active === i ? "w-full" : "w-0"}`} /></span>
-          </button>
-        ))}
+      <div className="absolute bottom-10 right-12 z-20 hidden w-[500px] grid-cols-3 gap-5 lg:grid">
+        {HERO_TABS.map((tab, i) => {
+          const brand = HERO_TAB_BRANDS[i]
+          const on = active === i
+          return (
+            <button key={tab.id} type="button" onClick={() => setActive(i)} aria-current={on ? "true" : undefined} className="flex min-w-0 flex-col gap-2 text-left">
+              <span
+                data-testid="hero-tab-brand"
+                className={`font-condensed text-[clamp(18px,1.5vw,24px)] font-extrabold uppercase leading-none tracking-[0.02em] transition-opacity duration-500 ${on ? "opacity-100" : "opacity-[0.42]"}`}
+              >
+                {brand ? <BrandWordmark brand={brand} className="text-[#fdf6e8]" /> : <span className="text-[#fdf6e8]">{tab.label}</span>}
+              </span>
+              <span className={`block truncate font-mono text-[9px] uppercase tracking-[0.14em] ${on ? "text-[#e8caa0]" : "text-[#f2ede4]/50"}`}>
+                0{i + 1} · {tab.label}
+              </span>
+              <span className="mt-0.5 block h-[2px] bg-white/20">
+                <span className={`block h-full bg-[#c9a869] transition-all ${on ? "w-full" : "w-0"}`} />
+              </span>
+            </button>
+          )
+        })}
       </div>
     </section>
   )

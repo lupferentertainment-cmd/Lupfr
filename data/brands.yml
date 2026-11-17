@@ -87,6 +87,11 @@
         line: "Offsites, client dinners and leadership events with a curated soundtrack."
       - title: "Full production"
         line: "Venue, talent, sound, lighting and run-of-show handled by one team."
+  # Owner-confirmed (LUPFR Website Design v5, 2026-11-17): HIGH//RISE's own
+  # Instagram. The other brands' handles in that file are marked CONFIRM and
+  # stay "via LUPFR" until the owner confirms them.
+  social:
+    instagram: "https://www.instagram.com/high.rise.la/"
   gallery:
     - "/brands/highrise.webp"
     - "/services/private-events-2026-ballroom.webp"
@@ -211,8 +216,7 @@
 # (assets/brands/skiside-bg.png); slashImage = its slashImg mark
 # (assets/brands/marks/skiside-slashes.png), drawn in place of the text "//"
 # on the home Our Brands tile only. comingSoon mirrors the design's own
-# isComingSoon list. No social accounts, gallery, deck or concepts in the
-# design — none added.
+# isComingSoon list. Gallery = the six v5 SKI//SIDE photos (2026-11-17).
 - key: skiside
   title: "SKI//SIDE"
   tag: "COMING 2027"
@@ -224,16 +228,23 @@
   # LUPFR Website Design v16 (2026-11-16): per-brand landing copy. tagline/statement/pillars are the design file's placeholder copy (owner to review).
   landing:
     tagline: "Après ski, amplified."
-    statement: "Live music at the top of the mountain."
+    statement: "Last run. First track."
     cta: "Partner with SKI//SIDE"
-    empty: "SKI//SIDE launches in 2027. Resorts and partners, reach out to bring it to your mountain."
+    empty: "SKI//SIDE launches in 2027. Follow along for dates and lineups."
     pillars:
-      - title: "Slopeside stages"
-        line: "Live sets at the base of the lifts as the last runs come down."
-      - title: "Après sessions"
-        line: "DJs and bands built into the après window, from lodge decks to mountain-top bars."
-      - title: "Resort partnerships"
-        line: "Full production and programming delivered with resorts across Tahoe and beyond."
+      - title: "World-class performers"
+        line: "Headline DJ sets as the lifts close, and full live bands on a mountain stage. When the lifts close, the party starts."
+      - title: "The scene"
+        line: "A branded gateway arrival, photo installations, fire-pit lounges and VIP decks, built at the base of the mountain."
+      - title: "The collection"
+        line: "Two merch lines: Heritage Alpine, with knits, pullovers and puffers, and Winter Athletic, with sculpt sets, flares and insulated layers."
+  # LUPFR Website Design v5 (2026-11-17): six real SKI//SIDE renders/photos from
+  # the owner's assets/skiside folder, in the design's own order.
   gallery:
-    - "/brands/skiside.webp"
+    - "/brands/skiside-gateway-arrival.webp"
+    - "/brands/skiside-photo-install.webp"
+    - "/brands/skiside-dj-crowd.webp"
+    - "/brands/skiside-live-band.webp"
+    - "/brands/skiside-heritage-collection.webp"
+    - "/brands/skiside-tahoe-concert.webp"
   comingSoon: true
