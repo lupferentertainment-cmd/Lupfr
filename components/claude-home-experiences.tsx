@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
@@ -215,17 +216,18 @@ const GHOST_BTN =
  * title visible. Owner override (2026-11-17): the Zusebi card keeps the
  * CURRENT Golden Gate loop video — no YouTube background or embed.
  */
-function CaseStudyCard({ study, index, total }: { study: CaseStudy; index: number; total: number }) {
+function CaseStudyCard({ study, index, total, covered, cardRef }: { study: CaseStudy; index: number; total: number; covered: boolean; cardRef: (el: HTMLElement | null) => void }) {
   const counter = `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
   return (
     <article
+      ref={cardRef}
       data-testid="experience-card"
       className="sticky mb-6 h-[min(80vh,760px)] min-h-[540px] overflow-hidden rounded-[4px] border border-white/10 bg-[#0d0c0a] last:mb-0 max-[900px]:h-[74vh] max-[900px]:max-h-[640px] max-[900px]:min-h-0"
       style={{ top: 92 + index * 16 }}
     >
       {study.video ? (
         <div className="absolute inset-0">
-          <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} className="h-full w-full object-cover" />
+          <LazyLoopVideo srcMp4={study.video.mp4} srcWebm={study.video.webm} poster={study.main.src} suspended={covered} className="h-full w-full object-cover" />
         </div>
       ) : (
         <Image src={study.main.src} alt={study.main.alt} fill sizes="100vw" className="object-cover" />
@@ -289,7 +291,40 @@ function CaseStudyCard({ study, index, total }: { study: CaseStudy; index: numbe
   )
 }
 
+// A card is "covered" once the next card has slid over it (next.top - this.top <= the 16px stack step).
+const COVER_THRESHOLD_PX = 20
+
+/** Tracks which stack cards are hidden behind the next one, so their videos can pause. One passive,
+ * rAF-throttled scroll listener for the whole stack. */
+function useCoveredCards(count: number) {
+  const els = useRef<HTMLElement[]>([])
+  const [covered, setCovered] = useState<boolean[]>(() => Array.from({ length: count }, () => false))
+  useEffect(() => {
+    let frame = 0
+    const measure = () => {
+      frame = 0
+      const tops = els.current.map((el) => el.getBoundingClientRect().top)
+      const next = tops.map((top, i) => i + 1 < tops.length && tops[i + 1]! - top <= COVER_THRESHOLD_PX)
+      setCovered((prev) => (prev.every((v, i) => v === next[i]) ? prev : next))
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(measure)
+    }
+    measure()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [count])
+  // Refs are kept dense (a card that unmounts is simply not re-registered).
+  return { covered, setEl: (i: number) => (el: HTMLElement | null) => { if (el) els.current[i] = el } }
+}
+
 export function ClaudeHomeExperiences() {
+  const { covered, setEl } = useCoveredCards(caseStudies.length)
   return (
     <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
       <div className="mx-auto max-w-[1400px]">
@@ -300,11 +335,14 @@ export function ClaudeHomeExperiences() {
               <span>OUR WORK</span>
             </div>
             <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8]">Featured Experiences</h2>
+            <p className="mb-0 mt-4 max-w-[560px] text-[15px] leading-[1.55] text-[#bdb6a9]">
+              Signature LUPFR productions — floating concerts, brand activations, and live-music events we&rsquo;ve built from the ground up.
+            </p>
           </div>
           <Link href="/events" className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-[#e8caa0]">View Past Events →</Link>
         </div>
         <div>
-          {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} />)}
+          {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} covered={covered[i] === true} cardRef={setEl(i)} />)}
         </div>
       </div>
     </section>

@@ -32,7 +32,7 @@ function partnerBandLogoClasses(treatment: PartnerLogoTreatment | undefined): st
 }
 
 const companyLinksBase = [
-    { name: "About", href: "#about" },
+    { name: "About", href: "/about" },
     { name: "Events", href: "#events" },
     { name: "Blog", href: "/blog" },
     { name: "Services", href: "#services" },

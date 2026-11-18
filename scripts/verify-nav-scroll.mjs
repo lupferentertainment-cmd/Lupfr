@@ -3,6 +3,9 @@
  * Chromium through the navbar's section links, asserting that clicking a section
  * lands the viewport ON that section quickly and stays there.
  *
+ * (2026-11-17: the About and Team tabs now route to /about and /about#team; the Experiences case still
+ * exercises the in-page deferred-section scroll on the home page.)
+ *
  * Regression guarded: deferred lower sections (#about/#team/#contact) used to
  * mount only the target, leaving the deferred sections above it as wrong-height
  * placeholders — so the target drifted while chunks loaded and blind timers
@@ -102,7 +105,7 @@ async function _open_mobile_menu(page) {
  * Load the home page fresh, click a nav link to `sectionId`, and assert the
  * section settles flush under the header within budget and holds still.
  */
-async function _check(page, { label, sectionId, mobile }, sink) {
+async function _check(page, { label, sectionId, mobile, expectPath, flushTop }, sink) {
   await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1280, height: 900 })
   await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT_MS })
 
@@ -115,7 +118,15 @@ async function _check(page, { label, sectionId, mobile }, sink) {
 
   await linkScope.getByRole("link", { name: label, exact: true }).click()
 
-  const pad = await _scroll_padding_top(page)
+  // About/Team live on /about (2026-11-17): wait for the route change before reading anything, so the
+  // scroll padding and section position are measured on the destination page, not mid-navigation.
+  if (expectPath) {
+    await page.waitForURL((url) => url.pathname === expectPath, { timeout: NAV_TIMEOUT_MS, waitUntil: "commit" })
+  }
+
+  // `flushTop` overrides the expected resting position (About sits at the top of /about, under the
+  // 76px header, with no scroll-padding involved).
+  const pad = flushTop ?? (await _scroll_padding_top(page))
   const where = `${mobile ? "mobile" : "desktop"} → ${label} (#${sectionId})`
 
   // Wait for sustained quiescence: the section must sit flush under the header AND
@@ -162,11 +173,12 @@ async function _check(page, { label, sectionId, mobile }, sink) {
 // Round 12 (v15 nav): six numbered links, no scroll-spy / active underline, so the
 // gate asserts the landing position only. Numbers are aria-hidden, so the link's
 // accessible name is just the label.
+// 2026-11-17: About and Team moved to /about; the About tab routes to /about, Team to /about#team.
 const CASES = [
-  { label: "Experiences", sectionId: "events", mobile: false }, // eager control
-  { label: "About", sectionId: "about", mobile: false }, // middle deferred
-  { label: "Team", sectionId: "team", mobile: false }, // Our Team (deferred, owns #team)
-  { label: "Team", sectionId: "team", mobile: true }, // mobile menu path
+  { label: "Experiences", sectionId: "events", mobile: false }, // eager control, same page
+  { label: "About", sectionId: "about", mobile: false, expectPath: "/about", flushTop: 76 }, // route change, lands under the 76px header
+  { label: "Team", sectionId: "team", mobile: false, expectPath: "/about" }, // route + hash, lands under scroll-padding
+  { label: "Team", sectionId: "team", mobile: true, expectPath: "/about" }, // mobile menu path
 ]
 
 function _report(sink) {

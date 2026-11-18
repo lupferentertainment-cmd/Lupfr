@@ -25,12 +25,10 @@ const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "")
 const homePage = fs.readFileSync(path.join(rootDir, "components", "home-page.tsx"), "utf8")
 
 describe("Follow the Momentum placement", () => {
-  it("follows Team in the owner's About → Team → Momentum order", () => {
-    const team = homePage.indexOf("<Team />")
+  it("opens the bottom block (About/Team moved to /about, 2026-11-17): Momentum, then Start Planning", () => {
     const momentum = homePage.indexOf("<FollowTheMomentum />")
     const contact = homePage.indexOf("<StartPlanning />")
-    expect(team).toBeGreaterThan(-1)
-    expect(momentum).toBeGreaterThan(team)
+    expect(momentum).toBeGreaterThan(-1)
     expect(contact).toBeGreaterThan(momentum)
   })
 

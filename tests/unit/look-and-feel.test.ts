@@ -383,9 +383,8 @@ describe("partner logo CSS system", () => {
 
 describe("navigation structure", () => {
   it("defines all expected section nav links", () => {
-    // "#team" dropped from the nav (owner restructure note, 2026-08-28) — Team now
-    // lives inside the About section, reachable via "#about" below.
-    const expected = ["#brands", "#events", "#services", "#artists", "#about", "#contact"]
+    // 2026-11-17: About (and Team) live on their own /about page, so About is a route link.
+    const expected = ["#brands", "#events", "#services", "#artists", "/about", "#contact"]
     for (const href of expected) {
       expect(navigation, `nav missing link to ${href}`).toContain(`href: "${href}"`)
     }
@@ -466,8 +465,8 @@ describe("home page section structure", () => {
   it("defers about, team, contact behind intersection observer; standalone gallery and news sections are retired", () => {
     expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     expect(homePage).not.toContain('id="gallery"')
-    expect(homePage).toContain('id="about"')
-    expect(homePage).toContain('id="team"')
+    expect(homePage).not.toContain('id="about"')
+    expect(homePage).not.toContain('id="team"')
     expect(homePage).toContain('id="contact"')
   })
 
@@ -535,11 +534,9 @@ describe("home page section structure", () => {
   // that window. Locks that About/Team both keep a same-sized placeholder
   // up through that gap, and that it matches their DeferredHomeSection
   // height so the two can never drift apart.
-  it("About and Team dynamic imports keep a same-sized placeholder while their chunk loads (no black-screen collapse)", () => {
-    expect(homePage).toMatch(/loading:\s*\(\)\s*=>\s*<div className=\{ABOUT_MIN_HEIGHT\}/)
-    expect(homePage).toMatch(/loading:\s*\(\)\s*=>\s*<div className=\{TEAM_MIN_HEIGHT\}/)
-    expect(homePage).toContain('estimatedHeightClassName={ABOUT_MIN_HEIGHT}')
-    expect(homePage).toContain('estimatedHeightClassName={TEAM_MIN_HEIGHT}')
+  it("About and Team no longer load as deferred home sections (they render directly on /about)", () => {
+    expect(homePage).not.toContain("ABOUT_MIN_HEIGHT")
+    expect(homePage).not.toContain("TEAM_MIN_HEIGHT")
   })
 })
 

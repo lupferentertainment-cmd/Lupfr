@@ -5,7 +5,6 @@ import Link from "next/link"
 import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { ScheduleCallCta } from "@/components/schedule-call-cta"
 import { BLOG_PUBLIC_ACCESS_ENABLED, CONTACT_PAGE_PATH } from "@/lib/site"
 const HEADER_SCROLL_THRESHOLD_PX = 50
@@ -23,7 +22,7 @@ const navLinksBase = [
   { name: "Services", href: "#services" },
   { name: "Artists", href: "#artists" },
   { name: "Blog", href: "/blog" },
-  { name: "About", href: "#about" },
+  { name: "About", href: "/about" },
   { name: "Contact", href: "#contact" },
 ] as const
 
@@ -39,7 +38,7 @@ const primaryNavLinks = [
   { name: "Experiences", href: "#events" },
   { name: "Brands", href: "#brands" },
   { name: "Media", href: "#news" },
-  { name: "About", href: "#about" },
+  { name: "About", href: "/about" },
 ] as const
 
 function isPlainLeftClick(e: MouseEvent<HTMLAnchorElement>): boolean {
@@ -111,9 +110,9 @@ export function Navigation() {
   const isNavLinkActive = (href: string) => {
     if (href.startsWith("#")) {
       const id = href.slice(1)
-      if (id === "about" && pathname === "/about") return true
       return isHome && activeSection === id
     }
+    if (href === "/about") return pathname === "/about"
     if (href === "/blog") return pathname === "/blog" || pathname.startsWith("/blog/")
     return false
   }
@@ -265,7 +264,6 @@ export function Navigation() {
           </div>
 
           <div className="hidden min-h-[2.5rem] w-full min-w-[19rem] items-center justify-end justify-self-stretch gap-x-2.5 self-center pl-2 [contain:layout] sm:pl-3 lg:flex lg:gap-x-3 xl:gap-x-3.5">
-            <ThemeToggle withSound className="shrink-0" />
             <ScheduleCallCta
               tone={scheduleTone}
               size="sm"
@@ -282,7 +280,6 @@ export function Navigation() {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-3 [contain:layout] lg:hidden">
-            <ThemeToggle withSound className="shrink-0" />
             {isOpen ? (
               <button
                 type="button"

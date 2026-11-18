@@ -47,8 +47,9 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain('import { DeferredHomeSection } from "@/components/deferred-home-section"')
         expect(homePage).not.toContain('<DeferredHomeSection id="services"')
         expect(homePage).not.toContain("id=\"gallery\"")
-        expect(homePage).toContain("id=\"about\"")
-        expect(homePage).toContain("id=\"team\"")
+        // 2026-11-17: About + Team moved to /about (app/about/page.tsx); home keeps only #contact deferred.
+        expect(homePage).not.toContain("id=\"about\"")
+        expect(homePage).not.toContain("id=\"team\"")
         expect(homePage).toContain("id=\"contact\"")
     })
 
@@ -116,8 +117,9 @@ describe("home page mobile transfer guardrails", () => {
         // Re-measured 2026-09-02 (Vercel CLS regression fix, see docs/DESIGN.md) —
         // the placeholders grew to match real measured section heights.
         expect(homePage).not.toContain('estimatedHeightClassName="min-h-[640px] sm:min-h-[820px]"')
-        expect(homePage).toMatch(/const ABOUT_MIN_HEIGHT = "min-h-\[1150px\] lg:min-h-\[920px\]"/)
-        expect(homePage).toContain("estimatedHeightClassName={ABOUT_MIN_HEIGHT}")
+        // About/Team left the home page (2026-11-17), so their placeholder constants are gone too.
+        expect(homePage).not.toContain("ABOUT_MIN_HEIGHT")
+        expect(homePage).not.toContain("TEAM_MIN_HEIGHT")
         expect(homePage).not.toContain("min-h-[1120px] sm:min-h-[980px]")
     })
 
@@ -125,7 +127,7 @@ describe("home page mobile transfer guardrails", () => {
         expect(homePage).toContain("{ ssr: false }")
         expect(homePage).toContain("<Artists />")
         expect(homePage).not.toContain("<Gallery />")
-        expect(homePage).toContain("<About />")
+        expect(homePage).not.toContain("<About />")
         expect(homePage).toContain("<StartPlanning />")
         expect(homePage).toContain("<Footer />")
     })

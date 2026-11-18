@@ -9,8 +9,8 @@ import { LayloEmbed } from "@/components/laylo-embed"
 import { resolveDynamicComponent } from "@/lib/dynamic-component"
 
 // Oct 1 2026 homepage redesign (owner table): Navbar/Hero/News/Brands/Events/
-// Services/Artists/Team swap to the new claude-home-*.tsx sibling components
-// below. Partners/About/Follow the Momentum/Start Planning/Footer stay on their
+// Services/Artists swap to the new claude-home-*.tsx sibling components
+// below. Partners/Follow the Momentum/Start Planning/Footer stay on their
 // original components untouched — see tests/components/
 // homepage-redesign.behavior.test.tsx's "scope lock" for the locked contract.
 import { ClaudeHomeNavigation as Navigation } from "@/components/claude-home-navigation"
@@ -20,43 +20,6 @@ import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experi
 import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"
 import { ClaudeHomeMedia as News } from "@/components/claude-home-media"
 import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"
-
-// Shared with the matching DeferredHomeSection's estimatedHeightClassName
-// below, so the two can never drift apart (see the `loading` option note
-// on About/Team just below for why that matters). A placeholder shorter than
-// the real section causes the page to grow when the real component swaps
-// in — the layout shift IS the CLS score; a placeholder much taller does the
-// opposite (a jarring collapse). ABOUT_MIN_HEIGHT is unchanged because About
-// itself is unchanged by this redesign.
-const ABOUT_MIN_HEIGHT = "min-h-[1150px] lg:min-h-[920px]"
-
-const About = dynamic(() =>
-  import("@/components/about").then((m) =>
-    resolveDynamicComponent(m, "About", "@/components/about")
-  ),
-  { ssr: false, loading: () => <div className={ABOUT_MIN_HEIGHT} aria-hidden="true" /> }
-)
-
-// 2026-11-15, round 12 (v15 design): the standalone Founders section is gone.
-// "Our Team" (Exec Team = Will + Eliott on top, then five dashed group frames)
-// owns the `#team` anchor, followed by the Partiful partnership band that used
-// to sit under Founders. Placeholder height approximates the real section so the
-// swap-in doesn't shift layout; measured in Chromium at 1440/924/390.
-const TEAM_MIN_HEIGHT = "min-h-[3700px] min-[901px]:min-h-[2900px]"
-
-const Team = dynamic(() =>
-  import("@/components/claude-home-crew").then((m) =>
-    resolveDynamicComponent(m, "ClaudeHomeCrew", "@/components/claude-home-crew")
-  ),
-  { ssr: false, loading: () => <div className={TEAM_MIN_HEIGHT} aria-hidden="true" /> }
-)
-
-const PartifulBand = dynamic(() =>
-  import("@/components/claude-home-partiful-band").then((m) =>
-    resolveDynamicComponent(m, "ClaudeHomePartifulBand", "@/components/claude-home-partiful-band")
-  ),
-  { ssr: false }
-)
 
 const StartPlanning = dynamic(() =>
   import("@/components/start-planning").then((m) =>
@@ -97,15 +60,8 @@ export function HomePage() {
       <Brands />
       <News />
       <Artists />
-      <DeferredHomeSection id="about" estimatedHeightClassName={ABOUT_MIN_HEIGHT}>
-        <About />
-      </DeferredHomeSection>
-      <DeferredHomeSection id="team" estimatedHeightClassName={TEAM_MIN_HEIGHT}>
-        <Team />
-        <PartifulBand />
-      </DeferredHomeSection>
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
-        {/* Owner 2026-08-08 flow: About → Our Team → Follow the Momentum. Rides
+        {/* 2026-11-17: About + Our Team live on /about now; the page ends with Follow the Momentum. Rides
             the contact deferred block rather than getting its own, so it stays
             below the fold without adding another placeholder to scroll through. */}
         <FollowTheMomentum />

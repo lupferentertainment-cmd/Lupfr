@@ -130,13 +130,9 @@ describe("new homepage sections render their real data", () => {
     expect(screen.queryAllByText("Experiences")).toHaveLength(1)
   })
 
-  it("ClaudeHomeNavigation's theme switch mounts and toggles both ways", async () => {
-    const user = userEvent.setup()
+  it("ClaudeHomeNavigation no longer renders a light/dark switch (owner 2026-11-17: it was not working)", () => {
     render(<ClaudeHomeNavigation />)
-    const switchControl = await screen.findByRole("switch")
-    await user.click(switchControl)
-    await user.click(switchControl)
-    expect(switchControl).toBeInTheDocument()
+    expect(screen.queryByRole("switch")).toBeNull()
   })
 
   it("ClaudeHomeBrands switches to the platform tab and back", async () => {

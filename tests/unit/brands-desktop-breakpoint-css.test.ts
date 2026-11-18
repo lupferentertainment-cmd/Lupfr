@@ -46,8 +46,8 @@ describe("v5 responsive cascade order", () => {
     expectAscending(["max-[1100px]:max-h-[90px]", "max-[480px]:text-[30px]"])
   })
 
-  it("Services: 16:10 cards (4:3 from 901 to 1250px), then 4:5 swipe cards at <=900px", () => {
-    expectAscending(["aspect-[16/10]", "max-[900px]:aspect-[4/5]"])
+  it("Services: 16:10 cards (4:3 from 901 to 1250px), then 4:3 tiles at <=900px and 5:3 at <=560px", () => {
+    expectAscending(["aspect-[16/10]", "max-[900px]:aspect-[4/3]", "max-[560px]:aspect-[5/3]"])
     expectAscending(["aspect-[16/10]", "max-[1250px]:min-[901px]:aspect-[4/3]"])
   })
 

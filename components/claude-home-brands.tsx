@@ -22,13 +22,14 @@ import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } fro
 const { liveEvents, corporateMedia } = getBrandsByDivision()
 const OPERATING = [...liveEvents, ...corporateMedia]
 
+// Descriptor only — the brand name is already the tile title right below, so repeating it read as a stutter (owner 2026-11-17).
 const BRAND_LABELS: Record<string, string> = {
-  seaside: "SEA//SIDE OFFSHORE EXPERIENCES",
-  inside: "IN//SIDE INDOOR NIGHTS",
-  outside: "OUT//SIDE OPEN-AIR GATHERINGS",
-  skiside: "SKI//SIDE APRÈS-SKI EXPERIENCES",
-  highrise: "HIGH//RISE CORPORATE",
-  soundcheck: "SOUND//CHECK MEDIA",
+  seaside: "OFFSHORE EXPERIENCES",
+  inside: "INDOOR NIGHTS",
+  outside: "OPEN-AIR GATHERINGS",
+  skiside: "APRÈS-SKI EXPERIENCES",
+  highrise: "CORPORATE",
+  soundcheck: "MEDIA",
 }
 
 const PLATFORM_LABELS = ["VIP", "PROMOTER", "MEDIA", "HOSPITALITY", "VENTURES"]

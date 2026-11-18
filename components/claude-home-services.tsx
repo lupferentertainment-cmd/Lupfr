@@ -26,8 +26,9 @@ const PLAN_CTA =
  * old per-service "included" list and divider are gone) with the "Plan Your
  * Event" button in the section header. Cards are 16:10 (4:3 between 901 and
  * 1250px wide) so all six fit on one screen; at ≤900px the grid becomes a
- * horizontal swipe row of 80vw 4:5 cards that snap, with the button moving
- * back below it. The previous icon-timeline + accordion is retired.
+ * vertical stack of smaller tiles (2 columns, then 1 column ≤560px, 5:3 — the same
+ * pattern as the Our Brands tiles; owner 2026-11-17 "not a carousel"), with the
+ * button moving back below it. The previous icon-timeline + accordion is retired.
  */
 export function ClaudeHomeServices() {
   return (
@@ -51,7 +52,7 @@ export function ClaudeHomeServices() {
 
         <div
           data-testid="services-grid"
-          className="grid grid-cols-3 gap-3.5 max-[900px]:-mr-5 max-[900px]:flex max-[900px]:snap-x max-[900px]:snap-mandatory max-[900px]:gap-3 max-[900px]:overflow-x-auto max-[900px]:pr-5 max-[900px]:[scrollbar-width:none] max-[900px]:[&::-webkit-scrollbar]:hidden"
+          className="grid grid-cols-3 gap-3.5 max-[900px]:grid-cols-2 max-[900px]:gap-[10px] max-[560px]:grid-cols-1"
         >
           {services.map((service, i) => {
             const Icon = service.icon
@@ -59,14 +60,14 @@ export function ClaudeHomeServices() {
               <article
                 key={service.title}
                 data-testid="service-card"
-                className="group relative aspect-[16/10] overflow-hidden rounded-[4px] border border-white/[0.08] bg-[#0d0c0a] max-[1250px]:min-[901px]:aspect-[4/3] max-[900px]:aspect-[4/5] max-[900px]:flex-none max-[900px]:basis-[80vw] max-[900px]:snap-start"
+                className="group relative aspect-[16/10] overflow-hidden rounded-[4px] border border-white/[0.08] bg-[#0d0c0a] max-[1250px]:min-[901px]:aspect-[4/3] max-[900px]:aspect-[4/3] max-[560px]:aspect-[5/3]"
               >
                 {service.image ? (
                   <Image
                     src={service.image}
                     alt=""
                     fill
-                    sizes="(max-width: 900px) 80vw, 33vw"
+                    sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 33vw"
                     className="object-cover transition-transform duration-[800ms] group-hover:scale-105"
                     style={{ objectPosition: IMAGE_POSITIONS[service.title] ?? "50% 50%" }}
                   />
@@ -80,17 +81,16 @@ export function ClaudeHomeServices() {
                     </span>
                   ) : null}
                 </div>
-                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[7px] px-5 pb-5 pt-[18px]">
-                  <h3 className="m-0 font-condensed text-[clamp(24px,2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8]">{service.title}</h3>
-                  <p className="m-0 text-pretty text-[13.5px] leading-[1.45] text-[#e6e0d4]">{service.description}</p>
+                <div className="absolute inset-x-0 bottom-0 flex flex-col gap-[7px] px-5 pb-5 pt-[18px] max-[900px]:gap-1 max-[900px]:px-4 max-[900px]:pb-4 max-[900px]:pt-3">
+                  <h3 className="m-0 font-condensed text-[clamp(24px,2vw,32px)] font-extrabold uppercase leading-[0.95] text-[#fdf6e8] max-[900px]:text-[24px]">{service.title}</h3>
+                  <p className="m-0 text-pretty text-[13.5px] leading-[1.45] text-[#e6e0d4] max-[900px]:text-[12.5px] max-[900px]:leading-[1.4]">{service.description}</p>
                 </div>
               </article>
             )
           })}
         </div>
 
-        <div className="mt-7 hidden flex-wrap items-center justify-between gap-4 max-[900px]:flex">
-          <span className="font-mono text-[10px] tracking-[0.18em] text-[#8f887c]">SWIPE · {services.length} SERVICES →</span>
+        <div className="mt-7 hidden items-center justify-end max-[900px]:flex">
           <Link href={CONTACT_PAGE_PATH} data-testid="services-footer-cta" className={`${PLAN_CTA} ml-auto`}>
             Plan Your Event <span aria-hidden>→</span>
           </Link>

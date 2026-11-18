@@ -1,7 +1,7 @@
 /**
  * Playwright edge-case gate for Will's 2026-07-21/22 homepage updates.
  * Starts the built server, loads `/`, and asserts partners/brands/services/
- * artists/team/past-compact contracts in real Chromium.
+ * artists/past-compact contracts (the Team / Partiful band check now loads /about) in real Chromium.
  *
  * Run: bun scripts/verify-will-home.mjs
  */
@@ -101,13 +101,19 @@ async function main() {
       failures.push("PLS&TY missing from the Past Artists wall")
     }
 
-    await _scrollUntil(page, "#team")
-    // Team body (incl. Partiful band) is client-deferred — wait after #team mounts.
-    try {
-      await page.getByText(/Backed by Partiful/i).first().waitFor({ state: "visible", timeout: 15000 })
-    } catch {
-      failures.push("Partiful announcement missing under Team")
+    // 2026-11-17: About + Our Team + the Partiful band moved to /about; the home page no longer has #team.
+    if ((await page.locator("#team").count()) > 0) {
+      failures.push("#team still renders on the landing page (it lives on /about now)")
     }
+    const aboutPage = await browser.newPage()
+    aboutPage.setDefaultTimeout(NAV_TIMEOUT_MS)
+    await aboutPage.goto(`${BASE}/about`, { waitUntil: "domcontentloaded" })
+    try {
+      await aboutPage.getByText(/Backed by Partiful/i).first().waitFor({ state: "visible", timeout: 15000 })
+    } catch {
+      failures.push("Partiful announcement missing under Team on /about")
+    }
+    await aboutPage.close()
 
     // Partner strip is above the fold — check after returning near top.
     await page.evaluate(() => window.scrollTo(0, 0))

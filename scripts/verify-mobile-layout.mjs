@@ -34,10 +34,12 @@ const SETTLE_MS = 1200
 
 /** Narrowest phone we support, a common mid-size, and a large phone. */
 const WIDTHS = [320, 390, 430]
-const ROUTES = ["/", "/events", "/artists", "/brands", "/services", "/media"]
+const ROUTES = ["/", "/about", "/events", "/artists", "/brands", "/services", "/media"]
 
 /** Home sections whose content column must sit symmetrically in the viewport. */
-const SECTION_IDS = ["brands", "events", "services", "artists", "about", "team", "contact"]
+const SECTION_IDS = ["brands", "events", "services", "artists", "contact"]
+/** 2026-11-17: About + Our Team moved to /about. */
+const SECTION_IDS_BY_ROUTE = { "/": SECTION_IDS, "/about": ["about", "team"] }
 
 /** Gutter asymmetry we treat as a defect, in CSS px. */
 const GUTTER_TOLERANCE_PX = 2
@@ -148,7 +150,7 @@ async function main() {
         await page.waitForTimeout(SETTLE_MS)
 
         const result = await page.evaluate(_measure, [
-          route === "/" ? SECTION_IDS : [],
+          SECTION_IDS_BY_ROUTE[route] ?? [],
           GUTTER_TOLERANCE_PX,
           width,
         ])

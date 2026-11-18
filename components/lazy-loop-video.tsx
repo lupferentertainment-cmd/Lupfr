@@ -19,6 +19,7 @@ export function LazyLoopVideo({
   srcWebm,
   poster,
   className,
+  suspended = false,
 }: {
   srcMp4: string
   /** Optional — omitted for clips that only exist as .mp4 (e.g. the Hero's
@@ -27,21 +28,39 @@ export function LazyLoopVideo({
   srcWebm?: string
   poster: string
   className?: string
+  /** True while the clip is on screen but hidden behind something else (e.g. a covered sticky
+   * "Stack" card). Covered clips stay paused so only the visible one decodes. */
+  suspended?: boolean
 }) {
   const ref = useRef<HTMLVideoElement>(null)
   const isInView = useInView(ref, { once: false, amount: 0.35 })
+  // Start fetching a little before the clip arrives so it can play the moment it is on screen
+  // (preload="none" + play() on arrival left a gap where the poster sat frozen, and a rejected
+  // play() was never retried). `once` — once buffering has started there's no reason to undo it.
+  const isNear = useInView(ref, { once: true, margin: "600px 0px 600px 0px" })
   const reducedMotion = useClientPrefersReducedMotion()
+  const shouldPlay = isInView && !suspended
 
   useEffect(() => {
     const el = ref.current
     if (!el || reducedMotion) return
-    if (isInView) {
+    if (!shouldPlay) {
+      el.pause()
+      return
+    }
+    const tryPlay = () => {
       const playPromise = el.play()
       if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {})
-    } else {
-      el.pause()
     }
-  }, [isInView, reducedMotion])
+    tryPlay()
+    // If play() was rejected because no data had loaded yet, retry once data arrives.
+    el.addEventListener("loadeddata", tryPlay)
+    el.addEventListener("canplay", tryPlay)
+    return () => {
+      el.removeEventListener("loadeddata", tryPlay)
+      el.removeEventListener("canplay", tryPlay)
+    }
+  }, [shouldPlay, reducedMotion])
 
   if (reducedMotion) {
     // eslint-disable-next-line @next/next/no-img-element -- poster-only fallback, not a next/image candidate (decorative background fill)
@@ -54,7 +73,7 @@ export function LazyLoopVideo({
       muted
       loop
       playsInline
-      preload="none"
+      preload={isNear || shouldPlay ? "auto" : "none"}
       poster={poster}
       className={className}
     >

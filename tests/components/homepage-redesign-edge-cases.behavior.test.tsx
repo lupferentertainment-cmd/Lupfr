@@ -282,25 +282,27 @@ describe("ClaudeHomeServices' v5 card grid", () => {
     })
   })
 
-  it("uses the v5 card shape: 16:10, 4:3 from 901 to 1250px, 4:5 at <=900px, 80vw swipe cards", () => {
+  it("uses the v5 card shape: 16:10, 4:3 from 901 to 1250px, then a vertical tile stack (not a carousel) at <=900px", () => {
     render(<ClaudeHomeServices />)
     expect(screen.getAllByTestId("service-card")[0]).toHaveClass(
       "aspect-[16/10]",
       "max-[1250px]:min-[901px]:aspect-[4/3]",
-      "max-[900px]:aspect-[4/5]",
-      "max-[900px]:basis-[80vw]",
+      "max-[900px]:aspect-[4/3]",
+      "max-[560px]:aspect-[5/3]",
       "rounded-[4px]"
     )
-    expect(screen.getByTestId("services-grid")).toHaveClass("grid-cols-3", "max-[900px]:flex", "max-[900px]:snap-x")
+    const grid = screen.getByTestId("services-grid")
+    expect(grid).toHaveClass("grid-cols-3", "max-[900px]:grid-cols-2", "max-[560px]:grid-cols-1")
+    expect(grid.className).not.toMatch(/snap-x|overflow-x-auto/)
   })
 
-  it("puts Plan Your Event in the header (hidden <=900px) and again below the cards with the swipe hint", () => {
+  it("puts Plan Your Event in the header (hidden <=900px) and again below the cards", () => {
     render(<ClaudeHomeServices />)
     const header = screen.getByTestId("services-header-cta")
     expect(header).toHaveAttribute("href", "/contact")
     expect(header).toHaveClass("max-[900px]:hidden")
     expect(screen.getByTestId("services-footer-cta")).toHaveAttribute("href", "/contact")
-    expect(screen.getByText(`SWIPE · ${getServices().length} SERVICES →`)).toBeInTheDocument()
+    expect(screen.queryByText(/SWIPE/)).not.toBeInTheDocument()
   })
 
   it("shows the heading 'Idea to execution.' with the v5 subtitle", () => {
@@ -346,6 +348,14 @@ describe("ClaudeHomeExperiences' v5 sticky stack", () => {
     expect(screen.getByText("OUR WORK")).toBeInTheDocument()
     expect(screen.getByRole("heading", { level: 2, name: "Featured Experiences" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "View Past Events →" })).toHaveAttribute("href", "/events")
+  })
+
+  it("explains what Featured Experiences are with a one-line subtext under the heading", () => {
+    render(<ClaudeHomeExperiences />)
+    const heading = screen.getByRole("heading", { level: 2, name: "Featured Experiences" })
+    const subtext = heading.nextElementSibling
+    expect(subtext?.tagName).toBe("P")
+    expect(subtext).toHaveTextContent(/floating concerts, brand activations, and live-music events/)
   })
 
   it("hides the description, chips, meta line and thumbnails on mobile / below 1100px, keeping title and buttons", () => {
@@ -460,7 +470,9 @@ describe("LazyLoopVideo's play/pause wiring to its on-screen state", () => {
     )
     const video = container.querySelector("video")
     expect(video).not.toBeNull()
-    expect(ioInstances.length).toBe(1)
+    // Two observers: [0] on-screen (play/pause), [1] near-screen (start buffering early).
+    expect(ioInstances.length).toBe(2)
+    expect(video).toHaveAttribute("preload", "none")
     // Mounts out-of-view (isInView starts false), so the effect's initial
     // run already takes the el.pause() branch once before any IO entry fires.
     const pauseCallsBeforeEntering = pauseSpy.mock.calls.length
@@ -479,15 +491,91 @@ describe("LazyLoopVideo's play/pause wiring to its on-screen state", () => {
     playSpy.mockRestore()
     pauseSpy.mockRestore()
   })
+
+  it("starts buffering when the clip is near the viewport, before it is on screen", async () => {
+    const playSpy = vi.spyOn(window.HTMLMediaElement.prototype, "play").mockResolvedValue(undefined)
+    const { LazyLoopVideo } = await import("@/components/lazy-loop-video")
+    const { container } = render(<LazyLoopVideo srcMp4="/a.mp4" poster="/a.webp" />)
+    const video = container.querySelector("video")!
+    act(() => {
+      ioInstances[1].fire([{ isIntersecting: true, target: video }])
+    })
+    expect(video).toHaveAttribute("preload", "auto")
+    expect(playSpy).not.toHaveBeenCalled()
+    playSpy.mockRestore()
+  })
+
+  it("retries play() when data arrives after a rejected first attempt", async () => {
+    const playSpy = vi.spyOn(window.HTMLMediaElement.prototype, "play").mockRejectedValue(new Error("no data yet"))
+    const { LazyLoopVideo } = await import("@/components/lazy-loop-video")
+    const { container } = render(<LazyLoopVideo srcMp4="/a.mp4" poster="/a.webp" />)
+    const video = container.querySelector("video")!
+    act(() => {
+      ioInstances[0].fire([{ isIntersecting: true, target: video }])
+    })
+    expect(playSpy).toHaveBeenCalledTimes(1)
+    act(() => {
+      video.dispatchEvent(new Event("canplay"))
+    })
+    expect(playSpy).toHaveBeenCalledTimes(2)
+    playSpy.mockRestore()
+  })
+
+  it("stays paused while suspended (covered stack card) and plays again when uncovered", async () => {
+    const playSpy = vi.spyOn(window.HTMLMediaElement.prototype, "play").mockResolvedValue(undefined)
+    const pauseSpy = vi.spyOn(window.HTMLMediaElement.prototype, "pause").mockImplementation(() => {})
+    const { LazyLoopVideo } = await import("@/components/lazy-loop-video")
+    const { container, rerender } = render(<LazyLoopVideo srcMp4="/a.mp4" poster="/a.webp" suspended />)
+    const video = container.querySelector("video")!
+    act(() => {
+      ioInstances[0].fire([{ isIntersecting: true, target: video }])
+    })
+    expect(playSpy).not.toHaveBeenCalled()
+    rerender(<LazyLoopVideo srcMp4="/a.mp4" poster="/a.webp" suspended={false} />)
+    expect(playSpy).toHaveBeenCalledTimes(1)
+    playSpy.mockRestore()
+    pauseSpy.mockRestore()
+  })
+})
+
+describe("ThemeToggle click sound", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it("plays a short Web Audio click with withSound, and stays silent if AudioContext throws", async () => {
+    const user = userEvent.setup()
+    const { ThemeToggle } = await import("@/components/theme-toggle")
+    const param = { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() }
+    const osc = { connect: vi.fn(), frequency: param, type: "", start: vi.fn(), stop: vi.fn() }
+    const ctor = vi.fn(function () {
+      return { createOscillator: () => osc, createGain: () => ({ connect: vi.fn(), gain: param }), destination: {}, currentTime: 0 }
+    })
+    vi.stubGlobal("AudioContext", ctor)
+    window.AudioContext = ctor as unknown as typeof AudioContext
+    render(
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeToggle withSound />
+      </ThemeProvider>
+    )
+    await user.click(await screen.findByRole("switch"))
+    expect(osc.start).toHaveBeenCalledTimes(1)
+
+    window.AudioContext = vi.fn(function () {
+      throw new Error("blocked")
+    }) as unknown as typeof AudioContext
+    await user.click(await screen.findByRole("switch"))
+    expect(osc.start).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe("ThemeToggle inside a real ThemeProvider", () => {
   it("flips from dark to light and shows the matching icon/label", async () => {
     const user = userEvent.setup()
-    const { ClaudeHomeNavigation } = await import("@/components/claude-home-navigation")
+    const { ThemeToggle } = await import("@/components/theme-toggle")
     render(
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <ClaudeHomeNavigation />
+        <ThemeToggle />
       </ThemeProvider>
     )
     const switchControl = await screen.findByLabelText("Turn light on")
@@ -512,15 +600,15 @@ describe("ClaudeHomeBrands' v5 content", () => {
     for (const n of ["01", "02", "03", "04", "05", "06"]) expect(screen.getByText(n)).toBeInTheDocument()
   })
 
-  it("uses the design file's small labels (file wins: SEA//SIDE is OFFSHORE EXPERIENCES)", () => {
+  it("uses descriptor-only small labels — the brand name is the title right below, so it is never repeated", () => {
     render(<ClaudeHomeBrands />)
     expect(screen.getAllByTestId("brand-label").map((l) => l.textContent)).toEqual([
-      "SEA//SIDE OFFSHORE EXPERIENCES",
-      "IN//SIDE INDOOR NIGHTS",
-      "OUT//SIDE OPEN-AIR GATHERINGS",
-      "SKI//SIDE APRÈS-SKI EXPERIENCES",
-      "HIGH//RISE CORPORATE",
-      "SOUND//CHECK MEDIA",
+      "OFFSHORE EXPERIENCES",
+      "INDOOR NIGHTS",
+      "OPEN-AIR GATHERINGS",
+      "APRÈS-SKI EXPERIENCES",
+      "CORPORATE",
+      "MEDIA",
     ])
   })
 

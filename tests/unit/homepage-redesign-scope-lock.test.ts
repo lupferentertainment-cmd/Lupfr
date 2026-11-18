@@ -31,11 +31,9 @@ describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
     expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
     expect(homePage).toContain('import { ClaudeHomeMedia as News } from "@/components/claude-home-media"')
     expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
-    // Round 12 (v15 design): the standalone Founders section (claude-home-team) is
-    // gone; Our Team (Exec Team + five groups) owns the #team anchor.
-    expect(homePage).toMatch(/import\("@\/components\/claude-home-crew"\)/)
-    expect(homePage).toContain('resolveDynamicComponent(m, "ClaudeHomeCrew", "@/components/claude-home-crew")')
-    expect(homePage).toMatch(/import\("@\/components\/claude-home-partiful-band"\)/)
+    // 2026-11-17: Our Team + the Partiful band moved to /about (see the next test).
+    expect(homePage).not.toContain("claude-home-crew")
+    expect(homePage).not.toContain("claude-home-partiful-band")
   })
 
   it("no longer mounts the standalone Founders section", () => {
@@ -44,23 +42,25 @@ describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
     expect(homePage).not.toContain('id="crew"')
   })
 
-  it("mounts Our Team (with the Partiful band under it) on the #team anchor, between About and Contact", () => {
-    const about = homePage.indexOf('<DeferredHomeSection id="about"')
-    const team = homePage.indexOf('<DeferredHomeSection id="team"')
-    const contact = homePage.indexOf('<DeferredHomeSection id="contact"')
+  it("mounts About, Our Team and the Partiful band on /about (in that order), not on the home page", () => {
+    const aboutPage = fs.readFileSync(path.join(rootDir, "app", "about", "page.tsx"), "utf8")
+    const about = aboutPage.indexOf("<About />")
+    const team = aboutPage.indexOf("<ClaudeHomeCrew />")
+    const band = aboutPage.indexOf("<ClaudeHomePartifulBand />")
+    const footer = aboutPage.indexOf("<Footer />")
     expect(about).toBeGreaterThan(-1)
     expect(team).toBeGreaterThan(about)
-    expect(contact).toBeGreaterThan(team)
-    const teamBlock = homePage.slice(team, contact)
-    expect(teamBlock).toContain("<Team />")
-    expect(teamBlock).toContain("<PartifulBand />")
+    expect(band).toBeGreaterThan(team)
+    expect(footer).toBeGreaterThan(band)
+    expect(homePage).not.toContain("<Team />")
+    expect(homePage).not.toContain("<PartifulBand />")
+    expect(homePage).toContain('<DeferredHomeSection id="contact"')
   })
 
   it("leaves every CURRENT section on its original component", () => {
     expect(homePage).toContain('import { PartnersStrip } from "@/components/partners-strip"')
     expect(homePage).toContain('import { FollowTheMomentum } from "@/components/follow-the-momentum"')
-    expect(homePage).toMatch(/import\("@\/components\/about"\)/)
-    expect(homePage).toContain('resolveDynamicComponent(m, "About", "@/components/about")')
+    expect(homePage).not.toContain("@/components/about")
     // v5 (2026-11-17): the Contact wizard was replaced by the Start Planning intake on #contact.
     expect(homePage).toMatch(/import\("@\/components\/start-planning"\)/)
     expect(homePage).not.toMatch(/components\/contact"/)
