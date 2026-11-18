@@ -14,7 +14,7 @@ const links = [
   ["Services", "#services"],
   ["Experiences", "#events"],
   ["Brands", "#brands"],
-  ["Media", "#news"],
+  ["Media", "/media"],
   ["About", "/about"],
   ["Team", "/about#team"],
 ] as const
@@ -24,7 +24,7 @@ type NavLink = (typeof links)[number]
 function NavAnchor({ link, isHome, pathname, className, onNavigate }: { link: NavLink; isHome: boolean; pathname: string; className: string; onNavigate?: () => void }) {
   const [label, target] = link
   const isAnchor = target.startsWith("#")
-  const current = label === "About" && pathname === "/about"
+  const current = (label === "About" && pathname === "/about") || (label === "Media" && pathname === "/media")
   const aria = current ? ("page" as const) : undefined
   if (isAnchor && isHome) {
     return (

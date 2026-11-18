@@ -29,7 +29,8 @@ describe("home-page.tsx scope lock (owner table, 2026-10-01)", () => {
     expect(homePage).toContain('import { ClaudeHomeServices as Services } from "@/components/claude-home-services"')
     expect(homePage).toContain('import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"')
     expect(homePage).toContain('import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"')
-    expect(homePage).toContain('import { ClaudeHomeMedia as News } from "@/components/claude-home-media"')
+    // Round 16: Media & News moved to /media.
+    expect(homePage).not.toContain("claude-home-media")
     expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
     // 2026-11-17: Our Team + the Partiful band moved to /about (see the next test).
     expect(homePage).not.toContain("claude-home-crew")

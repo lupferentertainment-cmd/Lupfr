@@ -37,7 +37,7 @@ const primaryNavLinks = [
   { name: "Services", href: "#services" },
   { name: "Experiences", href: "#events" },
   { name: "Brands", href: "#brands" },
-  { name: "Media", href: "#news" },
+  { name: "Media", href: "/media" },
   { name: "About", href: "/about" },
 ] as const
 
@@ -113,6 +113,7 @@ export function Navigation() {
       return isHome && activeSection === id
     }
     if (href === "/about") return pathname === "/about"
+    if (href === "/media") return pathname === "/media"
     if (href === "/blog") return pathname === "/blog" || pathname.startsWith("/blog/")
     return false
   }

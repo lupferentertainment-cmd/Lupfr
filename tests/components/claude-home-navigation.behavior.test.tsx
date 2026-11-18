@@ -16,7 +16,7 @@ const EXPECTED: Array<[string, string]> = [
   ["Services", "#services"],
   ["Experiences", "#events"],
   ["Brands", "#brands"],
-  ["Media", "#news"],
+  ["Media", "/media"],
   ["About", "/about"],
   ["Team", "/about#team"],
 ]
@@ -76,10 +76,18 @@ describe("ClaudeHomeNavigation (v15)", () => {
     render(<ClaudeHomeNavigation />)
     const primary = screen.getByRole("navigation", { name: "Primary" })
     expect(within(primary).getByRole("link", { name: "Services" })).toHaveAttribute("href", "/#services")
-    expect(within(primary).getByRole("link", { name: "Media" })).toHaveAttribute("href", "/#news")
+    expect(within(primary).getByRole("link", { name: "Media" })).toHaveAttribute("href", "/media")
     expect(within(primary).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page")
     expect(within(primary).getByRole("link", { name: "Team" })).toHaveAttribute("href", "/about#team")
     expect(within(primary).getByRole("link", { name: "LUPFR home" })).toHaveAttribute("href", "/")
+  })
+
+  it("marks Media as the current page on /media", () => {
+    nav.pathname = "/media"
+    render(<ClaudeHomeNavigation />)
+    const primary = screen.getByRole("navigation", { name: "Primary" })
+    expect(within(primary).getByRole("link", { name: "Media" })).toHaveAttribute("aria-current", "page")
+    expect(within(primary).getByRole("link", { name: "About" })).not.toHaveAttribute("aria-current")
   })
 
   it("treats a null pathname (no app router) as the home page", () => {

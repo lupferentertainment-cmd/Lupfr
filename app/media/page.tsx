@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Footer } from "@/components/footer"
+import { FollowTheMomentum } from "@/components/follow-the-momentum"
 import { GoldShineText } from "@/components/gold-shine-text"
 import { MediaOverview } from "@/components/media-overview"
 import { Navigation } from "@/components/navigation"
@@ -46,6 +47,7 @@ export default function MediaPage() {
           <MediaOverview />
         </div>
       </div>
+      <FollowTheMomentum />
       <Footer />
     </main>
   )

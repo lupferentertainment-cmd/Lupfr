@@ -2,6 +2,7 @@ import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 
 import { BrandSlashText } from "@/components/brand-slash-text"
+import { MediaNewsFeature } from "@/components/media-news-feature"
 import { SocialIcon } from "@/components/social-icon"
 import { PlayRing, ZusebiFeaturedTile } from "@/components/zusebi-featured"
 import { MEDIA_VIDEOS } from "@/lib/data/media-videos"
@@ -132,6 +133,8 @@ export function MediaOverview() {
           ))}
         </div>
       </section>
+
+      <MediaNewsFeature />
 
       <section aria-label="News and updates" className="mb-16 lg:mb-20">
         <RuleLabel>All news &amp; updates</RuleLabel>

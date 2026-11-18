@@ -8,6 +8,7 @@ import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
 import { brandPath, getBrandBySlug } from "@/lib/data/brands"
 import { eventDetailPath, getEventBySlug } from "@/lib/events"
+import { isFreshWheel, snapTarget, stackPositions } from "@/lib/stack-snap"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
 /**
@@ -320,11 +321,114 @@ function useCoveredCards(count: number) {
     }
   }, [count])
   // Refs are kept dense (a card that unmounts is simply not re-registered).
-  return { covered, setEl: (i: number) => (el: HTMLElement | null) => { if (el) els.current[i] = el } }
+  return { covered, els, setEl: (i: number) => (el: HTMLElement | null) => { if (el) els.current[i] = el } }
+}
+
+const SNAP_LOCK_MS = 650
+const SNAP_ENTRY_VH = 0.6
+const SWIPE_MIN_PX = 24
+const TAIL_MS = 1500
+
+function isBlockedTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('[role="dialog"],[aria-modal="true"],input,textarea,select') !== null
+}
+
+/**
+ * Card-by-card snapping (owner, Round 16: "when I scroll even a bit, it just takes me to the next one").
+ * A wheel tick, arrow/page key or swipe inside the stack's zone jumps straight to the neighbouring card
+ * instead of scrolling a few pixels, so the page never rests between two cards. Outside the zone (above the
+ * first card, past the last) everything scrolls normally, so the stack can never trap the page.
+ */
+function useStackSnap(containerRef: { current: HTMLElement | null }, cards: { current: HTMLElement[] }) {
+  useEffect(() => {
+    let lockUntil = 0
+    let snapAt = 0
+    let snapDir = 0
+    let lastWheelAt = 0
+    let lastAbs = 0
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true
+    const target = (dir: 1 | -1): number | null => {
+      const container = containerRef.current
+      const els = cards.current
+      const first = els[0]
+      if (!container || !first || els.length === 0) return null
+      const gap = Number.parseFloat(getComputedStyle(first).marginBottom) || 0
+      const stickyTops = els.map((el) => Number.parseFloat(el.style.top) || 0)
+      const docTop = container.getBoundingClientRect().top + window.scrollY
+      const positions = stackPositions(docTop, first.offsetHeight + gap, stickyTops)
+      return snapTarget(window.scrollY, dir, positions, window.innerHeight * SNAP_ENTRY_VH)
+    }
+    const go = (top: number, dir: number) => {
+      snapAt = performance.now()
+      snapDir = dir
+      lockUntil = snapAt + SNAP_LOCK_MS
+      window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" })
+    }
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX) || e.deltaY === 0 || isBlockedTarget(e.target)) return
+      const now = performance.now()
+      const abs = Math.abs(e.deltaY)
+      const fresh = isFreshWheel(lastAbs, abs, now - lastWheelAt)
+      lastWheelAt = now
+      lastAbs = abs
+      const dir = e.deltaY > 0 ? 1 : -1
+      // Mid-snap, and for the inertia tail of the flick that triggered it, swallow ticks in the same direction.
+      if (dir === snapDir && (now < lockUntil || (!fresh && now - snapAt < TAIL_MS))) {
+        e.preventDefault()
+        return
+      }
+      const to = target(dir)
+      if (to === null) return
+      e.preventDefault()
+      go(to, dir)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || (e.target !== document.body && e.target !== document.documentElement)) return
+      const down = e.key === "ArrowDown" || e.key === "PageDown" || (e.key === " " && !e.shiftKey)
+      const up = e.key === "ArrowUp" || e.key === "PageUp" || (e.key === " " && e.shiftKey)
+      if (!down && !up) return
+      const to = target(down ? 1 : -1)
+      if (to === null) return
+      e.preventDefault()
+      if (performance.now() >= lockUntil) go(to, down ? 1 : -1)
+    }
+    let startY = 0
+    let engaged: number | null = null
+    const onTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0]?.clientY ?? 0
+      engaged = null
+    }
+    const onTouchMove = (e: TouchEvent) => {
+      const y = e.touches[0]?.clientY ?? startY
+      if (engaged === null && Math.abs(startY - y) > 6 && !isBlockedTarget(e.target)) {
+        engaged = target(startY - y > 0 ? 1 : -1) ?? -1
+      }
+      if (engaged !== null && engaged >= 0 && e.cancelable) e.preventDefault()
+    }
+    const onTouchEnd = (e: TouchEvent) => {
+      const dy = startY - (e.changedTouches[0]?.clientY ?? startY)
+      if (engaged !== null && engaged >= 0 && Math.abs(dy) >= SWIPE_MIN_PX) go(engaged, dy > 0 ? 1 : -1)
+      engaged = null
+    }
+    window.addEventListener("wheel", onWheel, { passive: false })
+    window.addEventListener("keydown", onKey)
+    window.addEventListener("touchstart", onTouchStart, { passive: true })
+    window.addEventListener("touchmove", onTouchMove, { passive: false })
+    window.addEventListener("touchend", onTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener("wheel", onWheel)
+      window.removeEventListener("keydown", onKey)
+      window.removeEventListener("touchstart", onTouchStart)
+      window.removeEventListener("touchmove", onTouchMove)
+      window.removeEventListener("touchend", onTouchEnd)
+    }
+  }, [containerRef, cards])
 }
 
 export function ClaudeHomeExperiences() {
-  const { covered, setEl } = useCoveredCards(caseStudies.length)
+  const { covered, setEl, els } = useCoveredCards(caseStudies.length)
+  const stackRef = useRef<HTMLDivElement | null>(null)
+  useStackSnap(stackRef, els)
   return (
     <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
       <div className="mx-auto max-w-[1400px]">
@@ -341,7 +445,7 @@ export function ClaudeHomeExperiences() {
           </div>
           <Link href="/events" className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-[#e8caa0]">View Past Events →</Link>
         </div>
-        <div>
+        <div ref={stackRef}>
           {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} covered={covered[i] === true} cardRef={setEl(i)} />)}
         </div>
       </div>

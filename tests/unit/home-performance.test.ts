@@ -100,11 +100,11 @@ describe("home page mobile transfer guardrails", () => {
         // Partners, ahead of Services/Events, the reverse of the real design
         // file's section-marker order) — see docs/DESIGN.md's "Home section
         // order corrected" entry. Order is now Services -> Events -> Brands ->
-        // News, matching LUPFR Website v3.dc.html exactly. News (ClaudeHomeMedia)
+        // Artists (Media & News moved to /media in Round 16), matching LUPFR Website v3.dc.html exactly. News (ClaudeHomeMedia)
         // is a video reel, not the old short text list the stale comment here
         // used to describe; the mobile-perf budgets in verify-mobile-perf
         // remain the enforcing gate for above-the-fold cost either way.
-        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<News \/>/)
+        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<Artists \/>/)
         expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     })

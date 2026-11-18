@@ -147,3 +147,9 @@ Light-mode section surfaces use the cool off-white palette: the Reviews strip us
 - **Featured Experiences:** subtext under the heading; covered stack cards suspend their video (`LazyLoopVideo suspended`), cover threshold 20px (stack step is 16px).
 - **LazyLoopVideo:** play on >=35% visible and not suspended; preload `auto` once within 600px; retry `play()` on `loadeddata`/`canplay`.
 - **Services <=900px:** vertical tile stack (2 cols, 1 col <=560px; 4:3 / 5:3), no carousel. **Brands tile label:** descriptor only. **Theme toggle:** removed from navs.
+
+## Round 16 — Media page, square news photo, Experiences snapping (2026-11-18)
+
+- **Media** is its own page (`/media`); home order is Services -> Experiences -> Brands -> Artists -> (contact block). Media tab -> `/media` in both navs. `/media` = existing v16 layout + "LUPFR in the News" block (`MediaNewsFeature`) + Follow the Momentum + Footer.
+- **Voyage LA lead card:** `aspect-square`, 460px column on desktop, `object-position: 50% 10%` (face at ~14-51% of the 1206x1603 source). Do not switch back to a fixed-height wide card.
+- **Experiences snapping:** stops are the scroll offsets where card `i`'s natural top meets its sticky top (`92 + 16i`). Wheel/key/swipe inside the zone (0.6 viewport above the first card to the last card) jumps one stop; outside it, normal scroll. No global CSS scroll-snap (mandatory snap traps scrolling; proximity is too weak). Listeners are on `window` (wheel and touchmove `passive: false`) and are removed on unmount.

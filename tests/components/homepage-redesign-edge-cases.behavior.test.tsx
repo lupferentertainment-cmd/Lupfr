@@ -19,7 +19,7 @@ import { getServices } from "@/lib/data/services"
  * branch of its own — its video/no-video split is already covered by the 3
  * real case studies in homepage-redesign.behavior.test.tsx.
  *
- * ClaudeHomeMedia's "LUPFR in the News" lead card gained an optional
+ * MediaNewsFeature's "LUPFR in the News" lead card gained an optional
  * `image` field (2026-10-02 fix, round 4) whose real data always has one on
  * the newest/lead item today — covered below with the imageless branch.
  */
@@ -385,7 +385,7 @@ describe("ClaudeHomeExperiences' v5 sticky stack", () => {
   })
 })
 
-describe("ClaudeHomeMedia's 'LUPFR in the News' lead card with no image", () => {
+describe("MediaNewsFeature's lead card with no image", () => {
   it("renders the lead card without a background photo", async () => {
     vi.doMock("@/lib/data/news", () => ({
       getHomeNews: () => [
@@ -393,13 +393,12 @@ describe("ClaudeHomeMedia's 'LUPFR in the News' lead card with no image", () => 
       ],
       newsDateLabel: () => "JAN 1, 2026",
     }))
-    const { ClaudeHomeMedia } = await import("@/components/claude-home-media")
-    render(<ClaudeHomeMedia />)
+    const { MediaNewsFeature } = await import("@/components/media-news-feature")
+    render(<MediaNewsFeature />)
     expect(screen.getByText("Bare Headline")).toBeInTheDocument()
-    // The Zusebi lead poster + 3 side-clip posters always render (fixed, not
-    // news data); the news lead card's own photo is the only conditional
-    // `image`, so its absence here means exactly 4 decorative images, not 5.
-    expect(screen.getAllByAltText("")).toHaveLength(4)
+    // The lead card's photo is the only image in this block, so no image
+    // renders when the item has none.
+    expect(screen.queryAllByAltText("")).toHaveLength(0)
   })
 })
 

@@ -18,7 +18,6 @@ import { ClaudeHomeHero as Hero } from "@/components/claude-home-hero"
 import { ClaudeHomeServices as Services } from "@/components/claude-home-services"
 import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"
 import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"
-import { ClaudeHomeMedia as News } from "@/components/claude-home-media"
 import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"
 
 const StartPlanning = dynamic(() =>
@@ -45,20 +44,16 @@ export function HomePage() {
       {/* Section order below Partners follows the real design file (LUPFR
           Website v3.dc.html / claude-redesign-reference.html) section-marker
           outline verbatim: Services -> Featured Experiences (Events) ->
-          Our Brands (Brands) -> Media & News (News) -> Past Artists (Artists).
+          Our Brands (Brands) -> Past Artists (Artists). Media & News moved to /media (Round 16).
           The previous order here (News/Brands/Events/Services) carried over a
           stale "company news items below the Hero" comment from the OLD,
           since-retired components/news.tsx home strip (owner 2026-08-08) —
-          that component is no longer rendered on home at all (News here is
-          ClaudeHomeMedia, a different, later-positioned section in the real
-          design), so that ordering rationale no longer applies and the
-          sections are restored to the design's actual sequence (owner report
-          2026-10-01, "didnt come out in right order... still well off from
-          the claude design"). */}
+          that component is no longer rendered on home at all, so that
+          ordering rationale no longer applies and the sections are restored
+          to the design's actual sequence (owner report 2026-10-01). */}
       <Services />
       <Events />
       <Brands />
-      <News />
       <Artists />
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         {/* 2026-11-17: About + Our Team live on /about now; the page ends with Follow the Momentum. Rides

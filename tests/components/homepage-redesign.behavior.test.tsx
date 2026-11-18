@@ -8,7 +8,7 @@ import { ClaudeHomeHero } from "@/components/claude-home-hero"
 import { ClaudeHomeServices } from "@/components/claude-home-services"
 import { ClaudeHomeExperiences } from "@/components/claude-home-experiences"
 import { ClaudeHomeBrands } from "@/components/claude-home-brands"
-import { ClaudeHomeMedia } from "@/components/claude-home-media"
+import { MediaNewsFeature } from "@/components/media-news-feature"
 import { ClaudeHomeArtists } from "@/components/claude-home-artists"
 import { ClaudeHomePartifulBand } from "@/components/claude-home-partiful-band"
 import { getServices } from "@/lib/data/services"
@@ -87,28 +87,15 @@ describe("new homepage sections render their real data", () => {
     )
   })
 
-  it("ClaudeHomeMedia renders the Zusebi lead set (opens the film modal) and 3 real side clips", async () => {
-    const user = userEvent.setup()
-    render(<ClaudeHomeMedia />)
-    expect(screen.getByText("FULL LIVE SET")).toBeInTheDocument()
-    expect(screen.getByText("Zusebi · Live at Golden Gate Park")).toBeInTheDocument()
-    await user.click(screen.getByRole("button", { name: "Watch Zusebi live at Golden Gate Park" }))
-    expect(screen.getByTitle("Zusebi · Live at Golden Gate Park")).toHaveAttribute("src", expect.stringContaining("youtube-nocookie.com/embed/2w09dEQpz2E"))
-    await user.click(screen.getByRole("button", { name: "Close" }))
-    expect(screen.queryByTestId("film-modal")).not.toBeInTheDocument()
-    for (const title of ["Artist podcast", "SEA//SIDE 002", "Bal Masque"]) {
-      expect(screen.getByText(title)).toBeInTheDocument()
-    }
-    expect(screen.getByRole("link", { name: "See all videos →" })).toHaveAttribute("href", "/media")
-  })
-
-  it("ClaudeHomeMedia renders the design's 'LUPFR in the News' block with real, newest-first press links", () => {
+  it("MediaNewsFeature (on /media) renders the 'LUPFR in the News' block with real, newest-first press links and a square lead photo", () => {
     const news = getHomeNews()
-    render(<ClaudeHomeMedia />)
-    expect(screen.getByRole("heading", { name: "LUPFR in the News" })).toBeInTheDocument()
+    render(<MediaNewsFeature />)
+    expect(screen.getByRole("region", { name: "LUPFR in the News" })).toBeInTheDocument()
     const leadLink = screen.getByText(news[0].title).closest("a")
     expect(leadLink).toHaveAttribute("href", news[0].url)
     expect(leadLink).toHaveTextContent("Latest")
+    expect(leadLink?.className).toContain("aspect-square")
+    expect(leadLink?.querySelector("img")?.getAttribute("style")).toContain("50% 10%")
     for (const item of news.slice(1, 4)) {
       expect(screen.getByText(new RegExp(item.title.slice(0, 30)))).toBeInTheDocument()
     }
