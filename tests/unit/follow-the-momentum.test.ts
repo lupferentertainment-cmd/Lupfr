@@ -25,11 +25,15 @@ const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "")
 const homePage = fs.readFileSync(path.join(rootDir, "components", "home-page.tsx"), "utf8")
 
 describe("Follow the Momentum placement", () => {
-  it("opens the bottom block (About/Team moved to /about, 2026-11-17): Momentum, then Start Planning", () => {
+  it("sits below Plan Your Event (Start Planning) and above the Laylo signup, then the Footer (owner 2026-11-18)", () => {
+    const planning = homePage.indexOf("<StartPlanning />")
     const momentum = homePage.indexOf("<FollowTheMomentum />")
-    const contact = homePage.indexOf("<StartPlanning />")
-    expect(momentum).toBeGreaterThan(-1)
-    expect(contact).toBeGreaterThan(momentum)
+    const laylo = homePage.indexOf("<LayloEmbed />")
+    const footer = homePage.indexOf("<Footer />")
+    expect(planning).toBeGreaterThan(-1)
+    expect(momentum).toBeGreaterThan(planning)
+    expect(laylo).toBeGreaterThan(momentum)
+    expect(footer).toBeGreaterThan(laylo)
   })
 
   it("exposes a #momentum anchor", () => {

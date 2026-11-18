@@ -18,7 +18,6 @@ import { ClaudeHomeHero as Hero } from "@/components/claude-home-hero"
 import { ClaudeHomeServices as Services } from "@/components/claude-home-services"
 import { ClaudeHomeExperiences as Events } from "@/components/claude-home-experiences"
 import { ClaudeHomeBrands as Brands } from "@/components/claude-home-brands"
-import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"
 
 const StartPlanning = dynamic(() =>
   import("@/components/start-planning").then((m) =>
@@ -44,7 +43,7 @@ export function HomePage() {
       {/* Section order below Partners follows the real design file (LUPFR
           Website v3.dc.html / claude-redesign-reference.html) section-marker
           outline verbatim: Services -> Featured Experiences (Events) ->
-          Our Brands (Brands) -> Past Artists (Artists). Media & News moved to /media (Round 16).
+          Our Brands (Brands). Media & News moved to /media and Past Artists to /about (Round 16).
           The previous order here (News/Brands/Events/Services) carried over a
           stale "company news items below the Hero" comment from the OLD,
           since-retired components/news.tsx home strip (owner 2026-08-08) —
@@ -54,13 +53,12 @@ export function HomePage() {
       <Services />
       <Events />
       <Brands />
-      <Artists />
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         {/* 2026-11-17: About + Our Team live on /about now; the page ends with Follow the Momentum. Rides
             the contact deferred block rather than getting its own, so it stays
             below the fold without adding another placeholder to scroll through. */}
-        <FollowTheMomentum />
         <StartPlanning />
+        <FollowTheMomentum />
         {/* Owner 2026-08-08: Laylo drop signup, above the footer. */}
         <LayloEmbed />
         <Footer />

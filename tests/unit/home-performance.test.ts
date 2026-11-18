@@ -100,11 +100,11 @@ describe("home page mobile transfer guardrails", () => {
         // Partners, ahead of Services/Events, the reverse of the real design
         // file's section-marker order) — see docs/DESIGN.md's "Home section
         // order corrected" entry. Order is now Services -> Events -> Brands ->
-        // Artists (Media & News moved to /media in Round 16), matching LUPFR Website v3.dc.html exactly. News (ClaudeHomeMedia)
+        // the contact block (Media & News moved to /media and Past Artists to /about in Round 16), matching LUPFR Website v3.dc.html exactly. News (ClaudeHomeMedia)
         // is a video reel, not the old short text list the stale comment here
         // used to describe; the mobile-perf budgets in verify-mobile-perf
         // remain the enforcing gate for above-the-fold cost either way.
-        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<Artists \/>/)
+        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<DeferredHomeSection/)
         expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     })
@@ -125,19 +125,16 @@ describe("home page mobile transfer guardrails", () => {
 
     it("keeps the remaining heavyweight lower sections out of the initial server/client payload", () => {
         expect(homePage).toContain("{ ssr: false }")
-        expect(homePage).toContain("<Artists />")
+        expect(homePage).not.toContain("<Artists />")
         expect(homePage).not.toContain("<Gallery />")
         expect(homePage).not.toContain("<About />")
         expect(homePage).toContain("<StartPlanning />")
         expect(homePage).toContain("<Footer />")
     })
 
-    it("mounts the artists section eagerly to avoid blank placeholders on fast laptop navigation", () => {
-        // Oct 1 2026 redesign: new claude-home-artists.tsx sibling, still eager.
-        expect(homePage).toContain('import { ClaudeHomeArtists as Artists } from "@/components/claude-home-artists"')
-        expect(homePage).toContain("<Artists />")
-        expect(homePage).not.toContain('<DeferredHomeSection id="artists"')
-        expect(homePage).not.toContain('<DeferredHomeSection\n        id="artists"')
+    it("no longer mounts Past Artists on the home page (it lives on /about since Round 16)", () => {
+        expect(homePage).not.toContain("claude-home-artists")
+        expect(homePage).not.toContain("<Artists />")
     })
 
     it("loads MotionProvider with LazyMotion + domAnimation (non-strict)", () => {

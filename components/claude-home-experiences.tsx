@@ -1,5 +1,6 @@
 "use client"
 
+import { GoldShineText } from "@/components/gold-shine-text"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
@@ -438,7 +439,7 @@ export function ClaudeHomeExperiences() {
               <span className="text-[#c9a869]">(02)</span>
               <span>OUR WORK</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8]">Featured Experiences</h2>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88]"><GoldShineText>Featured Experiences</GoldShineText></h2>
             <p className="mb-0 mt-4 max-w-[560px] text-[15px] leading-[1.55] text-[#bdb6a9]">
               Signature LUPFR productions — floating concerts, brand activations, and live-music events we&rsquo;ve built from the ground up.
             </p>

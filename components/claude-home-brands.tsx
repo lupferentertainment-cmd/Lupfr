@@ -1,5 +1,6 @@
 "use client"
 
+import { GoldShineText } from "@/components/gold-shine-text"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -8,7 +9,7 @@ import { brandPath, getBrandsByDivision, PLATFORM_PROGRAMS, type BrandItem } fro
 
 /**
  * LUPFR Website Design v5 (owner, 2026-11-17) — Our Brands, "Reveal" layout
- * (design variant br3). Both tabs share one tile: a 3:4.6 photo with a
+ * (design variant br3). Both tabs share one tile: a 3:4 photo with a
  * brand-colour wash, an outlined index number, a small mono label, the brand
  * name, a description that is revealed on hover (always visible at <=1100px)
  * and an accent bar that grows on hover. Operating is a 6-column row in the
@@ -117,7 +118,7 @@ function RevealTileBody({ num, label, accent, image, description, title, sizes }
 }
 
 const TILE_CLASS =
-  "group relative block aspect-[3/4.6] overflow-hidden rounded-[4px] border border-white/10 bg-[#141210] transition-transform duration-500 hover:-translate-y-1.5 focus-visible:-translate-y-1.5 max-[480px]:aspect-[5/3]"
+  "group relative block aspect-[3/4] overflow-hidden rounded-[4px] border border-white/10 bg-[#141210] transition-transform duration-500 hover:-translate-y-1.5 focus-visible:-translate-y-1.5 max-[480px]:aspect-[5/3]"
 
 const GRID_BASE = "grid gap-[10px] max-[1100px]:grid-cols-3 max-[720px]:grid-cols-2 max-[480px]:grid-cols-1"
 
@@ -132,7 +133,7 @@ export function ClaudeHomeBrands() {
               <span className="text-[#c9a869]">(03)</span>
               <span>ELEVEN PLATFORMS. ONE COMPANY.</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8]">Our Brands</h2>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88]"><GoldShineText>Our Brands</GoldShineText></h2>
           </div>
           <div className="flex flex-wrap items-center gap-5">
             <div className="flex overflow-hidden rounded-full border border-white/15">

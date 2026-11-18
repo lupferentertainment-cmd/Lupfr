@@ -17,6 +17,9 @@ describe("/about page (owner 2026-11-17: About + Team moved off the home page)",
     const page = read("app", "about", "page.tsx")
     expect(page).toContain("<h1")
     for (const tag of ["<ClaudeHomeNavigation />", "<About />", "<ClaudeHomeCrew />", "<Footer />"]) expect(page).toContain(tag)
+    // Round 16: Past Artists lives here, after the Partiful band and before the Footer.
+    expect(page.indexOf("<ClaudeHomeArtists />")).toBeGreaterThan(page.indexOf("<ClaudeHomePartifulBand />"))
+    expect(page.indexOf("<Footer />")).toBeGreaterThan(page.indexOf("<ClaudeHomeArtists />"))
   })
 
   it("is linked from the footer and the subpage nav, and the Team anchor still exists", () => {

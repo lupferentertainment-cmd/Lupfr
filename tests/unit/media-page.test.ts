@@ -23,3 +23,13 @@ describe("/media page (owner 2026-11-18: Media moved off the home page, Follow t
     expect(read("components", "navigation.tsx")).toContain('{ name: "Media", href: "/media" }')
   })
 })
+
+describe("home section headings (owner 2026-11-18: every header has the gold look)", () => {
+  it("wraps the h2 of Services, Experiences, Brands and Start Planning in GoldShineText", () => {
+    for (const f of ["claude-home-services", "claude-home-experiences", "claude-home-brands", "start-planning"]) {
+      const src = read("components", `${f}.tsx`)
+      expect(src, f).toContain('import { GoldShineText } from "@/components/gold-shine-text"')
+      expect(src, f).toMatch(/<h2[^>]*>\s*<GoldShineText>/)
+    }
+  })
+})

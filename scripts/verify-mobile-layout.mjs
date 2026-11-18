@@ -37,9 +37,9 @@ const WIDTHS = [320, 390, 430]
 const ROUTES = ["/", "/about", "/events", "/artists", "/brands", "/services", "/media"]
 
 /** Home sections whose content column must sit symmetrically in the viewport. */
-const SECTION_IDS = ["brands", "events", "services", "artists", "contact"]
+const SECTION_IDS = ["brands", "events", "services", "contact"]
 /** 2026-11-17: About + Our Team moved to /about. */
-const SECTION_IDS_BY_ROUTE = { "/": SECTION_IDS, "/about": ["about", "team"] }
+const SECTION_IDS_BY_ROUTE = { "/": SECTION_IDS, "/about": ["about", "team", "artists"] }
 
 /** Gutter asymmetry we treat as a defect, in CSS px. */
 const GUTTER_TOLERANCE_PX = 2

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { About } from "@/components/about"
+import { ClaudeHomeArtists } from "@/components/claude-home-artists"
 import { ClaudeHomeCrew } from "@/components/claude-home-crew"
 import { ClaudeHomeNavigation } from "@/components/claude-home-navigation"
 import { ClaudeHomePartifulBand } from "@/components/claude-home-partiful-band"
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 // 2026-11-17: About + Our Team moved off the home page onto their own route. The top nav keeps the
 // About and Team tabs (About -> /about, Team -> /about#team). Start Planning stays on the home page.
+// Round 16 (2026-11-18): Past Artists moved here from the home page (after the Partiful band, before the Footer).
 export default function AboutPage() {
   return (
     <main className="relative min-h-screen overflow-x-clip bg-[#070605]">
@@ -26,6 +28,7 @@ export default function AboutPage() {
       </div>
       <ClaudeHomeCrew />
       <ClaudeHomePartifulBand />
+      <ClaudeHomeArtists />
       <Footer />
     </main>
   )

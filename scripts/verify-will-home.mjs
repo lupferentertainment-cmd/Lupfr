@@ -94,11 +94,9 @@ async function main() {
       failures.push("#past-events section still renders on the landing page")
     }
 
-    await _scrollUntil(page, "#artists")
-    // The home "Past Artists" wall is the design's fixed 7-name pick (round 4),
-    // not the full roster, so ASTRD is not expected here; PLS&TY leads the wall.
-    if ((await page.locator("#artists").getByRole("heading", { name: "PLS&TY" }).count()) === 0) {
-      failures.push("PLS&TY missing from the Past Artists wall")
+    // Round 16 (2026-11-18): Past Artists moved to /about (checked below); the home page no longer has #artists.
+    if ((await page.locator("#artists").count()) > 0) {
+      failures.push("#artists still renders on the landing page (it lives on /about now)")
     }
 
     // 2026-11-17: About + Our Team + the Partiful band moved to /about; the home page no longer has #team.
@@ -112,6 +110,12 @@ async function main() {
       await aboutPage.getByText(/Backed by Partiful/i).first().waitFor({ state: "visible", timeout: 15000 })
     } catch {
       failures.push("Partiful announcement missing under Team on /about")
+    }
+    // The Past Artists wall is the design's fixed 7-name pick (round 4), not the full roster; PLS&TY leads it.
+    try {
+      await aboutPage.locator("#artists").getByRole("heading", { name: "PLS&TY" }).waitFor({ state: "attached", timeout: 15000 })
+    } catch {
+      failures.push("PLS&TY missing from the Past Artists wall on /about")
     }
     await aboutPage.close()
 

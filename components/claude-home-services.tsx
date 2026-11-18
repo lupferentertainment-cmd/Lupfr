@@ -1,5 +1,6 @@
 "use client"
 
+import { GoldShineText } from "@/components/gold-shine-text"
 import Image from "next/image"
 import Link from "next/link"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
@@ -40,8 +41,8 @@ export function ClaudeHomeServices() {
               <span className="text-[#c9a869]">(01)</span>
               <span>SERVICES</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] tracking-[0.005em] text-[#fdf6e8]">
-              Idea to <span className="text-[#e8caa0]">execution.</span>
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] tracking-[0.005em]">
+              <GoldShineText>Idea to execution.</GoldShineText>
             </h2>
             <p className="mt-[18px] text-[clamp(15px,1.3vw,18px)] leading-[1.55] text-[#e6e0d4]">All an event needs in one place.</p>
           </div>

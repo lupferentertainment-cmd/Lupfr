@@ -1,5 +1,6 @@
 "use client"
 
+import { GoldShineText } from "@/components/gold-shine-text"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { isValidEmail, sanitizeEmail, sanitizeName } from "@/lib/contact-input"
@@ -369,8 +370,8 @@ export function StartPlanning() {
               <span className="text-[#c9a869]">(04)</span>
               <span>INQUIRIES</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(46px,5.4vw,80px)] font-extrabold uppercase leading-[0.88] text-[#fdf6e8] max-[640px]:text-[44px]">
-              Start <span className="text-[#e8caa0]">planning.</span>
+            <h2 className="m-0 font-condensed text-[clamp(46px,5.4vw,80px)] font-extrabold uppercase leading-[0.88] max-[640px]:text-[44px]">
+              <GoldShineText>Start planning.</GoldShineText>
             </h2>
             <p className="mt-[18px] max-w-[40ch] text-pretty text-[15.5px] leading-[1.6] text-[#d9d3c6] max-[640px]:mt-3 max-[640px]:text-[14.5px]">
               Tell us what you have in mind. Estimates and “not sure yet” are welcome. It takes about two minutes.

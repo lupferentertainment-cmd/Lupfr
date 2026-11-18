@@ -210,10 +210,10 @@ describe("ClaudeHomeBrands' v5 Reveal responsive grid", () => {
     expect(grid).toHaveClass("grid-cols-6", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1", "gap-[10px]")
   })
 
-  it("gives every tile the 3:4.6 shape, becoming 5:3 at <=480px", () => {
+  it("gives every tile the 3:4 shape, becoming 5:3 at <=480px", () => {
     const { container } = render(<ClaudeHomeBrands />)
     for (const tile of container.querySelectorAll("a[href^='/brands/']")) {
-      expect(tile).toHaveClass("aspect-[3/4.6]", "max-[480px]:aspect-[5/3]", "rounded-[4px]")
+      expect(tile).toHaveClass("aspect-[3/4]", "max-[480px]:aspect-[5/3]", "rounded-[4px]")
     }
   })
 
@@ -224,7 +224,7 @@ describe("ClaudeHomeBrands' v5 Reveal responsive grid", () => {
     const grid = screen.getByTestId("brands-grid-platform")
     expect(grid).toHaveClass("grid-cols-5", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1")
     expect(grid.children).toHaveLength(5)
-    for (const tile of grid.children) expect(tile).toHaveClass("aspect-[3/4.6]")
+    for (const tile of grid.children) expect(tile).toHaveClass("aspect-[3/4]")
   })
 
   it("turns the small labels into off-white dark pills at <=900px and drops the brand wash at <=1100px", () => {

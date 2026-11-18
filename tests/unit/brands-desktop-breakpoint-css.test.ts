@@ -39,8 +39,8 @@ describe("v5 responsive cascade order", () => {
     expectAscending(["grid-cols-6", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1"])
   })
 
-  it("Our Brands: the 3:4.6 tile becomes 5:3 at <=480px; the photo filter and revealed copy relax at <=1100px", () => {
-    expectAscending(["aspect-[3/4.6]", "max-[480px]:aspect-[5/3]"])
+  it("Our Brands: the 3:4 tile becomes 5:3 at <=480px; the photo filter and revealed copy relax at <=1100px", () => {
+    expectAscending(["aspect-[3/4]", "max-[480px]:aspect-[5/3]"])
     expectAscending(["brightness-[.72]", "max-[1100px]:brightness-100"])
     expectAscending(["max-h-0", "max-[1100px]:max-h-[90px]"])
     expectAscending(["max-[1100px]:max-h-[90px]", "max-[480px]:text-[30px]"])
