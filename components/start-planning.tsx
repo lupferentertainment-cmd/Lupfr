@@ -25,22 +25,34 @@ const STEP_NAMES = ["Occasion", "Details", "Experience", "Budget & timing", "Con
 const TOTAL_STEPS = STEP_NAMES.length
 const DONE_STEP = TOTAL_STEPS + 1
 
-const OCCASION_TILES: Array<[label: string, photo: string]> = [
+/** Round 16 (owner 2026-11-19): six occasions in this order. The third value is the photo's `object-position`
+ *  (the yacht shot is cropped toward the top so faces stay in frame). Greek life uses a placeholder event photo. */
+const OCCASION_TILES: Array<[label: string, photo: string, position?: string]> = [
   ["Private celebration", "/services/private-events-2026-ballroom.webp"],
+  ["Yacht event", "/events/seaside_series_dj.webp", "50% 12%"],
+  ["Greek life event", "/events/seaside_002_recap.webp"],
   ["Corporate event", "/services/event-production-2026.webp"],
   ["Brand activation", "/services/brand-partnerships-2026.webp"],
-  ["Yacht event", "/events/seaside_series_dj.webp"],
   ["Venue programming", "/brands/skiside-gateway-arrival.webp"],
-  ["Not sure yet", "/events/bal_masque_acrobat.webp"],
 ]
-/** Round 16 (owner 2026-11-19): after the occasion, offer the four experience brands (plus "Open to ideas"). */
-const BRAND_OPTIONS: Array<[label: string, sub: string]> = [
-  ["SEA//SIDE", "On the water"],
-  ["IN//SIDE", "Indoors"],
-  ["OUT//SIDE", "Outdoors"],
-  ["SKI//SIDE", "Mountain"],
-  ["Open to ideas", "Not sure yet"],
+/** Round 16: after the occasion, the four experience brands as cards (accent colors from data/brands.yml). */
+const BRAND_CARDS: Array<[label: string, sub: string, blurb: string, accent: string]> = [
+  ["SEA//SIDE", "On the water", "Yachts, sailings and offshore nights.", "#6fb8c9"],
+  ["IN//SIDE", "Indoors", "Warehouses, old buildings, one-off rooms.", "#e8e4da"],
+  ["OUT//SIDE", "Outdoors", "Open-air sets and park takeovers.", "#8aa878"],
+  ["SKI//SIDE", "Mountain", "Apres-ski style events on the slopes.", "#5b8ee6"],
 ]
+const OPEN_TO_IDEAS = "Open to ideas"
+const TIME_SHORT: Record<string, string> = { Daytime: "Day", "Late night": "Late", "Not sure yet": "Open" }
+const SERVICE_GROUPS: Array<[title: string, items: string[]]> = [
+  ["Music & hosting", ["DJs & live music", "Sound & lighting", "Hosts & staffing"]],
+  ["Look & feel", ["Decor & theme", "Photo & video", "Food & bar", "Branding & signage"]],
+  ["Logistics", ["Venue sourcing", "Transportation"]],
+]
+const FULL_SERVICE = "Full event management"
+const BUDGET_STOPS = ["Under $10K", "$10K–$25K", "$25K–$50K", "$50K–$100K", "$100K+"]
+const BUDGET_SHORT = ["Under $10K", "$10–25K", "$25–50K", "$50–100K", "$100K+"]
+const NOT_DECIDED = "Not decided"
 const GUESTS: Array<[string, string]> = [
   ["Under 50", "INTIMATE"],
   ["50–150", "GATHERING"],
@@ -112,11 +124,11 @@ const ICONS: Record<string, string> = {
   "Just exploring": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM15.5 8.5l-2 5-5 2 2-5z",
 }
 
-const LABEL = "mb-2.5 block font-mono text-[10px] tracking-[0.16em] text-[#a39b8d]"
+const LABEL = "mb-2.5 max-[640px]:mb-1.5 block font-mono text-[10px] tracking-[0.16em] text-[#a39b8d]"
 const INPUT =
-  "box-border w-full rounded-[3px] border border-white/12 bg-white/[0.035] px-[15px] py-3.5 font-sans text-[15px] text-[#f3efe6] outline-none [color-scheme:dark] placeholder:text-[#6f685c] focus:border-[#c9a869]/70"
+  "box-border w-full rounded-[3px] border border-white/12 bg-white/[0.035] px-[15px] py-3.5 max-[640px]:py-2.5 max-[640px]:text-[14px] font-sans text-[15px] text-[#f3efe6] outline-none [color-scheme:dark] placeholder:text-[#6f685c] focus:border-[#c9a869]/70"
 const STEP_H3 = "m-0 font-condensed text-[clamp(30px,3vw,42px)] font-extrabold uppercase leading-[0.95] text-[#f3efe6] max-[640px]:text-[30px]"
-const STEP_SUB = "m-0 text-[14.5px] leading-[1.5] text-[#bdb6a9]"
+const STEP_SUB = "m-0 text-[14.5px] leading-[1.5] text-[#bdb6a9] max-[640px]:hidden"
 
 interface Brief {
   occasion: string | null
@@ -241,44 +253,118 @@ function OptionIcon({ label, on }: { label: string; on: boolean }) {
   )
 }
 
-function Chip({ label, sub, on, onPick }: { label: string; sub?: string; on: boolean; onPick: () => void }) {
+function Chip({ label, on, onPick }: { label: string; on: boolean; onPick: () => void }) {
   return (
     <button
       type="button"
-      aria-label={label}
       aria-pressed={on}
       onClick={onPick}
-      className={`inline-flex items-center gap-2 rounded-full border px-4 py-[11px] text-left font-sans text-[14px] leading-none transition-all duration-200 max-[640px]:min-h-10 max-[640px]:rounded-[4px] max-[640px]:px-3 max-[640px]:py-2 max-[640px]:py-3 max-[640px]:text-[13.5px] max-[640px]:leading-[1.2] ${
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-[11px] text-left font-sans text-[14px] leading-none transition-all duration-200 max-[640px]:min-h-10 max-[640px]:px-3.5 ${
         on ? "border-[#c9a869] bg-[rgba(201,168,105,0.14)] text-[#fdf6e8]" : "border-white/12 bg-white/[0.02] text-[#d9d3c6]"
       }`}
     >
-      <span className={sub ? "flex max-[640px]:hidden" : "flex"}>
-        <OptionIcon label={label} on={on} />
-      </span>
-      <span className="flex min-w-0 flex-col gap-1">
-        <span>{label}</span>
-        {sub ? <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#8f887c] max-[640px]:hidden">{sub}</span> : null}
-      </span>
+      <OptionIcon label={label} on={on} />
+      <span className="min-w-0">{label}</span>
     </button>
   )
 }
 
-function ChipGroup({ children, cols = 2 }: { children: React.ReactNode; cols?: 2 | 3 }) {
-  return <div className={`flex flex-wrap gap-2 max-[640px]:grid max-[640px]:gap-1.5 ${cols === 3 ? "max-[640px]:grid-cols-3" : "max-[640px]:grid-cols-2"}`}>{children}</div>
+function ChipGroup({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-wrap gap-2 max-[640px]:gap-1.5">{children}</div>
 }
 
-function Tile({ label, sub, on, onPick }: { label: string; sub: string; on: boolean; onPick: () => void }) {
+/** "SEA//SIDE" with the // in the brand's accent colour (tight, unlike BrandSlashText's spaced divider). */
+function SlashName({ text, color }: { text: string; color: string }) {
+  const [a = "", b = ""] = text.split("//")
+  return (
+    <>
+      {a}
+      <span aria-hidden className="mx-[0.04em] inline-block -skew-x-12" style={{ color }}>
+        {"//"}
+      </span>
+      {b}
+    </>
+  )
+}
+
+/** A range slider whose stops are also buttons, so the choice is never "unset but visually selected". */
+function StopSlider({
+  label,
+  stops,
+  shortStops,
+  value,
+  onPick,
+  disabled,
+}: {
+  label: string
+  stops: readonly string[]
+  shortStops?: readonly string[]
+  value: number | null
+  onPick: (index: number) => void
+  disabled?: boolean
+}) {
+  return (
+    <div className={`flex flex-col gap-2 transition-opacity duration-200 ${disabled ? "pointer-events-none opacity-35" : ""}`}>
+      <input
+        type="range"
+        aria-label={label}
+        min={0}
+        max={stops.length - 1}
+        step={1}
+        disabled={disabled}
+        value={value ?? Math.floor((stops.length - 1) / 2)}
+        onChange={(e) => onPick(Number(e.target.value))}
+        onClick={(e) => onPick(Number(e.currentTarget.value))}
+        className="m-0 w-full cursor-pointer accent-[#c9a869]"
+      />
+      <div className="flex justify-between gap-1">
+        {stops.map((stop, i) => (
+          <button
+            key={stop}
+            type="button"
+            aria-label={stop}
+            aria-pressed={value === i}
+            disabled={disabled}
+            onClick={() => onPick(i)}
+            className={`cursor-pointer border-0 bg-transparent p-0 py-1 font-mono text-[9.5px] uppercase tracking-[0.06em] transition-colors max-[640px]:text-[8.5px] max-[640px]:tracking-normal ${value === i ? "text-[#e8caa0]" : "text-[#8f887c]"}`}
+          >
+            {shortStops?.[i] ?? stop}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function CheckRow({ label, on, onPick, disabled }: { label: string; on: boolean; onPick: () => void; disabled?: boolean }) {
   return (
     <button
       type="button"
       aria-pressed={on}
+      disabled={disabled}
       onClick={onPick}
-      className={`flex min-w-0 flex-col gap-1.5 rounded-[3px] border px-4 pb-3.5 pt-4 text-left transition-all duration-200 max-[640px]:px-3 max-[640px]:pb-3 max-[640px]:pt-3.5 ${
-        on ? "border-[#c9a869] bg-[rgba(201,168,105,0.12)]" : "border-white/10 bg-white/[0.02]"
+      className={`flex items-center gap-2.5 rounded-[3px] border px-3 py-2.5 text-left font-sans text-[14px] leading-tight transition-colors duration-200 max-[640px]:gap-2 max-[640px]:px-2.5 max-[640px]:py-2 max-[640px]:text-[12.5px] ${
+        on ? "border-[#c9a869] bg-[rgba(201,168,105,0.1)] text-[#f3efe6]" : "border-white/10 bg-white/[0.02] text-[#bdb6a9]"
       }`}
     >
-      <span className={`whitespace-nowrap font-condensed text-2xl font-extrabold uppercase leading-none max-[640px]:text-[21px] ${on ? "text-[#e8caa0]" : "text-[#f3efe6]"}`}>{label}</span>
-      <span className="font-mono text-[9px] tracking-[0.14em] text-[#8f887c]">{sub}</span>
+      <span
+        aria-hidden
+        className={`flex size-4 flex-none items-center justify-center rounded-[3px] border text-[11px] text-[#1a1408] max-[640px]:size-3.5 ${on ? "border-[#c9a869] bg-[#c9a869]" : "border-white/20"}`}
+      >
+        {on ? "✓" : ""}
+      </span>
+      {label}
+    </button>
+  )
+}
+
+function Switch({ on, label, onToggle }: { on: boolean; label: string; onToggle: () => void }) {
+  return (
+    <button type="button" role="switch" aria-checked={on} onClick={onToggle} className="flex cursor-pointer items-center gap-2.5 whitespace-nowrap border-0 bg-transparent p-0 text-[13.5px] text-[#d9d3c6]">
+      <span className={`relative h-[18px] w-[30px] flex-none rounded-full transition-colors duration-200 ${on ? "bg-[#c9a869]" : "bg-white/15"}`}>
+        <span className={`absolute top-0.5 size-3.5 rounded-full transition-[left] duration-200 ${on ? "left-3.5 bg-[#1a1408]" : "left-0.5 bg-[#f3efe6]"}`} />
+      </span>
+      {label}
     </button>
   )
 }
@@ -292,6 +378,8 @@ export function StartPlanning() {
   const [brief, setBrief] = useState<Brief>(EMPTY_BRIEF)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [venueOpen, setVenueOpen] = useState(false)
+  const [visionOpen, setVisionOpen] = useState(false)
 
   function patch(next: Partial<Brief>) {
     setBrief((b) => ({ ...b, ...next }))
@@ -312,6 +400,7 @@ export function StartPlanning() {
     return () => window.removeEventListener(PRESET_INQUIRY_EVENT, onPreset)
   }, [])
 
+  const full = brief.services.includes(FULL_SERVICE)
   const complete = stepComplete(brief)
   const values = railValues(brief)
   const canNext = step <= TOTAL_STEPS ? complete[step - 1] : false
@@ -446,10 +535,10 @@ export function StartPlanning() {
               <div key="s1" className="lp-pl-step flex flex-col gap-5 max-[640px]:gap-3">
                 <div className="flex flex-col gap-2">
                   <h3 className={STEP_H3}>What&apos;s the occasion?</h3>
-                  <p className={`${STEP_SUB} max-[640px]:hidden`}>Pick the closest fit. We&apos;ll shape the rest together.</p>
+                  <p className={STEP_SUB}>Pick the closest fit. We&apos;ll shape the rest together.</p>
                 </div>
                 <div className="grid grid-cols-3 gap-2 max-[640px]:grid-cols-2" data-testid="occasion-tiles">
-                  {OCCASION_TILES.map(([label, photo]) => {
+                  {OCCASION_TILES.map(([label, photo, position]) => {
                     const on = brief.occasion === label
                     return (
                       <button
@@ -461,7 +550,7 @@ export function StartPlanning() {
                           on ? "border-[#c9a869] shadow-[0_0_0_1px_#c9a869,0_10px_30px_rgba(201,168,105,0.18)]" : "border-white/10"
                         }`}
                       >
-                        <Image src={photo} alt="" fill sizes="(max-width: 640px) 45vw, 220px" className={`object-cover transition-opacity duration-300 ${on ? "opacity-95" : "opacity-50"}`} />
+                        <Image src={photo} alt="" fill sizes="(max-width: 640px) 45vw, 220px" className={`object-cover transition-opacity duration-300 ${on ? "opacity-95" : "opacity-50"}`} style={position ? { objectPosition: position } : undefined} />
                         <span aria-hidden className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,7,6,0.92)_10%,rgba(8,7,6,0.1)_75%)]" />
                         <span
                           aria-hidden
@@ -475,92 +564,177 @@ export function StartPlanning() {
                   })}
                 </div>
                 <div>
-                  <span className={LABEL}>WHICH LUPFR BRAND?</span>
-                  <ChipGroup cols={3}>
-                    {BRAND_OPTIONS.map(([label, sub]) => (
-                      <Chip key={label} label={label} sub={sub} on={brief.brands.includes(label)} onPick={() => patch({ brands: toggle(brief.brands, label) })} />
-                    ))}
-                  </ChipGroup>
+                  <span className={LABEL}>WHICH LUPFR BRAND? PICK ANY</span>
+                  <div className="grid grid-cols-4 gap-2 max-[900px]:grid-cols-2 max-[640px]:gap-1.5" data-testid="brand-cards">
+                    {BRAND_CARDS.map(([label, sub, blurb, accent]) => {
+                      const on = brief.brands.includes(label)
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          aria-label={label}
+                          aria-pressed={on}
+                          onClick={() => patch({ brands: toggle(brief.brands, label) })}
+                          style={{ ["--c" as string]: accent }}
+                          className={`group relative flex min-h-[112px] flex-col gap-1.5 overflow-hidden rounded-[3px] border p-4 text-left transition-[border-color,box-shadow] duration-200 max-[640px]:min-h-0 max-[640px]:gap-0.5 max-[640px]:px-3 max-[640px]:py-2.5 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--c)_10%,transparent),transparent_70%),#15130f] ${
+                            on ? "border-[var(--c)] shadow-[0_0_0_1px_var(--c),0_12px_30px_color-mix(in_srgb,var(--c)_22%,transparent)]" : "border-white/10"
+                          }`}
+                        >
+                          <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--c)] max-[640px]:text-[8.5px]">{sub}</span>
+                          <span className="font-condensed text-[26px] font-extrabold uppercase leading-[0.95] text-[#f3efe6] max-[640px]:text-[21px]">
+                            <SlashName text={label} color={accent} />
+                          </span>
+                          <span className="text-[12px] leading-[1.4] text-[#bdb6a9] max-[640px]:hidden">{blurb}</span>
+                          <span aria-hidden className={`absolute inset-x-0 bottom-0 h-0.5 origin-left bg-[var(--c)] transition-transform duration-300 ${on ? "scale-x-100" : "scale-x-[.18]"}`} />
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <button
+                    type="button"
+                    aria-pressed={brief.brands.includes(OPEN_TO_IDEAS)}
+                    onClick={() => patch({ brands: toggle(brief.brands, OPEN_TO_IDEAS) })}
+                    className={`mt-2.5 cursor-pointer border-0 border-b border-dashed bg-transparent px-1 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] max-[640px]:mt-1 ${brief.brands.includes(OPEN_TO_IDEAS) ? "border-[#c9a869] text-[#e8caa0]" : "border-white/25 text-[#bdb6a9]"}`}
+                  >
+                    Not sure yet. Open to ideas
+                  </button>
                 </div>
               </div>
             ) : null}
 
             {step === 2 ? (
-              <div key="s2" className="lp-pl-step flex flex-col gap-[26px] max-[640px]:gap-[22px]">
+              <div key="s2" className="lp-pl-step flex flex-col gap-5 max-[640px]:gap-3">
                 <div className="flex flex-col gap-2">
                   <h3 className={STEP_H3}>The details</h3>
                   <p className={STEP_SUB}>A rough idea is plenty. A date window works too.</p>
                 </div>
-                <div>
-                  <span className={LABEL}>EXPECTED GUESTS</span>
-                  <div className="grid grid-cols-4 gap-2 max-[640px]:grid-cols-2">
-                    {GUESTS.map(([label, sub]) => (
-                      <Tile key={label} label={label} sub={sub} on={brief.guests === label} onPick={() => patch({ guests: brief.guests === label ? null : label })} />
-                    ))}
+                <div className="grid grid-cols-2 rounded-[4px] border border-white/10 max-[640px]:grid-cols-1">
+                  <div className="flex min-w-0 flex-col gap-5 p-5 max-[640px]:gap-3 max-[640px]:p-3.5">
+                    <h4 className="m-0 flex items-baseline gap-2.5 font-condensed text-[20px] font-extrabold uppercase leading-none text-[#e8caa0] max-[640px]:text-[17px]">
+                      Who &amp; where <span className="font-mono text-[9px] font-normal tracking-[0.16em] text-[#8f887c] max-[640px]:hidden">2 QUESTIONS</span>
+                    </h4>
+                    <div className="flex flex-col gap-2.5 max-[640px]:gap-1.5">
+                      <span className={`${LABEL} mb-0`}>EXPECTED GUESTS</span>
+                      <div data-testid="guest-readout" className="flex items-baseline gap-2.5 font-condensed text-[30px] font-extrabold uppercase leading-none text-[#f3efe6] max-[640px]:text-[24px]">
+                        {brief.guests ?? "Slide to choose"}
+                        {brief.guests ? <span className="font-mono text-[9.5px] font-normal tracking-[0.14em] text-[#c9a869]">{GUESTS.find(([g]) => g === brief.guests)?.[1]}</span> : null}
+                      </div>
+                      <StopSlider
+                        label="Expected guests"
+                        stops={GUESTS.map(([g]) => g)}
+                        value={brief.guests ? GUESTS.findIndex(([g]) => g === brief.guests) : null}
+                        onPick={(i) => patch({ guests: GUESTS[i]![0] })}
+                      />
+                    </div>
+                    <label className="block">
+                      <span className={LABEL}>CITY OR AREA</span>
+                      <select value={brief.city ?? ""} onChange={(e) => patch({ city: e.target.value || null })} className={INPUT}>
+                        <option value="" disabled>
+                          Choose a city
+                        </option>
+                        {CITIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-5 border-l border-white/10 p-5 max-[640px]:gap-3 max-[640px]:border-l-0 max-[640px]:border-t max-[640px]:p-3.5">
+                    <h4 className="m-0 flex items-baseline gap-2.5 font-condensed text-[20px] font-extrabold uppercase leading-none text-[#e8caa0] max-[640px]:text-[17px]">
+                      When <span className="font-mono text-[9px] font-normal tracking-[0.16em] text-[#8f887c] max-[640px]:hidden">DATE + TIME</span>
+                    </h4>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
+                      <label className="block min-w-0">
+                        <span className={LABEL}>DATE</span>
+                        <input type="date" value={brief.date} onChange={(e) => patch({ date: e.target.value })} className={INPUT} />
+                      </label>
+                      <div className="pb-3.5">
+                        <Switch on={brief.flexible} label="Flexible" onToggle={() => patch({ flexible: !brief.flexible })} />
+                      </div>
+                    </div>
+                    <div>
+                      <span className={LABEL}>TIME OF DAY</span>
+                      <div className="grid auto-cols-fr grid-flow-col overflow-hidden rounded-[3px] border border-white/15" data-testid="time-of-day">
+                        {TIMES.map((t) => (
+                          <button
+                            key={t}
+                            type="button"
+                            aria-label={t}
+                            aria-pressed={brief.time === t}
+                            onClick={() => patch({ time: brief.time === t ? null : t })}
+                            className={`cursor-pointer border-0 border-r border-white/10 px-1 py-2.5 font-sans text-[12.5px] last:border-r-0 ${brief.time === t ? "bg-[rgba(201,168,105,0.16)] text-[#e8caa0]" : "bg-transparent text-[#bdb6a9]"}`}
+                          >
+                            {TIME_SHORT[t] ?? t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    {venueOpen || brief.venue ? (
+                      <label className="block">
+                        <span className={LABEL}>VENUE (OPTIONAL)</span>
+                        <input value={brief.venue} onChange={(e) => patch({ venue: e.target.value })} placeholder="Venue name or area" className={INPUT} />
+                      </label>
+                    ) : (
+                      <button type="button" onClick={() => setVenueOpen(true)} className="cursor-pointer self-start border-0 bg-transparent p-0 text-left font-mono text-[10.5px] uppercase tracking-[0.12em] text-[#c9a869]">
+                        + Already have a venue?
+                      </button>
+                    )}
                   </div>
                 </div>
-                <div>
-                  <span className={LABEL}>CITY OR AREA</span>
-                  <ChipGroup>
-                    {CITIES.map((c) => (
-                      <Chip key={c} label={c} on={brief.city === c} onPick={() => patch({ city: brief.city === c ? null : c })} />
-                    ))}
-                  </ChipGroup>
-                </div>
-                <div className="grid grid-cols-2 items-end gap-3.5 max-[640px]:grid-cols-1">
-                  <label className="block">
-                    <span className={LABEL}>DATE</span>
-                    <input type="date" value={brief.date} onChange={(e) => patch({ date: e.target.value })} className={INPUT} />
-                  </label>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={brief.flexible}
-                    onClick={() => patch({ flexible: !brief.flexible })}
-                    className="flex items-center gap-2.5 rounded-[3px] border border-white/12 bg-transparent px-[15px] py-[13px]"
-                  >
-                    <span className={`relative h-[18px] w-[30px] flex-none rounded-full transition-colors duration-200 ${brief.flexible ? "bg-[#c9a869]" : "bg-white/15"}`}>
-                      <span className={`absolute top-0.5 size-3.5 rounded-full bg-[#f3efe6] transition-[left] duration-200 ${brief.flexible ? "left-3.5" : "left-0.5"}`} />
-                    </span>
-                    <span className="text-[14px] text-[#d9d3c6]">My dates are flexible</span>
-                  </button>
-                </div>
-                <div>
-                  <span className={LABEL}>TIME OF DAY</span>
-                  <ChipGroup>
-                    {TIMES.map((t) => (
-                      <Chip key={t} label={t} on={brief.time === t} onPick={() => patch({ time: brief.time === t ? null : t })} />
-                    ))}
-                  </ChipGroup>
-                </div>
-                <label className="block">
-                  <span className={LABEL}>VENUE (OPTIONAL)</span>
-                  <input value={brief.venue} onChange={(e) => patch({ venue: e.target.value })} placeholder="Already booked? Tell us where. Otherwise, any ideas." className={INPUT} />
-                </label>
               </div>
             ) : null}
 
             {step === 3 ? (
-              <div key="s3" className="lp-pl-step flex flex-col gap-[26px] max-[640px]:gap-[22px]">
+              <div key="s3" className="lp-pl-step flex flex-col gap-5 max-[640px]:gap-3">
                 <div className="flex flex-col gap-2">
                   <h3 className={STEP_H3}>The experience</h3>
                   <p className={STEP_SUB}>What should we handle? Select all that apply.</p>
                 </div>
-                <ChipGroup>
-                  {SERVICES.map((s) => (
-                    <Chip key={s} label={s} on={brief.services.includes(s)} onPick={() => patch({ services: toggle(brief.services, s) })} />
-                  ))}
-                </ChipGroup>
-                <label className="block">
-                  <span className={LABEL}>WHAT WOULD MAKE THIS A GREAT EVENT?</span>
-                  <textarea
-                    rows={4}
-                    value={brief.vision}
-                    onChange={(e) => patch({ vision: e.target.value })}
-                    placeholder="The atmosphere, guest experience, must-haves, inspiration links..."
-                    className={`${INPUT} resize-y leading-normal`}
-                  />
-                </label>
+                <div className="flex flex-col gap-4 max-[640px]:gap-2.5">
+                  <button
+                    type="button"
+                    aria-pressed={full}
+                    onClick={() => patch({ services: full ? [] : [FULL_SERVICE] })}
+                    className={`flex w-full cursor-pointer items-center justify-between gap-4 rounded-[4px] border px-[18px] py-4 text-left transition-colors duration-200 max-[640px]:px-3.5 max-[640px]:py-3 ${
+                      full ? "border-[#c9a869] bg-[rgba(201,168,105,0.22)]" : "border-white/15 bg-[linear-gradient(100deg,rgba(201,168,105,0.12),transparent)]"
+                    }`}
+                  >
+                    <span className="flex flex-col gap-1">
+                      <span className="font-condensed text-[22px] font-extrabold uppercase leading-none text-[#f3efe6] max-[640px]:text-[19px]">Run the whole event</span>
+                      <span className="text-[13px] text-[#bdb6a9] max-[640px]:hidden">Full event management. We handle everything below.</span>
+                    </span>
+                    <span aria-hidden className={`relative h-[18px] w-[30px] flex-none rounded-full transition-colors duration-200 ${full ? "bg-[#c9a869]" : "bg-white/15"}`}>
+                      <span className={`absolute top-0.5 size-3.5 rounded-full transition-[left] duration-200 ${full ? "left-3.5 bg-[#1a1408]" : "left-0.5 bg-[#f3efe6]"}`} />
+                    </span>
+                  </button>
+                  <div data-testid="service-groups" className={`grid grid-cols-3 gap-3.5 transition-opacity duration-200 max-[640px]:grid-cols-1 max-[640px]:gap-2.5 ${full ? "pointer-events-none opacity-35" : ""}`}>
+                    {SERVICE_GROUPS.map(([title, items]) => (
+                      <div key={title} className="flex min-w-0 flex-col gap-1.5 border-t-2 border-[#c9a869] pt-3 max-[640px]:grid max-[640px]:grid-cols-2 max-[640px]:pt-2">
+                        <h5 className="m-0 mb-1 font-condensed text-[17px] font-extrabold uppercase leading-none text-[#f3efe6] max-[640px]:col-span-full max-[640px]:mb-0">{title}</h5>
+                        {items.map((item) => (
+                          <CheckRow key={item} label={item} disabled={full} on={brief.services.includes(item)} onPick={() => patch({ services: toggle(brief.services, item) })} />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {visionOpen || brief.vision ? (
+                  <label className="block">
+                    <span className={LABEL}>WHAT WOULD MAKE THIS A GREAT EVENT?</span>
+                    <textarea
+                      rows={3}
+                      value={brief.vision}
+                      onChange={(e) => patch({ vision: e.target.value })}
+                      placeholder="The atmosphere, guest experience, must-haves, inspiration links..."
+                      className={`${INPUT} resize-y leading-normal`}
+                    />
+                  </label>
+                ) : (
+                  <button type="button" onClick={() => setVisionOpen(true)} className="cursor-pointer self-start border-0 bg-transparent p-0 text-left font-mono text-[10.5px] uppercase tracking-[0.12em] text-[#c9a869]">
+                    + Add a vision note (optional)
+                  </button>
+                )}
               </div>
             ) : null}
 
@@ -570,13 +744,21 @@ export function StartPlanning() {
                   <h3 className={STEP_H3}>Budget &amp; timing</h3>
                   <p className={STEP_SUB}>An estimate or “not decided” is fine.</p>
                 </div>
-                <div>
-                  <span className={LABEL}>TOTAL EVENT BUDGET</span>
-                  <div className="grid grid-cols-3 gap-2 max-[640px]:grid-cols-2">
-                    {BUDGETS.map(([label, sub]) => (
-                      <Tile key={label} label={label} sub={sub} on={brief.budget === label} onPick={() => patch({ budget: brief.budget === label ? null : label })} />
-                    ))}
+                <div className="flex flex-col gap-3.5 rounded-[4px] border border-white/10 p-[22px] max-[640px]:p-4">
+                  <span className={`${LABEL} mb-0`}>TOTAL EVENT BUDGET</span>
+                  <div data-testid="budget-readout" className="flex items-baseline gap-2.5 font-condensed text-[30px] font-extrabold uppercase leading-none text-[#f3efe6] max-[640px]:text-[26px]">
+                    {brief.budget ?? "Slide to choose"}
+                    {brief.budget ? <span className="font-mono text-[9.5px] font-normal tracking-[0.14em] text-[#c9a869]">{BUDGETS.find(([b]) => b === brief.budget)?.[1]}</span> : null}
                   </div>
+                  <StopSlider
+                    label="Total event budget"
+                    stops={BUDGET_STOPS}
+                    shortStops={BUDGET_SHORT}
+                    value={BUDGET_STOPS.indexOf(brief.budget ?? "")  >= 0 ? BUDGET_STOPS.indexOf(brief.budget ?? "") : null}
+                    disabled={brief.budget === NOT_DECIDED}
+                    onPick={(i) => patch({ budget: BUDGET_STOPS[i]! })}
+                  />
+                  <Switch on={brief.budget === NOT_DECIDED} label="Not decided yet. Advise me" onToggle={() => patch({ budget: brief.budget === NOT_DECIDED ? null : NOT_DECIDED })} />
                 </div>
                 <div>
                   <span className={LABEL}>WHEN WOULD YOU LIKE TO DECIDE?</span>

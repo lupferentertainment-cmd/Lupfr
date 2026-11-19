@@ -18,25 +18,31 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
+const city = (user: ReturnType<typeof userEvent.setup>, name: string) => user.selectOptions(screen.getByLabelText(/CITY OR AREA/), name)
+const openVision = (user: ReturnType<typeof userEvent.setup>) => user.click(screen.getByRole("button", { name: "+ Add a vision note (optional)" }))
+const openVenue = (user: ReturnType<typeof userEvent.setup>) => user.click(screen.getByRole("button", { name: "+ Already have a venue?" }))
+
 const next = () => screen.getByRole("button", { name: /Continue|Send My Brief|Sending/ })
 
 async function fillThroughStep4(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Yacht event" }))
   await user.click(screen.getByRole("button", { name: "SEA//SIDE" }))
   await user.click(next())
-  await user.click(screen.getByRole("button", { name: /^50–150/ }))
-  await user.click(screen.getByRole("button", { name: "Los Angeles" }))
+  await user.click(screen.getByRole("button", { name: "50–150" }))
+  await city(user, "Los Angeles")
   fireEvent.change(screen.getByLabelText("DATE"), { target: { value: "2027-06-12" } })
-  await user.click(screen.getByRole("switch"))
+  await user.click(screen.getByRole("switch", { name: "Flexible" }))
   await user.click(screen.getByRole("button", { name: "Sunset" }))
+  await openVenue(user)
   await user.type(screen.getByLabelText("VENUE (OPTIONAL)"), "Marina del Rey")
   await user.click(next())
   await user.click(screen.getByRole("button", { name: "DJs & live music" }))
   await user.click(screen.getByRole("button", { name: "Photo & video" }))
   await user.click(screen.getByRole("button", { name: "Hosts & staffing" }))
+  await openVision(user)
   await user.type(screen.getByLabelText("WHAT WOULD MAKE THIS A GREAT EVENT?"), "Golden hour sail")
   await user.click(next())
-  await user.click(screen.getByRole("button", { name: /^\$25K–\$50K/ }))
+  await user.click(screen.getByRole("button", { name: "$25K–$50K" }))
   await user.click(screen.getByRole("button", { name: "1–3 months" }))
   await user.click(next())
 }
@@ -62,20 +68,26 @@ describe("StartPlanning — structure", () => {
     expect(screen.getByTestId("start-planning")).toHaveAttribute("id", "contact")
   })
 
-  it("offers six photo occasion tiles and the four LUPFR brands (plus Open to ideas)", () => {
+  it("offers six photo occasion tiles (no Not sure yet) and four brand cards plus an Open to ideas link", () => {
     render(<StartPlanning />)
     const tiles = within(screen.getByTestId("occasion-tiles")).getAllByRole("button")
     expect(tiles.map((t) => t.textContent?.replace("✓", ""))).toEqual([
       "Private celebration",
+      "Yacht event",
+      "Greek life event",
       "Corporate event",
       "Brand activation",
-      "Yacht event",
       "Venue programming",
-      "Not sure yet",
     ])
-    for (const s of ["SEA//SIDE", "IN//SIDE", "OUT//SIDE", "SKI//SIDE", "Open to ideas"]) {
-      expect(screen.getByRole("button", { name: s })).toBeInTheDocument()
-    }
+    const cards = within(screen.getByTestId("brand-cards")).getAllByRole("button")
+    expect(cards.map((c) => c.getAttribute("aria-label"))).toEqual(["SEA//SIDE", "IN//SIDE", "OUT//SIDE", "SKI//SIDE"])
+    expect(screen.getByRole("button", { name: "Not sure yet. Open to ideas" })).toBeInTheDocument()
+  })
+
+  it("keeps the yacht photo cropped toward the faces", () => {
+    render(<StartPlanning />)
+    const img = screen.getByRole("button", { name: "Yacht event" }).querySelector("img")!
+    expect(img.style.objectPosition).toBe("50% 12%")
   })
 })
 
@@ -90,47 +102,46 @@ describe("StartPlanning — gating and navigation", () => {
     expect(next()).toBeDisabled()
   })
 
-  it("requires guests AND city on step 2, and lets the visitor toggle each choice off", async () => {
+  it("requires guests AND city on step 2, and lets the visitor toggle the optional choices off", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
     await user.click(screen.getByRole("button", { name: "Private celebration" }))
     await user.click(next())
     expect(screen.getByRole("heading", { level: 3, name: "The details" })).toBeInTheDocument()
     expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: /^Under 50/ }))
+    expect(screen.getByTestId("guest-readout")).toHaveTextContent("Slide to choose")
+    await user.click(screen.getByRole("button", { name: "Under 50" }))
+    expect(screen.getByTestId("guest-readout")).toHaveTextContent("Under 50INTIMATE")
     expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: "Miami" }))
+    await city(user, "Miami")
     expect(next()).toBeEnabled()
-    await user.click(screen.getByRole("button", { name: "Miami" }))
-    expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: "Miami" }))
-    await user.click(screen.getByRole("button", { name: /^Under 50/ }))
-    expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: /^Under 50/ }))
+    fireEvent.change(screen.getByRole("slider", { name: "Expected guests" }), { target: { value: "2" } })
+    expect(screen.getByTestId("guest-readout")).toHaveTextContent("150–300BIG NIGHT")
     await user.click(screen.getByRole("button", { name: "Evening" }))
     await user.click(screen.getByRole("button", { name: "Evening" }))
     expect(screen.getByRole("button", { name: "Evening" })).toHaveAttribute("aria-pressed", "false")
-    await user.click(screen.getByRole("switch"))
-    expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true")
+    await user.click(screen.getByRole("switch", { name: "Flexible" }))
+    expect(screen.getByRole("switch", { name: "Flexible" })).toHaveAttribute("aria-checked", "true")
   })
 
   it("accepts either a service or the vision text on step 3, and multi-selects services", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Not sure yet" }))
+    await user.click(screen.getByRole("button", { name: "Corporate event" }))
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^300\+/ }))
-    await user.click(screen.getByRole("button", { name: "New York" }))
+    await user.click(screen.getByRole("button", { name: "300+" }))
+    await city(user, "New York")
     await user.click(next())
     expect(screen.getByRole("heading", { level: 3, name: "The experience" })).toBeInTheDocument()
     expect(next()).toBeDisabled()
+    await openVision(user)
     await user.type(screen.getByLabelText("WHAT WOULD MAKE THIS A GREAT EVENT?"), "  ")
     expect(next()).toBeDisabled()
     await user.type(screen.getByLabelText("WHAT WOULD MAKE THIS A GREAT EVENT?"), "A rooftop night")
     expect(next()).toBeEnabled()
     await user.clear(screen.getByLabelText("WHAT WOULD MAKE THIS A GREAT EVENT?"))
     expect(next()).toBeDisabled()
-    for (const s of ["DJs & live music", "Sound & lighting", "Venue sourcing", "Food & bar", "Decor & theme", "Branding & signage", "Transportation", "Full event management"]) {
+    for (const s of ["DJs & live music", "Sound & lighting", "Venue sourcing", "Food & bar", "Decor & theme", "Branding & signage", "Transportation"]) {
       await user.click(screen.getByRole("button", { name: s }))
     }
     expect(next()).toBeEnabled()
@@ -138,21 +149,50 @@ describe("StartPlanning — gating and navigation", () => {
     expect(screen.getByRole("button", { name: "Food & bar" })).toHaveAttribute("aria-pressed", "false")
   })
 
-  it("requires a budget on step 4 (guests tiles toggle, 'Not decided' counts)", async () => {
+  it("'Run the whole event' replaces the checklist with Full event management and dims the groups", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Not sure yet" }))
+    await user.click(screen.getByRole("button", { name: "Corporate event" }))
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^300\+/ }))
-    await user.click(screen.getByRole("button", { name: "New York" }))
+    await user.click(screen.getByRole("button", { name: "300+" }))
+    await city(user, "New York")
+    await user.click(next())
+    await user.click(screen.getByRole("button", { name: "Food & bar" }))
+    const banner = screen.getByRole("button", { name: /Run the whole event/ })
+    await user.click(banner)
+    expect(banner).toHaveAttribute("aria-pressed", "true")
+    expect(screen.getByRole("button", { name: "Food & bar" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Food & bar" })).toHaveAttribute("aria-pressed", "false")
+    expect(screen.getByTestId("service-groups").className).toContain("opacity-35")
+    expect(next()).toBeEnabled()
+    await user.click(banner)
+    expect(banner).toHaveAttribute("aria-pressed", "false")
+    expect(next()).toBeDisabled()
+  })
+
+  it("requires a budget on step 4 (slider stops, 'Not decided' switch)", async () => {
+    const user = userEvent.setup()
+    render(<StartPlanning />)
+    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(next())
+    await user.click(screen.getByRole("button", { name: "300+" }))
+    await city(user, "New York")
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "Food & bar" }))
     await user.click(next())
     expect(screen.getByRole("heading", { level: 3, name: "Budget & timing" })).toBeInTheDocument()
     expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: /^Not decided/ }))
+    expect(screen.getByTestId("budget-readout")).toHaveTextContent("Slide to choose")
+    fireEvent.change(screen.getByRole("slider", { name: "Total event budget" }), { target: { value: "3" } })
+    expect(screen.getByTestId("budget-readout")).toHaveTextContent("$50K–$100KSIGNATURE")
     expect(next()).toBeEnabled()
-    await user.click(screen.getByRole("button", { name: /^Not decided/ }))
+    const sw = screen.getByRole("switch", { name: "Not decided yet. Advise me" })
+    await user.click(sw)
+    expect(sw).toHaveAttribute("aria-checked", "true")
+    expect(screen.getByRole("slider", { name: "Total event budget" })).toBeDisabled()
+    expect(screen.getByTestId("budget-readout")).toHaveTextContent("Not decided")
+    expect(next()).toBeEnabled()
+    await user.click(sw)
     expect(next()).toBeDisabled()
     await user.click(screen.getByRole("button", { name: "Just exploring" }))
     await user.click(screen.getByRole("button", { name: "Just exploring" }))
@@ -257,15 +297,16 @@ describe("StartPlanning — submission", () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     vi.stubGlobal("fetch", fetchMock)
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Not sure yet" }))
+    await user.click(screen.getByRole("button", { name: "Corporate event" }))
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^300\+/ }))
-    await user.click(screen.getByRole("button", { name: "Somewhere else" }))
-    await user.click(screen.getByRole("switch"))
+    await user.click(screen.getByRole("button", { name: "300+" }))
+    await city(user, "Somewhere else")
+    await user.click(screen.getByRole("switch", { name: "Flexible" }))
     await user.click(next())
+    await openVision(user)
     await user.type(screen.getByLabelText("WHAT WOULD MAKE THIS A GREAT EVENT?"), "Surprise me")
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^Not decided/ }))
+    await user.click(screen.getByRole("switch", { name: "Not decided yet. Advise me" }))
     await user.click(next())
     await user.type(screen.getByLabelText("NAME"), "Sam")
     await user.type(screen.getByLabelText("EMAIL"), "sam@example.com")
@@ -344,7 +385,7 @@ describe("StartPlanning — presetInquiry event (Submit Your Mix)", () => {
       window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
     })
     expect(screen.getByRole("heading", { level: 3, name: "What's the occasion?" })).toBeInTheDocument()
-    // An existing pick is kept; only an empty occasion defaults to "Not sure yet".
+    // An existing pick is kept; only an empty occasion defaults to "Not sure yet" (no tile, shown in the rail).
     expect(screen.getByRole("button", { name: "Corporate event" })).toHaveAttribute("aria-pressed", "true")
   })
 
@@ -354,19 +395,19 @@ describe("StartPlanning — presetInquiry event (Submit Your Mix)", () => {
     act(() => {
       window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
     })
-    expect(screen.getByRole("button", { name: "Not sure yet" })).toHaveAttribute("aria-pressed", "true")
+    expect(within(screen.getByTestId("planning-steps")).getAllByRole("button")[0]).toHaveTextContent("Not sure yet")
     act(() => {
       window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Second ask" }))
       window.dispatchEvent(new CustomEvent("presetInquiry"))
     })
     // Jump to step 5 to read the notes back.
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^50–150/ }))
-    await user.click(screen.getByRole("button", { name: "Los Angeles" }))
+    await user.click(screen.getByRole("button", { name: "50–150" }))
+    await city(user, "Los Angeles")
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "Food & bar" }))
     await user.click(next())
-    await user.click(screen.getByRole("button", { name: /^Not decided/ }))
+    await user.click(screen.getByRole("switch", { name: "Not decided yet. Advise me" }))
     await user.click(next())
     expect((screen.getByLabelText("ANYTHING ELSE? (OPTIONAL)") as HTMLTextAreaElement).value).toBe("Interested in: Submit Your Mix\nInterested in: Second ask")
   })
