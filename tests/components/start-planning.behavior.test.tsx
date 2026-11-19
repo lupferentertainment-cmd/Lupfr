@@ -22,7 +22,7 @@ const next = () => screen.getByRole("button", { name: /Continue|Send My Brief|Se
 
 async function fillThroughStep4(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Yacht event" }))
-  await user.click(screen.getByRole("button", { name: "On the water" }))
+  await user.click(screen.getByRole("button", { name: "SEA//SIDE" }))
   await user.click(next())
   await user.click(screen.getByRole("button", { name: /^50–150/ }))
   await user.click(screen.getByRole("button", { name: "Los Angeles" }))
@@ -62,7 +62,7 @@ describe("StartPlanning — structure", () => {
     expect(screen.getByTestId("start-planning")).toHaveAttribute("id", "contact")
   })
 
-  it("offers six photo occasion tiles and four settings", () => {
+  it("offers six photo occasion tiles and the four LUPFR brands (plus Open to ideas)", () => {
     render(<StartPlanning />)
     const tiles = within(screen.getByTestId("occasion-tiles")).getAllByRole("button")
     expect(tiles.map((t) => t.textContent?.replace("✓", ""))).toEqual([
@@ -73,7 +73,7 @@ describe("StartPlanning — structure", () => {
       "Venue programming",
       "Not sure yet",
     ])
-    for (const s of ["On the water", "Outdoors", "Indoors", "Open to ideas"]) {
+    for (const s of ["SEA//SIDE", "IN//SIDE", "OUT//SIDE", "SKI//SIDE", "Open to ideas"]) {
       expect(screen.getByRole("button", { name: s })).toBeInTheDocument()
     }
   })
@@ -235,7 +235,7 @@ describe("StartPlanning — submission", () => {
       city: "Los Angeles",
       venue: "Marina del Rey",
     })
-    expect(body.message).toContain("Setting: On the water")
+    expect(body.message).toContain("Brand: SEA//SIDE")
     expect(body.message).toContain("Time of day: Sunset")
     expect(body.message).toContain("Vision: Golden hour sail")
     expect(body.message).toContain("Decide by: 1–3 months")
@@ -245,7 +245,7 @@ describe("StartPlanning — submission", () => {
     expect(within(done).getByRole("heading", { level: 3, name: "Your brief is on its way." })).toBeInTheDocument()
     expect(within(done).getByText(/Thanks, Dana\./)).toBeInTheDocument()
     expect(within(done).getByText("OCCASION")).toBeInTheDocument()
-    expect(within(done).getByText("Yacht event · On the water")).toBeInTheDocument()
+    expect(within(done).getByText("Yacht event · SEA//SIDE")).toBeInTheDocument()
     expect(within(done).getByText(/50–150 guests · Los Angeles · Jun 12, 2027 \(flexible\)/)).toBeInTheDocument()
     expect(within(done).getByText("DJs & live music, Photo & video +1")).toBeInTheDocument()
     expect(within(done).getByText("$25K–$50K · 1–3 months")).toBeInTheDocument()
@@ -376,7 +376,7 @@ describe("buildBriefText", () => {
   it("prints dashes for everything the visitor left blank", () => {
     const text = buildBriefText({
       occasion: null,
-      settings: [],
+      brands: [],
       guests: null,
       city: null,
       date: "",
@@ -394,5 +394,31 @@ describe("buildBriefText", () => {
       notes: "",
     })
     expect(text.split("\n").every((line) => line.endsWith(": -"))).toBe(true)
+  })
+})
+
+describe("StartPlanning — brand row and one-screen layout (owner 2026-11-19)", () => {
+  it("lets the visitor pick several brands, including SKI//SIDE, and sends them in the brief", async () => {
+    const user = userEvent.setup()
+    render(<StartPlanning />)
+    await user.click(screen.getByRole("button", { name: "Yacht event" }))
+    await user.click(screen.getByRole("button", { name: "SKI//SIDE" }))
+    await user.click(screen.getByRole("button", { name: "OUT//SIDE" }))
+    expect(screen.getByRole("button", { name: "SKI//SIDE" })).toHaveAttribute("aria-pressed", "true")
+    await user.click(screen.getByRole("button", { name: "OUT//SIDE" }))
+    expect(screen.getByRole("button", { name: "OUT//SIDE" })).toHaveAttribute("aria-pressed", "false")
+    const blank = { occasion: null, brands: [], guests: null, city: null, date: "", flexible: false, time: null, venue: "", services: [], vision: "", budget: null, decide: null, name: "", email: "", company: "", phone: "", notes: "" }
+    const text = buildBriefText({ ...blank, occasion: "Yacht event", brands: ["SKI//SIDE", "SEA//SIDE"] })
+    expect(text).toContain("Brand: SKI//SIDE, SEA//SIDE")
+  })
+
+  it("fills the screen (min-h 100dvh), keeps 16:9 occasion tiles, and pins Continue to the bottom of the card", () => {
+    render(<StartPlanning />)
+    expect(screen.getByTestId("start-planning").className).toContain("min-h-[100dvh]")
+    for (const tile of within(screen.getByTestId("occasion-tiles")).getAllByRole("button")) {
+      expect(tile.className).toContain("aspect-[16/9]")
+    }
+    expect(screen.getByTestId("planning-nav").className).toContain("sticky")
+    expect(screen.getByTestId("planning-nav").className).toContain("bottom-0")
   })
 })

@@ -33,7 +33,14 @@ const OCCASION_TILES: Array<[label: string, photo: string]> = [
   ["Venue programming", "/brands/skiside-gateway-arrival.webp"],
   ["Not sure yet", "/events/bal_masque_acrobat.webp"],
 ]
-const SETTINGS = ["On the water", "Outdoors", "Indoors", "Open to ideas"]
+/** Round 16 (owner 2026-11-19): after the occasion, offer the four experience brands (plus "Open to ideas"). */
+const BRAND_OPTIONS: Array<[label: string, sub: string]> = [
+  ["SEA//SIDE", "On the water"],
+  ["IN//SIDE", "Indoors"],
+  ["OUT//SIDE", "Outdoors"],
+  ["SKI//SIDE", "Mountain"],
+  ["Open to ideas", "Not sure yet"],
+]
 const GUESTS: Array<[string, string]> = [
   ["Under 50", "INTIMATE"],
   ["50–150", "GATHERING"],
@@ -71,9 +78,10 @@ const STAR = "M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"
 
 /** Option icons (24px viewBox, 1.4 stroke) — transcribed from the design's `ICN` map. */
 const ICONS: Record<string, string> = {
-  "On the water": "M2 10c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0M2 16c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0",
-  Outdoors: "M12 3l6 9h-3l4 6H5l4-6H6zM12 18v3",
-  Indoors: "M4 21V8l8-5 8 5v13M9 21v-6h6v6M2 21h20",
+  "SEA//SIDE": "M2 10c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0M2 16c2 1.6 4 1.6 6 0s4-1.6 6 0 4 1.6 6 0",
+  "OUT//SIDE": "M12 3l6 9h-3l4 6H5l4-6H6zM12 18v3",
+  "IN//SIDE": "M4 21V8l8-5 8 5v13M9 21v-6h6v6M2 21h20",
+  "SKI//SIDE": "M2 20l6-11 4 6 3-4 7 9z",
   "Open to ideas": "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6",
   "Los Angeles": PIN,
   "San Francisco": PIN,
@@ -112,7 +120,7 @@ const STEP_SUB = "m-0 text-[14.5px] leading-[1.5] text-[#bdb6a9]"
 
 interface Brief {
   occasion: string | null
-  settings: string[]
+  brands: string[]
   guests: string | null
   city: string | null
   date: string
@@ -132,7 +140,7 @@ interface Brief {
 
 const EMPTY_BRIEF: Brief = {
   occasion: null,
-  settings: [],
+  brands: [],
   guests: null,
   city: null,
   date: "",
@@ -162,7 +170,7 @@ function dateText(b: Brief): string | null {
 
 /** The four confirmation-screen / rail values, built only from what the visitor entered. */
 function railValues(b: Brief): Array<string | null> {
-  const a = b.occasion ? b.occasion + (b.settings.length ? ` · ${b.settings.join(", ")}` : "") : null
+  const a = b.occasion ? b.occasion + (b.brands.length ? ` · ${b.brands.join(", ")}` : "") : null
   const d = [b.guests ? `${b.guests} guests` : null, b.city, dateText(b)].filter(Boolean).join(" · ") || null
   const s = b.services.length
     ? b.services.length > 2
@@ -190,7 +198,7 @@ function stepComplete(b: Brief): boolean[] {
 export function buildBriefText(b: Brief): string {
   return [
     `Occasion: ${b.occasion ?? "-"}`,
-    `Setting: ${b.settings.join(", ") || "-"}`,
+    `Brand: ${b.brands.join(", ") || "-"}`,
     `Guests: ${b.guests ?? "-"}`,
     `City / area: ${b.city ?? "-"}`,
     `Date: ${dateText(b) ?? "-"}`,
@@ -233,24 +241,30 @@ function OptionIcon({ label, on }: { label: string; on: boolean }) {
   )
 }
 
-function Chip({ label, on, onPick }: { label: string; on: boolean; onPick: () => void }) {
+function Chip({ label, sub, on, onPick }: { label: string; sub?: string; on: boolean; onPick: () => void }) {
   return (
     <button
       type="button"
+      aria-label={label}
       aria-pressed={on}
       onClick={onPick}
-      className={`inline-flex items-center gap-2 rounded-full border px-4 py-[11px] text-left font-sans text-[14px] leading-none transition-all duration-200 max-[640px]:min-h-12 max-[640px]:rounded-[4px] max-[640px]:px-3 max-[640px]:py-3 max-[640px]:text-[13.5px] max-[640px]:leading-[1.2] ${
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-[11px] text-left font-sans text-[14px] leading-none transition-all duration-200 max-[640px]:min-h-10 max-[640px]:rounded-[4px] max-[640px]:px-3 max-[640px]:py-2 max-[640px]:py-3 max-[640px]:text-[13.5px] max-[640px]:leading-[1.2] ${
         on ? "border-[#c9a869] bg-[rgba(201,168,105,0.14)] text-[#fdf6e8]" : "border-white/12 bg-white/[0.02] text-[#d9d3c6]"
       }`}
     >
-      <OptionIcon label={label} on={on} />
-      <span className="min-w-0">{label}</span>
+      <span className={sub ? "flex max-[640px]:hidden" : "flex"}>
+        <OptionIcon label={label} on={on} />
+      </span>
+      <span className="flex min-w-0 flex-col gap-1">
+        <span>{label}</span>
+        {sub ? <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[#8f887c] max-[640px]:hidden">{sub}</span> : null}
+      </span>
     </button>
   )
 }
 
-function ChipGroup({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-wrap gap-2 max-[640px]:grid max-[640px]:grid-cols-2">{children}</div>
+function ChipGroup({ children, cols = 2 }: { children: React.ReactNode; cols?: 2 | 3 }) {
+  return <div className={`flex flex-wrap gap-2 max-[640px]:grid max-[640px]:gap-1.5 ${cols === 3 ? "max-[640px]:grid-cols-3" : "max-[640px]:grid-cols-2"}`}>{children}</div>
 }
 
 function Tile({ label, sub, on, onPick }: { label: string; sub: string; on: boolean; onPick: () => void }) {
@@ -362,18 +376,18 @@ export function StartPlanning() {
   ].filter((row): row is [string, string] => !!row[1])
 
   return (
-    <section id="contact" className="relative overflow-clip border-b border-white/10 bg-[#070605] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[641px]:py-[120px] min-[901px]:px-12" data-testid="start-planning">
-      <div className="relative mx-auto grid max-w-[1240px] items-start gap-[56px] min-[1001px]:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] max-[1000px]:gap-7">
-        <aside className="flex flex-col gap-8 min-[1001px]:sticky min-[1001px]:top-[110px] max-[1000px]:gap-0">
+    <section id="contact" className="relative flex min-h-[100dvh] items-center overflow-clip border-b border-white/10 bg-[#070605] px-5 pb-6 pt-[88px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:pb-10 min-[901px]:pt-[104px]" data-testid="start-planning">
+      <div className="relative mx-auto grid w-full max-w-[1240px] items-center gap-10 min-[1001px]:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] max-[1000px]:gap-4">
+        <aside className="flex flex-col gap-5 max-[1000px]:gap-0">
           <div>
-            <div className="mb-[18px] flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
+            <div className="mb-3.5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c] max-[640px]:mb-2">
               <span className="text-[#c9a869]">(04)</span>
               <span>INQUIRIES</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(46px,5.4vw,80px)] font-extrabold uppercase leading-[0.88] max-[640px]:text-[44px]">
-              <GoldShineText>Start planning.</GoldShineText>
+            <h2 className="m-0 font-condensed text-[clamp(40px,4.6vw,68px)] font-extrabold uppercase leading-none max-[640px]:text-[38px]">
+              <GoldShineText className="leading-none!">Start planning.</GoldShineText>
             </h2>
-            <p className="mt-[18px] max-w-[40ch] text-pretty text-[15.5px] leading-[1.6] text-[#d9d3c6] max-[640px]:mt-3 max-[640px]:text-[14.5px]">
+            <p className="mt-4 max-w-[40ch] text-pretty text-[15px] leading-[1.55] text-[#d9d3c6] max-[640px]:hidden">
               Tell us what you have in mind. Estimates and “not sure yet” are welcome. It takes about two minutes.
             </p>
           </div>
@@ -390,7 +404,7 @@ export function StartPlanning() {
                     disabled={!can}
                     aria-current={on ? "step" : undefined}
                     onClick={() => setStep(n)}
-                    className={`grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-2.5 border-0 border-b border-white/10 bg-transparent py-[15px] text-left ${can ? "cursor-pointer" : "cursor-default"}`}
+                    className={`grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-2.5 border-0 border-b border-white/10 bg-transparent py-2.5 text-left ${can ? "cursor-pointer" : "cursor-default"}`}
                   >
                     <span className={`font-mono text-[10.5px] ${on || done ? "text-[#c9a869]" : "text-[#8f887c]"}`}>{`0${n}`}</span>
                     <span className="flex min-w-0 flex-col gap-[5px]">
@@ -418,7 +432,7 @@ export function StartPlanning() {
           <div className="relative h-0.5 bg-white/[0.07]" role="progressbar" aria-label="Brief progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
             <span data-testid="planning-progress" className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#a67c3d] to-[#e8caa0] transition-[width] duration-500" style={{ width: `${pct}%` }} />
           </div>
-          <div className="box-border flex min-h-[540px] flex-col gap-[30px] px-10 pb-8 pt-9 max-[640px]:min-h-0 max-[640px]:gap-[22px] max-[640px]:px-[18px] max-[640px]:pb-5 max-[640px]:pt-6">
+          <div className="box-border flex min-h-[500px] flex-col gap-6 px-9 pb-6 pt-7 max-[640px]:min-h-0 max-[640px]:gap-3.5 max-[640px]:px-[18px] max-[640px]:pb-5 max-[640px]:pt-4">
             {step < DONE_STEP ? (
               <div className="flex items-center justify-between font-mono text-[10px] tracking-[0.18em] text-[#8f887c]">
                 <span>
@@ -429,10 +443,10 @@ export function StartPlanning() {
             ) : null}
 
             {step === 1 ? (
-              <div key="s1" className="lp-pl-step flex flex-col gap-7 max-[640px]:gap-[22px]">
+              <div key="s1" className="lp-pl-step flex flex-col gap-5 max-[640px]:gap-3">
                 <div className="flex flex-col gap-2">
                   <h3 className={STEP_H3}>What&apos;s the occasion?</h3>
-                  <p className={STEP_SUB}>Pick the closest fit. We&apos;ll shape the rest together.</p>
+                  <p className={`${STEP_SUB} max-[640px]:hidden`}>Pick the closest fit. We&apos;ll shape the rest together.</p>
                 </div>
                 <div className="grid grid-cols-3 gap-2 max-[640px]:grid-cols-2" data-testid="occasion-tiles">
                   {OCCASION_TILES.map(([label, photo]) => {
@@ -443,7 +457,7 @@ export function StartPlanning() {
                         type="button"
                         aria-pressed={on}
                         onClick={() => patch({ occasion: on ? null : label })}
-                        className={`relative aspect-[16/11] overflow-hidden rounded-[3px] border bg-[#0d0c0a] p-0 text-left transition-[border-color,box-shadow] duration-200 ${
+                        className={`relative aspect-[16/9] overflow-hidden max-[640px]:aspect-[2/1] rounded-[3px] border bg-[#0d0c0a] p-0 text-left transition-[border-color,box-shadow] duration-200 ${
                           on ? "border-[#c9a869] shadow-[0_0_0_1px_#c9a869,0_10px_30px_rgba(201,168,105,0.18)]" : "border-white/10"
                         }`}
                       >
@@ -455,16 +469,16 @@ export function StartPlanning() {
                         >
                           {on ? "✓" : ""}
                         </span>
-                        <span className="absolute inset-x-3 bottom-2.5 font-condensed text-lg font-extrabold uppercase leading-none text-white">{label}</span>
+                        <span className="absolute inset-x-3 bottom-2.5 font-condensed text-lg font-extrabold uppercase leading-none text-white max-[640px]:inset-x-2.5 max-[640px]:bottom-2 max-[640px]:text-[15px]">{label}</span>
                       </button>
                     )
                   })}
                 </div>
                 <div>
-                  <span className={LABEL}>PREFERRED SETTING</span>
-                  <ChipGroup>
-                    {SETTINGS.map((s) => (
-                      <Chip key={s} label={s} on={brief.settings.includes(s)} onPick={() => patch({ settings: toggle(brief.settings, s) })} />
+                  <span className={LABEL}>WHICH LUPFR BRAND?</span>
+                  <ChipGroup cols={3}>
+                    {BRAND_OPTIONS.map(([label, sub]) => (
+                      <Chip key={label} label={label} sub={sub} on={brief.brands.includes(label)} onPick={() => patch({ brands: toggle(brief.brands, label) })} />
                     ))}
                   </ChipGroup>
                 </div>
@@ -648,7 +662,7 @@ export function StartPlanning() {
             {step < DONE_STEP ? (
               <div
                 data-testid="planning-nav"
-                className="mt-auto flex items-center justify-between gap-4 border-t border-white/10 pt-[22px] max-[640px]:sticky max-[640px]:bottom-0 max-[640px]:z-10 max-[640px]:-mx-[18px] max-[640px]:-mb-5 max-[640px]:bg-[#0e0d0b] max-[640px]:px-[18px] max-[640px]:pb-4"
+                className="sticky bottom-0 z-10 -mx-9 -mb-6 mt-auto flex items-center justify-between gap-4 border-t border-white/10 bg-[#0e0d0b] px-9 pb-5 pt-4 max-[640px]:-mx-[18px] max-[640px]:-mb-5 max-[640px]:px-[18px] max-[640px]:pb-4 max-[640px]:pt-3"
               >
                 <button
                   type="button"
