@@ -334,16 +334,16 @@ describe("ClaudeHomeExperiences' v5 sticky stack", () => {
   it("pins each full-width card at 92px + index x 16px with the v5 height and radius", () => {
     render(<ClaudeHomeExperiences />)
     const cards = screen.getAllByTestId("experience-card")
-    expect(cards).toHaveLength(3)
+    expect(cards).toHaveLength(4)
     cards.forEach((card, i) => {
       expect(card).toHaveClass("sticky", "h-[min(80vh,760px)]", "min-h-[540px]", "rounded-[4px]", "max-[900px]:h-[74vh]", "max-[900px]:max-h-[640px]")
       expect(card.style.top).toBe(`${92 + i * 16}px`)
     })
   })
 
-  it("shows '01 / 03' counters and the (02) OUR WORK header with a View Past Events link", () => {
+  it("shows '01 / 04' counters and the (02) OUR WORK header with a View Past Events link", () => {
     render(<ClaudeHomeExperiences />)
-    for (const counter of ["01 / 03", "02 / 03", "03 / 03"]) expect(screen.getByText(counter)).toBeInTheDocument()
+    for (const counter of ["01 / 04", "02 / 04", "03 / 04", "04 / 04"]) expect(screen.getByText(counter)).toBeInTheDocument()
     expect(screen.getByText("(02)")).toBeInTheDocument()
     expect(screen.getByText("OUR WORK")).toBeInTheDocument()
     expect(screen.getByRole("heading", { level: 2, name: "Featured Experiences" })).toBeInTheDocument()
@@ -374,6 +374,23 @@ describe("ClaudeHomeExperiences' v5 sticky stack", () => {
     expect(seaside!.getByRole("link", { name: "Watch Film" })).toHaveAttribute("href", "https://www.instagram.com/p/DdrQLrbpPqr/")
     expect(bal!.getByRole("link", { name: "Watch Film" })).toHaveAttribute("href", "https://www.youtube.com/watch?v=Xt6zGwZ7jKg")
     expect(golden!.queryByRole("link", { name: "Watch Film" })).toBeNull()
+  })
+
+  it("ends with a SKI//SIDE 'Coming 2027' teaser card: clear photo, slash wordmark, pill and one button (owner, 2026-11-20)", () => {
+    render(<ClaudeHomeExperiences />)
+    const card = screen.getAllByTestId("experience-card")[3]!
+    expect(card).toHaveAttribute("data-teaser")
+    expect(card.style.top).toBe(`${92 + 3 * 16}px`)
+    expect(card.querySelector("img")?.getAttribute("src")).toContain("skiside-summit-set")
+    expect(within(card).getByRole("heading", { level: 3 })).toHaveTextContent("SKI//SIDE")
+    expect(card.querySelector("[data-brand-slash-image]")).not.toBeNull()
+    expect(within(card).getByText("COMING 2027")).toBeInTheDocument()
+    expect(within(card).getByText("LAKE TAHOE")).toBeInTheDocument()
+    expect(within(card).getByRole("link", { name: "Partner with SKI//SIDE" })).toHaveAttribute("href", "/contact")
+    // Nothing delivered yet: no description, service chips, thumbnails, film or video.
+    expect(within(card).queryByTestId("experience-thumbs")).toBeNull()
+    expect(within(card).queryByRole("link", { name: /Watch Film|Create One Like This|PRODUCTION/ })).toBeNull()
+    expect(card.querySelector("video")).toBeNull()
   })
 
   it("keeps the CURRENT Golden Gate loop video on the Zusebi card — no YouTube background or embed (owner, 2026-11-17)", () => {

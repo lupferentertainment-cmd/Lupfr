@@ -5,9 +5,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { BrandSlashText } from "@/components/brand-slash-text"
+import { BrandWordmark } from "@/components/brand-wordmark"
 import { LazyLoopVideo } from "@/components/lazy-loop-video"
 import { ServiceIcon, type ServiceIconKey } from "@/components/lupfr-service-icons"
-import { brandPath, getBrandBySlug } from "@/lib/data/brands"
+import { brandPath, getBrandBySlug, type BrandItem } from "@/lib/data/brands"
 import { eventDetailPath, getEventBySlug } from "@/lib/events"
 import { isFreshWheel, snapTarget, stackPositions } from "@/lib/stack-snap"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
@@ -92,10 +93,32 @@ const goldenGateLive = requireEvent("zusebi-002-live-from-golden-gate")
 const seasideLongBeach = requireEvent("seaside-001-long-beach-harbor")
 const seasideMarinaDelRey = requireEvent("seaside-002")
 
+function requireBrand(slug: string): BrandItem {
+  const brand = getBrandBySlug(slug)
+  if (!brand) throw new Error(`claude-home-experiences: expected brand "${slug}" to exist in data/brands.yml`)
+  return brand
+}
+
+const skiside = requireBrand("skiside")
+
 interface DeliveredItem {
   icon: ServiceIconKey
   label: string
   description: string
+}
+
+/**
+ * Round 17 (owner, 2026-11-20): a not-yet-delivered brand gets a "teaser" card instead of a case study: the
+ * photo stays clear and one slim bar holds the wordmark, the Coming pill and a single button. It has no
+ * description, service chips, thumbnails or film (nothing has been delivered yet).
+ */
+interface TeaserCard {
+  brand: BrandItem
+  meta: string
+  pill: string
+  cta: string
+  href: string
+  photo: { src: string; alt: string }
 }
 
 interface CaseStudy {
@@ -122,7 +145,7 @@ interface CaseStudy {
   side2: { src: string; alt: string; position?: string }
 }
 
-const caseStudies: CaseStudy[] = [
+const caseStudies: Array<CaseStudy | TeaserCard> = [
   {
     title: <BrandSlashText text="SEA//SIDE Series" color={seasideAccent} />,
     meta: `${seasideLongBeach.location.split(",")[0].toUpperCase()} · ${seasideMarinaDelRey.location.split(",")[0].toUpperCase()}`,
@@ -201,12 +224,26 @@ const caseStudies: CaseStudy[] = [
     side1: { src: "/events/ggl_dj_crowd.webp", alt: "Zusebi 002: Golden Gate Live — crowd" },
     side2: { src: "/events/ggl_shoulders.webp", alt: "Zusebi 002: Golden Gate Live — sunset over the city" },
   },
+  {
+    brand: skiside,
+    meta: "LAKE TAHOE",
+    pill: skiside.tag,
+    cta: skiside.landing?.cta ?? "Partner with SKI//SIDE",
+    href: CONTACT_PAGE_PATH,
+    photo: { src: "/brands/skiside-summit-set.webp", alt: "SKI//SIDE summit set: a DJ on a mountain stage between the red and blue slash sculpture" },
+  },
 ]
+
+function cardCounter(index: number, total: number): string {
+  return `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
+}
 
 function thumbs(study: CaseStudy): Array<{ src: string; alt: string; position?: string }> {
   return [study.side1, study.side2]
 }
 
+const CARD_SHELL =
+  "sticky mb-6 h-[min(80vh,760px)] min-h-[540px] overflow-hidden rounded-[4px] border border-white/10 bg-[#0d0c0a] last:mb-0 max-[900px]:h-[74vh] max-[900px]:max-h-[640px] max-[900px]:min-h-0"
 const GOLD_BTN =
   "inline-flex items-center gap-2 whitespace-nowrap rounded-[2px] border border-[rgba(243,227,196,0.7)] bg-gradient-to-br from-[#f3e3c4] via-[#c9a869] to-[#a67c3d] px-[18px] py-[13px] font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#1a1408] max-[900px]:px-3.5 max-[900px]:py-[11px] max-[900px]:text-[9.5px]"
 const GHOST_BTN =
@@ -219,12 +256,12 @@ const GHOST_BTN =
  * CURRENT Golden Gate loop video — no YouTube background or embed.
  */
 function CaseStudyCard({ study, index, total, covered, cardRef }: { study: CaseStudy; index: number; total: number; covered: boolean; cardRef: (el: HTMLElement | null) => void }) {
-  const counter = `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
+  const counter = cardCounter(index, total)
   return (
     <article
       ref={cardRef}
       data-testid="experience-card"
-      className="sticky mb-6 h-[min(80vh,760px)] min-h-[540px] overflow-hidden rounded-[4px] border border-white/10 bg-[#0d0c0a] last:mb-0 max-[900px]:h-[74vh] max-[900px]:max-h-[640px] max-[900px]:min-h-0"
+      className={CARD_SHELL}
       style={{ top: 92 + index * 16 }}
     >
       {study.video ? (
@@ -288,6 +325,32 @@ function CaseStudyCard({ study, index, total, covered, cardRef }: { study: CaseS
             </div>
           ))}
         </div>
+      </div>
+    </article>
+  )
+}
+
+
+/** The "Coming" teaser card (owner pick F, 2026-11-20): clear photo, counter and place on top, one slim bottom bar. */
+function TeaserCardView({ card, index, total, cardRef }: { card: TeaserCard; index: number; total: number; cardRef: (el: HTMLElement | null) => void }) {
+  return (
+    <article ref={cardRef} data-testid="experience-card" data-teaser className={CARD_SHELL} style={{ top: 92 + index * 16 }}>
+      <Image src={card.photo.src} alt={card.photo.alt} fill sizes="100vw" className="object-cover" />
+      <div aria-hidden className="absolute inset-x-0 top-0 h-[110px] bg-[linear-gradient(180deg,rgba(7,6,5,0.75),rgba(7,6,5,0))]" />
+      <div className="absolute inset-x-8 top-7 flex items-start justify-between gap-6 max-[900px]:inset-x-5 max-[900px]:top-5 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+        <span className="font-mono text-[11px] tracking-[0.2em] text-[#e8caa0]">{cardCounter(index, total)}</span>
+        <span className="text-right font-mono text-[10px] uppercase tracking-[0.14em] text-[#e6e0d4]">{card.meta}</span>
+      </div>
+      <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-5 gap-y-3 bg-[linear-gradient(180deg,rgba(7,6,5,0),rgba(7,6,5,0.92)_40%)] px-8 pb-5 pt-10 max-[900px]:px-5 max-[900px]:pb-4">
+        <div className="flex flex-wrap items-center gap-x-[18px] gap-y-2">
+          <h3 className="m-0 font-condensed text-[clamp(32px,3.8vw,52px)] font-extrabold uppercase leading-[0.9] text-[#fdf6e8] max-[900px]:text-[34px]">
+            <BrandWordmark brand={card.brand} />
+          </h3>
+          <span className="rounded-full border border-[#5b8ee6] bg-[rgba(91,142,230,0.16)] px-[11px] py-[5px] font-mono text-[10px] uppercase tracking-[0.16em] text-[#cfe0ff]">{card.pill}</span>
+        </div>
+        <Link href={card.href} className={GOLD_BTN}>
+          {card.cta}
+        </Link>
       </div>
     </article>
   )
@@ -447,7 +510,13 @@ export function ClaudeHomeExperiences() {
           <Link href="/events" className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-[#e8caa0]">View Past Events →</Link>
         </div>
         <div ref={stackRef}>
-          {caseStudies.map((study, i) => <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} covered={covered[i] === true} cardRef={setEl(i)} />)}
+          {caseStudies.map((study, i) =>
+            "brand" in study ? (
+              <TeaserCardView key={i} card={study} index={i} total={caseStudies.length} cardRef={setEl(i)} />
+            ) : (
+              <CaseStudyCard key={i} study={study} index={i} total={caseStudies.length} covered={covered[i] === true} cardRef={setEl(i)} />
+            )
+          )}
         </div>
       </div>
     </section>

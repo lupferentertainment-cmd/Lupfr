@@ -70,7 +70,7 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getByRole("link", { name: "Follow LUPFR on Partiful →" })).toBeInTheDocument()
   })
 
-  it("ClaudeHomeExperiences renders the 3 curated case studies with real event links", () => {
+  it("ClaudeHomeExperiences renders the 3 curated case studies (plus the SKI//SIDE teaser) with real event links", () => {
     render(<ClaudeHomeExperiences />)
     expect(screen.getByRole("heading", { name: /SEA.*SIDE Series/ })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "BAL MASQUE" })).toBeInTheDocument()

@@ -126,7 +126,11 @@ async function _check(page, { label, sectionId, mobile, expectPath, flushTop }, 
 
   // `flushTop` overrides the expected resting position (About sits at the top of /about, under the
   // 76px header, with no scroll-padding involved).
-  const pad = flushTop ?? (await _scroll_padding_top(page))
+  // Wait for the destination document to finish parsing before reading styles. Under load the "commit" event
+  // fires before the stylesheet is applied, which made the first read return 0 (flaky Team check, 2026-11-22).
+  if (expectPath) await page.waitForLoadState("domcontentloaded")
+  const readPad = async () => flushTop ?? (await _scroll_padding_top(page))
+  let pad = await readPad()
   const where = `${mobile ? "mobile" : "desktop"} → ${label} (#${sectionId})`
 
   // Wait for sustained quiescence: the section must sit flush under the header AND
@@ -142,6 +146,7 @@ async function _check(page, { label, sectionId, mobile, expectPath, flushTop }, 
   let lastTop = null
   let settledTop = null
   while (Date.now() < deadline) {
+    pad = await readPad() // re-read each poll so a late stylesheet cannot leave a stale 0
     const top = await _section_top(page, sectionId)
     const isFlush = top !== null && Math.abs(top - pad) <= ALIGN_TOLERANCE_PX
     const isSteady = top !== null && lastTop !== null && Math.abs(top - lastTop) <= STABILITY_TOLERANCE_PX

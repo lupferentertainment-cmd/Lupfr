@@ -7,8 +7,8 @@ vi.mock("@/components/lazy-loop-video", () => ({ LazyLoopVideo: () => <video /> 
 
 import { ClaudeHomeExperiences } from "@/components/claude-home-experiences"
 
-// Container at document y=1000, cards 600 tall with sticky tops 92/108/124 => stops 908 / 1492 / 2076.
-const STOPS = [908, 1492, 2076]
+// Container at document y=1000, cards 600 tall with sticky tops 92/108/124/140 => stops 908 / 1492 / 2076 / 2660.
+const STOPS = [908, 1492, 2076, 2660]
 let now = 10_000
 let scrollTo: ReturnType<typeof vi.fn>
 
@@ -90,10 +90,10 @@ describe("Featured Experiences card-by-card snapping", () => {
 
   it("lets the page leave after the last card, and snaps back up one card at a time", () => {
     render(<ClaudeHomeExperiences />)
-    setScroll(STOPS[2]!)
+    setScroll(STOPS[3]!)
     expect(wheel(100).defaultPrevented).toBe(false)
     expect(wheel(-100).defaultPrevented).toBe(true)
-    expect(scrollTo).toHaveBeenLastCalledWith({ top: STOPS[1], behavior: "smooth" })
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: STOPS[2], behavior: "smooth" })
     now += 2000
     setScroll(STOPS[0]!)
     expect(wheel(-100).defaultPrevented).toBe(false)
