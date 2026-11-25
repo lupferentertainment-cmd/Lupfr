@@ -1,7 +1,7 @@
 /** @vitest-environment happy-dom */
 
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { render, screen, within } from "@testing-library/react"
+import { act, render, screen, within } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { ClaudeHomeNavigation } from "@/components/claude-home-navigation"
 
@@ -99,5 +99,43 @@ describe("ClaudeHomeNavigation (v15)", () => {
   it("has no light/dark switch", () => {
     render(<ClaudeHomeNavigation />)
     expect(screen.queryByRole("switch")).toBeNull()
+  })
+
+  // v6 (owner, 2026-11-24): transparent over the full-screen hero, solid once the page scrolls.
+  describe("scroll-aware background", () => {
+    const scrollTo = (y: number) => {
+      act(() => {
+        Object.defineProperty(window, "scrollY", { value: y, configurable: true })
+        window.dispatchEvent(new Event("scroll"))
+      })
+    }
+    const header = () => screen.getByRole("banner")
+
+    it("is transparent at the top of the home page and turns solid after scrolling, then transparent again at the top", () => {
+      scrollTo(0)
+      render(<ClaudeHomeNavigation />)
+      expect(header()).toHaveAttribute("data-nav-state", "transparent")
+      expect(header()).toHaveClass("bg-transparent")
+      scrollTo(200)
+      expect(header()).toHaveAttribute("data-nav-state", "solid")
+      expect(header().className).toContain("bg-[#070605]/90")
+      scrollTo(0)
+      expect(header()).toHaveAttribute("data-nav-state", "transparent")
+    })
+
+    it("stays solid while the mobile menu is open", async () => {
+      const user = userEvent.setup()
+      scrollTo(0)
+      render(<ClaudeHomeNavigation />)
+      await user.click(screen.getByRole("button", { name: "Toggle menu" }))
+      expect(header()).toHaveAttribute("data-nav-state", "solid")
+    })
+
+    it("is always solid off the home page", () => {
+      nav.pathname = "/media"
+      scrollTo(0)
+      render(<ClaudeHomeNavigation />)
+      expect(header()).toHaveAttribute("data-nav-state", "solid")
+    })
   })
 })

@@ -12,7 +12,7 @@ import { MediaNewsFeature } from "@/components/media-news-feature"
 import { ClaudeHomeArtists } from "@/components/claude-home-artists"
 import { ClaudeHomePartifulBand } from "@/components/claude-home-partiful-band"
 import { getServices } from "@/lib/data/services"
-import { getBrandsByDivision } from "@/lib/data/brands"
+import { getBrandBySlug } from "@/lib/data/brands"
 import { getHomeNews } from "@/lib/data/news"
 
 /**
@@ -39,9 +39,9 @@ describe("new homepage sections render their real data", () => {
     expect(screen.getAllByText("Plan Your Event").length).toBeGreaterThan(0)
   })
 
-  it("ClaudeHomeHero renders the LUPFR lockup and both CTAs", () => {
+  it("ClaudeHomeHero renders the LE mark heading and both CTAs", () => {
     render(<ClaudeHomeHero />)
-    expect(screen.getByRole("heading", { name: "LUPFR" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "LUPFR Entertainment" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Plan Your Event" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Explore Our Work" })).toBeInTheDocument()
   })
@@ -55,12 +55,13 @@ describe("new homepage sections render their real data", () => {
     }
   })
 
-  it("ClaudeHomeBrands renders real operating brands, not fabricated ones", () => {
-    const { liveEvents, corporateMedia } = getBrandsByDivision()
+  it("ClaudeHomeBrands links the four experience brands to their real pages", () => {
     render(<ClaudeHomeBrands />)
-    for (const brand of [...liveEvents, ...corporateMedia]) {
-      // v5 Reveal tiles: each real brand is a link to its landing page showing its real description.
-      expect(screen.getByRole("link", { name: new RegExp(brand.description.slice(0, 20)) })).toHaveAttribute("href", `/brands/${brand.key}`)
+    for (const key of ["seaside", "inside", "outside", "skiside"]) {
+      const brand = getBrandBySlug(key)!
+      expect(brand).toBeDefined()
+      const link = screen.getAllByRole("link").find((a) => a.getAttribute("href") === `/brands/${key}`)
+      expect(link).toBeDefined()
     }
   })
 
@@ -120,16 +121,5 @@ describe("new homepage sections render their real data", () => {
   it("ClaudeHomeNavigation no longer renders a light/dark switch (owner 2026-11-17: it was not working)", () => {
     render(<ClaudeHomeNavigation />)
     expect(screen.queryByRole("switch")).toBeNull()
-  })
-
-  it("ClaudeHomeBrands switches to the platform tab and back", async () => {
-    const user = userEvent.setup()
-    render(<ClaudeHomeBrands />)
-    await user.click(screen.getByRole("button", { name: "platform" }))
-    expect(screen.getByTestId("brands-grid-platform")).toBeInTheDocument()
-    expect(screen.queryByTestId("brands-grid-operating")).toBeNull()
-    await user.click(screen.getByRole("button", { name: "operating" }))
-    expect(screen.getByTestId("brands-grid-operating")).toBeInTheDocument()
-    expect(screen.queryByTestId("brands-grid-platform")).toBeNull()
   })
 })

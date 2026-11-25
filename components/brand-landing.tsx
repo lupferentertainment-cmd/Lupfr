@@ -11,8 +11,9 @@ import { CONTACT_PAGE_PATH } from "@/lib/site"
 /**
  * Brand landing page body (LUPFR Website Design v16; v5 on 2026-11-17 removed
  * the "On the calendar" section — past events now live behind the "See Past
- * Events" button — and added the format photo + pillar icons): full-screen hero with
- * tagline + CTA, THE FORMAT (statement, format photo and three icon pillars),
+ * Events" button — and added the format photo + pillar icons; v6 on 2026-11-24 made THE FORMAT a
+ * full-width photo band with the statement over it, followed by three highlight cards): full-screen
+ * hero with tagline + CTA, THE FORMAT (photo band + three highlight cards),
  * a photo gallery, the "bring it to you" planning box with the brand's
  * accounts, and a row linking to the other brands. Theme tokens drive
  * everything below the hero; the hero is a fixed-dark photo overlay in both
@@ -98,59 +99,50 @@ export function BrandLanding({ brand }: { brand: BrandItem }) {
       </section>
 
       {landing ? (
-        <section className={SECTION} aria-label="The format">
-          <div className={`${INNER} grid items-start gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] md:gap-16`}>
-            <div>
-              <div className={`${KICKER} mb-3.5`} style={{ color: accent }}>
-                The format
-              </div>
-              <h2 className={H2}>{landing.statement}</h2>
-              <div className="mt-[22px] flex items-center gap-2.5 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground">
-                {motif ? <BrandPillarIcon name={motif} color={accent} size={18} /> : null}
-                {brand.format}
-              </div>
-              {formatPic ? (
-                <div data-testid="brand-format-photo" className="relative mt-9 aspect-[4/3] overflow-hidden rounded-[4px] border border-border bg-card">
-                  <ShimmerImage src={formatPic} alt="" fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover" />
+        <section className="border-b border-border bg-[#0b0a08]" aria-label="The format">
+          <div data-testid="brand-format-photo" className="relative h-[clamp(420px,62vh,640px)] overflow-hidden max-[640px]:h-[clamp(360px,56vh,480px)]">
+            {formatPic ? <ShimmerImage src={formatPic} alt="" fill sizes="100vw" className="object-cover" /> : null}
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.55)_42%,rgba(8,7,6,0)_75%),linear-gradient(to_top,#0b0a08_0%,rgba(8,7,6,0)_35%)]" aria-hidden />
+            <div className="pointer-events-none absolute inset-0 flex items-end">
+              <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-[18px] px-5 pb-10 sm:px-8 md:px-12 md:pb-16">
+                <div className={`${KICKER} flex items-center gap-3`} style={{ color: accent }}>
                   {motif ? (
-                    <span
-                      data-testid="brand-motif"
-                      className="pointer-events-none absolute bottom-3.5 left-3.5 flex size-11 items-center justify-center rounded-full border bg-[rgba(11,10,8,0.72)]"
-                      style={{ borderColor: accent }}
-                    >
-                      <BrandPillarIcon name={motif} color={accent} size={22} />
+                    <span data-testid="brand-motif" className="flex">
+                      <BrandPillarIcon name={motif} color={accent} size={20} />
+                    </span>
+                  ) : null}
+                  The format
+                </div>
+                <h2 className="m-0 max-w-[14ch] text-balance font-condensed text-[clamp(40px,5.4vw,80px)] font-extrabold uppercase leading-[0.9] text-[#fdf6e8]">{landing.statement}</h2>
+                <div className="font-mono text-[11px] uppercase tracking-[0.16em] text-[rgba(243,239,230,0.75)]">{brand.format}</div>
+              </div>
+            </div>
+          </div>
+          <div className={`${INNER} grid gap-5 px-5 pb-14 pt-6 sm:px-8 md:grid-cols-3 md:px-12 md:pb-24`}>
+            {landing.pillars.map((p, i) => (
+              <div
+                key={p.title}
+                data-testid="brand-pillar"
+                className="relative flex flex-col gap-[18px] rounded-[2px] border border-border border-t-[3px] px-[30px] pb-[34px] pt-8 max-[640px]:px-6 max-[640px]:py-6"
+                style={{ background: hexToRgba(accent, 0.07), borderTopColor: accent }}
+              >
+                <div className="flex items-start justify-between">
+                  <span className="font-condensed text-[64px] font-bold leading-[0.8] text-transparent" style={{ WebkitTextStroke: `1.2px ${accent}` }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {brandIconName(brand.key, i) ? (
+                    <span data-testid="brand-pillar-icon" className="flex size-12 items-center justify-center rounded-full border" style={{ borderColor: accent }}>
+                      <BrandPillarIcon name={brandIconName(brand.key, i)!} color={accent} size={24} />
                     </span>
                   ) : null}
                 </div>
-              ) : null}
-            </div>
-            <div className="flex flex-col border-t border-border">
-              {landing.pillars.map((p, i) => (
-                <div key={p.title} className="grid grid-cols-[56px_minmax(0,1fr)] gap-[18px] border-b border-border py-[26px]" data-testid="brand-pillar">
-                  <div className="flex flex-col items-start gap-2.5">
-                    {brandIconName(brand.key, i) ? (
-                      <span
-                        data-testid="brand-pillar-icon"
-                        className="flex size-11 items-center justify-center rounded-full border border-border"
-                        style={{ background: hexToRgba(accent, 0.07) }}
-                      >
-                        <BrandPillarIcon name={brandIconName(brand.key, i)!} color={accent} size={22} />
-                      </span>
-                    ) : null}
-                    <span className="pl-0.5 font-mono text-[11px] tracking-[0.06em]" style={{ color: accent }}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <span className="font-condensed text-[28px] font-bold uppercase leading-none text-foreground">{p.title}</span>
-                    <span className="max-w-[56ch] text-pretty text-[15px] leading-relaxed text-muted-foreground">{p.line}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                <span className="font-condensed text-[32px] font-extrabold uppercase leading-[0.95] text-foreground">{p.title}</span>
+                <span className="text-pretty text-base leading-relaxed text-muted-foreground">{p.line}</span>
+              </div>
+            ))}
           </div>
           {brand.deck && brand.deck.length > 0 ? (
-            <div className={`${INNER} mt-10`}>
+            <div className={`${INNER} px-5 pb-14 sm:px-8 md:px-12`}>
               <BrandDeck slides={brand.deck} label={plain} />
             </div>
           ) : null}

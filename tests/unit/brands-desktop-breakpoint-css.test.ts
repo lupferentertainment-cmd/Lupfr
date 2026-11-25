@@ -22,7 +22,7 @@ beforeAll(async () => {
 }, 120_000)
 
 function ruleIndex(className: string): number {
-  const selector = "." + className.replace(/[[\]/:.(),]/g, (c) => `\\${c}`)
+  const selector = "." + className.replace(/[[\]/:.(),%]/g, (c) => `\\${c}`)
   return css.indexOf(`${selector} {`)
 }
 
@@ -34,21 +34,17 @@ function expectAscending(classNames: string[]) {
   }
 }
 
-describe("v5 responsive cascade order", () => {
-  it("Our Brands: 6 columns, then 3 at <=1100px, 2 at <=720px, 1 at <=480px", () => {
-    expectAscending(["grid-cols-6", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1"])
+describe("v5/v6 responsive cascade order", () => {
+  it("Our Brands (v6): 4 columns, then 2 at <=900px; the number shrinks at <=560px", () => {
+    expectAscending(["grid-cols-4", "max-[900px]:grid-cols-2"])
+    expectAscending(["text-[44px]", "max-[560px]:text-[32px]"])
   })
 
-  it("Our Brands: the 3:4 tile becomes 5:3 at <=480px; the photo filter and revealed copy relax at <=1100px", () => {
-    expectAscending(["aspect-[3/4]", "max-[480px]:aspect-[5/3]"])
-    expectAscending(["brightness-[.72]", "max-[1100px]:brightness-100"])
-    expectAscending(["max-h-0", "max-[1100px]:max-h-[90px]"])
-    expectAscending(["max-[1100px]:max-h-[90px]", "max-[480px]:text-[30px]"])
-  })
-
-  it("Services: 16:10 cards (4:3 from 901 to 1250px), then 4:3 tiles at <=900px and 5:3 at <=560px", () => {
-    expectAscending(["aspect-[16/10]", "max-[900px]:aspect-[4/3]", "max-[560px]:aspect-[5/3]"])
-    expectAscending(["aspect-[16/10]", "max-[1250px]:min-[901px]:aspect-[4/3]"])
+  it("Services (v6): the 2:1 slanted tile becomes a full-width 190px tile at <=900px, and the row stacks", () => {
+    expectAscending(["aspect-[2/1]", "max-[900px]:aspect-auto"])
+    expectAscending(["w-[34.84%]", "max-[900px]:w-full"])
+    expectAscending(["-ml-[2.265%]", "max-[900px]:ml-0"])
+    expectAscending(["flex", "max-[900px]:flex-col"])
   })
 
   it("Featured Experiences: the stack card height is overridden at <=900px", () => {

@@ -499,7 +499,7 @@ export function ClaudeHomeExperiences() {
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
-              <span className="text-[#c9a869]">(02)</span>
+              <span className="text-[#c9a869]">(03)</span>
               <span>OUR WORK</span>
             </div>
             <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88]"><GoldShineText>Featured Experiences</GoldShineText></h2>

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LupfrLogoImage } from "@/components/lupfr-logo-image"
 import { CONTACT_PAGE_PATH } from "@/lib/site"
 
@@ -45,8 +45,24 @@ export function ClaudeHomeNavigation() {
   // usePathname() is null outside an app-router tree (tests, previews) — treat that as the home page.
   const pathname = usePathname() ?? "/"
   const isHome = pathname === "/"
+  // v6 (2026-11-24): on the home page the bar is transparent over the full-screen hero and turns solid once the page
+  // scrolls (or while the mobile menu is open); every other page keeps the solid bar.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    if (!isHome) return
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [isHome])
+  const transparent = isHome && !scrolled && !open
   return (
-    <header className="fixed inset-x-0 top-0 z-[80] h-[76px] border-b border-white/10 bg-[#070605]/90 backdrop-blur-md">
+    <header
+      data-nav-state={transparent ? "transparent" : "solid"}
+      className={`fixed inset-x-0 top-0 z-[80] h-[76px] border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        transparent ? "border-transparent bg-transparent" : "border-white/10 bg-[#070605]/90 backdrop-blur-md"
+      }`}
+    >
       <nav aria-label="Primary" className="mx-auto flex h-full max-w-[1440px] items-center justify-between gap-4 px-5 sm:px-7 lg:px-8">
         <Link href={isHome ? "#" : "/"} aria-label="LUPFR home" className="shrink-0">
           <LupfrLogoImage width={300} height={100} sizes="170px" className="h-11 w-auto object-contain" priority />

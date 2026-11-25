@@ -104,7 +104,8 @@ describe("home page mobile transfer guardrails", () => {
         // is a video reel, not the old short text list the stale comment here
         // used to describe; the mobile-perf budgets in verify-mobile-perf
         // remain the enforcing gate for above-the-fold cost either way.
-        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Events \/>\s*<Brands \/>\s*<DeferredHomeSection/)
+        // v6 (owner, 2026-11-24): Brands moved above Featured Experiences: Services -> Brands -> Events -> contact block.
+        expect(homePage).toMatch(/<PartnersStrip \/>[\s\S]*?<Services \/>\s*<Brands \/>\s*<Events \/>\s*<DeferredHomeSection/)
         expect(homePage).not.toContain('<DeferredHomeSection id="brands"')
         expect(homePage).not.toContain('<DeferredHomeSection id="news"')
     })

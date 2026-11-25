@@ -25,15 +25,15 @@ const STEP_NAMES = ["Occasion", "Details", "Experience", "Budget & timing", "Con
 const TOTAL_STEPS = STEP_NAMES.length
 const DONE_STEP = TOTAL_STEPS + 1
 
-/** Round 16 (owner 2026-11-19): six occasions in this order. The third value is the photo's `object-position`
- *  (the yacht shot is cropped toward the top so faces stay in frame). Greek life uses a placeholder event photo. */
+/** v6 (owner 2026-11-24): six occasions in the design's order. The third value is the photo's `object-position`
+ *  (the yacht shot is cropped toward the top so faces stay in frame). "Not sure yet" is a tile again. */
 const OCCASION_TILES: Array<[label: string, photo: string, position?: string]> = [
-  ["Private celebration", "/services/private-events-2026-ballroom.webp"],
-  ["Yacht event", "/events/seaside_series_dj.webp", "50% 12%"],
-  ["Greek life event", "/events/seaside_002_recap.webp"],
-  ["Corporate event", "/services/event-production-2026.webp"],
+  ["Private event", "/services/private-events-2026-ballroom.webp"],
+  ["Greek Life Event", "/services/event-production-2026.webp"],
   ["Brand activation", "/services/brand-partnerships-2026.webp"],
+  ["Yacht event", "/events/seaside_series_dj.webp", "50% 12%"],
   ["Venue programming", "/brands/skiside-gateway-arrival.webp"],
+  ["Not sure yet", "/events/bal_masque_acrobat.webp"],
 ]
 /** Round 16: after the occasion, the four experience brands as cards (accent colors from data/brands.yml). */
 const BRAND_CARDS: Array<[label: string, sub: string, blurb: string, accent: string]> = [
@@ -467,16 +467,16 @@ export function StartPlanning() {
   return (
     <section id="contact" className="relative flex min-h-[100dvh] items-center overflow-clip border-b border-white/10 bg-[#070605] px-5 pb-6 pt-[88px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:pb-10 min-[901px]:pt-[104px]" data-testid="start-planning">
       <div className="relative mx-auto grid w-full max-w-[1240px] items-center gap-10 min-[1001px]:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] max-[1000px]:gap-4">
-        <aside className="flex flex-col gap-5 max-[1000px]:gap-0">
+        <aside className="flex flex-col gap-4 max-[1000px]:gap-0">
           <div>
             <div className="mb-3.5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c] max-[640px]:mb-2">
               <span className="text-[#c9a869]">(04)</span>
               <span>INQUIRIES</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(40px,4.6vw,68px)] font-extrabold uppercase leading-none max-[640px]:text-[38px]">
+            <h2 className="m-0 font-condensed text-[clamp(40px,4vw,56px)] font-extrabold uppercase leading-none max-[640px]:text-[38px]">
               <GoldShineText className="leading-none!">Start planning.</GoldShineText>
             </h2>
-            <p className="mt-4 max-w-[40ch] text-pretty text-[15px] leading-[1.55] text-[#d9d3c6] max-[640px]:hidden">
+            <p className="mt-3 max-w-[40ch] text-pretty text-[14.5px] leading-[1.5] text-[#d9d3c6] max-[640px]:hidden">
               Tell us what you have in mind. Estimates and “not sure yet” are welcome. It takes about two minutes.
             </p>
           </div>
@@ -493,11 +493,11 @@ export function StartPlanning() {
                     disabled={!can}
                     aria-current={on ? "step" : undefined}
                     onClick={() => setStep(n)}
-                    className={`grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-2.5 border-0 border-b border-white/10 bg-transparent py-2.5 text-left ${can ? "cursor-pointer" : "cursor-default"}`}
+                    className={`grid w-full grid-cols-[34px_minmax(0,1fr)_auto] items-center gap-2.5 border-0 border-b border-white/10 bg-transparent py-2 text-left ${can ? "cursor-pointer" : "cursor-default"}`}
                   >
                     <span className={`font-mono text-[10.5px] ${on || done ? "text-[#c9a869]" : "text-[#8f887c]"}`}>{`0${n}`}</span>
                     <span className="flex min-w-0 flex-col gap-[5px]">
-                      <span className={`font-condensed text-[19px] font-extrabold uppercase leading-none transition-colors duration-300 ${on ? "text-[#fdf6e8]" : done ? "text-[#d9d3c6]" : "text-[#8f887c]"}`}>{label}</span>
+                      <span className={`font-condensed text-[17px] font-extrabold uppercase leading-none transition-colors duration-300 ${on ? "text-[#fdf6e8]" : done ? "text-[#d9d3c6]" : "text-[#8f887c]"}`}>{label}</span>
                       <span className={`truncate text-[12.5px] leading-[1.3] ${values[i] ? "text-[#e8caa0]" : "text-[#8f887c]"}`}>{values[i] ?? (on ? "In progress" : "—")}</span>
                     </span>
                     <span
@@ -564,7 +564,7 @@ export function StartPlanning() {
                   })}
                 </div>
                 <div>
-                  <span className={LABEL}>WHICH LUPFR BRAND? PICK ANY</span>
+                  <span className={LABEL}>PICK YOUR BRAND</span>
                   <div className="grid grid-cols-4 gap-2 max-[900px]:grid-cols-2 max-[640px]:gap-1.5" data-testid="brand-cards">
                     {BRAND_CARDS.map(([label, sub, blurb, accent]) => {
                       const on = brief.brands.includes(label)
@@ -592,11 +592,12 @@ export function StartPlanning() {
                   </div>
                   <button
                     type="button"
+                    aria-label="Not sure yet. Open to ideas"
                     aria-pressed={brief.brands.includes(OPEN_TO_IDEAS)}
                     onClick={() => patch({ brands: toggle(brief.brands, OPEN_TO_IDEAS) })}
                     className={`mt-2.5 cursor-pointer border-0 border-b border-dashed bg-transparent px-1 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] max-[640px]:mt-1 ${brief.brands.includes(OPEN_TO_IDEAS) ? "border-[#c9a869] text-[#e8caa0]" : "border-white/25 text-[#bdb6a9]"}`}
                   >
-                    Not sure yet. Open to ideas
+                    Not sure yet
                   </button>
                 </div>
               </div>

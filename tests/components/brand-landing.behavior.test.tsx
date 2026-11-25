@@ -13,6 +13,27 @@ import { brandPlainTitle, getBrandBySlug, getBrands } from "@/lib/data/brands"
  * "On the calendar" section. Copy comes from data/brands.yml's `landing` block.
  */
 describe("BrandLanding", () => {
+  // v6 (owner, 2026-11-24): below the hero, THE FORMAT is a full-width photo band with the statement over it,
+  // followed by three highlight cards (outlined number, icon disc, title, line).
+  it("puts the statement over a full-width photo band, then three highlight cards after it", () => {
+    const brand = getBrandBySlug("seaside")!
+    render(<BrandLanding brand={brand} />)
+    const band = screen.getByTestId("brand-format-photo")
+    expect(band.className).toContain("h-[clamp(420px,62vh,640px)]")
+    expect(within(band).getByRole("heading", { level: 2, name: brand.landing!.statement })).toBeInTheDocument()
+    expect(within(band).getByText("The format")).toBeInTheDocument()
+    expect(within(band).getByText(brand.format!)).toBeInTheDocument()
+    const cards = screen.getAllByTestId("brand-pillar")
+    expect(cards).toHaveLength(3)
+    cards.forEach((card, i) => {
+      expect(card).toHaveTextContent(String(i + 1).padStart(2, "0"))
+      expect(card).toHaveTextContent(brand.landing!.pillars[i]!.title)
+      expect(band.contains(card)).toBe(false)
+      expect(band.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    })
+    expect(cards[0]!.style.borderTopColor).not.toBe("")
+  })
+
   it.each(getBrands().map((b) => b.key))("%s renders hero, format, plan box and the other five brands, with no calendar", (key) => {
     const brand = getBrandBySlug(key)!
     render(<BrandLanding brand={brand} />)

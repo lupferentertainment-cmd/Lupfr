@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Barlow_Condensed, Space_Mono } from 'next/font/google'
+import { Barlow_Condensed, Space_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
 import { CookieConsent } from '@/components/cookie-consent'
 import { DeferredAnalytics } from '@/components/deferred-analytics'
@@ -15,11 +15,15 @@ import { SITE_URL } from '@/lib/site'
 import { LINKS } from '@/lib/links'
 import './globals.css'
 
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
+// Self-hosted (variable, latin subset, OFL), same reason as Work Sans below: Turbopack on Next 16.1.6 can fail to
+// parse Google's Playfair Display file URLs (`next/font/google queries have exactly one entry`, seen 2026-11-24).
+const playfairDisplay = localFont({
+  src: './fonts/playfair-display-latin-wght.woff2',
+  weight: '400 900',
+  style: 'normal',
   variable: '--font-playfair-display',
   display: 'swap',
+  adjustFontFallback: 'Times New Roman',
 })
 
 const barlowCondensed = Barlow_Condensed({
@@ -48,8 +52,8 @@ const spaceMono = Space_Mono({
 })
 
 const siteName = 'LUPFR Entertainment'
-const defaultTitle = 'LUPFR Entertainment | SF & LA Music Events & Talent Curation'
-const defaultDescription = "California's premier music event production company. Boat parties, rooftop events, warehouse sessions, and unforgettable experiences across SF and LA."
+const defaultTitle = 'LUPFR Entertainment | Music-Led Events & Production, SF & LA'
+const defaultDescription = "Music-led live experiences and event production in SF, LA and beyond. Six brands: SEA//SIDE, IN//SIDE, OUT//SIDE, SKI//SIDE, HIGH//RISE and SOUND//CHECK."
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lupfr.com"),
@@ -67,7 +71,12 @@ export const metadata: Metadata = {
     'san francisco events',
     'los angeles events',
     'california events',
-    'boat parties',
+    'SEA//SIDE',
+    'IN//SIDE',
+    'OUT//SIDE',
+    'SKI//SIDE',
+    'HIGH//RISE',
+    'SOUND//CHECK',
     'dj booking',
     'nightlife',
     'event production',
@@ -75,8 +84,6 @@ export const metadata: Metadata = {
     'SF nightlife',
     'LA nightlife',
     'Bay Area events',
-    'warehouse parties',
-    'rooftop parties',
     'house music',
     'talent booking',
     'event curator',

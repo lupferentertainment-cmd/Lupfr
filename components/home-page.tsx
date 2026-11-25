@@ -42,8 +42,8 @@ export function HomePage() {
       <PartnersStrip />
       {/* Section order below Partners follows the real design file (LUPFR
           Website v3.dc.html / claude-redesign-reference.html) section-marker
-          outline verbatim: Services -> Featured Experiences (Events) ->
-          Our Brands (Brands). Media & News moved to /media and Past Artists to /about (Round 16).
+          outline verbatim. v6 (owner, 2026-11-24): Services -> Our Brands (Brands) ->
+          Featured Experiences (Events) -> Start Planning (the v3 order was Services -> Events -> Brands). Media & News moved to /media and Past Artists to /about (Round 16).
           The previous order here (News/Brands/Events/Services) carried over a
           stale "company news items below the Hero" comment from the OLD,
           since-retired components/news.tsx home strip (owner 2026-08-08) —
@@ -51,8 +51,8 @@ export function HomePage() {
           ordering rationale no longer applies and the sections are restored
           to the design's actual sequence (owner report 2026-10-01). */}
       <Services />
-      <Events />
       <Brands />
+      <Events />
       <DeferredHomeSection id="contact" estimatedHeightClassName="min-h-[820px]">
         {/* 2026-11-17: About + Our Team live on /about now; the page ends with Follow the Momentum. Rides
             the contact deferred block rather than getting its own, so it stays

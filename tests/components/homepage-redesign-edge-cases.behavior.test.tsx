@@ -34,22 +34,14 @@ afterEach(() => {
   vi.doUnmock("@/lib/data/news")
 })
 
-describe("ClaudeHomeHero's background picker", () => {
-  // 2026-10-02 fix, round 2: the hero's 3-item picker (Bal Masque / SEA//SIDE
-  // / Golden Gate) defaults to Bal Masque's real video. 2026-10-03 fix: the
-  // Golden Gate tab used to have no real video asset (photo-only fallback
-  // branch) — the owner has since supplied a real clip for it
-  // (public/events/ggl_main_video.{mp4,webm}), so all 3 tabs now always
-  // render a video and that fallback branch no longer exists in the
-  // component. This just exercises switching tabs and picking up the new
-  // tab's own video source.
-  it("switches the video source when the Golden Gate tab is picked", async () => {
-    const user = userEvent.setup()
+describe("ClaudeHomeHero's v6 composition", () => {
+  // v6 (owner, 2026-11-24): the 01/02/03 picker is gone; the three event videos still rotate on a timer behind the
+  // centred mark, over the gold production photo, which is always rendered underneath as the fallback.
+  it("has no picker buttons, keeps the gold fallback photo and starts on Bal Masque's video", () => {
     const { container } = render(<ClaudeHomeHero />)
-    await user.click(screen.getByText(/Golden Gate/))
-    const video = container.querySelector("video")
-    expect(video?.getAttribute("poster")).toBe("/events/ggl_main_dj.webp")
-    expect(container.querySelector("source[src='/events/ggl_main_video.mp4']")).toBeInTheDocument()
+    expect(screen.queryByRole("button")).toBeNull()
+    expect(screen.getByTestId("hero-fallback").getAttribute("src")).toContain("hero-gold-fallback")
+    expect(container.querySelector("video")?.getAttribute("poster")).toBe("/events/bal_masque_wings.webp")
   })
 })
 
@@ -182,93 +174,62 @@ describe("ClaudeHomeArtists' default-active tile", () => {
   })
 })
 
-describe("ClaudeHomeBrands with an imageless brand", () => {
-  it("renders the card without an image", async () => {
+describe("ClaudeHomeBrands without brand data", () => {
+  it("still links each card to /brands/<key> when the brand record is missing", async () => {
     vi.doMock("@/lib/data/brands", () => ({
-      getBrandsByDivision: () => ({
-        liveEvents: [{ key: "bare", tag: "BARE", title: "BARE", accent: "#fff" }],
-        corporateMedia: [],
-      }),
+      getBrandBySlug: () => undefined,
       brandPath: (b: { key: string }) => `/brands/${b.key}`,
-      brandPlainTitle: (b: { title: string }) => b.title,
-      PLATFORM_PROGRAMS: [],
     }))
     const { ClaudeHomeBrands } = await import("@/components/claude-home-brands")
-    render(<ClaudeHomeBrands />)
-    expect(screen.getAllByText("BARE").length).toBeGreaterThan(0)
-  })
-})
-
-// LUPFR Website Design v5 (owner, 2026-11-17): Our Brands "Reveal" tiles. The
-// v10 poster grid (division rules, 4 columns, wide HIGH//RISE/SOUND//CHECK
-// tiles, 4:3 mobile tiles) is gone; these pin the v5 responsive classes. The
-// compiled cascade order is checked in tests/unit/brands-desktop-breakpoint-css.test.ts.
-describe("ClaudeHomeBrands' v5 Reveal responsive grid", () => {
-  it("lays Operating tiles out 6-up, then 3 at <=1100px, 2 at <=720px, 1 at <=480px", () => {
-    render(<ClaudeHomeBrands />)
-    const grid = screen.getByTestId("brands-grid-operating")
-    expect(grid).toHaveClass("grid-cols-6", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1", "gap-[10px]")
-  })
-
-  it("gives every tile the 3:4 shape, becoming 5:3 at <=480px", () => {
     const { container } = render(<ClaudeHomeBrands />)
-    for (const tile of container.querySelectorAll("a[href^='/brands/']")) {
-      expect(tile).toHaveClass("aspect-[3/4]", "max-[480px]:aspect-[5/3]", "rounded-[4px]")
+    expect([...container.querySelectorAll("a[href^='/brands/']")].map((a) => a.getAttribute("href"))).toEqual([
+      "/brands/seaside",
+      "/brands/inside",
+      "/brands/outside",
+      "/brands/skiside",
+    ])
+  })
+})
+
+// LUPFR Website Design v6 (owner, 2026-11-24): Our Brands is four photo cards.
+describe("ClaudeHomeBrands' v6 grid", () => {
+  it("lays four cards out 4-up, then 2-up at <=900px, each a 3:4 photo", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    expect(screen.getByTestId("brands-grid")).toHaveClass("grid-cols-4", "max-[900px]:grid-cols-2")
+    for (const card of screen.getAllByTestId("brand-card")) {
+      expect(card.querySelector("div.relative")).toHaveClass("aspect-[3/4]")
     }
-  })
-
-  it("lays Platform tiles out 5-up with the same responsive steps and shape", async () => {
-    const user = userEvent.setup()
-    render(<ClaudeHomeBrands />)
-    await user.click(screen.getByRole("button", { name: "platform" }))
-    const grid = screen.getByTestId("brands-grid-platform")
-    expect(grid).toHaveClass("grid-cols-5", "max-[1100px]:grid-cols-3", "max-[720px]:grid-cols-2", "max-[480px]:grid-cols-1")
-    expect(grid.children).toHaveLength(5)
-    for (const tile of grid.children) expect(tile).toHaveClass("aspect-[3/4]")
-  })
-
-  it("turns the small labels into off-white dark pills at <=900px and drops the brand wash at <=1100px", () => {
-    render(<ClaudeHomeBrands />)
-    const label = screen.getAllByTestId("brand-label")[0]!
-    expect(label).toHaveClass("max-[900px]:text-[#f3efe6]", "max-[900px]:bg-[rgba(8,7,6,0.72)]")
-    expect(screen.getAllByTestId("brand-wash")[0]).toHaveClass("opacity-[.22]", "group-hover:opacity-40", "max-[1100px]:hidden")
-  })
-
-  it("reveals the description on hover (max-h 90px) and always shows it at <=1100px", () => {
-    render(<ClaudeHomeBrands />)
-    const description = screen.getByText(/Indoor live music experiences/)
-    expect(description).toHaveClass("max-h-0", "group-hover:max-h-[90px]", "max-[1100px]:max-h-[90px]", "max-[1100px]:opacity-100")
-    expect(screen.getAllByTestId("brand-bar")[0]).toHaveClass("scale-x-[.18]", "group-hover:scale-x-100")
+    expect(container.querySelectorAll("[data-testid=brand-card]")).toHaveLength(4)
   })
 })
 
-// 2026-10-04 fix, round 11 (owner, Claude design mobile screenshot: "Hero...
-// needs to be designed like the screenshot I have from the claude design")
-// — the media panel's left-edge mask and heavy dark gradient only ever
-// made sense for the `md:`+ two-column layout; content now anchors to the
-// bottom on mobile instead of vertically centering.
-describe("ClaudeHomeHero's mobile layout", () => {
-  it("has no left-edge mask below md:, and restores it from md: up", () => {
-    const { container } = render(<ClaudeHomeHero />)
-    const mediaPanel = container.querySelector("video")!.closest("div.absolute")!
-    // Unprefixed (mobile) class must be absent — only the md:-prefixed one exists.
-    expect(mediaPanel.classList.contains("[-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)]")).toBe(false)
-    expect(mediaPanel).toHaveClass("md:[-webkit-mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,.55)_16%,#000_38%)]")
+// v6 (owner, 2026-11-24): full-screen hero behind the nav, thin low-key "//" dividers, dark fade at the top.
+describe("ClaudeHomeHero's v6 layout", () => {
+  it("is a full-screen section with a dark top fade for the transparent nav", () => {
+    render(<ClaudeHomeHero />)
+    const hero = document.getElementById("hero")!
+    expect(hero).toHaveClass("h-[100svh]")
+    expect(hero.className).not.toContain("pt-[76px]")
+    expect(screen.getByTestId("hero-top-fade").className).toContain("rgba(7,6,5,0.85)_0%")
   })
 
-  it("anchors content to the bottom below md:, centered from md: up", () => {
-    const { container } = render(<ClaudeHomeHero />)
-    const contentRow = container.querySelector("h1")!.closest("div.relative.z-10")!
-    expect(contentRow).toHaveClass("items-end")
-    expect(contentRow).toHaveClass("md:items-center")
+  it("centres the LE mark and keeps an sr-only h1", () => {
+    render(<ClaudeHomeHero />)
+    expect(screen.getByTestId("hero-logo")).toHaveClass("left-1/2", "top-[42%]", "-translate-x-1/2")
+    expect(screen.getByRole("heading", { level: 1, name: "LUPFR Entertainment" })).toHaveClass("sr-only")
+  })
+
+  it("renders the tagline dividers thin and low-key", () => {
+    render(<ClaudeHomeHero />)
+    const dividers = [...screen.getByTestId("hero-tagline").querySelectorAll("span[aria-hidden]")].filter((el) => el.textContent === "//")
+    expect(dividers).toHaveLength(2)
+    for (const d of dividers) expect(d).toHaveClass("font-light", "opacity-70")
   })
 })
 
-// LUPFR Website Design v5 (owner, 2026-11-17): Services is a 3x2 grid of photo
-// cards (number, icon, title, description only) with the Plan Your Event
-// button in the header; at <=900px it is a swipe row with the button below.
-describe("ClaudeHomeServices' v5 card grid", () => {
-  it("renders one card per service with number, title and description, and no included-items list", () => {
+// LUPFR Website Design v6 (owner, 2026-11-24): Services is two rows of three slanted tiles with a Services / Platforms toggle.
+describe("ClaudeHomeServices' v6 tiles", () => {
+  it("renders one tile per service with outlined number, one-line title and description, and no included-items list", () => {
     const services = getServices()
     render(<ClaudeHomeServices />)
     const cards = screen.getAllByTestId("service-card")
@@ -276,48 +237,70 @@ describe("ClaudeHomeServices' v5 card grid", () => {
     services.forEach((service, i) => {
       const card = within(cards[i]!)
       expect(card.getByText(String(i + 1).padStart(2, "0"))).toBeInTheDocument()
-      expect(card.getByRole("heading", { level: 3, name: service.title })).toBeInTheDocument()
+      const title = card.getByRole("heading", { level: 3, name: service.title })
+      expect(title).toHaveClass("whitespace-nowrap")
       expect(card.getByText(service.description)).toBeInTheDocument()
       expect(cards[i]!.querySelector("ul")).toBeNull()
     })
   })
 
-  it("uses the v5 card shape: 16:10, 4:3 from 901 to 1250px, then a vertical tile stack (not a carousel) at <=900px", () => {
+  it("lays the tiles out as two rows of three slanted tiles that stack at <=900px", () => {
     render(<ClaudeHomeServices />)
-    expect(screen.getAllByTestId("service-card")[0]).toHaveClass(
-      "aspect-[16/10]",
-      "max-[1250px]:min-[901px]:aspect-[4/3]",
-      "max-[900px]:aspect-[4/3]",
-      "max-[560px]:aspect-[5/3]",
-      "rounded-[4px]"
-    )
-    const grid = screen.getByTestId("services-grid")
-    expect(grid).toHaveClass("grid-cols-3", "max-[900px]:grid-cols-2", "max-[560px]:grid-cols-1")
-    expect(grid.className).not.toMatch(/snap-x|overflow-x-auto/)
+    const cards = screen.getAllByTestId("service-card")
+    expect(cards[0]).toHaveClass("aspect-[2/1]", "[clip-path:polygon(10%_0,100%_0,90%_100%,0_100%)]", "max-[900px]:h-[190px]", "max-[900px]:w-full")
+    expect(cards[1]).toHaveClass("-ml-[2.265%]", "max-[900px]:ml-0")
+    expect(cards[0]).not.toHaveClass("-ml-[2.265%]")
+    const rows = screen.getByTestId("services-grid").children
+    expect(rows).toHaveLength(2)
+    expect(rows[0]!.children).toHaveLength(3)
+    expect(rows[1]!.children).toHaveLength(3)
+    expect(rows[0]).toHaveClass("max-[900px]:flex-col")
   })
 
-  it("puts Plan Your Event in the header (hidden <=900px) and again below the cards", () => {
+  it("switches to the five platform tiles (numbered 07-11) and back", async () => {
+    const user = userEvent.setup()
     render(<ClaudeHomeServices />)
-    const header = screen.getByTestId("services-header-cta")
-    expect(header).toHaveAttribute("href", "/contact")
-    expect(header).toHaveClass("max-[900px]:hidden")
-    expect(screen.getByTestId("services-footer-cta")).toHaveAttribute("href", "/contact")
-    expect(screen.queryByText(/SWIPE/)).not.toBeInTheDocument()
+    const toggle = screen.getByRole("group", { name: "Services or platforms" })
+    expect(within(toggle).getByRole("button", { name: /Services/ })).toHaveAttribute("aria-pressed", "true")
+    await user.click(within(toggle).getByRole("button", { name: /Platforms/ }))
+    expect(screen.getByTestId("services-grid")).toHaveAttribute("data-tab", "platforms")
+    const cards = screen.getAllByTestId("service-card")
+    expect(cards.map((c) => within(c).getByRole("heading", { level: 3 }).textContent)).toEqual([
+      "LUPFR VIP",
+      "LP Program",
+      "LUPFR Media",
+      "LUPFR Hospitality",
+      "LUPFR Ventures",
+    ])
+    for (const n of ["07", "08", "09", "10", "11"]) expect(screen.getByText(n)).toBeInTheDocument()
+    expect(screen.getByTestId("services-grid").children[1]!.children).toHaveLength(2)
+    await user.click(within(toggle).getByRole("button", { name: /Services/ }))
+    expect(screen.getAllByTestId("service-card")).toHaveLength(6)
   })
 
-  it("shows the heading 'Idea to execution.' with the v5 subtitle", () => {
+  it("keeps Plan Your Event in the header and makes Plan Your Full Event a low-key text link under the tiles", () => {
+    render(<ClaudeHomeServices />)
+    expect(screen.getByTestId("services-header-cta")).toHaveAttribute("href", "/contact")
+    const strip = screen.getByTestId("services-footer-cta")
+    expect(strip).toHaveAttribute("href", "/contact")
+    expect(strip).toHaveTextContent("Plan Your Full Event")
+    expect(strip.className).not.toContain("btn-metallic-gold")
+    expect(screen.getByText("Full event design & execution")).toBeInTheDocument()
+  })
+
+  it("shows the heading 'Idea to execution.' with no subtitle", () => {
     render(<ClaudeHomeServices />)
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Idea to execution.")
-    expect(screen.getByText("All an event needs in one place.")).toBeInTheDocument()
+    expect(screen.queryByText("All an event needs in one place.")).not.toBeInTheDocument()
   })
 
-  it("applies the per-card photo focus from the design (Venue Programming 40%, Production 55%)", () => {
+  it("applies the per-tile photo focus from the design (Venue Programming 40%, Production 55%)", () => {
     const { container } = render(<ClaudeHomeServices />)
     const positions = [...container.querySelectorAll("[data-testid=service-card] img")].map((img) => (img as HTMLElement).style.objectPosition)
     expect(positions).toEqual(["50% 45%", "50% 45%", "50% 40%", "50% 40%", "50% 55%", "50% 35%"])
   })
 
-  it("renders an imageless, iconless service without a photo or badge", async () => {
+  it("renders an imageless service without a photo", async () => {
     vi.doMock("@/lib/data/services", () => ({
       getServices: () => [{ title: "Bare Service", description: "A plain service.", features: [] }],
     }))
@@ -341,10 +324,10 @@ describe("ClaudeHomeExperiences' v5 sticky stack", () => {
     })
   })
 
-  it("shows '01 / 04' counters and the (02) OUR WORK header with a View Past Events link", () => {
+  it("shows '01 / 04' counters and the (03) OUR WORK header with a View Past Events link", () => {
     render(<ClaudeHomeExperiences />)
     for (const counter of ["01 / 04", "02 / 04", "03 / 04", "04 / 04"]) expect(screen.getByText(counter)).toBeInTheDocument()
-    expect(screen.getByText("(02)")).toBeInTheDocument()
+    expect(screen.getByText("(03)")).toBeInTheDocument()
     expect(screen.getByText("OUR WORK")).toBeInTheDocument()
     expect(screen.getByRole("heading", { level: 2, name: "Featured Experiences" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "View Past Events →" })).toHaveAttribute("href", "/events")
@@ -600,50 +583,42 @@ describe("ThemeToggle inside a real ThemeProvider", () => {
   })
 })
 
-// LUPFR Website Design v5 (owner, 2026-11-17) — Our Brands content.
-describe("ClaudeHomeBrands' v5 content", () => {
-  it("reads '(03) ELEVEN PLATFORMS. ONE COMPANY.' with the Explore LUPFR link and no division labels", () => {
-    const { container } = render(<ClaudeHomeBrands />)
-    expect(screen.getByText("ELEVEN PLATFORMS. ONE COMPANY.")).toBeInTheDocument()
+// LUPFR Website Design v6 (owner, 2026-11-24) — Our Brands content.
+describe("ClaudeHomeBrands' v6 content", () => {
+  it("reads '(02) OUR BRANDS', 'Find your side.' and the one-line intro, with no tabs", () => {
+    render(<ClaudeHomeBrands />)
+    expect(screen.getByText("(02)")).toBeInTheDocument()
+    expect(screen.getByText("OUR BRANDS")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Find your side.")
+    expect(screen.getByText(/Four experience brands, one crew/)).toBeInTheDocument()
+    expect(screen.queryByRole("button")).toBeNull()
     expect(screen.getByRole("link", { name: "Explore LUPFR →" })).toHaveAttribute("href", "/brands")
-    expect(container.querySelector("[data-division-label]")).toBeNull()
   })
 
-  it("orders the Operating tiles SEA//SIDE, IN//SIDE, OUT//SIDE, SKI//SIDE, HIGH//RISE, SOUND//CHECK with 01–06 numbers", () => {
+  it("orders the cards SEA//SIDE, IN//SIDE, OUT//SIDE, SKI//SIDE with 01-04 numbers, each opening the brand page", () => {
     const { container } = render(<ClaudeHomeBrands />)
     const hrefs = [...container.querySelectorAll("a[href^='/brands/']")].map((a) => a.getAttribute("href"))
-    expect(hrefs).toEqual(["/brands/seaside", "/brands/inside", "/brands/outside", "/brands/skiside", "/brands/highrise", "/brands/soundcheck"])
-    for (const n of ["01", "02", "03", "04", "05", "06"]) expect(screen.getByText(n)).toBeInTheDocument()
+    expect(hrefs).toEqual(["/brands/seaside", "/brands/inside", "/brands/outside", "/brands/skiside"])
+    for (const n of ["01", "02", "03", "04"]) expect(screen.getByText(n)).toBeInTheDocument()
   })
 
-  it("uses descriptor-only small labels — the brand name is the title right below, so it is never repeated", () => {
-    render(<ClaudeHomeBrands />)
-    expect(screen.getAllByTestId("brand-label").map((l) => l.textContent)).toEqual([
-      "OFFSHORE EXPERIENCES",
-      "INDOOR NIGHTS",
-      "OPEN-AIR GATHERINGS",
-      "APRÈS-SKI EXPERIENCES",
-      "CORPORATE",
-      "MEDIA",
-    ])
-  })
-
-  it("shows the five Platform tiles labelled VIP, PROMOTER, MEDIA, HOSPITALITY, VENTURES with numbers 06–10", async () => {
-    const user = userEvent.setup()
-    render(<ClaudeHomeBrands />)
-    await user.click(screen.getByRole("button", { name: "platform" }))
-    expect(screen.getAllByTestId("brand-label").map((l) => l.textContent)).toEqual(["VIP", "PROMOTER", "MEDIA", "HOSPITALITY", "VENTURES"])
-    for (const n of ["06", "07", "08", "09", "10"]) expect(screen.getByText(n)).toBeInTheDocument()
-  })
-
-  it("keeps SKI//SIDE's slash-mark image with an accessible '//', and text '//' for brands without one", () => {
+  it("shows each brand's tagline and no category tag", () => {
     const { container } = render(<ClaudeHomeBrands />)
-    const ski = container.querySelector("a[href='/brands/skiside']") as HTMLElement
-    const heading = within(ski).getByRole("heading", { level: 3 })
-    expect(heading.textContent).toBe("SKI//SIDE")
-    expect(heading.querySelector("[data-brand-slash-image]")).not.toBeNull()
-    const seaside = container.querySelector("a[href='/brands/seaside']") as HTMLElement
-    expect(seaside.querySelector(".lupfr-brand-slash")).not.toBeNull()
-    expect(seaside.querySelector("[data-brand-slash-image]")).toBeNull()
+    for (const line of ["Offshore Music Experiences", "The Night, Reimagined", "An Open Air Series", "Après ski, amplified."]) {
+      expect(screen.getByText(line)).toBeInTheDocument()
+    }
+    for (const tag of ["YACHTS", "INDOORS", "OUTDOORS", "COMING 2027"]) expect(container.textContent).not.toContain(tag)
+  })
+
+  it("uses the v6 tile photos with a descriptive alt", () => {
+    const { container } = render(<ClaudeHomeBrands />)
+    const imgs = [...container.querySelectorAll("img")]
+    expect(imgs).toHaveLength(4)
+    expect(imgs.map((i) => i.getAttribute("alt"))).toEqual([
+      "SEA SIDE by LUPFR Entertainment",
+      "IN SIDE by LUPFR Entertainment",
+      "OUT SIDE by LUPFR Entertainment",
+      "SKI SIDE by LUPFR Entertainment",
+    ])
   })
 })

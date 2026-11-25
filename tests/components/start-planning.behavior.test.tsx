@@ -68,20 +68,23 @@ describe("StartPlanning — structure", () => {
     expect(screen.getByTestId("start-planning")).toHaveAttribute("id", "contact")
   })
 
-  it("offers six photo occasion tiles (no Not sure yet) and four brand cards plus an Open to ideas link", () => {
+  it("offers the six v6 occasion tiles (incl. Not sure yet) and four brand cards plus a Not sure yet link", () => {
     render(<StartPlanning />)
     const tiles = within(screen.getByTestId("occasion-tiles")).getAllByRole("button")
     expect(tiles.map((t) => t.textContent?.replace("✓", ""))).toEqual([
-      "Private celebration",
-      "Yacht event",
-      "Greek life event",
-      "Corporate event",
+      "Private event",
+      "Greek Life Event",
       "Brand activation",
+      "Yacht event",
       "Venue programming",
+      "Not sure yet",
     ])
+    expect(screen.getByText("PICK YOUR BRAND")).toBeInTheDocument()
+    expect(screen.queryByText(/Corporate event|Private celebration|HIGH\/\/RISE/)).toBeNull()
     const cards = within(screen.getByTestId("brand-cards")).getAllByRole("button")
     expect(cards.map((c) => c.getAttribute("aria-label"))).toEqual(["SEA//SIDE", "IN//SIDE", "OUT//SIDE", "SKI//SIDE"])
-    expect(screen.getByRole("button", { name: "Not sure yet. Open to ideas" })).toBeInTheDocument()
+    const unsure = screen.getByRole("button", { name: "Not sure yet. Open to ideas" })
+    expect(unsure).toHaveTextContent(/^Not sure yet$/)
   })
 
   it("keeps the yacht photo cropped toward the faces", () => {
@@ -96,16 +99,16 @@ describe("StartPlanning — gating and navigation", () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
     expect(next()).toBeDisabled()
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     expect(next()).toBeEnabled()
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     expect(next()).toBeDisabled()
   })
 
   it("requires guests AND city on step 2, and lets the visitor toggle the optional choices off", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Private celebration" }))
+    await user.click(screen.getByRole("button", { name: "Private event" }))
     await user.click(next())
     expect(screen.getByRole("heading", { level: 3, name: "The details" })).toBeInTheDocument()
     expect(next()).toBeDisabled()
@@ -127,7 +130,7 @@ describe("StartPlanning — gating and navigation", () => {
   it("accepts either a service or the vision text on step 3, and multi-selects services", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "300+" }))
     await city(user, "New York")
@@ -152,7 +155,7 @@ describe("StartPlanning — gating and navigation", () => {
   it("'Run the whole event' replaces the checklist with Full event management and dims the groups", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "300+" }))
     await city(user, "New York")
@@ -173,7 +176,7 @@ describe("StartPlanning — gating and navigation", () => {
   it("requires a budget on step 4 (slider stops, 'Not decided' switch)", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "300+" }))
     await city(user, "New York")
@@ -297,7 +300,7 @@ describe("StartPlanning — submission", () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     vi.stubGlobal("fetch", fetchMock)
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     await user.click(next())
     await user.click(screen.getByRole("button", { name: "300+" }))
     await city(user, "Somewhere else")
@@ -379,14 +382,14 @@ describe("StartPlanning — presetInquiry event (Submit Your Mix)", () => {
   it("selects 'Not sure yet', pre-fills the notes and returns to step 1", async () => {
     const user = userEvent.setup()
     render(<StartPlanning />)
-    await user.click(screen.getByRole("button", { name: "Corporate event" }))
+    await user.click(screen.getByRole("button", { name: "Greek Life Event" }))
     await user.click(next())
     act(() => {
       window.dispatchEvent(new CustomEvent("presetInquiry", { detail: "Submit Your Mix" }))
     })
     expect(screen.getByRole("heading", { level: 3, name: "What's the occasion?" })).toBeInTheDocument()
-    // An existing pick is kept; only an empty occasion defaults to "Not sure yet" (no tile, shown in the rail).
-    expect(screen.getByRole("button", { name: "Corporate event" })).toHaveAttribute("aria-pressed", "true")
+    // An existing pick is kept; only an empty occasion defaults to "Not sure yet" (now matching the "Not sure yet" tile).
+    expect(screen.getByRole("button", { name: "Greek Life Event" })).toHaveAttribute("aria-pressed", "true")
   })
 
   it("defaults the occasion when none is picked, appends to existing notes and tolerates an empty detail", async () => {
