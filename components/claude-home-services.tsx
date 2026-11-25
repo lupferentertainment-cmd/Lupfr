@@ -61,7 +61,7 @@ export function ClaudeHomeServices() {
   const rows = [tiles.slice(0, 3), tiles.slice(3, 6)].filter((r) => r.length > 0)
 
   return (
-    <section id="services" className="relative border-b border-white/10 bg-[#070605] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-[84px]">
+    <section id="services" className="relative border-b border-white/10 bg-[#070605] px-5 pb-8 pt-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-[84px]">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-6 max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-4 min-[901px]:mb-9">
           <div className="flex flex-col items-start">
@@ -73,8 +73,8 @@ export function ClaudeHomeServices() {
               <GoldShineText>Idea to execution.</GoldShineText>
             </h2>
           </div>
-          <div className="flex flex-wrap items-center gap-6 max-[900px]:gap-3.5">
-            <div role="group" aria-label="Services or platforms" className="flex gap-1 rounded-full border border-[rgba(201,168,105,0.45)] p-1">
+          <div className="flex flex-wrap items-center gap-6 max-[900px]:w-full max-[900px]:gap-3.5">
+            <div role="group" aria-label="Services or platforms" className="flex gap-1 rounded-full border border-[rgba(201,168,105,0.45)] p-1 max-[900px]:w-full">
               {(
                 [
                   ["services", "Services", serviceTiles.length],
@@ -86,14 +86,14 @@ export function ClaudeHomeServices() {
                   type="button"
                   aria-pressed={tab === key}
                   onClick={() => setTab(key)}
-                  className={`flex items-baseline gap-2 rounded-full px-[18px] py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors ${tab === key ? "bg-[#c9a869] text-[#1a1408]" : "text-[#e8caa0]"}`}
+                  className={`flex items-baseline gap-2 rounded-full px-[18px] py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors max-[900px]:flex-1 max-[900px]:justify-center max-[900px]:px-2 max-[900px]:tracking-[0.12em] ${tab === key ? "bg-[#c9a869] text-[#1a1408]" : "text-[#e8caa0]"}`}
                 >
                   {label}
                   <span className="opacity-60">{String(count).padStart(2, "0")}</span>
                 </button>
               ))}
             </div>
-            <Link href={CONTACT_PAGE_PATH} data-testid="services-header-cta" className={PLAN_CTA}>
+            <Link href={CONTACT_PAGE_PATH} data-testid="services-header-cta" className={`${PLAN_CTA} max-[1023px]:hidden`}>
               Plan Your Event <span aria-hidden>→</span>
             </Link>
           </div>
@@ -125,7 +125,7 @@ export function ClaudeHomeServices() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y border-[#2a2620] py-4">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-y border-[#2a2620] py-4 max-[900px]:hidden">
           <div className="flex flex-wrap items-baseline gap-x-[18px] gap-y-1">
             <span className="font-mono text-[11px] tracking-[0.22em] text-[#c9a869]">FULL SCALE</span>
             <span className="font-condensed text-2xl font-extrabold uppercase leading-none text-[#fdf6e8]">Full event design &amp; execution</span>

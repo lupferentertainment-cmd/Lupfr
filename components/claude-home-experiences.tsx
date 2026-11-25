@@ -496,14 +496,14 @@ export function ClaudeHomeExperiences() {
   return (
     <section id="events" className="border-b border-white/10 bg-[#0b0a08] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 max-[900px]:mb-6 max-[900px]:gap-4">
           <div>
-            <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
+            <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c] max-[900px]:mb-4">
               <span className="text-[#c9a869]">(03)</span>
               <span>OUR WORK</span>
             </div>
-            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88]"><GoldShineText>Featured Experiences</GoldShineText></h2>
-            <p className="mb-0 mt-4 max-w-[560px] text-[15px] leading-[1.55] text-[#bdb6a9]">
+            <h2 className="m-0 font-condensed text-[clamp(42px,4.8vw,72px)] font-extrabold uppercase leading-[0.88] max-[900px]:whitespace-nowrap max-[900px]:text-[clamp(26px,8.4vw,52px)]"><GoldShineText>Featured Experiences</GoldShineText></h2>
+            <p className="mb-0 mt-4 max-w-[560px] text-[15px] leading-[1.55] text-[#bdb6a9] max-[900px]:mt-3 max-[900px]:text-[13px] max-[900px]:leading-[1.45]">
               Signature LUPFR productions — floating concerts, brand activations, and live-music events we&rsquo;ve built from the ground up.
             </p>
           </div>

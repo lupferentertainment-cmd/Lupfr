@@ -167,3 +167,10 @@ Light-mode section surfaces use the cool off-white palette: the Reviews strip us
 - **Home order:** Services -> Brands -> Featured Experiences -> Start Planning (supersedes the v3 order noted in earlier rounds).
 - **Brand pages:** photo band `h-[clamp(420px,62vh,640px)]` (format photo = gallery[1] || gallery[0] || brand image), statement over it, three highlight cards (tinted, accent top border, outlined number, icon disc). Deck (HIGH//RISE, LUPFR) still follows.
 - **Start Planning:** six occasion tiles in the v6 order; "Not sure yet" is both an occasion tile and the brand-row link (the link keeps the accessible name "Not sure yet. Open to ideas").
+
+### Round 17 mobile follow-ups (2026-11-25)
+
+- The in-page "Plan Your Event" buttons (hero, Services header) are hidden at `max-[1023px]` to match `MobileStickyCta` (`lg:hidden`); keep the two breakpoints in step. "Plan Your Full Event" lives in the strip that is hidden at <=900px.
+- Services/Platforms toggle is full-width at <=900px with equal-width buttons. Services section uses `pb-8` (phones) / `py-[84px]` (>=901px); Brands uses `pt-11` / `py-24`.
+- Brands header: at <=900px the row and the right-hand block are `display: contents` so `order-*` places title (1), short one-line intro (2), card grid (3) and the single "Explore LUPFR →" link (4). Do not duplicate the link.
+- Featured Experiences: title `max-[900px]:whitespace-nowrap`, `clamp(26px,8.4vw,52px)`; intro 13px at <=900px.

@@ -30,10 +30,12 @@ const BRANDS: Array<{ card: BrandCard; brand: BrandItem | undefined }> = CARDS.m
 
 export function ClaudeHomeBrands() {
   return (
-    <section id="brands" className="border-b border-white/10 bg-[#070605] px-5 py-[72px] text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
-        <div className="flex flex-wrap items-end justify-between gap-6 max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-4">
-          <div className="flex flex-col items-start">
+    <section id="brands" className="border-b border-white/10 bg-[#070605] px-5 pb-[72px] pt-11 text-[#f3efe6] sm:px-8 min-[901px]:px-12 min-[901px]:py-24">
+      {/* <=900px: the header row and its right-hand block use `display: contents` so the intro line, the card grid and the
+          "Explore LUPFR" link can be ordered title -> intro -> cards -> link without a second copy of the link. */}
+      <div className="mx-auto flex max-w-[1400px] flex-col gap-8 max-[900px]:gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-6 max-[900px]:contents">
+          <div className="flex flex-col items-start max-[900px]:order-1">
             <div className="mb-5 flex gap-3.5 font-mono text-[11px] tracking-[0.22em] text-[#8f887c]">
               <span className="text-[#c9a869]">(02)</span>
               <span>OUR BRANDS</span>
@@ -42,15 +44,21 @@ export function ClaudeHomeBrands() {
               <GoldShineText>Find your side.</GoldShineText>
             </h2>
           </div>
-          <div className="flex max-w-[400px] flex-col gap-3">
-            <p className="m-0 text-base leading-[1.55] text-[#e6e0d4]">Four experience brands, one crew. Each one built around a different setting.</p>
-            <Link href="/brands" className="w-fit font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0] no-underline transition-colors hover:text-[#fdf6e8]">
+          <div className="flex max-w-[400px] flex-col gap-3 max-[900px]:contents">
+            <p className="m-0 text-base leading-[1.55] text-[#e6e0d4] max-[900px]:order-2 max-[900px]:whitespace-nowrap max-[900px]:text-[clamp(12.5px,3.9vw,15px)] max-[900px]:leading-snug">
+              <span className="max-[900px]:hidden">Four experience brands, one crew. Each one built around a different setting.</span>
+              <span className="hidden max-[900px]:inline">Four brands, one crew. Pick your setting.</span>
+            </p>
+            <Link
+              href="/brands"
+              className="w-fit font-mono text-[10px] uppercase tracking-[0.16em] text-[#e8caa0] no-underline transition-colors hover:text-[#fdf6e8] max-[900px]:order-4 max-[900px]:mt-1 max-[900px]:self-center max-[900px]:text-[11px]"
+            >
               Explore LUPFR →
             </Link>
           </div>
         </div>
 
-        <div data-testid="brands-grid" className="grid grid-cols-4 gap-3 max-[900px]:grid-cols-2 max-[900px]:gap-2">
+        <div data-testid="brands-grid" className="grid grid-cols-4 gap-3 max-[900px]:order-3 max-[900px]:mt-3 max-[900px]:grid-cols-2 max-[900px]:gap-2">
           {BRANDS.map(({ card, brand }, i) => (
             <Link key={card.key} href={brand ? brandPath(brand) : `/brands/${card.key}`} data-testid="brand-card" className="group flex flex-col gap-3.5 no-underline">
               <div className="relative aspect-[3/4] overflow-hidden bg-[#0b0d12]">

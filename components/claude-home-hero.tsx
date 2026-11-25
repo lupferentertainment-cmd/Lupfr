@@ -100,7 +100,7 @@ export function ClaudeHomeHero() {
           <GoldShineText scrollTargetRef={ref}>Built for You.</GoldShineText>
         </div>
         <div className="flex flex-wrap justify-center gap-3.5">
-          <Link href={CONTACT_PAGE_PATH} className="rounded-sm btn-metallic-gold px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">Plan Your Event</Link>
+          <Link href={CONTACT_PAGE_PATH} className="rounded-sm btn-metallic-gold px-6 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.16em] max-[1023px]:hidden">Plan Your Event</Link>
           <a href="#events" className="rounded-sm border border-[#e8caa0]/55 bg-black/45 px-6 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-[#e8caa0] max-[760px]:hidden">Explore Our Work</a>
         </div>
       </div>
